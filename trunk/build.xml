@@ -1,0 +1,378 @@
+<project name="Build UrlRewrite" default="dist" basedir=".">
+
+    <!-- Give user a chance to override without editing this file (and without typing -D each time) -->
+    <property file="${user.home}/urlrewrite.build.properties"/>
+    <property file="${user.home}/build.properties"/>
+    <property file="${basedir}/build.properties"/>
+
+    <property name="app.version" value="3.0.3"/>
+    <property name="app.manual-version" value="3.0"/>
+    <property name="app.stable-version" value="2.6"/>
+    <property name="app.year" value="2005"/>
+
+    <property name="build.home" value="build"/>
+
+    <property name="tomcat.home" value="/java/jakarta-tomcat-5.0.29"/>
+
+    <property name="compile.debug" value="true"/>
+    <property name="compile.deprecation" value="false"/>
+    <property name="compile.optimize" value="true"/>
+
+
+    <path id="compile.classpath">
+        <fileset dir="lib/">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="compiled.classpath">
+        <fileset dir="lib/">
+            <include name="*.jar"/>
+        </fileset>
+        <path path="${build.home}/java"/>
+    </path>
+
+    <path id="test.classpath">
+        <fileset dir="lib/">
+            <include name="*.jar"/>
+        </fileset>
+        <path path="${build.home}/java"/>
+        <path path="${build.home}/test"/>
+    </path>
+
+
+    <target name="clean">
+        <delete dir="${build.home}/"/>
+        <delete dir="dist/"/>
+        <delete dir="www/api/"/>
+        <delete dir="www/test-report/"/>
+        <delete dir="www/manual/"/>
+
+        <delete dir="dist-annotation/"/>
+    </target>
+
+
+    <target name="compile" description="Compile Java sources">
+        <buildnumber/>
+        <replaceregexp file="src/java/org/tuckey/web/filters/urlrewrite/UrlRewriteFilter.java"
+                       match="public static final String VERSION = \&quot;.*\&quot;;"
+                       replace="public static final String VERSION = &quot;${app.version} build ${build.number}&quot;;"/>
+
+        <mkdir dir="${build.home}/java"/>
+        <javac srcdir="src/java"
+               destdir="${build.home}/java"
+               debug="${compile.debug}"
+               deprecation="${compile.deprecation}"
+               source="1.3"
+               optimize="${compile.optimize}">
+            <classpath refid="compile.classpath"/>
+        </javac>
+
+        <!-- Copy application resources -->
+        <copy todir="${build.home}/java">
+            <fileset dir="src/java" excludes="**/*.java"/>
+        </copy>
+
+    </target>
+
+    <target name="compile-test" depends="compile">
+
+        <mkdir dir="${build.home}/test"/>
+        <javac srcdir="src/test"
+               destdir="${build.home}/test"
+               debug="${compile.debug}"
+               deprecation="${compile.deprecation}"
+               source="1.3"
+               optimize="${compile.optimize}">
+            <classpath refid="compile.classpath"/>
+            <classpath path="${build.home}/java"/>
+            <exclude name="**/*ContainerTest.java"/>
+        </javac>
+
+        <copy todir="${build.home}/test">
+            <fileset dir="src/test" excludes="**/*.java"/>
+        </copy>
+
+    </target>
+
+
+    <target name="copyto-tuckeyorg" depends="dist" description="Copy jar to site">
+        <copy todir="../tuckeyorg/htdocs/WEB-INF/lib/"
+              file="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib/urlrewrite-${app.version}.jar"/>
+
+        <!-- copy documentation zips etc and subdirectories -->
+        <copy todir="../tuckeyorg/htdocs/urlrewrite">
+            <fileset dir="www/"/>
+        </copy>
+
+        <!-- dtds -->
+        <copy todir="../tuckeyorg/htdocs/res/dtds">
+            <fileset dir="src/java/org/tuckey/web/filters/urlrewrite/dtds"/>
+        </copy>
+        <copy todir="../tuckeyorg/htdocs/res/dtd">
+            <fileset dir="src/java/org/tuckey/web/filters/urlrewrite/dtds"/>
+        </copy>
+    </target>
+
+
+    <target name="dist-jar" depends="clean,compile,dist-annotation" description="Create binary distribution">
+        <!-- create JAR file -->
+        <delete dir="dist/urlrewrite-${app.version}/webapp"/>
+        <mkdir dir="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib/"/>
+
+        <copy file="LICENSE.txt" todir="${build.home}/java/META-INF"/>
+        <copy file="src/MANIFEST.mf" todir="${build.home}/java/META-INF"/>
+        <replace file="${build.home}/java/META-INF/manifest.mf">
+            <replacefilter token="@version@" value="${app.version}"/>
+        </replace>
+
+        <jar jarfile="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib/urlrewrite-${app.version}.jar"
+             basedir="${build.home}/java"
+             manifest="${build.home}/java/META-INF/manifest.mf"/>
+
+        <!-- todo: remove!!! -->
+        <copy file="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib/urlrewrite-${app.version}.jar"
+            tofile="../hostedis/common/lib/urlrewrite.jar"/>
+        <copy file="dist/urlrewrite-${app.version}/annotation/urlrewrite-annotation-${app.version}.jar"
+            tofile="../hostedis/common/lib/urlrewrite-annotation.jar"/>
+
+        <!-- todo: remove!! -->
+        <copy file="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib/urlrewrite-${app.version}.jar"
+            tofile="../itender/main/lib/urlrewrite.jar"/>
+        <copy file="dist/urlrewrite-${app.version}/annotation/urlrewrite-annotation-${app.version}.jar"
+            tofile="../itender/main/lib/urlrewrite-annotation.jar"/>
+
+    </target>
+
+
+    <target name="dist" depends="clean,dist-jar,javadoc,test,compile-docs"
+            description="Create binary distribution">
+
+        <!-- make jar for maven -->
+        <mkdir dir="dist/maven-bundle/"/>
+        <copy file="LICENSE.txt" todir="dist/maven-bundle/"/>
+        <copy file="src/maven/project.xml" todir="dist/maven-bundle/"/>
+        <replace file="dist/maven-bundle/project.xml">
+            <replacefilter token="@version@" value="${app.version}"/>
+        </replace>
+        <copy tofile="dist/maven-bundle/urlrewritefilter-${app.version}.jar"
+              file="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib/urlrewrite-${app.version}.jar"/>
+        <jar jarfile="dist/urlrewritefilter-${app.version}-maven-bundle.jar"
+             basedir="dist/maven-bundle/"/>
+
+        <!-- copy in webapp dependencies for bin dist -->
+        <copy file="src/java/org/tuckey/web/filters/urlrewrite/conf-dist.xml"
+              tofile="dist/urlrewrite-${app.version}/webapp/WEB-INF/urlrewrite.xml"/>
+
+        <!-- copy in other dependencies for src dist -->
+        <copy todir="dist/urlrewrite-${app.version}/lib/">
+            <fileset dir="lib/"/>
+        </copy>
+        <copy todir="dist/urlrewrite-${app.version}/manual/">
+            <fileset dir="www/manual/"/>
+        </copy>
+        <copy file="build.xml"
+              todir="dist/urlrewrite-${app.version}/"/>
+        <copy file="LICENSE.txt"
+              todir="dist/urlrewrite-${app.version}/"/>
+        <copy todir="dist/urlrewrite-${app.version}/api/">
+            <fileset dir="www/api/"/>
+        </copy>
+        <copy todir="dist/urlrewrite-${app.version}/test-report/">
+            <fileset dir="www/test-report/"/>
+        </copy>
+        <copy todir="dist/urlrewrite-${app.version}/src/">
+            <fileset dir="src/"/>
+        </copy>
+
+        <!-- zip it -->
+        <zip destfile="dist/urlrewritefilter-${app.version}.zip"
+             basedir="dist/urlrewrite-${app.version}/webapp/" includes="**"/>
+        <zip destfile="dist/urlrewritefilter-${app.version}-src.zip">
+            <zipfileset prefix="urlrewrite-${app.version}-src"
+                        dir="dist/urlrewrite-${app.version}/"/>
+        </zip>
+
+        <!-- make checksums -->
+        <checksum algorithm="MD5" fileext=".md5">
+            <fileset dir="dist/" includes="*.zip"/>
+        </checksum>
+
+        <!-- copy into www -->
+        <copy todir="www/dist">
+            <fileset dir="dist/" includes="urlrewritefilter*"/>
+        </copy>
+    </target>
+
+
+    <target name="compile-docs" depends="urlrewrite-doc" description="only for tuckey.org dist">
+
+        <copy todir="www/" overwrite="true">
+            <fileset dir="src/doc/"/>
+        </copy>
+
+        <replace dir="www/">
+            <include name="**/*.html"/>
+            <replacefilter token="@version@" value="${app.version}"/>
+            <replacefilter token="@manual-version@" value="${app.manual-version}"/>
+            <replacefilter token="@stable-version@" value="${app.stable-version}"/>
+            <replacefilter token="@year@" value="${app.year}"/>
+        </replace>
+
+    </target>
+
+    <target name="test" depends="compile-test">
+        <delete dir="www/test-report/"/>
+        <mkdir dir="www/test-report/xml/"/>
+        <!--
+           MAKE sure that junit.jar is in your ANT_HOME/lib/ directory
+           see http://ant.apache.org/manual/OptionalTasks/junit.html
+        -->
+        <taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask" />
+        <junit printsummary="yes">
+            <classpath refid="test.classpath"/>
+            <formatter type="xml"/>
+            <batchtest fork="yes" todir="www/test-report/xml/">
+                <fileset dir="src/test">
+                    <include name="**/*Test.java"/>
+                    <exclude name="**/*ContainerTest.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+        <junitreport todir="www/test-report/">
+            <fileset dir="www/test-report/xml/">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report todir="www/test-report/"/>
+        </junitreport>
+        <delete dir="www/test-report/xml/"/>
+    </target>
+
+
+    <!--  description="Create Javadoc API documentation" -->
+    <target name="javadoc" depends="compile">
+
+        <delete dir="www/api/"/>
+        <mkdir dir="www/api/"/>
+        <javadoc sourcepath="src/java/" destdir="www/api/"
+            use="true" author="true" version="true"
+            packagenames="org.tuckey.web.filters.urlrewrite.*">
+            <classpath refid="compile.classpath"/>
+        </javadoc>
+
+    </target>
+
+
+    <target name="urlrewrite-doc" depends="compile" description="Create UrlRewriteFilter conf documentation">
+
+        <taskdef name="urlrewritedoc" classname="org.tuckey.web.filters.urlrewrite.UrlRewriteDocTask"
+                 classpathref="compiled.classpath"/>
+
+        <mkdir dir="www/manual/${app.manual-version}/"/>
+        <urlrewritedoc
+                conf="src/test-web/WEB-INF/urlrewrite.xml"
+                dest="src/doc/manual/${app.manual-version}/urlrewrite-conf-overview-sample.html"/>
+
+    </target>
+
+
+
+
+
+    <!-- annotation processor -->
+
+    <target name="build-annotation">
+
+        <!-- compile apt processor -->
+        <delete dir="${build.home}/annotation/classes"/>
+        <mkdir dir="${build.home}/annotation/classes"/>
+        <javac srcdir="src/annotation/java/"
+               destdir="${build.home}/annotation/classes/"
+               debug="${compile.debug}"
+               deprecation="${compile.deprecation}"
+               source="1.5"
+               optimize="${compile.optimize}">
+            <classpath refid="compile.classpath"/>
+        </javac>
+
+    </target>
+
+    <target name="dist-annotation" depends="build-annotation">
+
+        <!-- build a nice jar -->
+        <unzip src="lib/servlet-api.jar" dest="${build.home}/annotation/classes" />
+        <mkdir dir="dist/urlrewrite-${app.version}/annotation/"/>
+        <jar jarfile="dist/urlrewrite-${app.version}/annotation/urlrewrite-annotation-${app.version}.jar"
+             basedir="${build.home}/annotation/classes" />
+    </target>
+
+    <target name="test-annotation" depends="dist-annotation">
+        <path id="annotation-classpath">
+            <fileset file="dist/urlrewrite-${app.version}/annotation/urlrewrite-annotation-${app.version}.jar"/>
+            <fileset file="${java.home}/lib/tools.jar" />
+            <fileset file="lib/servlet-api.jar" />
+        </path>
+        <fileset id="sources" dir="." includes="src/annotation/test/**/*.java" />
+        <pathconvert pathsep=" " property="sourcefiles" refid="sources"/>
+        <!-- useful for debugging:
+        <property name="prop-annotation-classpath" refid="annotation-classpath"/>
+        <echo>
+            CLASSPATH ${prop-annotation-classpath}
+
+            SOURCES: ${sourcefiles}
+        </echo> -->
+        <mkdir dir="${build.home}/annotation/web/WEB-INF/"/>
+        <exec executable="apt">
+            <arg value="-classpath"/>
+            <arg pathref="annotation-classpath"/>
+            <arg value="-nocompile"/>
+            <arg value="-factory"/>
+            <arg value="org.tuckey.web.filters.urlrewrite.annotation.HttpUrlAPTFactory"/>
+            <arg value="-AsaveRulesTo=${build.home}/annotation/web/WEB-INF/urlrewrite-generated.xml"/>
+            <arg line="${sourcefiles}"/>
+        </exec>
+    </target>
+
+
+    <!-- sample for documentation -->
+    <target name="urlrewrite-annotations" depends="compile">
+        <path id="annotation-classpath">
+            <fileset file="lib/urlrewrite-annotation-3.0.1.jar"/>
+            <fileset file="lib/servlet-api.jar" />
+            <fileset file="${java.home}/lib/tools.jar" />
+        </path>
+        <!-- set the sources you want to check for annotations -->
+        <fileset id="sources" dir="." includes="src/annotation/test/**/*.java" />
+        <pathconvert pathsep=" " property="sourcefiles" refid="sources"/>
+        <!-- useful for debugging if you have trouble with classpaths etc:
+        <property name="prop-annotation-classpath" refid="annotation-classpath"/>
+        <echo>
+            CLASSPATH ${prop-annotation-classpath}
+
+            SOURCES: ${sourcefiles}
+        </echo> -->
+        <mkdir dir="${build.home}/annotation/web/WEB-INF/"/>
+        <exec executable="apt">
+            <arg value="-classpath"/>
+            <arg pathref="annotation-classpath"/>
+            <arg value="-nocompile"/>
+            <arg value="-factory"/>
+            <arg value="org.tuckey.web.filters.urlrewrite.annotation.HttpUrlAPTFactory"/>
+            <arg value="-AsaveRulesTo=build/WEB-INF/urlrewrite-generated.xml"/>
+            <arg line="${sourcefiles}"/>
+        </exec>
+    </target>
+
+    <target name="copy-for-cvs" depends="clean">
+        <mkdir dir="../urlrewrite-cvs/"/>
+
+        <copy todir="../urlrewrite-cvs/">
+            <fileset dir="./">
+                <include name="src/**"/>
+                <include name="lib/**"/>
+            </fileset>
+        </copy>
+
+    </target>
+
+</project>
