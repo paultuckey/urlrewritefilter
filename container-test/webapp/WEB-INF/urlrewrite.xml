@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE urlrewrite
+        PUBLIC "-//tuckey.org//DTD UrlRewrite 3.0//EN"
+        "http://tuckey.org/res/dtds/urlrewrite3.0.dtd">
+
+<urlrewrite>
+
+    <rule>
+        <note>
+            The rule means that requests to /test/status/ will be redirected to /rewrite-status
+            the url will be rewritten.
+        </note>
+        <from>/test/status/</from>
+        <to type="redirect">%{context-path}/rewrite-status</to>
+    </rule>
+
+    <rule>
+        <from>^/([a-z]+)/index.jsp$</from>
+        <to type="redirect">/$1/</to>
+    </rule>
+
+    <rule>
+        <from>^/([a-z]+)/$</from>
+        <to>/$1/index.jsp</to>
+    </rule>
+
+    <rule>
+        <from>/spelling/([a-z]+)</from>
+        <to>/spelling/index.jsp?spell=$1</to>
+    </rule>
+
+    <rule>
+        <condition type="method">gEt</condition>
+        <from>/get/</from>
+        <to>/getty/lotsofgetty/</to>
+    </rule>
+
+    <rule>
+        <from>/products/([0-9]+)</from>
+        <to last="false">/products.jsp?product_id=$1</to>
+    </rule>
+
+    <rule>
+        <from>/multiple/products/([0-9]+)</from>
+        <to last="false">/multiple/products.jsp?product_id=$1</to>
+    </rule>
+
+    <rule>
+        <from>/multiple/(.*)</from>
+        <to>/$1</to>
+    </rule>
+
+    <rule>
+        <from>/settest/([0-9]+)</from>
+        <set type="session" name="testsession">hello!</set>
+        <set type="response-header" name="cache-control">none-fool</set>
+    </rule>
+
+    <rule>
+        <name>
+            http method test
+        </name>
+        <condition type="method" next="or">PROPFIND</condition>
+        <condition type="method">PUT</condition>
+        <from>/.*</from>
+        <to type="redirect">/go-away-nasty-methods.html</to>
+    </rule>
+
+    <rule>
+        <condition type="year" operator="greater">1970</condition>
+        <condition type="year" operator="less">2020</condition>
+        <from>/time/year/current</from>
+        <to type="passthrough">/echo.jsp?echo=yearisbetween1970and3000</to>
+    </rule>
+
+    <rule>
+        <from>^/services/(.*)</from>
+        <to type="redirect">/axis/services/$1</to>
+    </rule>
+
+    <rule>
+        <from>^/weblog/([0-9]+)/([0-9]+)/$</from>
+        <to>/weblog/index.jsp?year=$1&amp;month=$2</to>
+    </rule>
+
+    <rule>
+        <name>Domain Name Check</name>
+        <condition name="host" operator="notequal">www.example.com</condition>
+        <from>/eriktest(.*)</from>
+        <to type="redirect">http://www.example.com/context$1</to>
+    </rule>
+
+    <rule>
+        <name>403 null Check</name>
+        <from>^/hideme/.*$</from>
+        <set type="status">403</set>
+        <to>null</to>
+    </rule>
+
+    <rule>
+        <name>encode test</name>
+        <from>/went to bahamas/</from>
+        <to type="redirect" encode="true">/bahamas/</to>
+    </rule>
+
+
+    <rule>
+        <name>utf test</name>
+        <from>/utf/(.*)</from>
+        <to type="redirect">/utf-redir/$1</to>
+    </rule>
+
+
+    <rule>
+        <name>Bad referers test</name>
+        <note>
+
+            Prevent vermin from appearing in your logs by denying nasty referers
+
+        </note>
+        <condition name="referer">^http://www\.badguys\.com/.*$</condition>
+        <from>/(.*)</from>
+        <set type="status">403</set>
+        <to>null</to>
+    </rule>
+
+
+    <rule>
+        <condition type="user-in-role" operator="notequal">admin</condition>
+        <condition type="user-in-role" operator="notequal">bigboss</condition>
+        <from>^/admin/(.*)$</from>
+        <to>/go-away-please.html</to>
+    </rule>
+
+
+    <rule>
+        <name>Simple Run Test</name>
+        <from>^/run/test/(.*)$</from>
+        <run class="org.tuckey.web.filters.urlrewrite.TestRunObj"/>
+        <to>null</to>
+    </rule>
+
+
+    <!--
+
+
+    mod_rewrite style test:
+
+    see http://httpd.apache.org/docs-2.0/misc/rewriteguide.html
+
+    -->
+    <!--
+        todo: think about rewriteBase is it the same as context??
+        todo: make condition that supports following
+        RewriteBase    /~quux/
+        RewriteCond    %{REQUEST_FILENAME}  -d
+        RewriteRule    ^(.+[^/])$           $1/  [R]
+    -->
+    <!--
+        Search pages in more than one directory
+        todo: how to implement... it a bit tricky as container controls access to fs
+        #   first try to find it in custom/...
+        #   ...and if found stop and be happy:
+        RewriteCond         /your/docroot/dir1/%{REQUEST_FILENAME}  -f
+        RewriteRule  ^(.+)  /your/docroot/dir1/$1  [L]
+
+        #   second try to find it in pub/...
+        #   ...and if found stop and be happy:
+        RewriteCond         /your/docroot/dir2/%{REQUEST_FILENAME}  -f
+        RewriteRule  ^(.+)  /your/docroot/dir2/$1  [L]
+
+        #   else go on for other Alias or ScriptAlias directives,
+        #   etc.
+        RewriteRule   ^(.+)  -  [PT]
+    -->
+    <!--
+        Set Environment Variables According To URL Parts
+        pt: no real need to do this in java land, set attribute works just fine
+        RewriteRule   ^(.*)/S=([^/]+)/(.*)    $1/$3 [E=STATUS:$2]
+    -->
+
+    <!--
+        Virtual User Hosts
+        todo: think of a way to do
+        RewriteCond   %{HTTP_HOST}                 ^www\.[^.]+\.host\.com$
+        RewriteRule   ^(.+)                        %{HTTP_HOST}$1          [C]
+        RewriteRule   ^www\.([^.]+)\.host\.com(.*) /home/$1$2
+    -->
+    <!--
+        Redirect Failing URLs To Other Webserver
+        todo: find a way to do this (see 3 above)
+        RewriteCond   /your/docroot/%{REQUEST_FILENAME} !-f
+        RewriteRule   ^(.+)                             http://webserverB.dom/$1
+    -->
+
+
+    <rule>
+        <name>Canonical URLs</name>
+        <note>
+            On some webservers there are more than one URL for a resource. Usually there are canonical URLs (which
+            should be actually used and distributed) and those which are just shortcuts, internal ones, etc. Independent
+            of which URL the user supplied with the request he should finally see the canonical one only.
+
+            We do an external HTTP redirect for all non-canonical URLs to fix them in the location view of the Browser
+            and for all subsequent requests. In the example ruleset below we replace /~user by the canonical /u/user and
+            fix a missing trailing slash for /u/user.
+
+            RewriteRule ^/~([^/]+)/?(.*) /u/$1/$2 [R]
+            RewriteRule ^/([uge])/([^/]+)$ /$1/$2/ [R]
+        </note>
+        <from>^/~([^/]+)/?(.*)</from>
+        <to type="redirect">/u/$1/$2</to>
+    </rule>
+    <rule>
+        <from>^/([uge])/([^/]+)$</from>
+        <to type="redirect">/$1/$2/</to>
+    </rule>
+
+
+    <rule>
+        <name>Canonical Hostnames</name>
+        <note>
+            The goal of this rule is to force the use of a particular hostname, in preference to other hostnames which
+            may be used to reach the same site. For example, if you wish to force the use of www.example.com instead of
+            example.com, you might use a variant of the following recipe.
+
+            RewriteCond %{HTTP_HOST} !^fully\.qualified\.domain\.name [NC]
+            RewriteCond %{HTTP_HOST} !^$
+            RewriteRule ^/(.*) http://fully.qualified.domain.name/$1 [L,R]
+        </note>
+        <condition name="host">!^fully\.qualified\.domain\.name</condition>
+        <condition name="host" operator="notequal">^$</condition>
+        <from>^/(.*)</from>
+        <to type="redirect" last="true">http://fully.qualified.domain.name/$1</to>
+    </rule>
+
+
+    <rule>
+        <name>Moved DocumentRoot</name>
+        <note>
+            Usually the DocumentRoot of the webserver directly relates to the URL "/". But often this data is not
+            really of top-level priority, it is perhaps just one entity of a lot of data pools. For instance at our
+            Intranet sites there are /e/www/ (the homepage for WWW), /e/sww/ (the homepage for the Intranet) etc. Now
+            because the data of the DocumentRoot stays at /e/www/ we had to make sure that all inlined images and other
+            stuff inside this data pool work for subsequent requests.
+
+            We just redirect the URL / to /e/www/. While is seems trivial it is actually trivial with mod_rewrite, only.
+            Because the typical old mechanisms of URL Aliases (as provides by mod_alias and friends) only used prefix
+            matching. With this you cannot do such a redirection because the DocumentRoot is a prefix of all URLs.
+            With mod_rewrite it is really trivial:
+
+            RewriteRule ^/$ /e/www/ [R]
+        </note>
+        <from>^/$</from>
+        <to type="redirect">/e/www/</to>
+    </rule>
+
+
+    <rule>
+        <name>Trailing Slash Problem</name>
+        <note>
+            Every webmaster can sing a song about the problem of the trailing slash on URLs referencing directories.
+            If they are missing, the server dumps an error, because if you say /~quux/foo instead of /~quux/foo/ then
+            the server searches for a file named foo. And because this file is a directory it complains. Actually it
+            tries to fix it itself in most of the cases, but sometimes this mechanism need to be emulated by you. For
+            instance after you have done a lot of complicated URL rewritings to CGI scripts etc.
+
+            The solution to this subtle problem is to let the server add the trailing slash automatically. To do this
+            correctly we have to use an external redirect, so the browser correctly requests subsequent images etc. If
+            we only did a internal rewrite, this would only work for the directory page, but would go wrong when any
+            images are included into this page with relative URLs, because the browser would request an in-lined object.
+            For instance, a request for image.gif in /~quux/foo/index.html would become /~quux/image.gif without the
+            external redirect!
+        </note>
+        <from>^/~quux/foo$</from>
+        <to type="redirect">/~quux/foo/</to>
+    </rule>
+
+
+    <rule>
+        <name>Move Homedirs to Different Webserver</name>
+        <note>
+            Many webmasters have asked for a solution to the following situation: They wanted to redirect just all
+            homedirs on a webserver to another webserver. They usually need such things when establishing a newer
+            webserver which will replace the old one over time.
+
+            The solution is trivial with mod_rewrite (and urlrewrite filter). On the old webserver we just redirect all
+            /~user/anypath URLs to http://newserver/~user/anypath.
+
+            RewriteRule ^/~(.+) http://newserver/~$1 [R,L]
+        </note>
+        <from>^/~(.+)</from>
+        <to type="redirect" last="true">http://newserver/~$1</to>
+    </rule>
+
+
+    <rule>
+        <name>Structured Homedirs</name>
+        <note>
+            Some sites with thousands of users usually use a structured homedir layout, i.e. each homedir is in a
+            subdirectory which begins for instance with the first character of the username. So, /~foo/anypath is
+            /home/f/foo/.www/anypath while /~bar/anypath is /home/b/bar/.www/anypath.
+
+            We use the following ruleset to expand the tilde URLs into exactly the above layout.
+
+            RewriteRule ^/~(([a-z])[a-z0-9]+)(.*) /home/$2/$1/.www$3
+        </note>
+        <from>^/~(([a-z])[a-z0-9]+)(.*)</from>
+        <to>/home/$2/$1/.www$3</to>
+    </rule>
+
+
+    <rule>
+        <name>Redirect Homedirs For Foreigners</name>
+        <note>
+            We want to redirect homedir URLs to another webserver www.somewhere.com when the requesting user does not
+            stay in the local domain ourdomain.com. This is sometimes used in virtual host contexts.
+
+            Just a rewrite condition:
+
+            RewriteCond %{REMOTE_HOST} !^.+\.ourdomain\.com$
+            RewriteRule ^(/~.+) http://www.somewhere.com/$1 [R,L]
+        </note>
+        <condition name="host">!^.+\.ourdomain\.com$</condition>
+        <from>^(/~.+)</from>
+        <to type="redirect" last="true">http://www.somewhere.com/$1</to>
+    </rule>
+
+
+    <rule>
+        <name>Time-Dependent Rewriting</name>
+        <note>
+            When tricks like time-dependent content should happen a lot of webmasters still use CGI scripts which do for
+            instance redirects to specialized pages. How can it be done via mod_rewrite?
+
+            There are a lot of types in conjunction with operators we can do time-dependent redirects:
+
+            RewriteCond %{TIME_HOUR}%{TIME_MIN} &gt;0700
+            RewriteCond %{TIME_HOUR}%{TIME_MIN} &lt;1900
+            RewriteRule ^foo\.html$ foo.day.html
+            RewriteRule ^foo\.html$ foo.night.html
+        </note>
+        <condition type="hourofday" operator="greater">7</condition>
+        <condition type="hourofday" operator="less">19</condition>
+        <from>^foo\.html$</from>
+        <to>foo.day.html</to>
+    </rule>
+    <rule>
+        <from>^foo\.html$</from>
+        <to>foo.night.html</to>
+    </rule>
+
+
+    <rule>
+        <name></name>
+        <note>
+            Assume we have recently renamed the page foo.html to bar.html and now want to provide the old URL for
+            backward compatibility. Actually we want that users of the old URL even not recognize that the pages was
+            renamed.
+
+            We rewrite the old URL to the new one internally via the following rule:
+
+            RewriteBase /~quux/
+            RewriteRule ^foo\.html$ bar.html
+        </note>
+        <from>^/~quux/foo\.html$</from>
+        <to>/~quux/bar.html</to>
+    </rule>
+
+
+    <rule>
+        <name>From Old to New (extern)</name>
+        <note>
+            Assume again that we have recently renamed the page foo.html to bar.html and now want to provide the old URL
+            for backward compatibility. But this time we want that the users of the old URL get hinted to the new one,
+            i.e. their browsers Location field should change, too.
+
+            We force a HTTP redirect to the new URL which leads to a change of the browsers and thus the users view:
+
+            RewriteBase /~quux/
+            RewriteRule ^foo\.html$ bar.html [R]
+        </note>
+        <from>^/~quux/foo\.html$</from>
+        <to type="redirect">/~quux/bar.html</to>
+    </rule>
+
+
+    <rule>
+        <name>Browser Dependent Content</name>
+        <note>
+            At least for important top-level pages it is sometimes necessary to provide the optimum of browser dependent
+            content, i.e. one has to provide a maximum version for the latest Netscape variants, a minimum version for
+            the Lynx browsers and a average feature version for all others.
+
+            We cannot use content negotiation because the browsers do not provide their type in that form. Instead we
+            have to act on the HTTP header "User-Agent". The following condig does the following: If the HTTP header
+            "User-Agent" begins with "Mozilla/3", the page foo.html is rewritten to foo.NS.html and and the rewriting
+            stops. If the browser is "Lynx" or "Mozilla" of version 1 or 2 the URL becomes foo.20.html. All other
+            browsers receive page foo.32.html. This is done by the following ruleset:
+
+            RewriteCond %{HTTP_USER_AGENT} ^Mozilla/3.*
+            RewriteRule ^foo\.html$ foo.NS.html [L]
+
+            RewriteCond %{HTTP_USER_AGENT} ^Lynx/.* [OR]
+            RewriteCond %{HTTP_USER_AGENT} ^Mozilla/[12].*
+            RewriteRule ^foo\.html$ foo.20.html [L]
+
+            RewriteRule ^foo\.html$ foo.32.html [L]
+        </note>
+        <condition name="user-agent">^Mozilla/3.*</condition>
+        <from>^foo\.html$</from>
+        <to last="true">foo.NS.html</to>
+    </rule>
+    <rule>
+        <condition name="user-agent" next="or">^Lynx/.*</condition>
+        <condition name="user-agent">^Mozilla/[12].*</condition>
+        <from>^foo\.html$</from>
+        <to last="true">foo.20.html</to>
+    </rule>
+    <rule>
+        <from>^foo\.html$</from>
+        <to last="true">foo.32.html</to>
+    </rule>
+
+
+    <rule>
+        <name>From Static to Dynamic</name>
+        <note>
+            How can we transform a static page foo.html into a dynamic variant foo.cgi in a seamless way, i.e. without
+            notice by the browser/user.
+
+            We just rewrite the URL to the jsp/servlet and force the correct MIME-type so it gets really run as
+            a CGI-script. This way a request to /~quux/foo.html internally leads to the invocation of /~quux/foo.jsp.
+
+            RewriteBase /~quux/
+            RewriteRule ^foo\.html$ foo.cgi [T=application/x-httpd-cgi]
+        </note>
+        <from>^/~quux/foo\.html$</from>
+        <to>/~quux/foo.jsp</to>
+    </rule>
+
+    <rule>
+        <name>Blocking of Robots</name>
+        <note>
+            How can we block a really annoying robot from retrieving pages of a specific webarea? A /robots.txt file
+            containing entries of the "Robot Exclusion Protocol" is typically not enough to get rid of such a robot.
+
+            We use a ruleset which forbids the URLs of the webarea /~quux/foo/arc/ (perhaps a very deep directory
+            indexed area where the robot traversal would create big server load). We have to make sure that we forbid
+            access only to the particular robot, i.e. just forbidding the host where the robot runs is not enough.
+            This would block users from this host, too. We accomplish this by also matching the User-Agent HTTP header
+            information.
+
+            RewriteCond %{HTTP_USER_AGENT} ^NameOfBadRobot.*
+            RewriteCond %{REMOTE_ADDR} ^123\.45\.67\.[8-9]$
+            RewriteRule ^/~quux/foo/arc/.+ - [F]
+        </note>
+        <condition name="user-agent">^NameOfBadRobot.*</condition>
+        <condition type="remote-addr">^123\.45\.67\.[8-9]$</condition>
+        <from>^/~quux/foo/arc/.+</from>
+        <set type="status">403</set>
+        <to>null</to>
+    </rule>
+
+
+    <rule>
+        <name>Blocked Inline-Images</name>
+        <note>
+            Assume we have under http://www.quux-corp.de/~quux/ some pages with inlined GIF graphics. These graphics are
+            nice, so others directly incorporate them via hyperlinks to their pages. We don't like this practice because
+            it adds useless traffic to our server.
+
+            While we cannot 100% protect the images from inclusion, we can at least restrict the cases where the browser
+            sends a HTTP Referer header.
+
+            RewriteCond %{HTTP_REFERER} !^$
+            RewriteCond %{HTTP_REFERER} !^http://www.quux-corp.de/~quux/.*$ [NC]
+            RewriteRule .*\.gif$ - [F]
+        </note>
+        <condition name="referer" operator="notequal">^$</condition>
+        <condition name="referer" operator="notequal">^http://www.quux-corp.de/~quux/.*$</condition>
+        <from>.*\.gif$</from>
+        <set type="status">403</set>
+        <to>null</to>
+    </rule>
+    <rule>
+        <name>Blocked Inline-Images example 2</name>
+        <note>
+            RewriteCond %{HTTP_REFERER} !^$
+            RewriteCond %{HTTP_REFERER} !.*/foo-with-gif\.html$
+            RewriteRule ^inlined-in-foo\.gif$ - [F]
+        </note>
+        <condition name="referer" operator="notequal">^$</condition>
+        <condition name="referer" operator="notequal">.*/foo-with-gif\.html$</condition>
+        <from>^inlined-in-foo\.gif$</from>
+        <set type="status">403</set>
+    </rule>
+
+</urlrewrite>
+

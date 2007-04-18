@@ -1,0 +1,5 @@
+<rule>
+    <name>Included Rule</name>
+    <from>included</from>
+    <to>somewhere</to>
+</rule>

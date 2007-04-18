@@ -1,0 +1,18 @@
+<project> 
+  <pomVersion>3</pomVersion> 
+  <artifactId>urlrewritefilter</artifactId> 
+  <groupId>net.java.dev.urlrewrite</groupId>
+  <name>urlrewritefilter</name> 
+  <currentVersion>@version@</currentVersion> 
+  <organization> 
+    <name>java.net project</name> 
+    <url>https://urlrewrite.dev.java.net</url> 
+  </organization> 
+  <licenses> 
+    <license> 
+      <name>GPL License</name>
+      <url>http://www.opensource.org/licenses/gpl-license.html</url> 
+    </license> 
+  </licenses> 
+</project>
+

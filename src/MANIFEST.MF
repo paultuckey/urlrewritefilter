@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Extension-Name: urlrewritefilter
+Specification-Title: Url Rewrite Filter
+Specification-Vendor: java.net project
+Specification-Version: @version@
+Implementation-Title: Url Rewrite Filter
+Implementation-Vendor: java.net project
+Implementation-Version: @version@
