@@ -5,7 +5,7 @@
     <property file="${user.home}/build.properties"/>
     <property file="${basedir}/build.properties"/>
 
-    <property name="app.version" value="3.0.3"/>
+    <property name="app.version" value="3.0.4"/>
     <property name="app.manual-version" value="3.0"/>
     <property name="app.stable-version" value="2.6"/>
     <property name="app.year" value="2005"/>
@@ -40,6 +40,9 @@
         <path path="${build.home}/test"/>
     </path>
 
+    <target name="prepare">
+        <available classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask" property="junit.present" />
+    </target>
 
     <target name="clean">
         <delete dir="${build.home}/"/>
@@ -52,7 +55,7 @@
     </target>
 
 
-    <target name="compile" description="Compile Java sources">
+    <target name="compile" depends="prepare" description="Compile Java sources">
         <buildnumber/>
         <replaceregexp file="src/java/org/tuckey/web/filters/urlrewrite/UrlRewriteFilter.java"
                        match="public static final String VERSION = \&quot;.*\&quot;;"
@@ -178,7 +181,7 @@
         <copy todir="dist/urlrewrite-${app.version}/api/">
             <fileset dir="www/api/"/>
         </copy>
-        <copy todir="dist/urlrewrite-${app.version}/test-report/">
+        <copy todir="dist/urlrewrite-${app.version}/test-report/" failonerror="false">
             <fileset dir="www/test-report/"/>
         </copy>
         <copy todir="dist/urlrewrite-${app.version}/src/">
@@ -221,7 +224,7 @@
 
     </target>
 
-    <target name="test" depends="compile-test">
+    <target name="test" depends="compile-test" if="junit.present">
         <delete dir="www/test-report/"/>
         <mkdir dir="www/test-report/xml/"/>
         <!--
