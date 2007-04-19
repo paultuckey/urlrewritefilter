@@ -151,6 +151,8 @@ public class SetAttribute {
 
     /**
      * @see #execute(ConditionMatch, StringMatchingMatcher, HttpServletRequest, HttpServletResponse) execute
+     * @param hsRequest the request
+     * @param hsResponse the response
      */
     public void execute(HttpServletRequest hsRequest, HttpServletResponse hsResponse) {
         execute(null, null, hsRequest, hsResponse);
@@ -207,8 +209,11 @@ public class SetAttribute {
             hsResponse.setStatus(numericValue);
 
         } else if (type == SET_TYPE_COOKIE) {
-            log.debug("setting status");
-            hsResponse.addCookie(cookie);
+            Cookie cookieToAdd = getCookie(name, value);
+            if ( cookieToAdd != null ) {
+                log.debug("adding cookie");
+                hsResponse.addCookie(cookieToAdd);
+            }
 
         } else if (type == SET_TYPE_CONTENT_TYPE) {
             log.debug("setting content type");
@@ -269,17 +274,7 @@ public class SetAttribute {
             cookie = null;
             // VAL[:domain[:lifetime[:path]]]
             if (value != null && name != null) {
-                if (value.indexOf(":") != -1) {
-                    // we must have extra items
-                    String items[] = value.split(":");
-                    cookie = new Cookie(name, items[0]);
-                    if (items.length > 1) cookie.setDomain(items[1]);
-                    if (items.length > 2) cookie.setMaxAge(NumberUtils.stringToInt(items[2]));
-                    if (items.length > 3) cookie.setPath(items[3]);
-
-                } else {
-                    cookie = new Cookie(name, value);
-                }
+                cookie = getCookie(name, value);
             } else {
                 setError("cookie must have a name and a value");
             }
@@ -289,6 +284,29 @@ public class SetAttribute {
             valid = true;
         }
         return valid;
+    }
+
+    private Cookie getCookie(String name, String value) {
+        if ( log.isDebugEnabled() ) {
+            log.debug("making cookie for " + name + ", " + value);
+        }
+        if ( name == null ) {
+            log.info("getCookie called with null name");
+            return null;
+        }
+        Cookie cookie;
+        if (value != null && value.indexOf(":") != -1) {
+            // we must have extra items
+            String items[] = value.split(":");
+            cookie = new Cookie(name, items[0]);
+            if (items.length > 1) cookie.setDomain(items[1]);
+            if (items.length > 2) cookie.setMaxAge(NumberUtils.stringToInt(items[2]));
+            if (items.length > 3) cookie.setPath(items[3]);
+
+        } else {
+            cookie = new Cookie(name, value);
+        }
+        return cookie;
     }
 
     /**

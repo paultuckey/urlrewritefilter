@@ -65,6 +65,22 @@ public class SetAttributeTest extends TestCase {
 
     }
 
+    public void testVariable() {
+        SetAttribute set = new SetAttribute();
+        set.setType("cookie");
+        set.setName("v");
+        set.setValue("%{parameter:v}");
+        MockRequest request = new MockRequest();
+        request.setParameter("v", "1234");
+        MockResponse response = new MockResponse();
+
+        set.initialise();
+        set.execute(request, response);
+        assertEquals("v", ((Cookie) response.getCookies().get(0)).getName());
+        assertEquals("1234", ((Cookie) response.getCookies().get(0)).getValue());
+
+    }
+
     public void testTypeStatus() {
         SetAttribute set = new SetAttribute();
         set.setType("status");
