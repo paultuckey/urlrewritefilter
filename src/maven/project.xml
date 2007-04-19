@@ -10,9 +10,8 @@
   </organization> 
   <licenses> 
     <license> 
-      <name>GPL License</name>
-      <url>http://www.opensource.org/licenses/gpl-license.html</url> 
+      <name>BSD License</name>
+      <url>http://www.opensource.org/licenses/bsd-license.html</url>
     </license> 
   </licenses> 
 </project>
-
