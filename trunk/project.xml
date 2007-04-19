@@ -53,16 +53,8 @@
             <version>3.8.1</version>
         </dependency>
         <dependency>
-            <id>oro</id>
-            <version>2.0.8</version>
-        </dependency>
-        <dependency>
             <id>commons-logging</id>
             <version>1.0</version>
-        </dependency>
-        <dependency>
-            <id>commons-digester</id>
-            <version>1.5</version>
         </dependency>
         <dependency>
             <id>log4j</id>
@@ -127,8 +119,8 @@
 
     <licenses>
         <license>
-            <name>GPL</name>
-            <url>http://www.opensource.org/licenses/gpl-license.php</url>
+            <name>BSD</name>
+            <url>http://www.opensource.org/licenses/bsd-license.php </url>
         </license>
     </licenses>
 
