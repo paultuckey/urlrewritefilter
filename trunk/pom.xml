@@ -10,6 +10,8 @@
     <version>3.0.4</version>
     <name>UrlRewriteFilter</name>
     <url>http://tuckey.org/urlrewrite/</url>
+    <inceptionYear>2001</inceptionYear>
+
     <licenses>
         <license>
             <name>BSD</name>
@@ -89,7 +91,6 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
             </plugin>
         </plugins>
-
     </reporting>
 
 </project>
