@@ -90,7 +90,7 @@ public class OutboundRuleTest extends TestCase {
     public void testOutboundQueryStr3() {
         Conf conf = new Conf();
         OutboundRule rule1 = new OutboundRule();
-        rule1.setFrom("^/world.jsp?country=([a-z]+)&amp;city=([a-z]+)$");
+        rule1.setFrom("^/world\\.jsp\\?country=([a-z]+)&city=([a-z]+)$");
         rule1.setTo("/world/$1/$2");
         conf.addOutboundRule(rule1);
         conf.initialise();
@@ -98,7 +98,7 @@ public class OutboundRuleTest extends TestCase {
         UrlRewriter urlRewriter = new UrlRewriter(conf);
 
         UrlRewriteWrappedResponse urlRewriteWrappedResponse = new UrlRewriteWrappedResponse(response, request, urlRewriter);
-        assertEquals("/storeitem/id666/c555;mockencoded=test", urlRewriteWrappedResponse.encodeURL("/world.jsp?country=usa&city=nyc"));
+        assertEquals("/world/usa/nyc;mockencoded=test", urlRewriteWrappedResponse.encodeURL("/world.jsp?country=usa&city=nyc"));
 
     }
 
