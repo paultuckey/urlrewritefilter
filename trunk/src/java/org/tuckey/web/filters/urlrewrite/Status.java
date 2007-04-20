@@ -42,7 +42,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -141,24 +140,22 @@ public class Status {
         println("</pre>");
 
         final Cookie[] cookies = hsRequest.getCookies();
-        if (cookies != null) {
-            if (cookies.length > 0) {
-                println("<h4>Cookies</h4>");
-                for (int i = 0; i < cookies.length; i++) {
-                    println("<h5>Cookie " + i + "</h5>");
-                    final Cookie cookie = cookies[i];
-                    if (cookie == null) continue;
-                    println("<pre>");
-                    println("    name     : " + cookie.getName());
-                    println("    value    : " + cookie.getValue());
-                    println("    path     : " + cookie.getPath());
-                    println("    domain   : " + cookie.getDomain());
-                    println("    max age  : " + cookie.getMaxAge());
-                    println("    is secure: " + cookie.getSecure());
-                    println("    version  : " + cookie.getVersion());
-                    println("    comment  : " + cookie.getComment());
-                    println("</pre>");
-                }
+        if (cookies != null && cookies.length > 0) {
+            println("<h4>Cookies</h4>");
+            for (int i = 0; i < cookies.length; i++) {
+                println("<h5>Cookie " + i + "</h5>");
+                final Cookie cookie = cookies[i];
+                if (cookie == null) continue;
+                println("<pre>");
+                println("    name     : " + cookie.getName());
+                println("    value    : " + cookie.getValue());
+                println("    path     : " + cookie.getPath());
+                println("    domain   : " + cookie.getDomain());
+                println("    max age  : " + cookie.getMaxAge());
+                println("    is secure: " + cookie.getSecure());
+                println("    version  : " + cookie.getVersion());
+                println("    comment  : " + cookie.getComment());
+                println("</pre>");
             }
         }
         println("</pre>");

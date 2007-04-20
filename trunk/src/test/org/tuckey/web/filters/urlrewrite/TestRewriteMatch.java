@@ -34,18 +34,17 @@
  */
 package org.tuckey.web.filters.urlrewrite;
 
-import org.tuckey.web.filters.urlrewrite.extend.RewriteRule;
 import org.tuckey.web.filters.urlrewrite.extend.RewriteMatch;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
+import java.io.IOException;
 
-public class TestRuleObj extends RewriteRule {
-    public RewriteMatch matches(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        return new TestRewriteMatch();
-    }
+public class TestRewriteMatch extends RewriteMatch {
 
-    public RewriteMatch trial(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-        return new TestRewriteMatch();
+    public boolean execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
+        //
+        return true;
     }
 }

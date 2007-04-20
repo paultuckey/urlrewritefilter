@@ -140,7 +140,7 @@ public final class UrlRewriteFilter implements Filter {
     private static Log log = Log.getLog(UrlRewriteFilter.class);
 
     // next line is replaced by ant on compile
-    public static final String VERSION = "3.0.4 build 6004";
+    public static final String VERSION = "3.0.4 build 6005";
 
     public static final String DEFAULT_WEB_CONF_PATH = "/WEB-INF/urlrewrite.xml";
 
