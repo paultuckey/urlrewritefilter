@@ -68,7 +68,6 @@ public class SetAttribute {
     private String value;
     private int numericValue;
     private Locale locale;
-    private Cookie cookie;
 
     private static final short SET_TYPE_REQUEST = 0;
     private static final short SET_TYPE_SESSION = 1;
@@ -271,10 +270,9 @@ public class SetAttribute {
             }
 
         } else if (type == SET_TYPE_COOKIE) {
-            cookie = null;
             // VAL[:domain[:lifetime[:path]]]
             if (value != null && name != null) {
-                cookie = getCookie(name, value);
+                getCookie(name, value);
             } else {
                 setError("cookie must have a name and a value");
             }

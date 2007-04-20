@@ -433,11 +433,9 @@ public class Run {
         }
         try {
             Object objReturned = runMethod.invoke(classInstanceToRun, (Object[]) params);
-            if (objReturned != null) {
+            if (objReturned != null && objReturned instanceof RewriteMatch) {
                 // if we get a rewriteMatch object then return it for execution later
-                if (objReturned instanceof RewriteMatch) {
-                    returned = (RewriteMatch) objReturned;
-                }
+                returned = (RewriteMatch) objReturned;
             }
 
         } catch (IllegalAccessException e) {

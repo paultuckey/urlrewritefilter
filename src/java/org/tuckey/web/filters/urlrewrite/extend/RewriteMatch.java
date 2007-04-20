@@ -37,7 +37,6 @@ package org.tuckey.web.filters.urlrewrite.extend;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
-import javax.servlet.FilterChain;
 import java.io.IOException;
 
 /**
@@ -49,6 +48,7 @@ public class RewriteMatch {
     /**
      * When future rules are processed they need to have a URL to compare against.  If this method is not implemented
      * then the url before this rule will be used. If isLast() returns true then this will never be called.
+     * @return String
      */
     public String getMatchingUrl() {
         return null;
