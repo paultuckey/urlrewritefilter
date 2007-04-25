@@ -38,6 +38,7 @@
             <li><a href="index.html#anttask">Ant Task</a></li>
         </ul>
     </li>
+    <li><a href="annotation.html">Annotations</a></li>
     <li><b>Examples</b>
         <ul>
             <li><a href="guide.html#method">Method Invocation</a></li>
@@ -50,6 +51,41 @@
 </div>
 
 <div id="main">
+
+<!--
+
+ todo: example for inclusion
+Takasho <takasho@gmail.com>
+to UrlRewrite
+
+show details
+	 12/8/06
+
+Thanks for such a quick response. That works great :)
+
+Please could you add some examples to your documentation such as the
+following:
+
+<rule>
+  <condition type="query-string">(.*)</condition>
+  <from>^/servlet/redirect</from>
+  <to type="permanent-redirect" last="true">/redirect?%1</to>
+</rule>
+<rule>
+  <condition type="query-string"
+operator="equal">(.*)myParam=true(.*)</condition>
+  <from>^(.*)$</from>
+  <to type="permanent-redirect">$1?changedParam=true%2&amp;%1</to>
+</rule>
+<rule>
+  <condition type="query-string">(.*)</condition>
+  <from>^/sitemap.jsp</from>
+  <to type="permanent-redirect"
+last="true">/site?addedParam=myValue&amp;%1</to>
+</rule>
+
+-->
+
 
 <h1>Examples</h1>
 
