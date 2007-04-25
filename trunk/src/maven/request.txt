@@ -1,0 +1,13 @@
+
+
+Upload UrlRewriteFilter @version@
+
+http://tuckey.org/urlrewrite/dist/urlrewritefilter-@version@-maven-bundle.jar
+
+http://tuckey.org/urlrewrite/
+
+UrlRewriteFilter
+
+Based on the popular and very useful mod_rewrite for apache, UrlRewriteFilter is a Java Web Filter for any J2EE
+compliant web application server (such as Resin, Orion or Tomcat), which allows you to rewrite URLs before they get to
+your code. It is a very powerful tool just like Apache's mod_rewrite.
