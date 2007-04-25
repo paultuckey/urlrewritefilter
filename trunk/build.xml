@@ -25,6 +25,12 @@
         </fileset>
     </path>
 
+    <path id="ant.classpath">
+        <fileset dir="${ant.home}/lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
     <path id="compiled.classpath">
         <fileset dir="lib/">
             <include name="*.jar"/>
@@ -241,6 +247,7 @@
             use="true" author="true" version="true"
             packagenames="org.tuckey.web.filters.urlrewrite.*">
             <classpath refid="compile.classpath"/>
+            <classpath refid="ant.classpath"/>
         </javadoc>
 
     </target>
