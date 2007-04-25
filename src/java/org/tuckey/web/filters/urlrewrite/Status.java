@@ -218,7 +218,7 @@ public class Status {
                 (conditionsCount > 0 ? " and " : "") +
                 (conditionsCount == 1 ? conditionsCount + " condtion" : "") +
                 (conditionsCount > 1 ? conditionsCount + " condtions" : "") +
-                " in the configuration file.</code></p>");
+                " in the configuration file.</p>");
 
         for (int i = 0; i < rules.size(); i++) {
             final Rule rule = (Rule) rules.get(i);
@@ -255,13 +255,14 @@ public class Status {
                 if (!rule.isLast()) {
                     println("<p>Note, other rules will be proessed after this rule.</p>");
                 }
-                println("</p>");
             }
             if (rule instanceof ClassRule) {
                 ClassRule classRule = (ClassRule) rule;
                 println("<h3>" + classRule.getDisplayName() +
                         (classRule.isEnabled() ? "" : " **DISABLED**") + "</h3>");
             }
+            println();
+            println();
         }
 
         for (int i = 0; i < outboundRules.size(); i++) {
@@ -290,7 +291,8 @@ public class Status {
             if (!rule.isLast()) {
                 println("<p>Note, other outbound rules will be proessed after this rule.</p>");
             }
-            println("</p>");
+            println();
+            println();
         }
         println("<hr />");
     }
@@ -504,6 +506,9 @@ public class Status {
         println("</html>");
     }
 
+    private void println() {
+        buffer.append("\n");
+    }
 
     private void print(String s) {
         buffer.append(s);
@@ -511,7 +516,7 @@ public class Status {
 
     private void println(String s) {
         buffer.append(s);
-        buffer.append("\n");
+        println();
     }
 
     public StringBuffer getBuffer() {
