@@ -54,8 +54,8 @@ import java.io.IOException;
  */
 public class UrlRewriteDocTask extends Task {
 
-    private String conf = UrlRewriteFilter.DEFAULT_WEB_CONF_PATH;
-    private String dest = "urlrewrite-conf-overview.html";
+    private File conf = new File(UrlRewriteFilter.DEFAULT_WEB_CONF_PATH);
+    private File dest = new File("urlrewrite-conf-overview.html");
     private String logLevel = "INFO";
 
     public void execute() throws BuildException {
@@ -75,7 +75,7 @@ public class UrlRewriteDocTask extends Task {
         Run.setLoadClass(false);
         CatchElem.setLoadClass(false);
 
-        Conf confObj = new Conf(new FileInputStream(conf), conf);
+        Conf confObj = new Conf(new FileInputStream(conf), conf.toString());
         confObj.initialise();
 
         if (!confObj.isOk()) {
@@ -83,7 +83,7 @@ public class UrlRewriteDocTask extends Task {
         }
         log("loaded fine with " + confObj.getRules().size() + " rules");
 
-        File reportFile = new File(dest);
+        File reportFile = dest;
         if (reportFile.exists()) {
             reportFile.delete();
         }
@@ -97,11 +97,11 @@ public class UrlRewriteDocTask extends Task {
         writer.close();
     }
 
-    public void setConf(String conf) {
+    public void setConf(File conf) {
         this.conf = conf;
     }
 
-    public void setDest(String dest) {
+    public void setDest(File dest) {
         this.dest = dest;
     }
 
