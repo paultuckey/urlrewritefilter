@@ -75,7 +75,7 @@ public class UrlRewriteDocTask extends Task {
         Run.setLoadClass(false);
         CatchElem.setLoadClass(false);
 
-        Conf confObj = new Conf(new FileInputStream(conf), conf.toString());
+        Conf confObj = new Conf(new FileInputStream(conf), conf.getName());
         confObj.initialise();
 
         if (!confObj.isOk()) {

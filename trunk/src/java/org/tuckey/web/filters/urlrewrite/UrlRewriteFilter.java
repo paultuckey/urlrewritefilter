@@ -132,6 +132,17 @@ import java.util.Date;
  * understand the manual i allways have to provide a name when using
  * type="parameter" in a condition.
  *
+ * todo: javaFreak <mwdavis1@gmail.com> 	12/13/06
+ * In Apache: RewriteEngine on
+ * RewriteMap upper2lower int:tolower
+ * RewriteRule ^/(.*)$ /${upper2lower:$1}
+ *
+ * todo: Rostislav Hristov <rostislav.hristov@gmail.com  12/29/06
+ * Is there an analogue to this mod_rewrite feature and can we expect it
+ * in the upcoming versions?
+ * RewriteCond      %{REQUEST_FILENAME}   !-f
+ * RewriteCond      %{REQUEST_FILENAME}   !-d
+ *
  * @author Paul Tuckey
  * @version $Revision: 51 $ $Date: 2006-12-08 11:37:07 +1300 (Fri, 08 Dec 2006) $
  */
@@ -140,7 +151,7 @@ public final class UrlRewriteFilter implements Filter {
     private static Log log = Log.getLog(UrlRewriteFilter.class);
 
     // next line is replaced by ant on compile
-    public static final String VERSION = "3.0.4 build 6005";
+    public static final String VERSION = "3.0.4 build 6023";
 
     public static final String DEFAULT_WEB_CONF_PATH = "/WEB-INF/urlrewrite.xml";
 
