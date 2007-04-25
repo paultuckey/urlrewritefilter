@@ -8,7 +8,7 @@
     <property name="app.version" value="3.0.4"/>
     <property name="app.manual-version" value="3.0"/>
     <property name="app.stable-version" value="2.6"/>
-    <property name="app.year" value="2005"/>
+    <property name="app.year" value="2007"/>
 
     <property name="build.home" value="build"/>
 
@@ -97,26 +97,6 @@
         </copy>
 
     </target>
-
-
-    <target name="copyto-tuckeyorg" depends="dist" description="Copy jar to site">
-        <copy todir="../tuckeyorg/htdocs/WEB-INF/lib/"
-              file="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib/urlrewrite-${app.version}.jar"/>
-
-        <!-- copy documentation zips etc and subdirectories -->
-        <copy todir="../tuckeyorg/htdocs/urlrewrite">
-            <fileset dir="www/"/>
-        </copy>
-
-        <!-- dtds -->
-        <copy todir="../tuckeyorg/htdocs/res/dtds">
-            <fileset dir="src/java/org/tuckey/web/filters/urlrewrite/dtds"/>
-        </copy>
-        <copy todir="../tuckeyorg/htdocs/res/dtd">
-            <fileset dir="src/java/org/tuckey/web/filters/urlrewrite/dtds"/>
-        </copy>
-    </target>
-
 
     <target name="dist-jar" depends="clean,compile,dist-annotation" description="Create binary distribution">
         <!-- create JAR file -->
@@ -340,7 +320,7 @@
     <!-- sample for documentation -->
     <target name="urlrewrite-annotations" depends="compile">
         <path id="annotation-classpath">
-            <fileset file="lib/urlrewrite-annotation-3.0.1.jar"/>
+            <fileset file="lib/urlrewrite-annotation-${app.version}.jar"/>
             <fileset file="lib/servlet-api.jar" />
             <fileset file="${java.home}/lib/tools.jar" />
         </path>
