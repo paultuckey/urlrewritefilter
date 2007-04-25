@@ -221,16 +221,16 @@ public class ClassRule implements Rule {
             return false;
         }
         if (initMethod != null) {
-            log.debug("about to run init(ServletContext) on " + classStr);
+            log.debug("about to run init(ServletConfig) on " + classStr);
             Object[] args = new Object[1];
             args[0] = context;
             try {
                 initMethod.invoke(instance, args);
             } catch (IllegalAccessException e) {
-                logInvokeException("init(ServletContext)", e);
+                logInvokeException("init(ServletConfig)", e);
                 return false;
             } catch (InvocationTargetException e) {
-                logInvokeException("init(ServletContext)", e);
+                logInvokeException("init(ServletConfig)", e);
                 return false;
             }
         }
