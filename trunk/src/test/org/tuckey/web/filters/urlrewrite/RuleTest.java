@@ -72,6 +72,19 @@ public class RuleTest extends TestCase {
         assertTrue("Should be a forward", rewrittenUrl.isForward());
     }
 
+    public void testRule03() throws IOException, ServletException, InvocationTargetException {
+        NormalRule rule = new NormalRule();
+        rule.setFrom("^/visa.jsp/([0-9]+)$");
+        rule.setTo("/visa.jsp?Idet=$1");
+        rule.initialise(null);
+        MockRequest request = new MockRequest("/visa.jsp/974210592");
+        NormalRewrittenUrl rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
+
+        assertEquals("forward should be default type", "forward", rule.getToType());
+        assertEquals("/visa.jsp?Idet=974210592", rewrittenUrl.getTarget());
+        assertTrue("Should be a forward", rewrittenUrl.isForward());
+    }
+
     public void testRuleNullTo() throws IOException, ServletException, InvocationTargetException {
         NormalRule rule = new NormalRule();
         rule.setFrom("from");
