@@ -1,0 +1,68 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                      http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.tuckey.urlrewrite</groupId>
+    <artifactId>urlrewrite</artifactId>
+    <packaging>jar</packaging>
+    <version>@version@</version>
+    <name>UrlRewriteFilter</name>
+    <url>http://tuckey.org/urlrewrite/</url>
+    <inceptionYear>2001</inceptionYear>
+    <description>A Java Web Filter for any J2EE compliant web application server (such as Resin, Orion or Tomcat), which allows you to rewrite URLs before they get to your code. It is a very powerful tool just like Apache's mod_rewrite.</description>
+
+    <licenses>
+        <license>
+            <name>BSD</name>
+            <url>http://www.opensource.org/licenses/bsd-license.php</url>
+        </license>
+    </licenses>
+
+    <scm>
+      <url>http://code.google.com/p/urlrewritefilter/source</url>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.3</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.5</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.8</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>cactus</groupId>
+            <artifactId>cactus</artifactId>
+            <version>13-1.7.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

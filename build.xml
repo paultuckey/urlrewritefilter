@@ -133,21 +133,27 @@
 
     </target>
 
-
-    <target name="dist" depends="clean,dist-jar,javadoc,test,compile-docs"
-            description="Create binary distribution">
-
+    <target name="maven-bundle">
         <!-- make jar for maven -->
         <mkdir dir="dist/maven-bundle/"/>
         <copy file="LICENSE.txt" todir="dist/maven-bundle/"/>
-        <copy file="src/maven/project.xml" todir="dist/maven-bundle/"/>
-        <replace file="dist/maven-bundle/project.xml">
+        <copy file="src/maven/pom.xml" todir="dist/maven-bundle/"/>
+        <copy file="src/maven/request.txt" tofile="dist/maven-request.txt"/>
+        <replace file="dist/maven-bundle/pom.xml">
+            <replacefilter token="@version@" value="${app.version}"/>
+        </replace>
+        <replace file="dist/maven-request.txt">
             <replacefilter token="@version@" value="${app.version}"/>
         </replace>
         <copy tofile="dist/maven-bundle/urlrewritefilter-${app.version}.jar"
               file="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib/urlrewrite-${app.version}.jar"/>
         <jar jarfile="dist/urlrewritefilter-${app.version}-maven-bundle.jar"
              basedir="dist/maven-bundle/"/>
+    </target>
+
+
+    <target name="dist" depends="clean,dist-jar,javadoc,test,compile-docs"
+            description="Create binary distribution">
 
         <!-- copy in webapp dependencies for bin dist -->
         <copy file="src/java/org/tuckey/web/filters/urlrewrite/conf-dist.xml"

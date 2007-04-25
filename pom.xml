@@ -11,6 +11,7 @@
     <name>UrlRewriteFilter</name>
     <url>http://tuckey.org/urlrewrite/</url>
     <inceptionYear>2001</inceptionYear>
+    <description>A Java Web Filter for any J2EE compliant web application server (such as Resin, Orion or Tomcat), which allows you to rewrite URLs before they get to your code. It is a very powerful tool just like Apache's mod_rewrite.</description>
 
     <licenses>
         <license>
@@ -18,6 +19,10 @@
             <url>http://www.opensource.org/licenses/bsd-license.php</url>
         </license>
     </licenses>
+
+    <scm>
+      <url>http://code.google.com/p/urlrewritefilter/source</url>
+    </scm>
 
     <build>
         <directory>target</directory>
