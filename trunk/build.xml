@@ -5,7 +5,7 @@
     <property file="${user.home}/build.properties"/>
     <property file="${basedir}/build.properties"/>
 
-    <property name="app.version" value="3.0.4"/>
+    <property name="app.version" value="3.0.5"/>
     <property name="app.manual-version" value="3.0"/>
     <property name="app.stable-version" value="2.6"/>
     <property name="app.year" value="2007"/>
@@ -120,18 +120,6 @@
         <jar jarfile="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib/urlrewrite-${app.version}.jar"
              basedir="${build.home}/java"
              manifest="${build.home}/java/META-INF/manifest.mf"/>
-
-        <!-- todo: remove!!! -->
-        <copy file="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib/urlrewrite-${app.version}.jar"
-            tofile="../hostedis/common/lib/urlrewrite.jar"/>
-        <copy file="dist/urlrewrite-${app.version}/annotation/urlrewrite-annotation-${app.version}.jar"
-            tofile="../hostedis/common/lib/urlrewrite-annotation.jar"/>
-
-        <!-- todo: remove!! -->
-        <copy file="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib/urlrewrite-${app.version}.jar"
-            tofile="../itender/main/lib/urlrewrite.jar"/>
-        <copy file="dist/urlrewrite-${app.version}/annotation/urlrewrite-annotation-${app.version}.jar"
-            tofile="../itender/main/lib/urlrewrite-annotation.jar"/>
 
     </target>
 
