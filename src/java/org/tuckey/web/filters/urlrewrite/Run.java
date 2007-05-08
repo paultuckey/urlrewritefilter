@@ -114,7 +114,11 @@ public class Run {
 
     private static Class[][] runMethodPossibleSignatures = {
             {ServletRequest.class, ServletResponse.class},
-            {HttpServletRequest.class, HttpServletResponse.class}
+            {ServletRequest.class},
+            {ServletResponse.class},
+            {HttpServletRequest.class, HttpServletResponse.class},
+            {HttpServletRequest.class},
+            {HttpServletResponse.class}
     };
     private boolean filter = false;
 
