@@ -43,7 +43,7 @@ import junit.framework.TestCase;
 public class StringMatchingMatcherTest extends TestCase {
 
 
-    public void testEscaped() throws StringMatchingPatternSyntaxException {
+    public void testPatterns() throws StringMatchingPatternSyntaxException {
         RegexPattern pat1 = new RegexPattern("a(a)", false);
         StringMatchingMatcher mat1 = pat1.matcher("aaf");
         assertEquals("$1f", mat1.replaceAll("\\$1"));
@@ -62,6 +62,23 @@ public class StringMatchingMatcherTest extends TestCase {
         WildcardPattern pat4 = new WildcardPattern("aa");
         StringMatchingMatcher mat4 = pat4.matcher("aaf");
         assertEquals("a$1b", mat4.replaceAll("a\\$1b"));
+
+        WildcardPattern pat5 = new WildcardPattern("/**");
+        StringMatchingMatcher mat5 = pat5.matcher("/aa/bb/cc/?aa&bb#cc");
+        assertTrue(mat5.find());
+        assertEquals(1, mat5.groupCount());
+        assertEquals("aa/bb/cc/?aa&bb#cc$3$2", mat5.replaceAll("$1$2$3\\$3\\$2"));
+
+        WildcardPattern pat6 = new WildcardPattern("/aa/**");
+        StringMatchingMatcher mat6 = pat6.matcher("/aa/bb/cc/?aa&bb#cc");
+        assertTrue(mat6.find());
+        assertEquals(1, mat6.groupCount());
+        assertEquals("bb/cc/?aa&bb#cc$3$2", mat6.replaceAll("$1$2$3\\$3\\$2"));
+
+        WildcardPattern pat7 = new WildcardPattern("/ee/**");
+        StringMatchingMatcher mat7 = pat7.matcher("/aa/bb/cc/?aa&bb#cc");
+        assertFalse(mat7.find());
+
     }
 
     /**
