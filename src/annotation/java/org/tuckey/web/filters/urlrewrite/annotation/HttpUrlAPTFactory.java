@@ -60,7 +60,6 @@ public class HttpUrlAPTFactory implements AnnotationProcessorFactory {
         if (declarations.isEmpty()) {
             result = AnnotationProcessors.NO_OP;
         } else {
-            // Next Step - implement this class:
             result = new HttpUrlAnnotationProcessor(env);
         }
         return result;
@@ -68,8 +67,7 @@ public class HttpUrlAPTFactory implements AnnotationProcessorFactory {
     }
 
     /**
-     * This factory only builds processors for the
-     * {@link HttpUrl} annotation.
+     * This factory only builds processors for all UrlRewrite annotations.
      *
      * @return a collection containing only the note annotation name.
      */
