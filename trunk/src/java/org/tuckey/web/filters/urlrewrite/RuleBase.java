@@ -34,6 +34,7 @@
  */
 package org.tuckey.web.filters.urlrewrite;
 
+import org.tuckey.web.filters.urlrewrite.extend.RewriteMatch;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.utils.RegexPattern;
 import org.tuckey.web.filters.urlrewrite.utils.StringMatchingMatcher;
@@ -41,16 +42,15 @@ import org.tuckey.web.filters.urlrewrite.utils.StringMatchingPattern;
 import org.tuckey.web.filters.urlrewrite.utils.StringMatchingPatternSyntaxException;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 import org.tuckey.web.filters.urlrewrite.utils.WildcardPattern;
-import org.tuckey.web.filters.urlrewrite.extend.RewriteMatch;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Defines a rule that can be run against an incoming request.
@@ -61,6 +61,8 @@ import java.lang.reflect.InvocationTargetException;
 public class RuleBase implements Runnable {
 
     private static Log log = Log.getLog(RuleBase.class);
+
+    private static String DEFAULT_RULE_FROM = "^(.*)$";
 
     protected int id;
 
@@ -132,7 +134,7 @@ public class RuleBase implements Runnable {
             log.debug("not enabled, skipping");
             return null;
         }
-        if ( url == null ) {
+        if (url == null) {
             log.debug("url is null (maybe because of a previous match), skipping");
             return null;
         }
@@ -278,7 +280,7 @@ public class RuleBase implements Runnable {
             if (!run.initialise(context)) {
                 ok = false;
             }
-            if ( run.isFilter() ) {
+            if (run.isFilter()) {
                 log.debug("rule is a filtering rule");
                 filter = true;
             }
@@ -290,31 +292,33 @@ public class RuleBase implements Runnable {
             }
         }
         // make sure default set for matchType
-        if (! isMatchTypeWildcard()) {
+        if (!isMatchTypeWildcard()) {
             matchType = DEFAULT_MATCH_TYPE;
         }
 
         // compile the from regexp
         if (StringUtils.isBlank(from)) {
-            addError("from is not valid because it is blank");
-        } else {
-            try {
-                if (isMatchTypeWildcard()) {
-                    log.debug("rule match type is wildcard");
-                    pattern = new WildcardPattern(from);
-
-                } else {
-                    // default is regexp
-                    pattern = new RegexPattern(from, fromCaseSensitive);
-                }
-
-            } catch (StringMatchingPatternSyntaxException e) {
-                addError("from (" + from + ") is an invalid expression - " + e.getMessage());
-            }
+            log.debug("rule's from is blank, setting to " + DEFAULT_RULE_FROM);
+            from = DEFAULT_RULE_FROM;
         }
+
+        try {
+            if (isMatchTypeWildcard()) {
+                log.debug("rule match type is wildcard");
+                pattern = new WildcardPattern(from);
+
+            } else {
+                // default is regexp
+                pattern = new RegexPattern(from, fromCaseSensitive);
+            }
+
+        } catch (StringMatchingPatternSyntaxException e) {
+            addError("from (" + from + ") is an invalid expression - " + e.getMessage());
+        }
+
         // set the substitution
         if (StringUtils.isBlank(to) && setAttributes.size() == 0 && runs.size() == 0) {
-            addError("to is not valid because it is blank");
+            addError("to is not valid because it is blank (it is allowed to be blank when there is a 'set' specified)");
         } else if ("null".equalsIgnoreCase(to)) {
             stopFilterChainOnMatch = true;
         } else if (StringUtils.isBlank(to)) {

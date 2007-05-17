@@ -701,5 +701,50 @@ public class RuleTest extends TestCase {
         assertEquals("bar", urlRewriteWrappedRequest.getParameter("param1"));
     }
 
+    public void testRuleNoFrom() throws IOException, ServletException, InvocationTargetException {
+        NormalRule rule = new NormalRule();
+        rule.setTo("to");
+        Condition condition = new Condition();
+        condition.setType("port");
+        condition.setValue("90");
+        rule.addCondition(condition);
+        rule.initialise(null);
+        MockRequest request = new MockRequest("from");
+        request.setServerPort(88);
+        RewrittenUrl rewrittenUrl = rule.matches(request.getRequestURI(), request, response);
+        assertNull("should not be rewritten", rewrittenUrl);
+
+        request.setServerPort(90);
+        RewrittenUrl rewrittenUrl2 = rule.matches(request.getRequestURI(), request, response);
+        assertNotNull("should be rewritten", rewrittenUrl2);
+    }
+
+    public void testConditionAndSet() throws IOException, ServletException, InvocationTargetException {
+        Condition condition = new Condition();
+        condition.setType("header");
+        condition.setName("user-agent");
+        condition.setValue("iexplore");
+
+        SetAttribute s = new SetAttribute();
+        s.setType("request");
+        s.setName("browser");
+        s.setValue("ie");
+
+        NormalRule rule = new NormalRule();
+        rule.addCondition(condition);
+        rule.addSetAttribute(s);
+        rule.initialise(null);
+
+        MockRequest request = new MockRequest("from");
+        request.setHeader("user-agent", "firefox");
+        RewrittenUrl rewrittenUrl = rule.matches(request.getRequestURI(), request, response);
+        assertNull("should not be rewritten", rewrittenUrl);
+        assertNull(request.getAttribute("browser"));
+
+        request.setHeader("user-agent", "iexplore");
+        RewrittenUrl rewrittenUrl2 = rule.matches(request.getRequestURI(), request, response);
+        assertNull("should not be rewritten", rewrittenUrl2);
+        assertEquals("ie", request.getAttribute("browser"));
+    }
 
 }
