@@ -1,4 +1,4 @@
-<project name="Build UrlRewrite" default="dist" basedir=".">
+<project name="UrlRewriteFilter" default="dist" basedir=".">
 
     <!-- Give user a chance to override without editing this file (and without typing -D each time) -->
     <property file="${user.home}/urlrewrite.build.properties"/>
