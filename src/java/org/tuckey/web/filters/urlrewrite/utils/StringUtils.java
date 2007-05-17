@@ -61,13 +61,7 @@ public class StringUtils {
     }
 
     public static boolean isBlank(final String str) {
-        if (str == null) {
-            return true;
-        }
-        if ("".equals(str)) {
-            return true;
-        }
-        return "".equals(str.trim());
+        return str == null || "".equals(str) || "".equals(str.trim());
     }
 
     public static String notNull(final String str) {
