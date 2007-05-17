@@ -41,6 +41,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.Hashtable;
+import java.util.regex.Pattern;
 
 /**
  * Handles DTD lookup and error handling for XML Conf parsing.
@@ -52,8 +53,12 @@ public class ConfHandler extends DefaultHandler {
 
     private static Log log = Log.getLog(ConfHandler.class);
 
-    private static Hashtable dtdPaths = new Hashtable();
+    // pattern to match file://, http://, jndi://
+    private static final Pattern HAS_PROTOCOL = Pattern.compile("^\\w+:");
+
     private String confSystemId;
+
+    private static Hashtable dtdPaths = new Hashtable();
 
     static {
         dtdPaths.put("-//tuckey.org//DTD UrlRewrite 1.0//EN", "/org/tuckey/web/filters/urlrewrite/dtds/urlrewrite1.0.dtd");
@@ -78,15 +83,14 @@ public class ConfHandler extends DefaultHandler {
      */
     public InputSource resolveEntity(String publicId, String systemId)
             throws SAXException {
-        if ( publicId == null ) {
+        if (publicId == null) {
             if (log.isDebugEnabled()) {
                 log.debug("Couldn't resolve entity with no publicId, system id is " + systemId);
             }
-            if ( confSystemId != null && !systemId.startsWith("file:") ) {
-                return new InputSource(confSystemId.substring(0, confSystemId.lastIndexOf('/')) + "/" + systemId); 
+            if (confSystemId != null && !hasProtocol(systemId)) {
+                return new InputSource(confSystemId.substring(0, confSystemId.lastIndexOf('/')) + "/" + systemId);
             }
             return new InputSource(systemId);
-            //return null;
         }
         String entity = (String) dtdPaths.get(publicId);
 
@@ -101,6 +105,18 @@ public class ConfHandler extends DefaultHandler {
             log.debug("Resolving to DTD " + entity);
         }
         return new InputSource(ConfHandler.class.getResourceAsStream(entity));
+    }
+
+    /**
+     * Check for protocol on a systemId.
+     * eg, file://blah, http://blah, jndi://blah have protocols
+     * /blah does not
+     *
+     * @param systemId the full systemId
+     * @return true if systemId has protocol
+     */
+    private static boolean hasProtocol(String systemId) {
+        return systemId != null && HAS_PROTOCOL.matcher(systemId).find();
     }
 
     //
