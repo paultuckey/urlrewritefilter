@@ -38,17 +38,26 @@ import com.sun.mirror.apt.AnnotationProcessor;
 import com.sun.mirror.apt.AnnotationProcessorEnvironment;
 import com.sun.mirror.apt.Filer;
 import com.sun.mirror.apt.Messager;
-import com.sun.mirror.declaration.*;
+import com.sun.mirror.declaration.AnnotationTypeDeclaration;
+import com.sun.mirror.declaration.Declaration;
+import com.sun.mirror.declaration.MethodDeclaration;
+import com.sun.mirror.declaration.ParameterDeclaration;
 import com.sun.mirror.util.SourcePosition;
 
 import javax.servlet.FilterChain;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 
 /**
- * see http://today.java.net/pub/a/today/2005/07/05/IOCAnnotation.html
+ * Annotation processor for UrlRewrite. Will search compiled classes for annotations and generate XML.
  */
 public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
 
@@ -103,7 +112,7 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
             Collection<Declaration> urlDeclarations = environment.getDeclarationsAnnotatedWith(httpUrlDeclaration);
             for (Declaration declaration : urlDeclarations) {
                 ProcessedHttpUrlAnnotation pa = processHttpUrlAnnotation(declaration);
-                if ( pa == null ) delFile = true;
+                if (pa == null) delFile = true;
                 else processedAnnotations.add(pa);
             }
 
@@ -111,7 +120,7 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
             Collection<Declaration> exceptionDeclarations = environment.getDeclarationsAnnotatedWith(httpExceptionHandlerDeclaration);
             for (Declaration declaration : exceptionDeclarations) {
                 ProcessedHttpExceptionAnnotation phea = processHttpExceptionHandlerAnnotation(declaration);
-                if ( phea == null ) delFile = true;
+                if (phea == null) delFile = true;
                 else httpExceptionHandlers.add(phea);
             }
 
@@ -126,39 +135,34 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
 
             if (!delFile) {
                 environment.getMessager().printNotice("Writing to " + confFile);
-                //processedAnnotations.
-                //pw.println("<group>");
                 for (ProcessedHttpUrlAnnotation pa : processedAnnotations) {
                     pw.println("<rule>");
-                    // todo: xml escape docComment, trim new lines? indendation?
-                    if (pa.docComment != null) {
-                        pw.println("    <note>" + pa.docComment.trim() + "</note>");
+                    if (!isBlank(pa.docComment)) {
+                        pw.println("    <note>");
+                        pw.println(padEachLine("        ", escapeXML(pa.docComment)));
+                        pw.println("    </note>");
                     }
                     pw.println("    <from>" + pa.value + "</from>");
                     pw.println("    <run class=\"" + pa.className + "\" method=\"" + pa.methodName + pa.paramsFormatted + "\"/>");
-                    if (! pa.chainUsed) {
+                    if (!pa.chainUsed) {
                         pw.println("    <to>null</to>");
                     }
                     pw.println("</rule>");
                     pw.flush();
                 }
-                /**
-                 * <catch class="com.hostedis.client.exception.ContentNotFoundException">
-                 *  <run class="com.hostedis.client.ba.ExceptionHandlingAction" method="contentNotFound"/>
-                 * </catch>
-                 */
+
                 for (ProcessedHttpExceptionAnnotation pa : httpExceptionHandlers) {
                     pw.println("<catch class=\"" + pa.exceptionName + "\">");
-                    // todo: xml escape docComment, trim new lines? indendation?
-                    if (pa.docComment != null) {
-                        pw.println("    <note>" + pa.docComment.trim() + "</note>");
+                    if (!isBlank(pa.docComment)) {
+                        pw.println("    <note>");
+                        pw.println(padEachLine("        ", escapeXML(pa.docComment)));
+                        pw.println("    </note>");
                     }
                     pw.println("    <run class=\"" + pa.className + "\" method=\"" + pa.methodName + pa.paramsFormatted + "\"/>");
                     pw.println("</catch>");
                     pw.flush();
 
                 }
-                //pw.println("</group>");
 
             } else {
                 confFile.delete();
@@ -266,18 +270,18 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
                 int i = 1;
                 for (ParameterDeclaration paramDeclaration : params) {
                     String paramType = paramDeclaration.getType().toString();
-                    //System.out.println("found param " + paramType);
+                    //environment.getMessager().printNotice("found param " + paramType);
                     if (FilterChain.class.getName().equals(paramType)) {
                         chainUsed = true;
                     }
                     paramsFormatted += (i == 1 ? "" : ", ") + paramType;
 
                     HttpParam httpParam = paramDeclaration.getAnnotation(HttpParam.class);
-                    if ( httpParam != null ) {
+                    if (httpParam != null) {
                         paramsFormatted += " ";
-                        if ( ! "[ unassigned ]".equals(httpParam.value()) ) {
+                        if (!"[ unassigned ]".equals(httpParam.value())) {
                             paramsFormatted += httpParam.value();
-                        }   else {
+                        } else {
                             paramsFormatted += paramDeclaration.getSimpleName();
                         }
                     }
@@ -298,6 +302,57 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
             return comp;
         }
 
+    }
+
+
+    /**
+     * a very very basic xml escaper.
+     * @param s string to escape
+     * @return the escaped string
+     */
+    public static String escapeXML(String s) {
+        if (s == null) {
+            return null;
+        }
+        final int length = s.length();
+        StringBuffer b = new StringBuffer();
+        for (int i = 0; i < length; i++) {
+            char c = s.charAt(i);
+            switch(c) {
+                case '&':
+                    b.append("&amp;");
+                    break;
+                case '<':
+                    b.append("&lt;");
+                    break;
+                case '>':
+                    b.append("&gt;");
+                    break;
+                default:
+                    b.append(c);
+                    break;
+            }
+        }
+        return b.toString();
+    }
+
+
+    public static String padEachLine(String padWith, String str) {
+        StringBuffer out = new StringBuffer();
+        String[] lines = str.split("\n");
+        int i = 0;
+        while (i < lines.length) {
+            String line = lines[i];
+            out.append(padWith);
+            out.append(line);
+            i++;
+            if ( i < lines.length ) out.append('\n');
+        }
+        return out.toString();
+    }
+
+    public static boolean isBlank(final String str) {
+        return str == null || "".equals(str) || "".equals(str.trim());
     }
 
 }

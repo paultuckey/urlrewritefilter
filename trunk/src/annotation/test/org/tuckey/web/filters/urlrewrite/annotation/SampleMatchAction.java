@@ -34,8 +34,8 @@
  */
 package org.tuckey.web.filters.urlrewrite.annotation;
 
-import javax.servlet.ServletException;
 import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -61,6 +61,8 @@ public class SampleMatchAction {
 
     /**
      * In the file 3rd. Should be 1st.
+     * <p/>
+     * Multiline doc.
      */
     @HttpUrl(value = "^/clientinfo/(*)/$", weight = 2)
     public void addClientFilterFirst(int clientId, FilterChain chain)
@@ -91,7 +93,7 @@ public class SampleMatchAction {
     }
 
     @HttpUrl("^/search/(clients|staff)/$")
-    public void addClientFilterSecond(String searchType, @HttpParam String firstName, @HttpParam("lName") String lastName)
+    public void addClientFilterSecond(String searchType, @HttpParam String firstName, @HttpParam("lName")String lastName)
             throws SQLException {
 
     }

@@ -34,10 +34,10 @@
  */
 package org.tuckey.web.filters.urlrewrite.annotation;
 
-import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Annotation for matching URL's in HTTP requests.
@@ -48,6 +48,12 @@ public @interface HttpUrl {
 
     String value();
 
+    /**
+     * A weighting to be applied to the url, if higher it will move this url to the "top" if lower more towards the
+     * "bottom".
+     *
+     * @return weight
+     */
     int weight() default 0;
 
 }
