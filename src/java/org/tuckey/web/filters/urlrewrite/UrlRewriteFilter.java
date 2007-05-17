@@ -79,8 +79,6 @@ import java.util.Date;
  * <p/>
  * <p/>
  * <p/>
- * todo: ability to have no from, just conditions matches
- * <p/>
  * todo: user in role throw 403 if no match?
  * <p/>
  * todo: ability to set default-to-type on <urlrewrite> level of conf file for conf files full of redirects
@@ -128,16 +126,16 @@ import java.util.Date;
  * todo: capture original (pre match) url into request attr so that people can use it
  * <p/>
  * <p/>
- * todo: <wieselt@acm.org> to UrlRewrite is there a way to compare ALL parameters with a pattern? As far as i
+ * todo: wieselt to UrlRewrite is there a way to compare ALL parameters with a pattern? As far as i
  * understand the manual i allways have to provide a name when using
  * type="parameter" in a condition.
  *
- * todo: javaFreak <mwdavis1@gmail.com> 	12/13/06
+ * todo: javaFreak 12/13/06
  * In Apache: RewriteEngine on
  * RewriteMap upper2lower int:tolower
  * RewriteRule ^/(.*)$ /${upper2lower:$1}
  *
- * todo: Rostislav Hristov <rostislav.hristov@gmail.com  12/29/06
+ * todo: Rostislav Hristov  12/29/06
  * Is there an analogue to this mod_rewrite feature and can we expect it
  * in the upcoming versions?
  * RewriteCond      %{REQUEST_FILENAME}   !-f
@@ -151,7 +149,7 @@ public final class UrlRewriteFilter implements Filter {
     private static Log log = Log.getLog(UrlRewriteFilter.class);
 
     // next line is replaced by ant on compile
-    public static final String VERSION = "3.0.4 build 6023";
+    public static final String VERSION = "3.1.0 build 6027";
 
     public static final String DEFAULT_WEB_CONF_PATH = "/WEB-INF/urlrewrite.xml";
 

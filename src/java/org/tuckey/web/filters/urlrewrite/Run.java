@@ -314,8 +314,13 @@ public class Run {
             for (int i = 0; i < runMethodPossibleSignatures.length; i++) {
                 Class[] runMethodPossibleSignature = runMethodPossibleSignatures[i];
                 if (extraParam != null) {
-                    runMethodPossibleSignature = new Class[]{runMethodPossibleSignature[0],
+                    if(runMethodPossibleSignature.length == 2) {
+                        runMethodPossibleSignature = new Class[]{runMethodPossibleSignature[0], 
                             runMethodPossibleSignature[1], extraParam};
+                    }
+                    if(runMethodPossibleSignature.length == 1) {
+                        runMethodPossibleSignature = new Class[]{runMethodPossibleSignature[0], extraParam};
+                    }
                 }
                 if (log.isDebugEnabled()) {
                     String possible = "";
