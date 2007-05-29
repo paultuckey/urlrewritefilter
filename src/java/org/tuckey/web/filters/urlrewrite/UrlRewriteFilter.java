@@ -141,6 +141,12 @@ import java.util.Date;
  * RewriteCond      %{REQUEST_FILENAME}   !-f
  * RewriteCond      %{REQUEST_FILENAME}   !-d
  *
+ * todo: debug screen, ie, this request matches the following rules
+ *
+ * todo: centralised browser detection example (set request attr?)
+ *
+ *
+ *
  * @author Paul Tuckey
  * @version $Revision: 51 $ $Date: 2006-12-08 11:37:07 +1300 (Fri, 08 Dec 2006) $
  */
