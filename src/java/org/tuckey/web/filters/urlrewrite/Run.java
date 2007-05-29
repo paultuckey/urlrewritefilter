@@ -406,6 +406,7 @@ public class Run {
 
         if (runMethodParams != null && runMethodParams.length > 0) {
             params = new Object[runMethodParams.length];
+            int paramMatchCounter = 0;
             for (int i = 0; i < runMethodParams.length; i++) {
                 Class runMethodParam = runMethodParams[i];
                 String runMethodParamName = null;
@@ -430,8 +431,9 @@ public class Run {
 
                 } else {
                     Object matchObj = null;
-                    if ( matchObjs != null && matchObjs.length > i ) matchObj = matchObjs[i];
+                    if ( matchObjs != null && matchObjs.length > paramMatchCounter ) matchObj = matchObjs[paramMatchCounter];
                     param = getConvertedParam(runMethodParam, matchObj);
+                    paramMatchCounter ++;
                 }
 
                 params[i] = param;
