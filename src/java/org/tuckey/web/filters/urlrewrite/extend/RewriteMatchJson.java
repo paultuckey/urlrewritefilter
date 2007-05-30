@@ -38,6 +38,7 @@ import com.metaparadigm.jsonrpc.JSONRPCResult;
 import com.metaparadigm.jsonrpc.JSONSerializer;
 import com.metaparadigm.jsonrpc.MarshallException;
 import com.metaparadigm.jsonrpc.SerializerState;
+import org.json.JSONString;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 
 import javax.servlet.ServletException;
@@ -73,34 +74,41 @@ public class RewriteMatchJson extends RewriteMatch {
     protected void writeJsonObject(Object result, Writer writer) throws ServletException, IOException {
         if (writer == null) throw new ServletException("writer is null");
 
+        String output;
         Long requestId = new Long(0);
-        JSONRPCResult jsonResult;
-        JSONSerializer serializer = new JSONSerializer();
-        try {
+        if (result instanceof JSONString) {
+            String resultStr = ((JSONString) result).toJSONString();
+            output = "{\"result\":{" + resultStr + "},\"id\":" + requestId + "}";
+        } else {
+            JSONRPCResult jsonResult;
+            JSONSerializer serializer = new JSONSerializer();
             try {
-                serializer.registerDefaultSerializers();
-            } catch (Exception e) {
-                log.error(e, e);
-            }
-            serializer.setMarshallClassHints(true);
-            serializer.setMarshallNullAttributes(true);
-
-            if (result != null && (result instanceof Throwable)) {
-                if (result instanceof InvocationTargetException) {
-                    result = ((InvocationTargetException) result).getTargetException();
+                try {
+                    serializer.registerDefaultSerializers();
+                } catch (Exception e) {
+                    log.error(e, e);
                 }
-                jsonResult = new JSONRPCResult(JSONRPCResult.CODE_REMOTE_EXCEPTION, requestId, result);
+                serializer.setMarshallClassHints(true);
+                serializer.setMarshallNullAttributes(true);
 
-            } else {
-                SerializerState state = new SerializerState();
-                Object marshaledObject = serializer.marshall(state, result);
-                jsonResult = new JSONRPCResult(JSONRPCResult.CODE_SUCCESS, requestId, marshaledObject);
+                if (result != null && (result instanceof Throwable)) {
+                    if (result instanceof InvocationTargetException) {
+                        result = ((InvocationTargetException) result).getTargetException();
+                    }
+                    jsonResult = new JSONRPCResult(JSONRPCResult.CODE_REMOTE_EXCEPTION, requestId, result);
+
+                } else {
+                    SerializerState state = new SerializerState();
+                    Object marshaledObject = serializer.marshall(state, result);
+                    jsonResult = new JSONRPCResult(JSONRPCResult.CODE_SUCCESS, requestId, marshaledObject);
+                }
+
+            } catch (MarshallException e) {
+                jsonResult = new JSONRPCResult(JSONRPCResult.CODE_ERR_MARSHALL, requestId, e.getMessage());
             }
-
-        } catch (MarshallException e) {
-            jsonResult = new JSONRPCResult(JSONRPCResult.CODE_ERR_MARSHALL, requestId, e.getMessage());
+            output = jsonResult.toString();
         }
-        writer.write(jsonResult.toString());
+        writer.write(output);
     }
 
     public Object executeAction(HttpServletRequest request, HttpServletResponse response)
