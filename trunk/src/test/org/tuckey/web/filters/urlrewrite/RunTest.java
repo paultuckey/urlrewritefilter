@@ -155,7 +155,7 @@ public class RunTest extends TestCase {
         RewriteMatch match = run.execute(request, response, new Object[]{"99"} );
         assertEquals("Should be invoked", "99", TestRunObj.getParamStr());
         match.execute(request, response);
-        assertEquals("{\"string\": \"99\"}", response.getWriterAsString());
+        assertEquals("{\"result\":\"99\",\"id\":0}", response.getWriterAsString());
     }
 
     public void testRunMethodParamNamed() throws IOException, ServletException, InvocationTargetException {
