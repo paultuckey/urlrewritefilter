@@ -39,6 +39,8 @@ import org.tuckey.web.testhelper.MockFilterConfig;
 import org.tuckey.web.testhelper.MockServletContext;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 
+import javax.servlet.ServletException;
+
 /**
  * @author Paul Tuckey
  * @version $Revision: 1 $ $Date: 2006-08-01 21:40:28 +1200 (Tue, 01 Aug 2006) $
@@ -58,12 +60,12 @@ public class UrlRewriteFilterTest extends TestCase {
         filter = null;
     }
 
-    public void testInit() {
+    public void testInit() throws ServletException {
         filter.init(null);
         filter.init(new MockFilterConfig());
     }
 
-    public void testInitContext() {
+    public void testInitContext() throws ServletException {
         MockFilterConfig mockFilterConfig = new MockFilterConfig();
         mockFilterConfig.setServletContext(new MockServletContext());
         filter.init(mockFilterConfig);
