@@ -56,8 +56,7 @@
 
 <a name="annotation"></a>
 
-<p>EXPIREMENTAL support for annotations has been added as part of 3.0 development.
-    You must be using JDK 1.5 for this to work.</p>
+<p>Support for annotations has been added as part of version 3 development.  You must be using JDK 1.5 for this to work.</p>
 
     <p>The intention of annotations in UrlRewriteFilter is purely for conf file generation.  The is NO runtime
     dependency on the annotations.</p>
@@ -70,7 +69,7 @@
 
     <pre><code>
     @HttpUrl("^/do-something/([0-9]+)$")
-    void doSomething(Long id)
+    public void doSomething(Long id)
     </code></pre>
 
     <p>When a request for /do-something/1234, doSomething is called with id set to 1234.</p>
@@ -80,23 +79,32 @@
     <p>Operates in the same way as <code>@HttpUrl</code> but the
         resulting object will be converted to <a href="http://json.org/" title="JavaScript Object Notation">JSON</a> and
         written to the output stream. Note, exceptions thrown in the run method will be converted also.
-        (<a href="http://oss.metaparadigm.com/jsonrpc/">JSON-RPC-Java</a> must be in the classpath, it's not in the binary distribution)
+        (<a href="http://oss.metaparadigm.com/jsonrpc/">JSON-RPC-Java</a> must be in the classpath, it's not in the
+        binary distribution)
     </p>
 
     <pre><code>
     @HttpUrlJson("^/ajax/get-person/([0-9]+)$")
-    PersonAjaxBean getPerson(Long id)
+    public PersonAjaxBean getPerson(Long id) { .... }
     </code></pre>
 
-    <p>When a request for /ajax/get-person/1234, getPerson is called with id set to 1234. PersonAjaxBean is then
-        converted to JSON and written to outputstream.</p>
+    <p>When a request for /ajax/get-person/1234, getPerson is called with id set to 1234. PersonAjaxBean (a plain
+        java object) is then converted to JSON (in JSON-RPC style) and written to outputstream.</p>
 
     <pre><code>
-    { "com.bigco.PersonAjaxBean": {
-            "id": 123,
-            "firstName": "Bob",
-            "lastName": "Smith"         } }
+        {   "result":
+                {   "com.bigco.PersonAjaxBean":
+                    {   "id": 123,
+                        "firstName": "Bob",
+                        "lastName": "Smith"
+                    }
+                }, 
+            "id":0
+        }
     </code></pre>
+
+    <p>Note, if the returned object implements <code>org.json.JSONString</code> then <code>toJSONString()</code> will be
+        called to generate the result part of the JSON string.</p>
 
     <h3>@HttpParam</h3>
 
