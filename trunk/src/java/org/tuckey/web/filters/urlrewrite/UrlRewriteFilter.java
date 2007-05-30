@@ -150,7 +150,7 @@ import java.util.Date;
  * @author Paul Tuckey
  * @version $Revision: 51 $ $Date: 2006-12-08 11:37:07 +1300 (Fri, 08 Dec 2006) $
  */
-public final class UrlRewriteFilter implements Filter {
+public class UrlRewriteFilter implements Filter {
 
     private static Log log = Log.getLog(UrlRewriteFilter.class);
 
@@ -208,7 +208,7 @@ public final class UrlRewriteFilter implements Filter {
      *
      * @param filterConfig The config of the filter
      */
-    public void init(final FilterConfig filterConfig) {
+    public void init(final FilterConfig filterConfig) throws ServletException {
 
         log.debug("filter init called");
         if (filterConfig == null) {
@@ -286,10 +286,18 @@ public final class UrlRewriteFilter implements Filter {
         }
         statusServerNameMatcher = new ServerNameMatcher(statusEnabledOnHosts);
 
-        loadConf();
+        loadUrlRewriter(filterConfig);
     }
 
-    private void loadConf() {
+    /**
+     * Separate from init so that it can be overidden.
+     */
+    protected void loadUrlRewriter(FilterConfig filterConfig) throws ServletException {
+        loadUrlRewriter();
+    }
+
+
+    private void loadUrlRewriter() {
         InputStream inputStream = context.getResourceAsStream(confPath);
         URL confUrl = null;
         try {
@@ -339,16 +347,20 @@ public final class UrlRewriteFilter implements Filter {
     }
 
     public void destroyActual() {
-        if (urlRewriter != null) {
-            urlRewriter.destroy();
-            urlRewriter = null;
-        }
+        destroyUrlRewriter();
         context = null;
         confLastLoad = 0;
         confPath = DEFAULT_WEB_CONF_PATH;
         confReloadCheckEnabled = false;
         confReloadCheckInterval = 0;
         confReloadInProgress = false;
+    }
+
+    protected void destroyUrlRewriter() {
+        if (urlRewriter != null) {
+            urlRewriter.destroy();
+            urlRewriter = null;
+        }
     }
 
     /**
@@ -363,26 +375,7 @@ public final class UrlRewriteFilter implements Filter {
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain)
             throws IOException, ServletException {
 
-        // check to see if the conf needs reloading
-        long now = System.currentTimeMillis();
-        if (confReloadCheckEnabled && !confReloadInProgress &&
-                (now - confReloadCheckInterval) > confReloadLastCheck) {
-            confReloadInProgress = true;
-            confReloadLastCheck = now;
-
-            log.debug("starting conf reload check");
-            long confFileCurrentTime = getConfFileLastModified();
-            if (confLastLoad < confFileCurrentTime) {
-                // reload conf
-                confLastLoad = System.currentTimeMillis();
-                log.info("conf file modified since last load, reloading");
-                loadConf();
-            } else {
-                log.debug("conf is not modified");
-            }
-
-            confReloadInProgress = false;
-        }
+        UrlRewriter urlRewriter = getUrlRewriter(request, response, chain);
 
         final HttpServletRequest hsRequest = (HttpServletRequest) request;
         final HttpServletResponse hsResponse = (HttpServletResponse) response;
@@ -419,6 +412,36 @@ public final class UrlRewriteFilter implements Filter {
         if (!requestRewritten) {
             chain.doFilter(hsRequest, urlRewriteWrappedResponse);
         }
+    }
+
+
+    /**
+     * Called for every request.
+     * <p/>
+     * Split from doFilter so that it can be overriden.
+     */
+    protected UrlRewriter getUrlRewriter(ServletRequest request, ServletResponse response, FilterChain chain) {
+        // check to see if the conf needs reloading
+        long now = System.currentTimeMillis();
+        if (confReloadCheckEnabled && !confReloadInProgress &&
+                (now - confReloadCheckInterval) > confReloadLastCheck) {
+            confReloadInProgress = true;
+            confReloadLastCheck = now;
+
+            log.debug("starting conf reload check");
+            long confFileCurrentTime = getConfFileLastModified();
+            if (confLastLoad < confFileCurrentTime) {
+                // reload conf
+                confLastLoad = System.currentTimeMillis();
+                log.info("conf file modified since last load, reloading");
+                loadUrlRewriter();
+            } else {
+                log.debug("conf is not modified");
+            }
+
+            confReloadInProgress = false;
+        }
+        return urlRewriter;
     }
 
 

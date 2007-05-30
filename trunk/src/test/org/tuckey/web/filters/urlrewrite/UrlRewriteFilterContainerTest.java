@@ -64,7 +64,7 @@ public class UrlRewriteFilterContainerTest extends FilterTestCase {
     private UrlRewriteFilter filter = new UrlRewriteFilter();
     private String CONTENT = "<p>some content</p>";
 
-    public void setUp() {
+    public void setUp() throws ServletException {
         config.setInitParameter("logLevel", "sysout:TRACE");
         Log.setLevel("sysout:TRACE");
         filter.init(config);
