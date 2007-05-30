@@ -2,10 +2,14 @@ package org.tuckey.web.filters.urlrewrite.extend;
 
 import junit.framework.TestCase;
 import org.tuckey.web.filters.urlrewrite.Run;
+import org.json.JSONString;
+import org.json.JSONObject;
+import org.json.JSONException;
 
 import javax.servlet.ServletException;
 import java.io.StringWriter;
 import java.io.IOException;
+import java.util.Date;
 
 
 public class RewriteMatchJsonTest extends TestCase {
@@ -27,7 +31,7 @@ public class RewriteMatchJsonTest extends TestCase {
         RewriteMatchJson rmj = new RewriteMatchJson("hello");
         StringWriter sw3 = new StringWriter();
         rmj.writeJsonObject(new Run(), sw3);
-        assertEquals("g{\"result\":{\"newEachTime\":false," +
+        assertEquals("{\"result\":{\"newEachTime\":false," +
                 "\"javaClass\":\"org.tuckey.web.filters.urlrewrite.Run\"," +
                 "\"handler\":\"standard\",\"methodSignature\":\"run\"," +
                 "\"methodStr\":\"run\",\"valid\":false,\"error\":null," +
@@ -36,30 +40,36 @@ public class RewriteMatchJsonTest extends TestCase {
                 "\"displayName\":\"Run 0\"},\"id\":0}", sw3.toString());
     }
 
+
+    class JSONStringSample implements JSONString {
+        public String toJSONString() {
+            JSONObject jo = new JSONObject();
+            try {
+                jo.put("stringSample", "hello");
+                jo.put("longSample", new Long(0));
+                jo.put("dateSample", new Date(1234567890).getTime());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return jo.toString();
+        }
+    }
+
+    public void testJson4() throws ServletException, IOException {
+        RewriteMatchJson rmj = new RewriteMatchJson("hello");
+        StringWriter sw3 = new StringWriter();
+        rmj.writeJsonObject(new JSONStringSample(), sw3);
+        assertEquals("{\"result\":{{\"dateSample\":1234567890,\"longSample\":0," +
+                "\"stringSample\":\"hello\"}},\"id\":0}", sw3.toString());
+    }
+
     public void testJsonError() throws ServletException, IOException {
         RewriteMatchJson rmj = new RewriteMatchJson("hello");
         StringWriter sw3 = new StringWriter();
         rmj.writeJsonObject(new NullPointerException(), sw3);
-        assertEquals("{\"error\":{\"code\":490," +
+        assertTrue("not right: " + sw3.toString(), sw3.toString().startsWith("{\"error\":{\"code\":490," +
                 "\"trace\":\"java.lang.NullPointerException\\r\\n\\t" +
-                "at org.tuckey.web.filters.urlrewrite.extend.RewriteMatchJsonTest.testJsonError(RewriteMatchJsonTest.java:42)\\r\\n\\t" +
-                "at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\\r\\n\\t" +
-                "at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)\\r\\n\\t" +
-                "at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)\\r\\n\\t" +
-                "at java.lang.reflect.Method.invoke(Method.java:585)\\r\\n\\tat junit.framework.TestCase.runTest(TestCase.java:154)\\r\\n\\t" +
-                "at junit.framework.TestCase.runBare(TestCase.java:127)\\r\\n\\tat junit.framework.TestResult$1.protect(TestResult.java:106)\\r\\n\\t" +
-                "at junit.framework.TestResult.runProtected(TestResult.java:124)\\r\\n\\tat junit.framework.TestResult.run(TestResult.java:109)\\r\\n\\t" +
-                "at junit.framework.TestCase.run(TestCase.java:118)\\r\\n\\tat junit.textui.TestRunner.doRun(TestRunner.java:116)\\r\\n\\t" +
-                "at com.intellij.rt.execution.junit.IdeaTestRunner.doRun(IdeaTestRunner.java:65)\\r\\n\\t" +
-                "at junit.textui.TestRunner.doRun(TestRunner.java:109)\\r\\n\\t" +
-                "at com.intellij.rt.execution.junit.IdeaTestRunner.startRunnerWithArgs(IdeaTestRunner.java:24)\\r\\n\\t" +
-                "at com.intellij.rt.execution.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:118)\\r\\n\\t" +
-                "at com.intellij.rt.execution.junit.JUnitStarter.main(JUnitStarter.java:40)\\r\\n\\t" +
-                "at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\\r\\n\\t" +
-                "at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)\\r\\n\\t" +
-                "at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)\\r\\n\\t" +
-                "at java.lang.reflect.Method.invoke(Method.java:585)\\r\\n\\t" +
-                "at com.intellij.rt.execution.application.AppMain.main(AppMain.java:90)\\r\\n\"},\"id\":0}", sw3.toString());
+                "at org.tuckey.web.filters.urlrewrite.extend.RewriteMatchJsonTest"));
     }
 
 }
