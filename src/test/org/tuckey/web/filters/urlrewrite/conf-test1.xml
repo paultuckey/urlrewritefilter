@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 3.0//EN"
-        "http://tuckey.org/res/dtds/urlrewrite3.0.dtd">
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 3.1//EN"
+        "http://tuckey.org/res/dtds/urlrewrite3.1.dtd">
 
 <urlrewrite>
 
@@ -59,6 +59,11 @@
     <rule>
         <from>^/runWithParam/([0-9])+/$</from>
         <run class="org.tuckey.web.filters.urlrewrite.TestRunObj" method="runWithParam(int)" />
+    </rule>
+
+    <rule>
+        <from>^/json/runWithParam/([0-9])+/$</from>
+        <run handler="json" class="org.tuckey.web.filters.urlrewrite.TestRunObj" method="runWithParam(int)" />
     </rule>
 
 

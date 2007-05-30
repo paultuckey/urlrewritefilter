@@ -39,6 +39,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.ByteArrayOutputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -55,6 +57,9 @@ public class MockResponse implements HttpServletResponse {
     private String redirectedUrl;
     private List cookies = new ArrayList();
     private Locale locale;
+    MockSerlvetOutputStream mockSerlvetOutputStream = new MockSerlvetOutputStream();
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter writer = new PrintWriter(stringWriter);
 
     public void addCookie(Cookie cookie) {
         cookies.add(cookie);
@@ -148,11 +153,20 @@ public class MockResponse implements HttpServletResponse {
     }
 
     public ServletOutputStream getOutputStream() throws IOException {
-        return null;
+        return mockSerlvetOutputStream;
+    }
+
+    public String getOutputStreamAsString() {
+        return mockSerlvetOutputStream.getAsString();
     }
 
     public PrintWriter getWriter() throws IOException {
-        return null;
+        return writer;
+    }
+
+    public String getWriterAsString() {
+        writer.flush();
+        return stringWriter.toString();
     }
 
     public void setCharacterEncoding(String s) {
@@ -213,5 +227,22 @@ public class MockResponse implements HttpServletResponse {
 
     public List getCookies() {
         return cookies;
+    }
+}
+
+class MockSerlvetOutputStream extends ServletOutputStream {
+
+    ByteArrayOutputStream baos;
+
+    public MockSerlvetOutputStream() {
+        this.baos = new ByteArrayOutputStream();
+    }
+
+    public void write(int b) throws IOException {
+        baos.write(b);
+    }
+
+    public String getAsString() {
+        return new String(baos.toByteArray());
     }
 }

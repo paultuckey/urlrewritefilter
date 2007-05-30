@@ -40,6 +40,7 @@ import org.tuckey.web.testhelper.MockResponse;
 import org.tuckey.web.testhelper.MockServletContext;
 import org.tuckey.web.testhelper.MockFilterChain;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
+import org.tuckey.web.filters.urlrewrite.extend.RewriteMatch;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -141,6 +142,20 @@ public class RunTest extends TestCase {
         run.execute(request, response, new Object[]{"99"} );
         assertEquals("Should be invoked", "99", TestRunObj.getParamStr());
         // Should not error just do nothing
+    }
+
+    public void testRunMethodParamsJson() throws IOException, ServletException, InvocationTargetException {
+        Run run = new Run();
+        run.setClassStr(org.tuckey.web.filters.urlrewrite.TestRunObj.class.getName());
+        // run.setMethodStr("runWithParam(  int, String, d, long, req, res  )");
+        run.setMethodStr("runWithParam(  int )");
+        run.setHandler("json");
+        run.initialise(servletContext);
+        assertTrue("Should be initialised " + run.getError(), run.isValid());
+        RewriteMatch match = run.execute(request, response, new Object[]{"99"} );
+        assertEquals("Should be invoked", "99", TestRunObj.getParamStr());
+        match.execute(request, response);
+        assertEquals("{\"string\": \"99\"}", response.getWriterAsString());
     }
 
     public void testRunMethodParamNamed() throws IOException, ServletException, InvocationTargetException {

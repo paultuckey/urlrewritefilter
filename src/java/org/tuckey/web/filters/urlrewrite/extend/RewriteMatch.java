@@ -58,6 +58,8 @@ public class RewriteMatch {
      * If this rule has been matched and has not been "stolen" by another rule then process the request.
      *
      * If you return true then the filter chain will NOT continue.
+     *
+     * @return boolean true if the request was rewritten, false if not.
      */
     public boolean execute(HttpServletRequest request,
                                  HttpServletResponse response) throws ServletException, IOException {

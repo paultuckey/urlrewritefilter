@@ -35,6 +35,7 @@
 package org.tuckey.web.filters.urlrewrite;
 
 import org.tuckey.web.filters.urlrewrite.extend.RewriteMatch;
+import org.tuckey.web.filters.urlrewrite.extend.RewriteMatchJson;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.utils.StringMatchingMatcher;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
@@ -121,6 +122,11 @@ public class Run {
             {HttpServletResponse.class}
     };
     private boolean filter = false;
+
+    private short HANDLER_STANDARD = 1;
+    private short HANDLER_JSON = 2;
+
+    private short handler = HANDLER_STANDARD;
 
 
     /**
@@ -442,17 +448,29 @@ public class Run {
                 }
             }
         }
-        try {
-            Object objReturned = runMethod.invoke(classInstanceToRun, (Object[]) params);
-            if (objReturned != null && objReturned instanceof RewriteMatch) {
-                // if we get a rewriteMatch object then return it for execution later
-                returned = (RewriteMatch) objReturned;
+
+        if ( HANDLER_JSON == handler ) {
+            Object objReturned;
+            try {
+                objReturned = runMethod.invoke(classInstanceToRun, (Object[]) params);
+            }   catch (Exception e) {
+                objReturned = e;
             }
+            returned = new RewriteMatchJson(objReturned);
 
-        } catch (IllegalAccessException e) {
-            if (log.isDebugEnabled()) log.debug(e);
-            throw new ServletException(e);
+        }   else { // must be standard
+            try {
+                Object objReturned = runMethod.invoke(classInstanceToRun, (Object[]) params);
+                    if (objReturned != null && objReturned instanceof RewriteMatch) {
+                        // if we get a rewriteMatch object then return it for execution later
+                        returned = (RewriteMatch) objReturned;
+                    }
 
+            } catch (IllegalAccessException e) {
+                if (log.isDebugEnabled()) log.debug(e);
+                throw new ServletException(e);
+
+            }
         }
         return returned;
     }
@@ -790,4 +808,13 @@ public class Run {
     public boolean isFilter() {
         return filter;
     }
+
+    public void setHandler(String handler) {
+        this.handler = "json".equalsIgnoreCase(handler) ? HANDLER_JSON : HANDLER_STANDARD;
+    }
+
+    public String getHandler() {
+        return this.handler == HANDLER_JSON ? "json" : "standard";
+    }
+
 }
