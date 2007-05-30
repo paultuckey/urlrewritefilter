@@ -5,8 +5,8 @@
     <property file="${user.home}/build.properties"/>
     <property file="${basedir}/build.properties"/>
 
-    <property name="app.version" value="3.0.5"/>
-    <property name="app.manual-version" value="3.0"/>
+    <property name="app.version" value="3.1.0"/>
+    <property name="app.manual-version" value="3.1"/>
     <property name="app.stable-version" value="2.6"/>
     <property name="app.year" value="2007"/>
 
@@ -82,6 +82,22 @@
         <copy todir="${build.home}/java">
             <fileset dir="src/java" excludes="**/*.java"/>
         </copy>
+
+    </target>
+
+    <!-- json does not come jared so jar it, one off -->
+    <target name="prepare-json">
+        <mkdir dir="${build.home}/json"/>
+        <javac srcdir="src/json"
+               destdir="${build.home}/json"
+               debug="${compile.debug}"
+               deprecation="${compile.deprecation}"
+               source="1.3"
+               target="1.3"
+               optimize="${compile.optimize}">
+            <classpath refid="compile.classpath"/>
+        </javac>
+        <jar basedir="${build.home}/json" destfile="lib/json.jar"/>
 
     </target>
 

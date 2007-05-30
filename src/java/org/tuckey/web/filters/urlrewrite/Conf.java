@@ -99,6 +99,8 @@ public final class Conf {
 
     /**
      * Normal constructor.
+     *
+     * @param fileName to display on status screen
      */
     public Conf(ServletContext context, final InputStream inputStream, String fileName, String systemId) {
         // make sure context is setup before calling initialise()
@@ -325,6 +327,7 @@ public final class Conf {
             }
             run.setClassStr(getAttrValue(runNode, "class"));
             run.setMethodStr(getAttrValue(runNode, "method"));
+            run.setHandler(getAttrValue(runNode, "handler"));
             run.setNewEachTime("true".equalsIgnoreCase(getAttrValue(runNode, "neweachtime")));
             runnable.addRun(run);
         }
