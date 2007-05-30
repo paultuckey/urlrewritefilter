@@ -48,12 +48,12 @@ public class MockRewriteMatch extends RewriteMatch {
 
     public boolean execute(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        calledTime = System.currentTimeMillis();
         try {
             Thread.sleep(10);
         } catch (InterruptedException e) {
-            //
+            // don't worry
         }
-        calledTime = System.currentTimeMillis();
         return true;
     }
 
