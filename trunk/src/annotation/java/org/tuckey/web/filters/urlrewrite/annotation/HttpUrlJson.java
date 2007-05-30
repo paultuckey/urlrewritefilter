@@ -32,43 +32,29 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.tuckey.web.filters.urlrewrite.extend;
+package org.tuckey.web.filters.urlrewrite.annotation;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * A RewriteRule is basically the class that will figure out the answer to "Can we service this http request?".  If we
- * can we return a match object that will actually service the request.
+ * Annotation for matching URL's in HTTP requests, the result of the annotated method will be serialised into json.
+ * Note, ALL members (including private) will be serialised)
  */
-public class RewriteRule {
+@Retention(RetentionPolicy.SOURCE)
+@Target(ElementType.METHOD)
+public @interface HttpUrlJson {
+
+    String value();
 
     /**
-     * Initialise the rule.
-     * If you return false here the rule will be marked as disabled.
-     */
-    public boolean initialise(ServletContext servletContext) {
-        // do nothing
-        return true;
-    }
-
-    /**
-     * Prepare to be shut down.  There will be no more calls to "matches" after this is called.
-     */
-    public void destroy() {
-        // do nothing
-    }
-
-    /**
-     * Can we match the current request?  null means no.  Return a valid RuleMatch object or
-     * new SimpleRewriteMatch() (or an object that extends RewriteMatch) if this rule matches.
+     * A weighting to be applied to the url, if higher it will move this url to the "top" if lower more towards the
+     * "bottom".
      *
-     * @param request
-     * @param response
+     * @return weight
      */
-    public RewriteMatch matches(HttpServletRequest request, HttpServletResponse response) {
-        return null;
-    }
+    int weight() default 0;
 
 }

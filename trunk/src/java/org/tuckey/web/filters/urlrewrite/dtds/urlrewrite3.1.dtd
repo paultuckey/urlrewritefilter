@@ -76,6 +76,7 @@ eg,
 class  CDATA  #IMPLIED
 method  CDATA  #IMPLIED
 neweachtime (true|false) "false"
+handler (json|standard) "standard"
 >
 
 <!ELEMENT init-param (param-name, param-value)>

@@ -58,11 +58,15 @@ import java.util.Set;
 
 /**
  * Annotation processor for UrlRewrite. Will search compiled classes for annotations and generate XML.
+ * todo: validate nethodname?
+ * todo: validate classname
+ * todo: what about private methods???
  */
 public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
 
     private AnnotationProcessorEnvironment environment;
     private AnnotationTypeDeclaration httpUrlDeclaration;
+    private AnnotationTypeDeclaration httpUrlJsonDeclaration;
     private AnnotationTypeDeclaration httpExceptionHandlerDeclaration;
     private List<ProcessedHttpUrlAnnotation> processedAnnotations = new ArrayList<ProcessedHttpUrlAnnotation>();
     private List<ProcessedHttpExceptionAnnotation> httpExceptionHandlers = new ArrayList<ProcessedHttpExceptionAnnotation>();
@@ -74,6 +78,7 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
         messager = env.getMessager();
         // get the type declaration for the annotations we are processing for
         httpUrlDeclaration = (AnnotationTypeDeclaration) environment.getTypeDeclaration(HttpUrl.class.getName());
+        httpUrlJsonDeclaration = (AnnotationTypeDeclaration) environment.getTypeDeclaration(HttpUrlJson.class.getName());
         httpExceptionHandlerDeclaration = (AnnotationTypeDeclaration) environment.getTypeDeclaration(HttpExceptionHandler.class.getName());
     }
 
@@ -108,10 +113,18 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
         }
         try {
 
-            // Get all declarations that use the HttpRule annotation.
+            // Get all declarations that use the HttpUrl annotation.
             Collection<Declaration> urlDeclarations = environment.getDeclarationsAnnotatedWith(httpUrlDeclaration);
             for (Declaration declaration : urlDeclarations) {
                 ProcessedHttpUrlAnnotation pa = processHttpUrlAnnotation(declaration);
+                if (pa == null) delFile = true;
+                else processedAnnotations.add(pa);
+            }
+
+            // Get all declarations that use the HttpUrlJson annotation.
+            Collection<Declaration> urlDeclarationsJson = environment.getDeclarationsAnnotatedWith(httpUrlJsonDeclaration);
+            for (Declaration declaration : urlDeclarationsJson) {
+                ProcessedHttpUrlAnnotation pa = processHttpUrlJsonAnnotation(declaration);
                 if (pa == null) delFile = true;
                 else processedAnnotations.add(pa);
             }
@@ -137,13 +150,15 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
                 environment.getMessager().printNotice("Writing to " + confFile);
                 for (ProcessedHttpUrlAnnotation pa : processedAnnotations) {
                     pw.println("<rule>");
+                    pw.println("    <name>" + pa.sourceRef + "</name>");
                     if (!isBlank(pa.docComment)) {
                         pw.println("    <note>");
                         pw.println(padEachLine("        ", escapeXML(pa.docComment)));
                         pw.println("    </note>");
                     }
                     pw.println("    <from>" + pa.value + "</from>");
-                    pw.println("    <run class=\"" + pa.className + "\" method=\"" + pa.methodName + pa.paramsFormatted + "\"/>");
+                    pw.println("    <run class=\"" + pa.className + "\" method=\"" + pa.methodName + pa.paramsFormatted +
+                            "\""+ (pa.isHandler() ? " handler=\""+pa.handler+"\"" : "") +" />");
                     if (!pa.chainUsed) {
                         pw.println("    <to>null</to>");
                     }
@@ -182,31 +197,14 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
     }
 
     private ProcessedHttpUrlAnnotation processHttpUrlAnnotation(Declaration declaration) {
-        SourcePosition position = declaration.getPosition();
-        if (!(declaration instanceof MethodDeclaration)) {
-            messager.printWarning(declaration.getPosition(), "@HttpUrl declared on a non-method " + position);
-            return null;
-        }
-        MethodDeclaration methodDeclaration = (MethodDeclaration) declaration;
-        String className = methodDeclaration.getDeclaringType().getQualifiedName();
-        HttpUrl httpUrl = methodDeclaration.getAnnotation(HttpUrl.class);
-
-        ProcessedHttpUrlAnnotation pa = new ProcessedHttpUrlAnnotation();
-        pa.value = httpUrl.value();
-        pa.weight = httpUrl.weight();
-        //todo: validate nethodname?
-        pa.methodName = declaration.getSimpleName();
-        pa.docComment = declaration.getDocComment();
-        //todo: validate classname
-        pa.className = className;
-        pa.setParams(methodDeclaration.getParameters());
-
-        if (showPositionsOfAnnotations) {
-            messager.printNotice(position, "@HttpUrl value " + pa.value + " weight " + pa.weight);
-        }
-        return pa;
+        HttpUrl httpUrl = declaration.getAnnotation(HttpUrl.class);
+        return new ProcessedHttpUrlAnnotation(HttpUrl.class.getName(), declaration, httpUrl.value(), httpUrl.weight(), null);
     }
 
+    private ProcessedHttpUrlAnnotation processHttpUrlJsonAnnotation(Declaration declaration) {
+        HttpUrlJson httpUrlJson = declaration.getAnnotation(HttpUrlJson.class);
+        return new ProcessedHttpUrlAnnotation(HttpUrlJson.class.getName(), declaration, httpUrlJson.value(), httpUrlJson.weight(), "json");
+    }
 
     private ProcessedHttpExceptionAnnotation processHttpExceptionHandlerAnnotation(Declaration declaration) {
         SourcePosition position = declaration.getPosition();
@@ -217,14 +215,11 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
         MethodDeclaration methodDeclaration = (MethodDeclaration) declaration;
         HttpExceptionHandler httpExceptionHandler = declaration.getAnnotation(HttpExceptionHandler.class);
         String className = methodDeclaration.getDeclaringType().getQualifiedName();
-        // todo: what about private methods???
 
         ProcessedHttpExceptionAnnotation ea = new ProcessedHttpExceptionAnnotation();
-        //todo: validate nethodname?
         ea.exceptionName = httpExceptionHandler.value(); //.getName();
         ea.methodName = declaration.getSimpleName();
         ea.docComment = declaration.getDocComment();
-        //todo: validate classname
         ea.className = className;
 
         ea.setParams(methodDeclaration.getParameters());
@@ -249,6 +244,35 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
         public String methodName;
         public String className;
         public String docComment;
+        public boolean valid = true;
+        private String handler;
+        public String sourceRef;
+
+        public ProcessedHttpUrlAnnotation() {
+            // empty
+        }
+
+        public ProcessedHttpUrlAnnotation(String typeName, Declaration declaration, String value, int weight, String handler) {
+            MethodDeclaration methodDeclaration = (MethodDeclaration) declaration;
+            String className = methodDeclaration.getDeclaringType().getQualifiedName();
+            this.methodName = declaration.getSimpleName();
+            this.docComment = declaration.getDocComment();
+            this.className = className;
+            this.value = value;
+            this.weight = weight;
+            this.setParams(methodDeclaration.getParameters());
+            this.handler = handler;
+            String typeNameShort = typeName.substring(typeName.lastIndexOf("."));
+            SourcePosition positionInCode = declaration.getPosition();
+            sourceRef = positionInCode.file().getName() + ":" + positionInCode.line();
+            if (!(declaration instanceof MethodDeclaration)) {
+                messager.printWarning(positionInCode, "@" + typeNameShort + " declared on a non-method " + positionInCode);
+                valid = false;
+            }
+            if (showPositionsOfAnnotations) {
+                messager.printNotice(positionInCode, "@" + typeNameShort + " value " + value + " weight " + weight);
+            }
+        }
 
         public int compareTo(ProcessedHttpUrlAnnotation other) {
             if (this.weight < other.weight) return 1;
@@ -270,7 +294,6 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
                 int i = 1;
                 for (ParameterDeclaration paramDeclaration : params) {
                     String paramType = paramDeclaration.getType().toString();
-                    //environment.getMessager().printNotice("found param " + paramType);
                     if (FilterChain.class.getName().equals(paramType)) {
                         chainUsed = true;
                     }
@@ -291,6 +314,9 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
             paramsFormatted += ")";
         }
 
+        public boolean isHandler() {
+            return handler != null;
+        }
     }
 
     class ProcessedHttpExceptionAnnotation extends ProcessedHttpUrlAnnotation {
@@ -307,6 +333,7 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
 
     /**
      * a very very basic xml escaper.
+     *
      * @param s string to escape
      * @return the escaped string
      */
@@ -318,7 +345,7 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
         StringBuffer b = new StringBuffer();
         for (int i = 0; i < length; i++) {
             char c = s.charAt(i);
-            switch(c) {
+            switch (c) {
                 case '&':
                     b.append("&amp;");
                     break;
@@ -346,7 +373,7 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
             out.append(padWith);
             out.append(line);
             i++;
-            if ( i < lines.length ) out.append('\n');
+            if (i < lines.length) out.append('\n');
         }
         return out.toString();
     }

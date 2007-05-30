@@ -74,6 +74,7 @@ public class HttpUrlAPTFactory implements AnnotationProcessorFactory {
     public Collection<String> supportedAnnotationTypes() {
         Set<String> set = new HashSet<String>();
         set.add(HttpUrl.class.getName());
+        set.add(HttpUrlJson.class.getName());
         set.add(HttpExceptionHandler.class.getName());
         set.add(HttpParam.class.getName());
         return set;

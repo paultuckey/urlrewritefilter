@@ -950,14 +950,17 @@
 <table cellspacing="0">
     <tr>
         <th>Attribute</th>
+        <th>Possible value</th>
         <th>Explanation</th>
     </tr>
     <tr>
         <td>class</td>
+        <td></td>
         <td>The class you want to run a method on. Must be a fully qualified name.</td>
     </tr>
     <tr>
-        <td>method (optional, default run)</td>
+        <td>method (optional)</td>
+        <td>run (default)</td>
         <td>The method you want to run, the method must have the parameters (HttpServletRequest, HttpServletResponse)
             e.g. <code>run(HttpServletRequest request, HttpServletResponse response)</code>
             <br/>Note, if <code>init(ServletConfig)</code> or <code>destroy()</code> is found they will be run at when
@@ -966,8 +969,24 @@
         </td>
     </tr>
     <tr>
-        <td>neweachtime (optional, default false)</td>
-        <td>If you want new instance of the class to be created before running each time set to true.</td>
+        <td rowspan="2">neweachtime (optional)</td>
+        <td>false (default)</td>
+        <td>One instance for each UrlRewriteFilter instance.</td>
+    </tr>
+    <tr>
+        <td>true</td>
+        <td>A new instance of the class will be created before running each time set to true.</td>
+    </tr>
+    <tr>
+        <td rowspan="3">handler (optional)</td>
+        <td>standard (default)</td>
+        <td>Result from the method will be handled in the default way (ie, unless resultsing object extends RewriteMatch nothing will be done).</td>
+    </tr>
+    <tr>
+        <td>json</td>
+        <td>Resulting object will be converted to <a href="http://json.org/" title="JavaScript Object Notation">JSON</a> and written to the output stream.
+            Note, exceptions thrown in the run method will be converted also. 
+            (<a href="http://oss.metaparadigm.com/jsonrpc/">JSON-RPC-Java</a> must be in the classpath, it's not in the binary distribution)</td>
     </tr>
 </table>
 
