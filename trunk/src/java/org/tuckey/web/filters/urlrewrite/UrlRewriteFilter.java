@@ -451,7 +451,7 @@ public class UrlRewriteFilter implements Filter {
      * @return time as a long
      */
     private long getConfFileLastModified() {
-        File confFile = new File(context.getRealPath(DEFAULT_WEB_CONF_PATH));
+        File confFile = new File(context.getRealPath(confPath));
         return confFile.lastModified();
     }
 
