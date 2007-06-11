@@ -129,23 +129,21 @@ import java.util.Date;
  * todo: wieselt to UrlRewrite is there a way to compare ALL parameters with a pattern? As far as i
  * understand the manual i allways have to provide a name when using
  * type="parameter" in a condition.
- *
+ * <p/>
  * todo: javaFreak 12/13/06
  * In Apache: RewriteEngine on
  * RewriteMap upper2lower int:tolower
  * RewriteRule ^/(.*)$ /${upper2lower:$1}
- *
+ * <p/>
  * todo: Rostislav Hristov  12/29/06
  * Is there an analogue to this mod_rewrite feature and can we expect it
  * in the upcoming versions?
  * RewriteCond      %{REQUEST_FILENAME}   !-f
  * RewriteCond      %{REQUEST_FILENAME}   !-d
- *
+ * <p/>
  * todo: debug screen, ie, this request matches the following rules
- *
+ * <p/>
  * todo: centralised browser detection example (set request attr?)
- *
- *
  *
  * @author Paul Tuckey
  * @version $Revision: 51 $ $Date: 2006-12-08 11:37:07 +1300 (Fri, 08 Dec 2006) $
@@ -422,28 +420,40 @@ public class UrlRewriteFilter implements Filter {
      */
     protected UrlRewriter getUrlRewriter(ServletRequest request, ServletResponse response, FilterChain chain) {
         // check to see if the conf needs reloading
-        long now = System.currentTimeMillis();
-        if (confReloadCheckEnabled && !confReloadInProgress &&
-                (now - confReloadCheckInterval) > confReloadLastCheck) {
-            confReloadInProgress = true;
-            confReloadLastCheck = now;
-
-            log.debug("starting conf reload check");
-            long confFileCurrentTime = getConfFileLastModified();
-            if (confLastLoad < confFileCurrentTime) {
-                // reload conf
-                confLastLoad = System.currentTimeMillis();
-                log.info("conf file modified since last load, reloading");
-                loadUrlRewriter();
-            } else {
-                log.debug("conf is not modified");
-            }
-
-            confReloadInProgress = false;
+        if (isTimeToReloadConf()) {
+            reloadConf();
         }
         return urlRewriter;
     }
 
+    /**
+     * Is it time to reload the configuration now.  Depends on is conf reloading is enabled.
+     */
+    public boolean isTimeToReloadConf() {
+        long now = System.currentTimeMillis();
+        return confReloadCheckEnabled && !confReloadInProgress && (now - confReloadCheckInterval) > confReloadLastCheck;
+    }
+
+    /**
+     * Forcibly reload the configuration now.
+     */
+    public void reloadConf() {
+        long now = System.currentTimeMillis();
+        confReloadInProgress = true;
+        confReloadLastCheck = now;
+
+        log.debug("starting conf reload check");
+        long confFileCurrentTime = getConfFileLastModified();
+        if (confLastLoad < confFileCurrentTime) {
+            // reload conf
+            confLastLoad = System.currentTimeMillis();
+            log.info("conf file modified since last load, reloading");
+            loadUrlRewriter();
+        } else {
+            log.debug("conf is not modified");
+        }
+        confReloadInProgress = false;
+    }
 
     /**
      * Gets the last modified date of the conf file.

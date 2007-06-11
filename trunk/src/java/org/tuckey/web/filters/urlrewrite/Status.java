@@ -50,6 +50,8 @@ import java.util.List;
 
 /**
  * Outputs information about urlrewritefilter.
+ * <p/>
+ * todo: add ability to trigger reload conf
  *
  * @author Paul Tuckey
  * @version $Revision: 43 $ $Date: 2006-10-31 17:29:59 +1300 (Tue, 31 Oct 2006) $
@@ -203,7 +205,7 @@ public class Status {
         final List rules = conf.getRules();
         for (int i = 0; i < rules.size(); i++) {
             final Rule rule = (Rule) rules.get(i);
-            if ( rule instanceof NormalRule ) {
+            if (rule instanceof NormalRule) {
                 conditionsCount += ((NormalRule) rule).getConditions().size();
             }
         }
@@ -231,7 +233,7 @@ public class Status {
                 }
 
                 print("<p>URL's matching <code>" + normalRule.getFrom() + "</code>");
-                if ( normalRule.isFilter() ) {
+                if (normalRule.isFilter()) {
                     print(" (filter)");
                 }
                 if (!StringUtils.isBlank(normalRule.getTo())) {
