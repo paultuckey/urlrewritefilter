@@ -280,9 +280,11 @@ public final class Condition extends TypeConverter {
             return null;
         }
         if (instanceOfClass.isInstance(obj)) {
+            log.debug("yes");
             return new ConditionMatch();
         }
-        return evaluateBoolCondition(false);
+        log.debug("no");
+        return null;
     }
 
 
