@@ -977,17 +977,6 @@
         <td>true</td>
         <td>A new instance of the class will be created before running each time set to true.</td>
     </tr>
-    <tr>
-        <td rowspan="3">handler (optional)</td>
-        <td>standard (default)</td>
-        <td>Result from the method will be handled in the default way (ie, unless resultsing object extends RewriteMatch nothing will be done).</td>
-    </tr>
-    <tr>
-        <td>json</td>
-        <td>Resulting object will be converted to <a href="http://json.org/" title="JavaScript Object Notation">JSON</a> and written to the output stream.
-            Note, exceptions thrown in the run method will be converted also. 
-            (<a href="http://oss.metaparadigm.com/jsonrpc/">JSON-RPC-Java</a> must be in the classpath, it's not in the binary distribution)</td>
-    </tr>
 </table>
 
 <p>When the rule in the following example is matched, <code>WorldServlet.goGet(HttpServletRequest,
