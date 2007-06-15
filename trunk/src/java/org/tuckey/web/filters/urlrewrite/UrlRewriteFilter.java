@@ -81,8 +81,6 @@ import java.util.Date;
  * <p/>
  * todo: user in role throw 403 if no match?
  * <p/>
- * todo: ability to set default-to-type on <urlrewrite> level of conf file for conf files full of redirects
- * <p/>
  * todo: ability to test new conf without having to reload, via status page
  * <p/>
  * todo: allow condition matching on get-param or post-param as well as just parameter
@@ -90,14 +88,6 @@ import java.util.Date;
  * todo: store list of robots and hide jsessionid when a robot also have condition
  * <p/>
  * todo: allow mounting of packages from /xxxyyy/aaa.gif to org.tuckey.xxx.static."aaa.gif" http://wiki.opensymphony.com/pages/viewpage.action?pageId=4476
- * <p/>
- * todo: <on-startup><run </on-startup> <on-shutdown> <run </on-shutdown> will conflict with run in a rule init?
- * <p/>
- * todo: handle exceptions, condition exception regex match name
- * <p/>
- * todo: instanceof in urlrewrite filter conditions
- * <p/>
- * todo: consider using http://dtddoc.sourceforge.net/documentation.html
  * <p/>
  * todo: random condition type
  * 2. A randomized condition, i.e. a condition which is
@@ -107,8 +97,6 @@ import java.util.Date;
  * <p/>
  * todo: backrefs in sets
  * <p/>
- * todo: no error is trapped correctly and conf.isOk still return true???
- * <p/>
  * todo: better debugging of server name matcher
  * <p/>
  * todo: debugging tool especially googlebot client debugger, possibly googlebot tag
@@ -116,8 +104,6 @@ import java.util.Date;
  * todo: ability to set request parameters
  * <p/>
  * todo: ability to specify a $1 as $encode($1) (or something like that)
- * <p/>
- * todo: pull out exception condition type?
  * <p/>
  * todo: <to-servlet>struts</to-servlet>  will call context.getNamedDispatcher() to similar
  * <p/>
@@ -153,7 +139,7 @@ public class UrlRewriteFilter implements Filter {
     private static Log log = Log.getLog(UrlRewriteFilter.class);
 
     // next line is replaced by ant on compile
-    public static final String VERSION = "3.1.0 build 6027";
+    public static final String VERSION = "3.1.0 build 6032";
 
     public static final String DEFAULT_WEB_CONF_PATH = "/WEB-INF/urlrewrite.xml";
 
