@@ -115,9 +115,7 @@ public class CatchElem implements Runnable {
     }
 
     public boolean matches(Throwable t) {
-        if ( t == null ) return false;
-        if ( exceptionClass == null ) return false;
-        return exceptionClass.isInstance(t);
+        return t != null && exceptionClass != null && exceptionClass.isInstance(t);
     }
 
     protected RewrittenUrl execute(final HttpServletRequest hsRequest, final HttpServletResponse hsResponse,
