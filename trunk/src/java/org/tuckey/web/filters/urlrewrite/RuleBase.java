@@ -249,7 +249,7 @@ public class RuleBase implements Runnable {
             ruleExecutionOutput.setStopFilterMatch(true);
             ruleExecutionOutput.setReplacedUrl(null);
         }
-        // the rewritten URL is unchanged if there was no <to> element.
+        // note, the rewritten URL is unchanged if there was no <to> element.
         return ruleExecutionOutput;
     }
 
