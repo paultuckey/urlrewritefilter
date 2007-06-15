@@ -327,7 +327,6 @@ public final class Conf {
             }
             run.setClassStr(getAttrValue(runNode, "class"));
             run.setMethodStr(getAttrValue(runNode, "method"));
-            run.setHandler(getAttrValue(runNode, "handler"));
             run.setNewEachTime("true".equalsIgnoreCase(getAttrValue(runNode, "neweachtime")));
             runnable.addRun(run);
         }
