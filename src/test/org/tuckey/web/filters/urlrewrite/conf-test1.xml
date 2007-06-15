@@ -61,12 +61,6 @@
         <run class="org.tuckey.web.filters.urlrewrite.TestRunObj" method="runWithParam(int)" />
     </rule>
 
-    <rule>
-        <from>^/json/runWithParam/([0-9])+/$</from>
-        <run handler="json" class="org.tuckey.web.filters.urlrewrite.TestRunObj" method="runWithParam(int)" />
-    </rule>
-
-
     <outbound-rule>
         <name>default encode on to test</name>
         <from>a</from>

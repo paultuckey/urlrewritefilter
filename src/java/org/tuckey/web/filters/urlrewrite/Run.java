@@ -35,7 +35,6 @@
 package org.tuckey.web.filters.urlrewrite;
 
 import org.tuckey.web.filters.urlrewrite.extend.RewriteMatch;
-import org.tuckey.web.filters.urlrewrite.extend.RewriteMatchJson;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.utils.StringMatchingMatcher;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
@@ -123,14 +122,8 @@ public class Run {
     };
     private boolean filter = false;
 
-    private short HANDLER_STANDARD = 1;
-    private short HANDLER_JSON = 2;
-
-    private short handler = HANDLER_STANDARD;
-
-
     /**
-     * @see #initialise(ServletContext, Class) initialise
+     * @see #initialise(ServletContext,Class) initialise
      */
     public boolean initialise(ServletContext context) {
         return initialise(context, null);
@@ -249,7 +242,7 @@ public class Run {
             paramClass = FilterChain.class;
         }
 
-        if ( loadClass ) {
+        if (loadClass) {
             if (paramClass == null) {
                 try {
                     paramClass = Class.forName(param);
@@ -320,11 +313,11 @@ public class Run {
             for (int i = 0; i < runMethodPossibleSignatures.length; i++) {
                 Class[] runMethodPossibleSignature = runMethodPossibleSignatures[i];
                 if (extraParam != null) {
-                    if(runMethodPossibleSignature.length == 2) {
-                        runMethodPossibleSignature = new Class[]{runMethodPossibleSignature[0], 
-                            runMethodPossibleSignature[1], extraParam};
+                    if (runMethodPossibleSignature.length == 2) {
+                        runMethodPossibleSignature = new Class[]{runMethodPossibleSignature[0],
+                                runMethodPossibleSignature[1], extraParam};
                     }
-                    if(runMethodPossibleSignature.length == 1) {
+                    if (runMethodPossibleSignature.length == 1) {
                         runMethodPossibleSignature = new Class[]{runMethodPossibleSignature[0], extraParam};
                     }
                 }
@@ -416,7 +409,7 @@ public class Run {
             for (int i = 0; i < runMethodParams.length; i++) {
                 Class runMethodParam = runMethodParams[i];
                 String runMethodParamName = null;
-                if ( runMethodParamNames != null && runMethodParamNames.length > i) {
+                if (runMethodParamNames != null && runMethodParamNames.length > i) {
                     runMethodParamName = runMethodParamNames[i];
                 }
                 Object param;
@@ -437,9 +430,11 @@ public class Run {
 
                 } else {
                     Object matchObj = null;
-                    if ( matchObjs != null && matchObjs.length > paramMatchCounter ) matchObj = matchObjs[paramMatchCounter];
+                    if (matchObjs != null && matchObjs.length > paramMatchCounter) {
+                        matchObj = matchObjs[paramMatchCounter];
+                    }
                     param = getConvertedParam(runMethodParam, matchObj);
-                    paramMatchCounter ++;
+                    paramMatchCounter++;
                 }
 
                 params[i] = param;
@@ -449,28 +444,17 @@ public class Run {
             }
         }
 
-        if ( HANDLER_JSON == handler ) {
-            Object objReturned;
-            try {
-                objReturned = runMethod.invoke(classInstanceToRun, (Object[]) params);
-            }   catch (Exception e) {
-                objReturned = e;
-            }
-            returned = new RewriteMatchJson(objReturned);
+        try {
+            Object objReturned = runMethod.invoke(classInstanceToRun, (Object[]) params);
+                if (objReturned != null && objReturned instanceof RewriteMatch) {
+                    // if we get a rewriteMatch object then return it for execution later
+                    returned = (RewriteMatch) objReturned;
+                }
 
-        }   else { // must be standard
-            try {
-                Object objReturned = runMethod.invoke(classInstanceToRun, (Object[]) params);
-                    if (objReturned != null && objReturned instanceof RewriteMatch) {
-                        // if we get a rewriteMatch object then return it for execution later
-                        returned = (RewriteMatch) objReturned;
-                    }
+        } catch (IllegalAccessException e) {
+            if (log.isDebugEnabled()) log.debug(e);
+            throw new ServletException(e);
 
-            } catch (IllegalAccessException e) {
-                if (log.isDebugEnabled()) log.debug(e);
-                throw new ServletException(e);
-
-            }
         }
         return returned;
     }
@@ -547,7 +531,7 @@ public class Run {
     }
 
     /**
-     * @see #execute(HttpServletRequest, HttpServletResponse, Object[], FilterChain)
+     * @see #execute(HttpServletRequest,HttpServletResponse,Object[],FilterChain)
      */
     public RewriteMatch execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
             throws IOException, ServletException, InvocationTargetException {
@@ -807,14 +791,6 @@ public class Run {
 
     public boolean isFilter() {
         return filter;
-    }
-
-    public void setHandler(String handler) {
-        this.handler = "json".equalsIgnoreCase(handler) ? HANDLER_JSON : HANDLER_STANDARD;
-    }
-
-    public String getHandler() {
-        return this.handler == HANDLER_JSON ? "json" : "standard";
     }
 
 }
