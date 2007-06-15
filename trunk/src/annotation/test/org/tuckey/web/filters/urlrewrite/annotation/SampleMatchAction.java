@@ -98,12 +98,6 @@ public class SampleMatchAction {
 
     }
 
-    @HttpUrlJson("^/search/(clients|staff)/$")
-    public void getSomethingAsJson(String searchType)
-            throws SQLException {
-
-    }
-
     @HttpExceptionHandler("java.lang.Exception")
     public void addExceptionHandler(Exception e)
             throws SQLException {
