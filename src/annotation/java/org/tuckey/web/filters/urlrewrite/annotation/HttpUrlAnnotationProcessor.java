@@ -66,7 +66,6 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
 
     private AnnotationProcessorEnvironment environment;
     private AnnotationTypeDeclaration httpUrlDeclaration;
-    private AnnotationTypeDeclaration httpUrlJsonDeclaration;
     private AnnotationTypeDeclaration httpExceptionHandlerDeclaration;
     private List<ProcessedHttpUrlAnnotation> processedAnnotations = new ArrayList<ProcessedHttpUrlAnnotation>();
     private List<ProcessedHttpExceptionAnnotation> httpExceptionHandlers = new ArrayList<ProcessedHttpExceptionAnnotation>();
@@ -78,7 +77,6 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
         messager = env.getMessager();
         // get the type declaration for the annotations we are processing for
         httpUrlDeclaration = (AnnotationTypeDeclaration) environment.getTypeDeclaration(HttpUrl.class.getName());
-        httpUrlJsonDeclaration = (AnnotationTypeDeclaration) environment.getTypeDeclaration(HttpUrlJson.class.getName());
         httpExceptionHandlerDeclaration = (AnnotationTypeDeclaration) environment.getTypeDeclaration(HttpExceptionHandler.class.getName());
     }
 
@@ -117,14 +115,6 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
             Collection<Declaration> urlDeclarations = environment.getDeclarationsAnnotatedWith(httpUrlDeclaration);
             for (Declaration declaration : urlDeclarations) {
                 ProcessedHttpUrlAnnotation pa = processHttpUrlAnnotation(declaration);
-                if (pa == null) delFile = true;
-                else processedAnnotations.add(pa);
-            }
-
-            // Get all declarations that use the HttpUrlJson annotation.
-            Collection<Declaration> urlDeclarationsJson = environment.getDeclarationsAnnotatedWith(httpUrlJsonDeclaration);
-            for (Declaration declaration : urlDeclarationsJson) {
-                ProcessedHttpUrlAnnotation pa = processHttpUrlJsonAnnotation(declaration);
                 if (pa == null) delFile = true;
                 else processedAnnotations.add(pa);
             }
@@ -199,11 +189,6 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
     private ProcessedHttpUrlAnnotation processHttpUrlAnnotation(Declaration declaration) {
         HttpUrl httpUrl = declaration.getAnnotation(HttpUrl.class);
         return new ProcessedHttpUrlAnnotation(HttpUrl.class.getName(), declaration, httpUrl.value(), httpUrl.weight(), null);
-    }
-
-    private ProcessedHttpUrlAnnotation processHttpUrlJsonAnnotation(Declaration declaration) {
-        HttpUrlJson httpUrlJson = declaration.getAnnotation(HttpUrlJson.class);
-        return new ProcessedHttpUrlAnnotation(HttpUrlJson.class.getName(), declaration, httpUrlJson.value(), httpUrlJson.weight(), "json");
     }
 
     private ProcessedHttpExceptionAnnotation processHttpExceptionHandlerAnnotation(Declaration declaration) {
