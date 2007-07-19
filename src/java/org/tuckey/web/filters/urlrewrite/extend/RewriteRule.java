@@ -49,7 +49,7 @@ public class RewriteRule {
      * If you return false here the rule will be marked as disabled.
      */
     public boolean initialise(ServletContext servletContext) {
-        // do nothing
+        // by default do nothing
         return true;
     }
 
@@ -57,7 +57,7 @@ public class RewriteRule {
      * Prepare to be shut down.  There will be no more calls to "matches" after this is called.
      */
     public void destroy() {
-        // do nothing
+        // by default do nothing
     }
 
     /**
