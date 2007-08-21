@@ -50,7 +50,7 @@ casesensitive (true|false) "false"
 
 <!ELEMENT set (#PCDATA)>
 <!ATTLIST set
-type (request|session|response-header|cookie|content-type|charset|locale|status) "request"
+type (request|session|response-header|cookie|content-type|charset|locale|status|expires) "request"
 name CDATA  #IMPLIED
 >
 
