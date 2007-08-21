@@ -35,9 +35,10 @@
 package org.tuckey.web.filters.urlrewrite;
 
 import junit.framework.TestCase;
+import org.tuckey.web.filters.urlrewrite.utils.Log;
+import org.tuckey.web.filters.urlrewrite.utils.NumberUtils;
 import org.tuckey.web.testhelper.MockRequest;
 import org.tuckey.web.testhelper.MockResponse;
-import org.tuckey.web.filters.urlrewrite.utils.Log;
 
 import javax.servlet.http.Cookie;
 
@@ -79,6 +80,34 @@ public class SetAttributeTest extends TestCase {
         assertEquals("v", ((Cookie) response.getCookies().get(0)).getName());
         assertEquals("1234", ((Cookie) response.getCookies().get(0)).getValue());
 
+    }
+
+    public void testExpires() throws InterruptedException {
+        SetAttribute set = new SetAttribute();
+
+        assertEquals(1000 * 60 * 60 * 24, set.parseTimeValue("1 days"));
+        assertEquals(1000 * 60 * 60 * 24, set.parseTimeValue("1 day"));
+        assertEquals(1000 * 60 * 60 * 24, set.parseTimeValue(" 1    day "));
+        assertEquals((1000 * 60 * 60 * 24 ) + 4000, set.parseTimeValue("1 day 4 seconds"));
+        assertEquals(Math.round(1000 * 60 * 60 * 24 * 365.25), set.parseTimeValue("1 year"));
+
+        set.setType("expires");
+        set.setValue("access plus 1 day   2  hours");
+        MockRequest request = new MockRequest();
+        MockResponse response = new MockResponse();
+        set.initialise();
+
+        long oneDayPlusTwoHours = (1000 * 60 * 60 * 24) + (2 * 1000 * 60 * 60);
+        long before = System.currentTimeMillis() + oneDayPlusTwoHours;
+        Thread.sleep(100);
+
+        set.execute(request, response);
+
+        Thread.sleep(100);
+        long after = System.currentTimeMillis() + oneDayPlusTwoHours;
+        long expiresValue = NumberUtils.stringToLong(response.getHeader("Expires"));
+        assertTrue(expiresValue + " needs to be greater than " + before, expiresValue > before );
+        assertTrue(expiresValue + " needs to be less than " + after, expiresValue < after);
     }
 
     public void testTypeStatus() {

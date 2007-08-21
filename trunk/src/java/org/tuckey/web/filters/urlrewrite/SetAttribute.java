@@ -78,7 +78,9 @@ public class SetAttribute {
     private static final short SET_TYPE_LOCALE = 6;
     private static final short SET_TYPE_STAUS = 7;
     private static final short SET_TYPE_PARAM = 8;
+    private static final short SET_TYPE_EXPIRES = 9;
 
+    private long expiresValueAdd = 0;
     private boolean valueContainsVariable = false;
     private boolean valueContainsBackRef = false;
     private static Pattern replacementVarPattern = Pattern.compile("(?<!\\\\)\\$([0-9])");
@@ -92,6 +94,7 @@ public class SetAttribute {
         if (type == SET_TYPE_LOCALE) return "locale";
         if (type == SET_TYPE_STAUS) return "status";
         if (type == SET_TYPE_PARAM) return "param";
+        if (type == SET_TYPE_EXPIRES) return "expires";
         return "request";
     }
 
@@ -112,6 +115,8 @@ public class SetAttribute {
             type = SET_TYPE_STAUS;
         } else if ("param".equals(typeStr) || "parameter".equals(typeStr)) {
             type = SET_TYPE_PARAM;
+        } else if ("expires".equals(typeStr)) {
+            type = SET_TYPE_EXPIRES;
         } else if ("request".equals(typeStr) || StringUtils.isBlank(typeStr)) {
             type = SET_TYPE_REQUEST;
         } else {
@@ -226,6 +231,10 @@ public class SetAttribute {
             log.debug("setting charset");
             hsResponse.setLocale(locale);
 
+        } else if (type == SET_TYPE_EXPIRES) {
+            log.debug("setting expires");
+            hsResponse.setDateHeader("Expires", System.currentTimeMillis() + expiresValueAdd);
+
         } else if (type == SET_TYPE_PARAM) {
             if ( hsRequest instanceof UrlRewriteWrappedRequest ) {
                 log.debug("setting parameter");
@@ -276,12 +285,65 @@ public class SetAttribute {
             } else {
                 setError("cookie must have a name and a value");
             }
+
+        } else if (type == SET_TYPE_EXPIRES) {
+            // "access plus 1 month"
+            if (value != null ) {
+                expiresValueAdd = parseTimeValue(value);
+            } else {
+                setError("expires must have a value");
+            }
         }
 
         if (error == null) {
             valid = true;
         }
         return valid;
+    }
+
+    /**
+     * takes a string a number expression and converts it to a long.
+     * syntax: number type
+     *
+     * Valid examples: "1 day", "2 days", "1 hour", "1 hour 2 minutes", "34 months"
+     *
+     * Any positive number is valid
+     *
+     * Valid types are: years, months, weeks, days, hours, minutes, seconds
+     *
+     * note, this syntax is a direct copy of mod_expires syntax
+     * http://httpd.apache.org/docs/2.0/mod/mod_expires.html
+     *
+     * note, a year is calculated as 365.25 days and a month as 365.25 days divided by 12.
+     */
+    protected long parseTimeValue(String parsingValue) {
+        long calculatedMillis = 0;
+        if ( parsingValue.startsWith("access")) parsingValue = parsingValue.substring("access".length()).trim();
+        if ( parsingValue.startsWith("plus")) parsingValue = parsingValue.substring("plus".length()).trim();
+        log.debug("calculating expires ms based on '" + parsingValue + "'");
+        Matcher matcher = Pattern.compile("([0-9]+)\\s+(\\w+)").matcher(parsingValue);
+        while ( matcher.find()) {
+            int num = NumberUtils.stringToInt(matcher.group(1), -1);
+            if ( num < 0 ) setError("could not calculate numeric value of " + matcher.group(1));
+            String part = matcher.group(2);
+            log.debug("adding '"+num+"' '" + part + "'");
+            long addThisRound = 0;
+            if ( part.matches("year[s]?") ) addThisRound = (long) num * Math.round(1000 * 60 * 60 * 24 * 365.25);
+            if ( part.matches("month[s]?") ) addThisRound = num * Math.round( 1000 * 60 * 60 * 24 * (365.25/12) );
+            if ( part.matches("week[s]?") ) addThisRound = num * ( 1000 * 60 * 60 * 24 * 7 );
+            if ( part.matches("day[s]?") ) addThisRound = num * ( 1000 * 60 * 60 * 24 );
+            if ( part.matches("hour[s]?") ) addThisRound = num * ( 1000 * 60 * 60 );
+            if ( part.matches("minute[s]?") ) addThisRound = num * ( 1000 * 60 );
+            if ( part.matches("second[s]?") ) addThisRound = num * ( 1000 );
+            if ( addThisRound == 0 ) {
+                setError("unkown time unit '" + part + "'");
+            }
+            calculatedMillis += addThisRound;
+        }
+        if ( calculatedMillis == 0 ) {
+            setError("could not calculate expires time from '"+parsingValue+"'");
+        }
+        return calculatedMillis;
     }
 
     private Cookie getCookie(String name, String value) {
