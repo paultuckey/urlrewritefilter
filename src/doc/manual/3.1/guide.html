@@ -264,6 +264,15 @@ last="true">/site?addedParam=myValue&amp;%1</to>
     inside
     the servlet <code>request.getAttribute("action")</code> will return <code>purchase</code>.</p>
 
+<p>Set an "Expires" HTTP header 6 hours into the future for js, css and gif files</p>
+
+<pre><code>
+    &lt;rule&gt;
+        &lt;from&gt;^.*\.(js|css|gif)$&lt;/from&gt;
+        &lt;set name="expires"&gt;6 hours&lt;/set&gt;
+    &lt;/rule&gt;
+</code></pre>
+
 <p>Hide jsessionid for requests from googlebot.</p>
 
 <pre><code>
