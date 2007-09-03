@@ -858,7 +858,7 @@
         <th>Explanation</th>
     </tr>
     <tr>
-        <td rowspan="8">type <br/><small>(optional)</small></td>
+        <td rowspan="10">type <br/><small>(optional)</small></td>
         <td>request (default)</td>
         <td>The same as <code>request.<a
                 href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/ServletRequest.html#setAttribute(java.lang.String,%20java.lang.Object)">setAttribute</a>([name],
@@ -907,6 +907,15 @@
         <td>The same as <code>response.<a
                 href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/ServletResponse.html#setContentType(java.lang.String)">setContentType</a>([value])
         </code></td>
+    </tr>
+    <tr>
+        <td>expires</td>
+        <td>Will set the Expires HTTP header by adding the time specified and current time
+            (this is <a href="http://httpd.apache.org/docs/2.0/mod/mod_expires.html">mod_expires</a> style). Syntax "{num type}*".
+            Units can be (singular or plural);
+            years, months, weeks, days, hours, minutes, seconds.
+            <br/>eg, "1 day 2 seconds", "3 hours", "1 year 1 hour"  
+        </td>
     </tr>
     <tr>
         <td>locale</td>
