@@ -112,14 +112,14 @@
         <mkdir dir="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib/"/>
 
         <copy file="LICENSE.txt" todir="${build.home}/java/META-INF"/>
-        <copy file="src/MANIFEST.mf" todir="${build.home}/java/META-INF"/>
-        <replace file="${build.home}/java/META-INF/manifest.mf">
+        <copy file="src/MANIFEST.MF" todir="${build.home}/java/META-INF"/>
+        <replace file="${build.home}/java/META-INF/MANIFEST.MF">
             <replacefilter token="@version@" value="${app.version}"/>
         </replace>
 
         <jar jarfile="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib/urlrewrite-${app.version}.jar"
              basedir="${build.home}/java"
-             manifest="${build.home}/java/META-INF/manifest.mf"/>
+             manifest="${build.home}/java/META-INF/MANIFEST.MF"/>
 
     </target>
 
