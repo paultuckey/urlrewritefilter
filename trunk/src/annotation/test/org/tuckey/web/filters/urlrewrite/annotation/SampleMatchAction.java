@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 
 public class SampleMatchAction {
@@ -93,9 +94,25 @@ public class SampleMatchAction {
     }
 
     @HttpUrl("^/search/(clients|staff)/$")
-    public void addClientFilterSecond(String searchType, @HttpParam String firstName, @HttpParam("lName")String lastName)
+    public void addClientFilterSecond(String searchType, @HttpParam String firstName, @HttpParam("lName") String lastName)
             throws SQLException {
 
+    }
+
+    @HttpUrl(value = "^/rpc/search/(clients|staff)/$", handler = "json")
+    public ClientBean rpcGetClient(String searchType, @HttpParam String firstName, @HttpParam("lName") String lastName)
+            throws SQLException {
+        return new ClientBean();
+    }
+
+    @HttpJsonRpc
+    public ClientBean rpcGetClient2(String searchType, @HttpParam String firstName, @HttpParam("lName") String lastName)
+            throws SQLException {
+        return new ClientBean();
+    }
+
+    class ClientBean {
+        private String name = "Bob";
     }
 
     @HttpExceptionHandler("java.lang.Exception")
