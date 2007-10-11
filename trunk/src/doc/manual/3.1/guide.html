@@ -453,30 +453,6 @@ Cross context forwarding.
 <pre><code>&lt;a href="/tidy/page">some link&lt;/a></code></pre>
 
 
-<h2>AJAX (or perhaps more accurately AJAJ)</h2>
-
-<p>
-    { "com.bigco.PersonAjaxBean": {
-            "id": 123,
-            "firstName": "Bob",
-            "lastName": "Smith"         } }
-</p>
-
-<a href="javascript:go();">go</a>
-
-<script type="text/javascript">
-
-    function go() {
-        var returnedObj = {"result":{"newEachTime":false,"javaClass":"org.tuckey.web.filters.urlrewrite.Run",
-            "handler":"standard","methodSignature":"run","methodStr":"run","valid":false,"error":null,
-            "id":0,"filter":false,"initialised":false,"classStr":null,"runClassInstance":null,
-            "displayName":"Run 0"},"id":0};
-        alert(returnedObj.result.javaClass);
-    }
-
-</script>
-
-
 <a name="mod_re"></a>
 
 <h2>mod_rewrite vs urlrewrite filter</h2>
