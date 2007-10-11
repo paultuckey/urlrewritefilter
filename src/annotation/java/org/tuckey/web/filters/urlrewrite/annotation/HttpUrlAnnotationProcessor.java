@@ -102,7 +102,12 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
         PrintWriter pw;
         boolean delFile = false;
         try {
-            if (!confFile.exists()) confFile.createNewFile();
+            if (!confFile.exists()) {
+                if ( !confFile.getParentFile().exists() ) {
+                    confFile.getParentFile().mkdir();
+                }
+                confFile.createNewFile();
+            }
             if (!confFile.canWrite()) throw new IOException("cannot write to " + confFile.getName());
             pw = environment.getFiler().createTextFile(Filer.Location.CLASS_TREE, "", confFile, null);
         } catch (IOException e) {
@@ -148,7 +153,7 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
                     }
                     pw.println("    <from>" + pa.value + "</from>");
                     pw.println("    <run class=\"" + pa.className + "\" method=\"" + pa.methodName + pa.paramsFormatted +
-                            "\""+ (pa.isHandler() ? " handler=\""+pa.handler+"\"" : "") +" />");
+                            "\" />");
                     if (!pa.chainUsed) {
                         pw.println("    <to>null</to>");
                     }
@@ -188,7 +193,7 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
 
     private ProcessedHttpUrlAnnotation processHttpUrlAnnotation(Declaration declaration) {
         HttpUrl httpUrl = declaration.getAnnotation(HttpUrl.class);
-        return new ProcessedHttpUrlAnnotation(HttpUrl.class.getName(), declaration, httpUrl.value(), httpUrl.weight(), null);
+        return new ProcessedHttpUrlAnnotation(HttpUrl.class.getName(), declaration, httpUrl.value(), httpUrl.weight());
     }
 
     private ProcessedHttpExceptionAnnotation processHttpExceptionHandlerAnnotation(Declaration declaration) {
@@ -230,14 +235,13 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
         public String className;
         public String docComment;
         public boolean valid = true;
-        private String handler;
         public String sourceRef;
 
         public ProcessedHttpUrlAnnotation() {
             // empty
         }
 
-        public ProcessedHttpUrlAnnotation(String typeName, Declaration declaration, String value, int weight, String handler) {
+        public ProcessedHttpUrlAnnotation(String typeName, Declaration declaration, String value, int weight) {
             MethodDeclaration methodDeclaration = (MethodDeclaration) declaration;
             String className = methodDeclaration.getDeclaringType().getQualifiedName();
             this.methodName = declaration.getSimpleName();
@@ -246,7 +250,6 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
             this.value = value;
             this.weight = weight;
             this.setParams(methodDeclaration.getParameters());
-            this.handler = handler;
             String typeNameShort = typeName.substring(typeName.lastIndexOf("."));
             SourcePosition positionInCode = declaration.getPosition();
             sourceRef = positionInCode.file().getName() + ":" + positionInCode.line();
@@ -297,10 +300,6 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
                 }
             }
             paramsFormatted += ")";
-        }
-
-        public boolean isHandler() {
-            return handler != null;
         }
     }
 
