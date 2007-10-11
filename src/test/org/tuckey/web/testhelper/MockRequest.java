@@ -42,6 +42,7 @@ import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.io.CharArrayReader;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -81,6 +82,7 @@ public class MockRequest implements HttpServletRequest {
     private String servletPath;
     private String scheme;
     private int localPort = 0;
+    private String body;
 
     public MockRequest() {
     }
@@ -290,7 +292,7 @@ public class MockRequest implements HttpServletRequest {
     }
 
     public BufferedReader getReader() throws IOException {
-        return null;
+        return new BufferedReader(new CharArrayReader(body.toCharArray()));
     }
 
     public String getRemoteAddr() {
@@ -433,4 +435,7 @@ public class MockRequest implements HttpServletRequest {
         this.localPort = localPort;
     }
 
+    public void setBody(String s) {
+        body = s;
+    }
 }
