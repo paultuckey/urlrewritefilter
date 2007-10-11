@@ -272,6 +272,7 @@
                source="1.5"
                optimize="${compile.optimize}">
             <classpath refid="compile.classpath"/>
+            <classpath refid="compiled.classpath"/>
         </javac>
 
     </target>
