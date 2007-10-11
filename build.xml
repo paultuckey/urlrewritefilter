@@ -47,7 +47,7 @@
     </path>
 
     <target name="prepare">
-        <available classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask" property="junit.present" />
+        <available classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask" property="junit.present"/>
     </target>
 
     <target name="clean">
@@ -213,7 +213,7 @@
            MAKE sure that junit.jar is in your ANT_HOME/lib/ directory
            see http://ant.apache.org/manual/OptionalTasks/junit.html
         -->
-        <taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask" />
+        <taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"/>
         <junit printsummary="yes">
             <classpath refid="test.classpath"/>
             <formatter type="xml"/>
@@ -236,39 +236,32 @@
 
     <!--  description="Create Javadoc API documentation" -->
     <target name="javadoc" depends="compile">
-
         <delete dir="www/api/"/>
         <mkdir dir="www/api/"/>
         <javadoc sourcepath="src/java/" destdir="www/api/"
-            use="true" author="true" version="true"
-            packagenames="org.tuckey.web.filters.urlrewrite.*">
+                 use="true" author="true" version="true"
+                 packagenames="org.tuckey.web.filters.urlrewrite.*">
             <classpath refid="compile.classpath"/>
             <classpath refid="ant.classpath"/>
         </javadoc>
-
     </target>
 
 
     <target name="urlrewrite-doc" depends="compile" description="Create UrlRewriteFilter conf documentation">
-
         <taskdef name="urlrewritedoc" classname="org.tuckey.web.filters.urlrewrite.UrlRewriteDocTask"
                  classpathref="compiled.classpath"/>
-
         <mkdir dir="www/manual/${app.manual-version}/"/>
         <urlrewritedoc
                 conf="src/test-web/WEB-INF/urlrewrite.xml"
                 dest="src/doc/manual/${app.manual-version}/urlrewrite-conf-overview-sample.html"/>
-
     </target>
 
 
-
-
-
-    <!-- annotation processor -->
+    <!--
+     annotation processor
+    -->
 
     <target name="build-annotation">
-
         <!-- compile apt processor -->
         <delete dir="${build.home}/annotation/classes"/>
         <mkdir dir="${build.home}/annotation/classes"/>
@@ -284,81 +277,46 @@
     </target>
 
     <target name="dist-annotation" depends="build-annotation">
-
         <!-- build a nice jar -->
-        <unzip src="lib/servlet-api.jar" dest="${build.home}/annotation/classes" />
+        <unzip src="lib/servlet-api.jar" dest="${build.home}/annotation/classes"/>
         <mkdir dir="dist/urlrewrite-${app.version}/annotation/"/>
         <jar jarfile="dist/urlrewrite-${app.version}/annotation/urlrewrite-annotation-${app.version}.jar"
-             basedir="${build.home}/annotation/classes" />
+             basedir="${build.home}/annotation/classes"/>
     </target>
 
     <target name="test-annotation" depends="dist-annotation">
         <path id="annotation-classpath">
             <fileset file="dist/urlrewrite-${app.version}/annotation/urlrewrite-annotation-${app.version}.jar"/>
-            <fileset file="${java.home}/lib/tools.jar" />
-            <fileset file="lib/servlet-api.jar" />
+            <fileset file="lib/servlet-api.jar"/>
         </path>
-        <fileset id="sources" dir="." includes="src/annotation/test/**/*.java" />
-        <pathconvert pathsep=" " property="sourcefiles" refid="sources"/>
-        <!-- useful for debugging:
-        <property name="prop-annotation-classpath" refid="annotation-classpath"/>
-        <echo>
-            CLASSPATH ${prop-annotation-classpath}
-
-            SOURCES: ${sourcefiles}
-        </echo> -->
         <mkdir dir="${build.home}/annotation/web/WEB-INF/"/>
-        <exec executable="apt">
-            <arg value="-classpath"/>
-            <arg pathref="annotation-classpath"/>
-            <arg value="-nocompile"/>
-            <arg value="-factory"/>
-            <arg value="org.tuckey.web.filters.urlrewrite.annotation.HttpUrlAPTFactory"/>
-            <arg value="-AsaveRulesTo=${build.home}/annotation/web/WEB-INF/urlrewrite-generated.xml"/>
-            <arg line="${sourcefiles}"/>
-        </exec>
+        <apt compile="false" factory="org.tuckey.web.filters.urlrewrite.annotation.HttpUrlAPTFactory"
+             srcdir="src/annotation/test/" classpathref="annotation-classpath">
+            <option name="saveRulesTo" value="${build.home}/annotation/web/WEB-INF/urlrewrite-generated.xml"/>
+        </apt>
     </target>
-
 
     <!-- sample for documentation -->
     <target name="urlrewrite-annotations" depends="compile">
         <path id="annotation-classpath">
-            <fileset file="lib/urlrewrite-annotation-${app.version}.jar"/>
-            <fileset file="lib/servlet-api.jar" />
-            <fileset file="${java.home}/lib/tools.jar" />
+            <fileset file="dist/urlrewrite-${app.version}/annotation/urlrewrite-annotation-${app.version}.jar"/>
+            <fileset file="lib/servlet-api.jar"/>
         </path>
-        <!-- set the sources you want to check for annotations -->
-        <fileset id="sources" dir="." includes="src/annotation/test/**/*.java" />
-        <pathconvert pathsep=" " property="sourcefiles" refid="sources"/>
-        <!-- useful for debugging if you have trouble with classpaths etc:
-        <property name="prop-annotation-classpath" refid="annotation-classpath"/>
-        <echo>
-            CLASSPATH ${prop-annotation-classpath}
-
-            SOURCES: ${sourcefiles}
-        </echo> -->
-        <mkdir dir="${build.home}/annotation/web/WEB-INF/"/>
-        <exec executable="apt">
-            <arg value="-classpath"/>
-            <arg pathref="annotation-classpath"/>
-            <arg value="-nocompile"/>
-            <arg value="-factory"/>
-            <arg value="org.tuckey.web.filters.urlrewrite.annotation.HttpUrlAPTFactory"/>
-            <arg value="-AsaveRulesTo=build/WEB-INF/urlrewrite-generated.xml"/>
-            <arg line="${sourcefiles}"/>
-        </exec>
+        <mkdir dir="build/WEB-INF/"/>
+        <apt compile="false" factory="org.tuckey.web.filters.urlrewrite.annotation.HttpUrlAPTFactory"
+             srcdir="src/annotation/test/" classpathref="annotation-classpath">
+            <option name="saveRulesTo" value="build/WEB-INF/urlrewrite-generated.xml"/>
+        </apt>
     </target>
 
     <target name="copy-for-cvs" depends="clean">
         <mkdir dir="../urlrewrite-cvs/"/>
-
         <copy todir="../urlrewrite-cvs/">
             <fileset dir="./">
                 <include name="src/**"/>
                 <include name="lib/**"/>
             </fileset>
         </copy>
-
     </target>
 
 </project>
