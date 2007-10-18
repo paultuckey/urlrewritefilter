@@ -324,7 +324,7 @@ public class Run {
                 if (log.isDebugEnabled()) {
                     String possible = "";
                     for (int j = 0; j < runMethodPossibleSignature.length; j++) {
-                        possible += (j > 0 ? "," : "") + runMethodPossibleSignature[j].getSimpleName();
+                        possible += (j > 0 ? "," : "") + runMethodPossibleSignature[j].getName();
                     }
                     log.debug("looking for " + methodStr + "(" + possible + ")");
                 }
