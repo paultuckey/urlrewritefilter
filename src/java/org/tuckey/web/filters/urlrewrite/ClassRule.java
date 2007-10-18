@@ -39,7 +39,6 @@ import org.tuckey.web.filters.urlrewrite.extend.RewriteRule;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -199,7 +198,7 @@ public class ClassRule implements Rule {
                 destroyMethod = method;
             }
             if ("init".equals(method.getName()) && method.getParameterTypes().length == 1 &&
-                    ServletConfig.class.getName().equals(method.getParameterTypes()[0].getName())) {
+                    ServletContext.class.getName().equals(method.getParameterTypes()[0].getName())) {
                 log.debug("found init methodStr");
                 initMethod = method;
             }
@@ -221,16 +220,16 @@ public class ClassRule implements Rule {
             return false;
         }
         if (initMethod != null) {
-            log.debug("about to run init(ServletConfig) on " + classStr);
+            log.debug("about to run init(ServletContext) on " + classStr);
             Object[] args = new Object[1];
             args[0] = context;
             try {
                 initMethod.invoke(instance, args);
             } catch (IllegalAccessException e) {
-                logInvokeException("init(ServletConfig)", e);
+                logInvokeException("init(ServletContext)", e);
                 return false;
             } catch (InvocationTargetException e) {
-                logInvokeException("init(ServletConfig)", e);
+                logInvokeException("init(ServletContext)", e);
                 return false;
             }
         }
