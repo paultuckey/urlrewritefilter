@@ -37,16 +37,17 @@ package org.tuckey.web.testhelper;
 
 /**
  * Used to extablish a system benchmark that other performance things can be compared to.
- *
+ * <p/>
  * Adapted from...
  * http://mathsrv.ku-eichstaett.de/MGF/homes/grothmann/java/bench/BTest.java
  * http://mathsrv.ku-eichstaett.de/MGF/homes/grothmann/java/bench/Bench.html
  */
 public final class BenchmarkRunner {
-    private static final int n = 60;
-    private static final int N = 1125;
-    private static final double XTotal = 395113;
-    private static final double[][] Data = {
+    private static final int ITER = 1000;
+    private final int n = 60;
+    private final int N = 1125;
+    private final double XTotal = 395113;
+    private final double[][] Data = {
             {158.40, 0},
             {33.99, 0},
             {78.40, 0},
@@ -116,18 +117,19 @@ public final class BenchmarkRunner {
     /**
      * Will give an amount of millisecs that is taken to run a specific complex chunk of code.
      */
-    public static float establishBenchmark() {
+    public float establishBenchmark() {
         return establishBenchmark(2);
     }
 
-    private static float establishBenchmark(int numIters) {
+    private float establishBenchmark(int numIters) {
         // warm up
         System.out.println("Establishing benchmark");
         BenchmarkRunner br = new BenchmarkRunner();
         br.compute();
         long benchStarted = System.currentTimeMillis();
         for (float i = 0; i < numIters; i++) {
-            br.compute();
+            BenchmarkRunner brIter = new BenchmarkRunner();
+            brIter.compute();
         }
         long totalBenchTook = System.currentTimeMillis() - benchStarted;
         int benchAvg = Math.round((float) totalBenchTook / (float) numIters);
@@ -278,7 +280,6 @@ public final class BenchmarkRunner {
             }
         }
 
-        private static final int ITER = 1000;
 
         public void run() {
             int f, k, j;
