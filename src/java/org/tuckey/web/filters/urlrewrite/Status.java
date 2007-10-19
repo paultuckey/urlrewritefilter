@@ -304,7 +304,7 @@ public class Status {
         println("<html>");
         println("<head>");
         println("<title>UrlRewriteFilter configuration overview for " + conf.getFileName() + "</title>");
-        println("<style>");
+        println("<style type=\"text/css\">");
         InputStream is = Status.class.getResourceAsStream("doc/doc.css");
         if (is == null) {
             log.warn("unable to load style sheet");
