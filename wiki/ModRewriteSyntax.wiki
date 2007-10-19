@@ -22,4 +22,4 @@ Example
     <filter>
 }}}
 
-==Note, this is a BETA Quality Feature==
+==Note, this is a ALPHA Quality Feature==
