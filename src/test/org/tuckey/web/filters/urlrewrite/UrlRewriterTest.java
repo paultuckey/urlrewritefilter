@@ -224,9 +224,9 @@ public class UrlRewriterTest extends TestCase {
         Log.setLevel("ERROR");
 
         // benchmark this machine to see what it can do...
-        float bench = BenchmarkRunner.establishBenchmark();
+        float bench = new BenchmarkRunner().establishBenchmark();
         float timePerRule = bench * (float) 0.0003; // ms per rule... 0.03% of the benchmark
-        System.out.print("using " + timePerRule + "ms per rule as the standard");
+        System.out.println("using " + timePerRule + "ms per rule as the standard");
 
         float testAmount = 10000; // number of times to run test
 
