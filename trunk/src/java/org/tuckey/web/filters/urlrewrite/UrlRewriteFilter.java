@@ -35,6 +35,7 @@
 package org.tuckey.web.filters.urlrewrite;
 
 import org.tuckey.web.filters.urlrewrite.utils.Log;
+import org.tuckey.web.filters.urlrewrite.utils.ModRewriteConfLoader;
 import org.tuckey.web.filters.urlrewrite.utils.NumberUtils;
 import org.tuckey.web.filters.urlrewrite.utils.ServerNameMatcher;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
@@ -128,8 +129,6 @@ import java.util.Date;
  * RewriteCond      %{REQUEST_FILENAME}   !-d
  * <p/>
  * todo: debug screen, ie, this request matches the following rules
- * <p/>
- * todo: centralised browser detection example (set request attr?)
  *
  * @author Paul Tuckey
  * @version $Revision: 51 $ $Date: 2006-12-08 11:37:07 +1300 (Fri, 08 Dec 2006) $
@@ -139,7 +138,7 @@ public class UrlRewriteFilter implements Filter {
     private static Log log = Log.getLog(UrlRewriteFilter.class);
 
     // next line is replaced by ant on compile
-    public static final String VERSION = "3.1.0 build 6032";
+    public static final String VERSION = "3.1.0 build 6072";
 
     public static final String DEFAULT_WEB_CONF_PATH = "/WEB-INF/urlrewrite.xml";
 
@@ -164,6 +163,7 @@ public class UrlRewriteFilter implements Filter {
     private long confLastLoad = 0;
     private Conf confLastLoaded = null;
     private long confReloadLastCheck = 30;
+    private boolean confLoadedFromFile = true;
 
     /**
      * path to conf file.
@@ -277,7 +277,16 @@ public class UrlRewriteFilter implements Filter {
      * Separate from init so that it can be overidden.
      */
     protected void loadUrlRewriter(FilterConfig filterConfig) throws ServletException {
-        loadUrlRewriter();
+        String modRewriteStyleConf = filterConfig.getInitParameter("conf");
+        if (!StringUtils.isBlank(modRewriteStyleConf)) {
+            ModRewriteConfLoader loader = new ModRewriteConfLoader();
+            Conf conf = loader.process(modRewriteStyleConf);
+            checkConf(conf);
+
+        } else {
+            confLoadedFromFile = true;
+            loadUrlRewriter();
+        }
     }
 
 
@@ -303,19 +312,30 @@ public class UrlRewriteFilter implements Filter {
 
         } else {
             Conf conf = new Conf(context, inputStream, confPath, confUrlStr);
-            if (log.isDebugEnabled()) {
-                if (conf.getRules() != null) {
-                    log.debug("inited with " + conf.getRules().size() + " rules");
-                }
-                log.debug("conf is " + (conf.isOk() ? "ok" : "NOT ok"));
-            }
-            confLastLoaded = conf;
-            if (conf.isOk()) {
-                urlRewriter = new UrlRewriter(conf);
-                log.info("loaded (conf ok)");
+            checkConf(conf);
+        }
+    }
 
-            } else {
+    private void checkConf(Conf conf) {
+        if (log.isDebugEnabled()) {
+            if (conf.getRules() != null) {
+                log.debug("inited with " + conf.getRules().size() + " rules");
+            }
+            log.debug("conf is " + (conf.isOk() ? "ok" : "NOT ok"));
+        }
+        confLastLoaded = conf;
+        if (conf.isOk() && conf.isEngineEnabled()) {
+            urlRewriter = new UrlRewriter(conf);
+            log.info("loaded (conf ok)");
+
+        } else {
+            if (!conf.isOk()) {
                 log.error("Conf failed to load");
+            }
+            if (!conf.isEngineEnabled()) {
+                log.error("Engine explicitly disabled in conf"); // not really an error but we want ot to show in logs
+            }
+            if (urlRewriter != null) {
                 log.error("unloading existing conf");
                 urlRewriter = null;
             }
@@ -416,6 +436,7 @@ public class UrlRewriteFilter implements Filter {
      * Is it time to reload the configuration now.  Depends on is conf reloading is enabled.
      */
     public boolean isTimeToReloadConf() {
+        if (!confLoadedFromFile) return false;
         long now = System.currentTimeMillis();
         return confReloadCheckEnabled && !confReloadInProgress && (now - confReloadCheckInterval) > confReloadLastCheck;
     }
