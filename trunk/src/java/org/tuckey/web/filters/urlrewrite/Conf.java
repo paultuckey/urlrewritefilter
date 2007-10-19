@@ -89,6 +89,7 @@ public final class Conf {
 
     private ServletContext context;
     private boolean docProcessed = false;
+    private boolean engineEnabled = true;
 
     /**
      * Empty const for testing etc.
@@ -546,5 +547,13 @@ public final class Conf {
 
     public boolean isDecodeRequired() {
         return decodeUsing != null;
+    }
+
+    public boolean isEngineEnabled() {
+        return engineEnabled;
+    }
+
+    public void setEngineEnabled(boolean engineEnabled) {
+        this.engineEnabled = engineEnabled;
     }
 }
