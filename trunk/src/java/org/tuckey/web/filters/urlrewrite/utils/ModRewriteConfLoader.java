@@ -275,7 +275,7 @@ public class ModRewriteConfLoader {
                 Prefix Substitution with http://thishost[:thisport]/ (which makes the new URL a URI) to force a external redirection. If no code is given, a HTTP response of 302 (MOVED TEMPORARILY) will be returned. If you want to use other response codes in the range 300-400, simply specify the appropriate number or use one of the following symbolic names: temp (default), permanent, seeother. Use this for rules to canonicalize the URL and return it to the client - to translate ``/~'' into ``/u/'', or to always append a slash to /u/user, etc.
                 Note: When you use this flag, make sure that the substitution field is a valid URL! Otherwise, you will be redirecting to an invalid location. Remember that this flag on its own will only prepend http://thishost[:thisport]/ to the URL, and rewriting will continue. Usually, you will want to stop rewriting at this point, and redirect immediately. To stop rewriting, you should add the 'L' flag.
                 */
-                if ("passthrough".equalsIgnoreCase(flag) || "PT".equalsIgnoreCase(flag)) {
+                if ("redirect".equalsIgnoreCase(flag) || "R".equalsIgnoreCase(flag)) {
                     if ("301".equals(flagValue)) {
                         rule.setToType("permanent-redirect");
                     } else if ("302".equals(flagValue)) {
@@ -324,7 +324,7 @@ public class ModRewriteConfLoader {
                         condition.setName("user-agent");
                     } else if (part.equalsIgnoreCase("%{HTTP_REFERER}")) {
                         condition.setType("header");
-                        condition.setName("refferer");
+                        condition.setName("referer");
                     } else if (part.equalsIgnoreCase("%{HTTP_COOKIE}")) {
                         condition.setType("header");
                         condition.setName("cookie");
