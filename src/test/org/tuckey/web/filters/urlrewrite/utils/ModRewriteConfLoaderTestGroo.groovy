@@ -2,7 +2,7 @@ package org.tuckey.web.filters.urlrewrite.utils
 
 import groovy.util.GroovyTestCase
 
-class ModRewriteConfLoaderTest extends GroovyTestCase {
+class ModRewriteConfLoaderTestGroo extends GroovyTestCase {
     def loader = new ModRewriteConfLoader()
 
     void setUp() {
