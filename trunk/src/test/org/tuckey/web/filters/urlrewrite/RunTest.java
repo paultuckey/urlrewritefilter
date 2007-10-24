@@ -40,7 +40,6 @@ import org.tuckey.web.testhelper.MockResponse;
 import org.tuckey.web.testhelper.MockServletContext;
 import org.tuckey.web.testhelper.MockFilterChain;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
-import org.tuckey.web.filters.urlrewrite.extend.RewriteMatch;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -72,7 +71,7 @@ public class RunTest extends TestCase {
         assertTrue("Should be a initialised " + run.getError(), run.isValid());
         assertTrue("Should be created now", TestRunObj.getCreatedCount() == 1);
         assertTrue("Should be inited now", TestRunObj.isInitCalled());
-        run.execute(request, response);
+        run.execute(request, response, null, null);
         assertTrue("Should be invoked", TestRunObj.isRunCalled());
         assertTrue("Should not have been created again", TestRunObj.getCreatedCount() == 1);
         assertFalse("Should not be destroyed", TestRunObj.isDestroyCalled());
@@ -85,7 +84,7 @@ public class RunTest extends TestCase {
         run.setClassStr("this.is.an.not.found.Class");
         run.initialise(servletContext);
         assertFalse("Should not be initialised " + run.getError(), run.isValid());
-        run.execute(request, response);
+        run.execute(request, response, null, null);
         // Should not error just do nothing
     }
 
@@ -95,7 +94,7 @@ public class RunTest extends TestCase {
         run.setMethodStr("badMethod");
         run.initialise(servletContext);
         assertFalse("Should not be initialised " + run.getError(), run.isValid());
-        run.execute(request, response);
+        run.execute(request, response, null, null);
         // Should not error just do nothing
     }
 
@@ -105,7 +104,7 @@ public class RunTest extends TestCase {
         run.setMethodStr("runThatReturns");
         run.initialise(servletContext);
         assertTrue("Should be initialised " + run.getError(), run.isValid());
-        run.execute(request, response);
+        run.execute(request, response, null, null);
         // Should not error just do nothing
     }
 
@@ -115,7 +114,7 @@ public class RunTest extends TestCase {
         run.setMethodStr("runWithNoParams()");
         run.initialise(servletContext);
         assertTrue("Should be initialised " + run.getError(), run.isValid());
-        run.execute(request, response);
+        run.execute(request, response, null, null);
         // Should not error just do nothing
         assertEquals("[no params]", TestRunObj.getParamStr());
     }
@@ -126,7 +125,7 @@ public class RunTest extends TestCase {
         run.setMethodStr("nonDefaultRun");
         run.initialise(servletContext);
         assertTrue("Should be initialised " + run.getError(), run.isValid());
-        run.execute(request, response);
+        run.execute(request, response, null, null);
         assertTrue("Should be invoked", TestRunObj.isNonDefaultRunCalled());
         // Should not error just do nothing
     }
@@ -139,7 +138,7 @@ public class RunTest extends TestCase {
         run.setMethodStr("runWithParam(  int )");
         run.initialise(servletContext);
         assertTrue("Should be initialised " + run.getError(), run.isValid());
-        run.execute(request, response, new Object[]{"99"} );
+        run.execute(request, response, new Object[]{"99"}, null );
         assertEquals("Should be invoked", "99", TestRunObj.getParamStr());
         // Should not error just do nothing
     }
@@ -152,7 +151,7 @@ public class RunTest extends TestCase {
         run.initialise(servletContext);
         assertTrue("Should be initialised " + run.getError(), run.isValid());
         request.setParameter("id", "99");
-        run.execute(request, response);
+        run.execute(request, response, null, null);
         assertEquals("Should be invoked", "99", TestRunObj.getParamStr());
         // Should not error just do nothing
     }
@@ -182,12 +181,12 @@ public class RunTest extends TestCase {
         assertEquals("runWithPrimitiveParam(int, char, double, float, short, byte, boolean, java.lang.String)", run.getMethodSignature());
 
         // check null's
-        run.execute(request, response);
+        run.execute(request, response, null, null);
         assertEquals("0,\u0000,0.0,0.0,0,0,false,null", TestRunObj.getParamStr());
 
         // check values
         Object[] args = {"12", "xyz", "11", "11.58", "2", "1", "true", "abcd"};
-        run.execute(request, response, args);
+        run.execute(request, response, args, null);
         assertEquals("12,x,11.0,11.58,2,1,true,abcd", TestRunObj.getParamStr());
 
     }
@@ -204,12 +203,12 @@ public class RunTest extends TestCase {
                 "java.lang.Short, java.lang.Byte, java.lang.Boolean, java.lang.String)", run.getMethodSignature());
 
         // check null's
-        run.execute(request, response);
+        run.execute(request, response, null, null);
         assertEquals("null,null,null,null,null,null,null,null", TestRunObj.getParamStr());
 
         // check values
         Object[] args = {"12", "xyz", "11", "11.58", "2", "1", "true", "abcd"};
-        run.execute(request, response, args);
+        run.execute(request, response, args, null);
         assertEquals("12,x,11.0,11.58,2,1,true,abcd", TestRunObj.getParamStr());
 
     }
@@ -226,7 +225,7 @@ public class RunTest extends TestCase {
 
         System.out.println("this...");
         try {
-            run.execute(request, response);
+            run.execute(request, response, null, null);
         } catch (Throwable t) {
             throwableViaRun = t;
             t.printStackTrace(System.out);
@@ -315,7 +314,7 @@ public class RunTest extends TestCase {
         run.setMethodStr("privateRun");
         run.initialise(servletContext);
         assertFalse("Should not be initialised " + run.getError(), run.isValid());
-        run.execute(request, response);
+        run.execute(request, response, null, null);
         // Should not error just do nothing, check log msgs
     }
 
@@ -325,9 +324,9 @@ public class RunTest extends TestCase {
         run.setNewEachTime(true);
         run.initialise(servletContext);
         assertTrue("Should not have been created yet", TestRunObj.getCreatedCount() == 0);
-        run.execute(request, response);
+        run.execute(request, response, null, null);
         assertTrue("Should be created now", TestRunObj.getCreatedCount() == 1);
-        run.execute(request, response);
+        run.execute(request, response, null, null);
         assertTrue("Should be created twice", TestRunObj.getCreatedCount() == 2);
         assertTrue("Should be destroyed", TestRunObj.isDestroyCalled());
     }
