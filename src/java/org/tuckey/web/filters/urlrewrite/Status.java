@@ -222,6 +222,12 @@ public class Status {
                 (conditionsCount > 1 ? conditionsCount + " condtions" : "") +
                 " in the configuration file.</p>");
 
+        showRules(rules);
+        showOutboundRules(outboundRules);
+        println("<hr />");
+    }
+
+    private void showRules(List rules) {
         for (int i = 0; i < rules.size(); i++) {
             final Rule rule = (Rule) rules.get(i);
             if (rule instanceof NormalRule) {
@@ -266,7 +272,9 @@ public class Status {
             println();
             println();
         }
+    }
 
+    private void showOutboundRules(List outboundRules) {
         for (int i = 0; i < outboundRules.size(); i++) {
             final OutboundRule rule = (OutboundRule) outboundRules.get(i);
             println("<h3>" + rule.getDisplayName() +
@@ -296,7 +304,6 @@ public class Status {
             println();
             println();
         }
-        println("<hr />");
     }
 
     private void showHeader() {
@@ -342,7 +349,7 @@ public class Status {
                         urlRewriteFilter.getConfReloadCheckInterval() + "s</em>, last checked <em>" +
                         urlRewriteFilter.getConfReloadLastCheck() + "</em>, next check at <em>" +
                         nextReloadCheckDate + "</em> in <em>" +
-                        Math.round(nextReloadCheckDate.getTime() - System.currentTimeMillis()) / 1000 + "s</em>.");
+                        Math.round((nextReloadCheckDate.getTime() - System.currentTimeMillis()) / 1000d) + "s</em>.");
             } else {
                 println("Conf file reload check <em>disabled</em>");
             }
