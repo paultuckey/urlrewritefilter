@@ -171,7 +171,19 @@ public class ModRewriteConfLoader {
                 if ("cookie".equalsIgnoreCase(flag) || "CO".equalsIgnoreCase(flag)) {
                     SetAttribute set = new SetAttribute();
                     set.setType("cookie");
-                    set.setValue(flagValue);
+                    String cookieName = flagValue;
+                    String cookieValue = null;
+                    if (flagValue != null) {
+                        int colon = flagValue.indexOf(":");
+                        if (colon != -1) {
+                            cookieValue = flagValue.substring(colon + 1);
+                            cookieName = flagValue.substring(0, colon);
+                        }
+                    }
+                    set.setName(cookieName);
+                    // NOTE: The colon separated domain, lifetime, path are
+                    // handled by SetAttribute.setValue()
+                    set.setValue(cookieValue);
                     rule.addSetAttribute(set);
                 }
                 /*
