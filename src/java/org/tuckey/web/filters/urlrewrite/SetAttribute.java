@@ -323,12 +323,12 @@ public class SetAttribute {
         log.debug("calculating expires ms based on '" + parsingValue + "'");
         Matcher matcher = Pattern.compile("([0-9]+)\\s+(\\w+)").matcher(parsingValue);
         while ( matcher.find()) {
-            int num = NumberUtils.stringToInt(matcher.group(1), -1);
+            long num = NumberUtils.stringToInt(matcher.group(1), -1);
             if ( num < 0 ) setError("could not calculate numeric value of " + matcher.group(1));
             String part = matcher.group(2);
             log.debug("adding '"+num+"' '" + part + "'");
             long addThisRound = 0;
-            if ( part.matches("year[s]?") ) addThisRound = (long) num * Math.round(1000 * 60 * 60 * 24 * 365.25);
+            if ( part.matches("year[s]?") ) addThisRound = num * Math.round(1000 * 60 * 60 * 24 * 365.25);
             if ( part.matches("month[s]?") ) addThisRound = num * Math.round( 1000 * 60 * 60 * 24 * (365.25/12) );
             if ( part.matches("week[s]?") ) addThisRound = num * ( 1000 * 60 * 60 * 24 * 7 );
             if ( part.matches("day[s]?") ) addThisRound = num * ( 1000 * 60 * 60 * 24 );
