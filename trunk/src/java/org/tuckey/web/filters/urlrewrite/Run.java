@@ -322,9 +322,10 @@ public class Run {
                     }
                 }
                 if (log.isDebugEnabled()) {
-                    String possible = "";
+                    StringBuffer possible = new StringBuffer();
                     for (int j = 0; j < runMethodPossibleSignature.length; j++) {
-                        possible += (j > 0 ? "," : "") + runMethodPossibleSignature[j].getName();
+                        if (j > 0) possible.append(",");
+                        possible.append(runMethodPossibleSignature[j].getName());
                     }
                     log.debug("looking for " + methodStr + "(" + possible + ")");
                 }
@@ -531,7 +532,7 @@ public class Run {
     }
 
     /**
-     * @see #execute(HttpServletRequest,HttpServletResponse,Object[],FilterChain)
+     * @deprecated see #execute(HttpServletRequest,HttpServletResponse,Object[],FilterChain)
      */
     public RewriteMatch execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
             throws IOException, ServletException, InvocationTargetException {
@@ -583,6 +584,9 @@ public class Run {
         return execute(httpServletRequest, httpServletResponse, params, null);
     }
 
+    /**
+     * @deprecated use execute(HttpServletRequest, HttpServletResponse, Object[], FilterChain)
+     */
     public RewriteMatch execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                                 Object[] params) throws IOException, ServletException, InvocationTargetException {
         return execute(httpServletRequest, httpServletResponse, params, null);

@@ -85,7 +85,7 @@ public class UrlRewriteServlet extends HttpServlet {
     /**
      * Simple empty wrapper on top of FilterChain.
      */
-    class FilterChainWrapper implements FilterChain {
+    static class FilterChainWrapper implements FilterChain {
 
         public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse)
                 throws IOException, ServletException {
@@ -96,7 +96,7 @@ public class UrlRewriteServlet extends HttpServlet {
     /**
      * Simple wrapper for filter config to make it useful when we have a ServletConfig.
      */
-    class ConfigWrapper implements FilterConfig {
+    static class ConfigWrapper implements FilterConfig {
 
         private ServletConfig servletConfig;
 

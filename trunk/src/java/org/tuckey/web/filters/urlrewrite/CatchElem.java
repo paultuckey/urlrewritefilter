@@ -63,7 +63,7 @@ public class CatchElem implements Runnable {
     /**
      * For testing and documentation we don't want to load the classes.
      */
-    public static boolean loadClass = true;
+    private static boolean loadClass = true;
 
     public static void setLoadClass(boolean loadClass) {
         CatchElem.loadClass = loadClass;

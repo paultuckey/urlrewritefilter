@@ -259,7 +259,7 @@ public class UrlRewriter {
 
         if (outboundUrl == null) {
             // this probably means encode called with no url
-            return new RewrittenOutboundUrl(outboundUrl, true);
+            return new RewrittenOutboundUrl(null, true);
         }
 
         // attempt to match the rules

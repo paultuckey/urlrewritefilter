@@ -54,7 +54,7 @@ public class RunConfig implements ServletConfig, FilterConfig {
 
     public RunConfig(ServletContext servletContext, Hashtable initParameters) {
         this.servletContext = servletContext;
-        this.initParameters = initParameters;
+        this.initParameters = new Hashtable(initParameters);
     }
 
     public String getServletName() {
