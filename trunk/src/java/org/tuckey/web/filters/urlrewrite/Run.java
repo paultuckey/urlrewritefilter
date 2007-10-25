@@ -649,19 +649,7 @@ public class Run {
      * for paramters.
      */
     public String getMethodSignature() {
-        if (methodStr == null) return null;
-        StringBuffer sb = new StringBuffer(methodStr);
-        if (runMethodParams != null) {
-            for (int i = 0; i < runMethodParams.length; i++) {
-                Class runMethodParam = runMethodParams[i];
-                if (runMethodParam == null) continue;
-                if (i == 0) sb.append("(");
-                if (i > 0) sb.append(", ");
-                sb.append(runMethodParam.getName());
-                if (i + 1 == runMethodParams.length) sb.append(")");
-            }
-        }
-        return sb.toString();
+        return TypeUtils.getMethodSignature(methodStr, runMethodParams);
     }
 
 

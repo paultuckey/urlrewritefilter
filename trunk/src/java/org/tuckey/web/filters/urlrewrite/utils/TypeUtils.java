@@ -93,4 +93,22 @@ public class TypeUtils {
         return param;
     }
 
+    public static String getMethodSignature(String methodStr, Class[] methodParams) {
+        if (methodStr == null) return null;
+        StringBuffer sb = new StringBuffer(methodStr);
+        if (methodParams != null) {
+            for (int i = 0; i < methodParams.length; i++) {
+                Class runMethodParam = methodParams[i];
+                if (runMethodParam == null) continue;
+                if (i == 0) sb.append("(");
+                if (i > 0) sb.append(", ");
+                sb.append(runMethodParam.getName());
+                if (i + 1 == methodParams.length) sb.append(")");
+            }
+        }
+        return sb.toString();
+    }
+
+
+
 }
