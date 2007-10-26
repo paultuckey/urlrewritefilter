@@ -6,7 +6,24 @@ import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+/**
+ * todo: IN PROGRESS
+ *
+ * Class to decode a request from one of three inputs.  Literally:
+ * 
+ * /blah.jsp
+ *
+ * or
+ *
+ * GET /blah.jsp HTTP/1.1
+ *
+ * or
+ *
+ * GET /blah.jsp HTTP/1.1
+ * user-agent: Mozilla 1.2.3
+ * cookie: a:aaa
+ *
+ */
 public class MockRequestParser {
 
     private static Log log = Log.getLog(MockRequestParser.class);
@@ -30,7 +47,6 @@ public class MockRequestParser {
             request.setMethod(line1Matcher.group(1));
             requestPart = line1Matcher.group(2);
             request.setScheme(line1Matcher.group(3));
-
         } else {
             requestPart = line1;
         }
@@ -41,6 +57,16 @@ public class MockRequestParser {
             String queryString = requestPart.substring(questionMarkIdx + 1);
             setParams(request, queryString);
             requestUri = requestPart.substring(0, questionMarkIdx);
+        }
+        int semiColonIdx = requestUri.indexOf(';');
+        if (semiColonIdx != -1) {
+            String sessionId = requestUri.substring(semiColonIdx + 1);
+            int equalsIdx = sessionId.indexOf('=');
+            if ( equalsIdx != -1 ) {
+                sessionId = sessionId.substring(equalsIdx+1);
+            }
+            request.setRequestedSessionId(sessionId);
+            requestUri = requestUri.substring(0, semiColonIdx);
         }
         request.setRequestURI(requestUri);
 
