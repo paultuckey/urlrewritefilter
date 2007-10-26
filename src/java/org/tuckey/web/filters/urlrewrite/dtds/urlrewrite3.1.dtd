@@ -3,12 +3,20 @@
  http://tuckey.org/urlrewrite/
 -->
 
-<!ELEMENT urlrewrite ((rule|class-rule)*, outbound-rule*, catch*)>
+<!ELEMENT urlrewrite (function*, (rule|class-rule)*, outbound-rule*, catch*)>
 <!ATTLIST urlrewrite
 use-query-string (true|false) "false"
 use-context  (true|false) "false"
 decode-using CDATA  #IMPLIED
 default-match-type (regex|wildcard) #IMPLIED
+>
+
+<!ELEMENT function (init-param*)>
+<!ATTLIST function
+name   CDATA #IMPLIED
+class  CDATA #IMPLIED
+method CDATA #IMPLIED
+neweachtime (true|false) "false"
 >
 
 <!ELEMENT rule (name?, note?, condition*, from?, set*, run*, to?)>

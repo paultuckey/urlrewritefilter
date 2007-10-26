@@ -70,6 +70,7 @@ public final class Conf {
     private final List errors = new ArrayList();
     private final List rules = new ArrayList(50);
     private final List catchElems = new ArrayList(10);
+    private List functionElems = new ArrayList(10);
     private List outboundRules = new ArrayList(50);
     private boolean ok = false;
     private Date loadedDate = null;
@@ -197,6 +198,8 @@ public final class Conf {
         }
         setDecodeUsing(getAttrValue(rootElement, "decode-using"));
         setDefaultMatchType(getAttrValue(rootElement, "default-match-type"));
+
+        functionElems = processFunctions(rootElement);
 
         NodeList rootElementList = rootElement.getChildNodes();
         for (int i = 0; i < rootElementList.getLength(); i++) {
@@ -333,6 +336,37 @@ public final class Conf {
         }
     }
 
+    private static List processFunctions(Element rootElement) {
+        List functions = new ArrayList();
+        NodeList functionNodes = rootElement.getElementsByTagName("function");
+        for (int j = 0; j < functionNodes.getLength(); j++) {
+            Node functionNode = functionNodes.item(j);
+
+            if (functionNode == null) continue;
+            Function function = new Function();
+
+            if (functionNode.getNodeType() == Node.ELEMENT_NODE) {
+                Element functionElement = (Element) functionNode;
+                NodeList initParamsNodeList = functionElement.getElementsByTagName("init-param");
+                for (int k = 0; k < initParamsNodeList.getLength(); k++) {
+                    Node initParamNode = initParamsNodeList.item(k);
+                    if (initParamNode == null) continue;
+                    if (initParamNode.getNodeType() != Node.ELEMENT_NODE) continue;
+                    Element initParamElement = (Element) initParamNode;
+                    Node paramNameNode = initParamElement.getElementsByTagName("param-name").item(0);
+                    Node paramValueNode = initParamElement.getElementsByTagName("param-value").item(0);
+                    function.addInitParam(getNodeValue(paramNameNode), getNodeValue(paramValueNode));
+                }
+            }
+            function.setName(getAttrValue(functionNode, "name"));
+            function.setClassStr(getAttrValue(functionNode, "class"));
+            function.setMethodStr(getAttrValue(functionNode, "method"));
+            function.setNewEachTime("true".equalsIgnoreCase(getAttrValue(functionNode, "neweachtime")));
+            functions.add(function);
+        }
+        return functions;
+    }
+
     private static void procesConditions(Element ruleElement, RuleBase rule) {
         NodeList conditionNodes = ruleElement.getElementsByTagName("condition");
         for (int j = 0; j < conditionNodes.getLength(); j++) {
@@ -395,6 +429,13 @@ public final class Conf {
         }
 
         boolean rulesOk = true;
+        for (int i = 0; i < functionElems.size(); i++) {
+            final Function function = (Function) functionElems.get(i);
+            if (!function.initialise(context)) {
+                // if we failed to initialise anything set the status to bad
+                rulesOk = false;
+            }
+        }
         for (int i = 0; i < rules.size(); i++) {
             final Rule rule = (Rule) rules.get(i);
             if (!rule.initialise(context)) {
@@ -497,7 +538,7 @@ public final class Conf {
     }
 
     public Date getLoadedDate() {
-        return loadedDate;
+        return (Date)loadedDate.clone();
     }
 
     public String getFileName() {

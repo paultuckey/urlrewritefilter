@@ -4,6 +4,10 @@
 
 <urlrewrite>
 
+    <function name="lower"
+              class="org.tuckey.web.filters.urlrewrite.functions.StringFunctions"
+              method="toLower(String)"/>
+
     <rule>
         <condition next="or" type="header" name="user-agent">basicvalue1</condition>
         <from>basicfrom1</from>
@@ -40,9 +44,9 @@
         <to type="redirect">https:///very/newdir/$1</to>
     </rule>
 
-    <class-rule class="org.tuckey.web.filters.urlrewrite.TestRuleObj" />
+    <class-rule class="org.tuckey.web.filters.urlrewrite.TestRuleObj"/>
 
-    <class-rule class="org.tuckey.web.filters.urlrewrite.TestRuleObj" method="trial" />
+    <class-rule class="org.tuckey.web.filters.urlrewrite.TestRuleObj" method="trial"/>
 
     <rule>
         <from>/run-me</from>
@@ -58,7 +62,12 @@
 
     <rule>
         <from>^/runWithParam/([0-9])+/$</from>
-        <run class="org.tuckey.web.filters.urlrewrite.TestRunObj" method="runWithParam(int)" />
+        <run class="org.tuckey.web.filters.urlrewrite.TestRunObj" method="runWithParam(int)"/>
+    </rule>
+
+    <rule>
+        <from>^/lowerMe/([A-Z])+/$</from>
+        <to>/lowerMe/${lower:$1}</to>
     </rule>
 
     <outbound-rule>
