@@ -18,6 +18,7 @@
     <property name="compile.deprecation" value="false"/>
     <property name="compile.optimize" value="true"/>
 
+    <property name="jar.groovy" value="groovy-all-1.0.jar"/>
 
     <path id="compile.classpath">
         <fileset dir="lib/">
@@ -85,7 +86,7 @@
 
     </target>
 
-    <target name="compile-test" depends="compile">
+    <target name="compile-test" depends="compile, get-libs">
 
         <mkdir dir="${build.home}/test"/>
         <javac srcdir="src/test"
@@ -100,8 +101,18 @@
             <exclude name="**/*ContainerTest.java"/>
         </javac>
 
+        <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpathref="compile.classpath"/>
+        
+        <groovyc srcdir="src/test" destdir="${build.home}/test">
+            <classpath refid="compile.classpath"/>
+            <classpath path="${build.home}/java"/>
+        </groovyc>
+
         <copy todir="${build.home}/test">
-            <fileset dir="src/test" excludes="**/*.java"/>
+            <fileset dir="src/test">
+                <exclude name="**/*.java"/>
+                <exclude name="**/*.groovy"/>
+            </fileset>
         </copy>
 
     </target>
@@ -218,9 +229,9 @@
             <classpath refid="test.classpath"/>
             <formatter type="xml"/>
             <batchtest fork="yes" todir="www/test-report/xml/">
-                <fileset dir="src/test">
-                    <include name="**/*Test.java"/>
-                    <exclude name="**/*ContainerTest.java"/>
+                <fileset dir="${build.home}/test">
+                    <include name="**/*Test.class"/>
+                    <exclude name="**/*ContainerTest.class"/>
                 </fileset>
             </batchtest>
         </junit>
@@ -319,5 +330,23 @@
             </fileset>
         </copy>
     </target>
+
+    <target name="get-libs-check">
+        <available file="lib/${jar.groovy}" property="lib.complete"/>
+    </target>
+
+    <target name="get-libs" depends="get-libs-check" unless="lib.complete">
+        <description>
+
+            Download necessary libs from the web. You may need to set a proxy via ANT_OPTS
+            if you're behind a firewall. Something like:
+
+            % export ANT_OPTS="-Dhttp.proxyHost=foo.org -Dhttp.proxyPort=8080 -Dhttps.proxyHost=foo.org -Dhttps.proxyPort=8080"
+
+        </description>
+        <get dest="lib/${jar.groovy}" usetimestamp="true"
+             src="http://www.ibiblio.org/maven/groovy/jars/${jar.groovy}"/>
+    </target>
+
 
 </project>
