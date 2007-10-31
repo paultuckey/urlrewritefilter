@@ -5,10 +5,8 @@
 
   * mod_rewrite configuration support
 
-  * Allowing UrlRewrite to be initialized and configured in a Spring
-    application context
-  * Allowing UrlRewrite to be controlled at runtime using JMX (which
-    could be done with almost no effort in a Spring-based env if
-    UrlRewrite were more amenable)
+  * Allowing UrlRewrite to be initialized and configured in a Spring application context
+
+  * Allowing UrlRewrite to be controlled at runtime using JMX (which could be done with almost no effort in a Spring-based env if UrlRewrite were more amenable)
 
   * apache httpd configuration parser for tomcat.  This would allow administrators to try tomcat without having to learn how to configure it.  mod_rewrite style configuration is a critical component for this.
