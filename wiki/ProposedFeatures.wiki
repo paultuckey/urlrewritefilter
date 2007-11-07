@@ -3,7 +3,12 @@
 
 = Proposed Features =
 
-  * mod_rewrite configuration support
+== Features for 3.1 ==
+
+  * Full mod_rewrite configuration support (including RewriteMap)
+
+
+== Later Releases ==
 
   * Allowing UrlRewrite to be initialized and configured in a Spring application context
 
