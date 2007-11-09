@@ -218,10 +218,6 @@ public class Run {
             if (paramClass == null) {
                 try {
                     paramClass = Class.forName(param);
-                    if (paramClass == null) {
-                        setError("had trouble finding " + param + " after Class.forName got a null object");
-                        return null;
-                    }
                 } catch (ClassNotFoundException e) {
                     setError("could not find " + param + " got a " + e.toString(), e);
                     return null;
@@ -251,10 +247,6 @@ public class Run {
         Class runClass;
         try {
             runClass = Class.forName(classStr);
-            if (runClass == null) {
-                setError("had trouble finding " + classStr + " after Class.forName got a null object");
-                return;
-            }
         } catch (ClassNotFoundException e) {
             setError("could not find " + classStr + " got a " + e.toString(), e);
             return;
@@ -461,8 +453,7 @@ public class Run {
      */
     public RewriteMatch execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
             throws IOException, ServletException, InvocationTargetException {
-        Object[] params = null;
-        return execute(httpServletRequest, httpServletResponse, params, null);
+        return execute(httpServletRequest, httpServletResponse, null, null);
     }
 
     public RewriteMatch execute(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,

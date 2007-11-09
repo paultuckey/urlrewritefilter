@@ -163,10 +163,6 @@ public class ClassRule implements Rule {
             addError("could not find " + classStr + " got a " + e.toString(), e);
             return false;
         }
-        if (ruleClass == null) {
-            addError("had trouble finding " + classStr + " after Class.forName got a null object");
-            return false;
-        }
 
         Constructor constructor;
         try {

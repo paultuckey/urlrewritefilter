@@ -497,9 +497,6 @@ public final class Condition extends TypeConverter {
             strValue = StringUtils.trim(strValue);
             try {
                 instanceOfClass = Class.forName(strValue);
-                if (instanceOfClass == null) {
-                    setError("had trouble finding " + strValue + " after Class.forName got a null object");
-                }
             } catch (ClassNotFoundException e) {
                 setError("could not find " + strValue + " got a " + e.toString());
             } catch (NoClassDefFoundError e) {

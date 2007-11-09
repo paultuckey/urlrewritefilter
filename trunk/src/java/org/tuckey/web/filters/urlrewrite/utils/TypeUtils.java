@@ -77,8 +77,7 @@ public class TypeUtils {
                 param = Float.valueOf((String) matchObj);
             else if (runMethodParam.equals(Double.class) || runMethodParam.equals(double.class))
                 param = Double.valueOf((String) matchObj);
-            else if (matchObj != null &&
-                    matchObj instanceof Throwable &&
+            else if (matchObj instanceof Throwable &&
                     runMethodParam.isAssignableFrom(matchObj.getClass()))
                 param = matchObj;
             else {
