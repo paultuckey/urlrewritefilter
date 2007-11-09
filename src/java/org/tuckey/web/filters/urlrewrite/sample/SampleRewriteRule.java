@@ -51,10 +51,15 @@ public class SampleRewriteRule extends RewriteRule {
         // return null if we don't want the request
         if (!request.getRequestURI().startsWith("/staff/")) return null;
 
-        // grab the things out of the url we need
-        Integer id = Integer.valueOf(request.getRequestURI().replaceFirst("/staff/([0-9]+)/", "$1"));
-        // if we don't get a good id then return null
-        if (id == null) return null;
+        Integer id = null;
+        try {
+            // grab the things out of the url we need
+            id = Integer.valueOf(request.getRequestURI().replaceFirst(
+                "/staff/([0-9]+)/", "$1"));
+        } catch (NumberFormatException e) {
+            // if we don't get a good id then return null
+            return null;
+        }
 
         // match required with clean parameters
         return new SampleRewriteMatch(id.intValue());
