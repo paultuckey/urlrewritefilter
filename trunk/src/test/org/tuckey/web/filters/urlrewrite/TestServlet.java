@@ -47,6 +47,8 @@ import java.io.PrintWriter;
  * @version $Revision: 1 $ $Date: 2006-08-01 21:40:28 +1200 (Tue, 01 Aug 2006) $
  */
 public class TestServlet extends HttpServlet {
+    private static final long serialVersionUID = 8797402387550458476L;
+
     private static boolean runCalled;
     private static boolean destroyCalled;
     private static boolean initCalled;
