@@ -228,9 +228,18 @@
         <junit printsummary="yes">
             <classpath refid="test.classpath"/>
             <formatter type="xml"/>
-            <batchtest fork="yes" todir="www/test-report/xml/">
+            <test fork="yes"
+                todir="www/test-report/xml/"
+                name="${test.class.name}"
+                if="test.class.name"
+            />
+            <batchtest fork="yes"
+                todir="www/test-report/xml/"
+                unless="test.class.name"
+            >
                 <fileset dir="${build.home}/test">
                     <include name="**/*Test.class"/>
+                    <include name="**/*TestGroo.class"/>
                     <exclude name="**/*ContainerTest.class"/>
                 </fileset>
             </batchtest>
