@@ -56,6 +56,7 @@ import java.util.Enumeration;
  * This servlet just loads an instance of the filter and calls it as if it were the container.
  */
 public class UrlRewriteServlet extends HttpServlet {
+    private static final long serialVersionUID = 2186203405866227539L;
 
     private UrlRewriteFilter urlRewriteFilter = new UrlRewriteFilter();
 
