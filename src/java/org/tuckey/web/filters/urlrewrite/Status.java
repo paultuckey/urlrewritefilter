@@ -344,7 +344,7 @@ public class Status {
         if (urlRewriteFilter != null) {
             if (urlRewriteFilter.isConfReloadCheckEnabled()) {
                 Date nextReloadCheckDate = new Date(urlRewriteFilter.getConfReloadLastCheck().getTime() +
-                        (urlRewriteFilter.getConfReloadCheckInterval() * 1000));
+                        (urlRewriteFilter.getConfReloadCheckInterval() * 1000L));
                 println("<p>Conf file reload check <em>enabled</em>, last modified will be checked every <em>" +
                         urlRewriteFilter.getConfReloadCheckInterval() + "s</em>, last checked <em>" +
                         urlRewriteFilter.getConfReloadLastCheck() + "</em>, next check at <em>" +
