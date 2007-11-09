@@ -89,10 +89,6 @@ public class CatchElem implements Runnable {
         if ( loadClass ) {
             try {
                 exceptionClass = Class.forName(classStr);
-                if (exceptionClass == null) {
-                    setError("had trouble finding " + classStr + " after Class.forName got a null object");
-                    return false;
-                }
             } catch (ClassNotFoundException e) {
                 setError("could not find " + classStr + " got a " + e.toString(), e);
                 return false;

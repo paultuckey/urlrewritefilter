@@ -209,7 +209,6 @@ public class VariableReplacer {
             case TypeConverter.TYPE_EXCEPTION:
                 Exception e = (Exception) hsRequest.getAttribute("javax.servlet.error.exception");
                 if (e == null) return "";
-                if (e.getClass() == null) return "";
                 return e.getClass().getName();
 
             case TypeConverter.TYPE_HEADER:

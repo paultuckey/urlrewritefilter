@@ -141,10 +141,6 @@ public class Function {
         Class runClass;
         try {
             runClass = Class.forName(classStr);
-            if (runClass == null) {
-                setError("had trouble finding " + classStr + " after Class.forName got a null object");
-                return;
-            }
         } catch (ClassNotFoundException e) {
             setError("could not find " + classStr + " got a " + e.toString(), e);
             return;
