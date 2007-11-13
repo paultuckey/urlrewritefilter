@@ -66,10 +66,16 @@ public class StatusTest extends TestCase {
 
         Status status = new Status(urlRewriter.getConf(), urlRewriteFilter);
         status.displayStatusInContainer(hsRequest);
+        assertNotNull(status.getBuffer());
+        assertFalse(status.getBuffer().length() == 0);
 
         // save it so we can view it
         BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(new File("status.html")));
-        bos.write(status.getBuffer().toString().getBytes());
+        try {
+            bos.write(status.getBuffer().toString().getBytes());
+        } finally {
+            bos.close();
+        }
 
     }
 
