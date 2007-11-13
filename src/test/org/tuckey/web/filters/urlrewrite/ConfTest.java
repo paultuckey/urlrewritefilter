@@ -57,6 +57,7 @@ public class ConfTest extends TestCase {
 
     public void testGoodNormalConf() throws FileNotFoundException {
         InputStream is = ConfTest.class.getResourceAsStream(BASE_XML_PATH + "conf-test1.xml");
+        assertNotNull(is);
         Conf conf = new Conf(is, "conf-test1.xml");
         assertTrue(conf.isOk());
         assertEquals("regex", conf.getDefaultMatchType());
@@ -114,6 +115,7 @@ public class ConfTest extends TestCase {
 
     public void testNoDtdConf() throws FileNotFoundException {
         InputStream is = ConfTest.class.getResourceAsStream(BASE_XML_PATH + "conf-test-no-dtd.xml");
+        assertNotNull(is);
         Conf conf = new Conf(is, "conf-test-no-dtd.xml");
         assertTrue(conf.isOk());
         assertFalse(conf.isDecodeRequired());
