@@ -261,7 +261,7 @@ public class Status {
                 showRuns(normalRule);
 
                 if (!rule.isLast()) {
-                    println("<p>Note, other rules will be proessed after this rule.</p>");
+                    println("<p>Note, other rules will be processed after this rule.</p>");
                 }
             }
             if (rule instanceof ClassRule) {
@@ -299,7 +299,7 @@ public class Status {
             showRuns(rule);
 
             if (!rule.isLast()) {
-                println("<p>Note, other outbound rules will be proessed after this rule.</p>");
+                println("<p>Note, other outbound rules will be processed after this rule.</p>");
             }
             println();
             println();
