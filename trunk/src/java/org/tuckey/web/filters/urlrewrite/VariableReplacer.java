@@ -67,6 +67,7 @@ public class VariableReplacer {
         StringBuffer sb = new StringBuffer();
         boolean anyMatches = false;
 
+        int lastAppendPosition = 0;
         while (varMatcher.find()) {
             anyMatches = true;
             int groupCount = varMatcher.groupCount();
@@ -85,10 +86,12 @@ public class VariableReplacer {
             } else {
                 if (log.isDebugEnabled()) log.debug("variable reference is null " + varMatcher);
             }
-            varMatcher.appendReplacement(sb, varValue);
+            sb.append(subjectOfReplacement.substring(lastAppendPosition, varMatcher.start()));
+            sb.append(varValue);
+            lastAppendPosition = varMatcher.end();
         }
         if (anyMatches) {
-            varMatcher.appendTail(sb);
+            sb.append(subjectOfReplacement.substring(lastAppendPosition, subjectOfReplacement.length()));
             log.debug("replaced sb is " + sb);
             return sb.toString();
         }
