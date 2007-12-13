@@ -36,34 +36,40 @@ package org.tuckey.web.filters.urlrewrite.test;
 
 import junit.framework.TestCase;
 import org.tuckey.web.filters.urlrewrite.Conf;
-import org.tuckey.web.filters.urlrewrite.UrlRewriter;
-import org.tuckey.web.filters.urlrewrite.Rule;
 import org.tuckey.web.filters.urlrewrite.NormalRewrittenUrl;
+import org.tuckey.web.filters.urlrewrite.Rule;
+import org.tuckey.web.filters.urlrewrite.UrlRewriter;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.net.URL;
-import java.util.List;
-import java.util.Hashtable;
-import java.util.Enumeration;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Locale;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-
+/**
+ * The idea for UrlRewriteTestCase is that users can extend it to create their own
+ * simple unit tests instead of having to manually setup a mock request and the filter.
+ * <p/>
+ * note, Ideally this would be in a separate urlrewrite-test.jar but that
+ * seems a little over the top for one class.
+ */
 public class UrlRewriteTestCase extends TestCase {
 
     Conf conf;
@@ -78,7 +84,8 @@ public class UrlRewriteTestCase extends TestCase {
 
     /**
      * Checks to see if the specified rule name matches the url specified.
-     * @param ruleName - the name of the rule
+     *
+     * @param ruleName   - the name of the rule
      * @param requestUrl - the url to check
      */
     public void assertRuleMatches(String ruleName, String requestUrl) {
@@ -440,7 +447,7 @@ class MockRequest implements HttpServletRequest {
     }
 
     public void addCookie(Cookie c) {
-        if ( cookies == null ) cookies = new Cookie[100];
+        if (cookies == null) cookies = new Cookie[100];
         cookies[cookieCounter++] = c;
     }
 
@@ -517,7 +524,7 @@ class MockResponse implements HttpServletResponse {
 
     public String encodeURL(String s) {
         if (s == null) return null;
-        if (s.indexOf("http:") == 0 ) return s;
+        if (s.indexOf("http:") == 0) return s;
         if (s.contains("?")) {
             return s.substring(0, s.indexOf("?")) + ";mockencoded=test" + s.substring(s.indexOf("?"), s.length());
         } else {
