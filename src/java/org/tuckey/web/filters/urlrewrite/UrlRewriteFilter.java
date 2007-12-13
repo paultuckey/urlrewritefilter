@@ -56,6 +56,7 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
+import java.util.Properties;
 
 /**
  * Based on the popular and very useful mod_rewrite for apache, UrlRewriteFilter is a Java Web Filter for any J2EE
@@ -137,8 +138,7 @@ public class UrlRewriteFilter implements Filter {
 
     private static Log log = Log.getLog(UrlRewriteFilter.class);
 
-    // next line is replaced by ant on compile
-    public static final String VERSION = "3.1.0 build 6072";
+    public static final String VERSION = "3.1.0";
 
     public static final String DEFAULT_WEB_CONF_PATH = "/WEB-INF/urlrewrite.xml";
 
@@ -523,5 +523,23 @@ public class UrlRewriteFilter implements Filter {
 
     public boolean isLoaded() {
         return urlRewriter != null;
+    }
+
+    public static String getFullVersionString() {
+        Properties props = new Properties();
+        String buildNumberStr = "";
+        try {
+            InputStream is = UrlRewriteFilter.class.getResourceAsStream("build.number.properties");
+            if ( is != null ) {
+                props.load(is);
+                String buildNumber = (String) props.get("build.number");
+                if (!StringUtils.isBlank(buildNumber)){
+                    buildNumberStr =  " build " + props.get("build.number");
+                }
+            }
+        } catch (IOException e) {
+            log.error(e);
+        }
+        return VERSION + buildNumberStr;
     }
 }

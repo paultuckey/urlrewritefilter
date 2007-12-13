@@ -12,7 +12,7 @@
 
     <property name="build.home" value="build"/>
 
-    <property name="tomcat.home" value="/java/jakarta-tomcat-5.0.29"/>
+    <property name="tomcat.home" value="/java/apache-tomcat-5.5.23"/>
 
     <property name="compile.debug" value="true"/>
     <property name="compile.deprecation" value="false"/>
@@ -63,10 +63,8 @@
 
 
     <target name="compile" depends="prepare" description="Compile Java sources">
-        <buildnumber/>
-        <replaceregexp file="src/java/org/tuckey/web/filters/urlrewrite/UrlRewriteFilter.java"
-                       match="public static final String VERSION = \&quot;.*\&quot;;"
-                       replace="public static final String VERSION = &quot;${app.version} build ${build.number}&quot;;"/>
+        <touch mkdirs="true" file="${build.home}/java/org/tuckey/web/filters/urlrewrite/build.number.properties"/>
+        <buildnumber file="${build.home}/java/org/tuckey/web/filters/urlrewrite/build.number.properties"/>
 
         <mkdir dir="${build.home}/java"/>
         <javac srcdir="src/java"
