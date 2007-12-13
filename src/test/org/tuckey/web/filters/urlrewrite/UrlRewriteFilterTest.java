@@ -65,6 +65,12 @@ public class UrlRewriteFilterTest extends TestCase {
         filter.init(new MockFilterConfig());
     }
 
+    public void testVersion() throws ServletException {
+        String ver = UrlRewriteFilter.getFullVersionString();
+        System.out.println(ver);
+        assertTrue(ver.matches("[0-9]+\\.[0-9]+\\.[0-9]+ build [0-9]+"));
+    }
+
     public void testInitContext() throws ServletException {
         MockFilterConfig mockFilterConfig = new MockFilterConfig();
         mockFilterConfig.setServletContext(new MockServletContext());
