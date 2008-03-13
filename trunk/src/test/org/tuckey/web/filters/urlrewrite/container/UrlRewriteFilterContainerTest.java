@@ -32,7 +32,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.tuckey.web.filters.urlrewrite;
+package org.tuckey.web.filters.urlrewrite.container;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -42,6 +42,8 @@ import org.apache.cactus.WebResponse;
 import org.apache.cactus.server.RequestDispatcherWrapper;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
+import org.tuckey.web.filters.urlrewrite.UrlRewriteFilter;
+import org.tuckey.web.filters.urlrewrite.TestRunObj;
 
 import javax.servlet.FilterChain;
 import javax.servlet.RequestDispatcher;
