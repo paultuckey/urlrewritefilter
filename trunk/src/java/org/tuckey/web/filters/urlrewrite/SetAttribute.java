@@ -153,15 +153,6 @@ public class SetAttribute {
         this.value = value;
     }
 
-    /**
-     * @see #execute(ConditionMatch, StringMatchingMatcher, HttpServletRequest, HttpServletResponse) execute
-     * @param hsRequest the request
-     * @param hsResponse the response
-     */
-    public void execute(HttpServletRequest hsRequest, HttpServletResponse hsResponse) {
-        execute(null, null, hsRequest, hsResponse);
-    }
-
     public void execute(ConditionMatch lastConditionMatch, StringMatchingMatcher toMatcher,
                         HttpServletRequest hsRequest, HttpServletResponse hsResponse) {
 
@@ -178,17 +169,17 @@ public class SetAttribute {
         }
 
         String value = this.value;
-        if (valueContainsBackRef) {
-            value = BackReferenceReplacer.replace(lastConditionMatch, value);
-        }
-        if (valueContainsVariable) {
-            value = VariableReplacer.replace(value, hsRequest);
-        }
         if (toMatcher != null) {
             Matcher replacementVarMatcher = replacementVarPattern.matcher(value);
             if (replacementVarMatcher.find()) {
                 value = toMatcher.replaceAll(value);
             }
+        }
+        if (valueContainsBackRef) {
+            value = BackReferenceReplacer.replace(lastConditionMatch, value);
+        }
+        if (valueContainsVariable) {
+            value = VariableReplacer.replace(value, hsRequest);
         }
 
         if (type == SET_TYPE_REQUEST) {

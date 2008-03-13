@@ -34,9 +34,12 @@
  */
 package org.tuckey.web.filters.urlrewrite;
 
+import java.util.regex.Pattern;
+
 import junit.framework.TestCase;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.utils.NumberUtils;
+import org.tuckey.web.filters.urlrewrite.utils.RegexMatcher;
 import org.tuckey.web.testhelper.MockRequest;
 import org.tuckey.web.testhelper.MockResponse;
 
@@ -48,8 +51,12 @@ import javax.servlet.http.Cookie;
  */
 public class SetAttributeTest extends TestCase {
 
+    private RegexMatcher toMatcher;
+
     public void setUp() {
         Log.setLevel("DEBUG");
+        // Create a matcher to pass to execute
+        toMatcher = new RegexMatcher(Pattern.compile("^(.*)$").matcher("/query"));
     }
 
 
@@ -61,8 +68,21 @@ public class SetAttributeTest extends TestCase {
         MockResponse response = new MockResponse();
 
         set.initialise();
-        set.execute(request, response);
+        set.execute(null, toMatcher, request, response);
         assertTrue(request.getAttribute("blah").equals("mercuryrev"));
+
+    }
+
+    public void testCaptureGroup() {
+        SetAttribute set = new SetAttribute();
+        set.setName("blah");
+        set.setValue("Capture group 1 is $1");
+        MockRequest request = new MockRequest();
+        MockResponse response = new MockResponse();
+
+        set.initialise();
+        set.execute(null, toMatcher, request, response);
+        assertTrue(request.getAttribute("blah").equals("Capture group 1 is /query"));
 
     }
 
@@ -76,9 +96,23 @@ public class SetAttributeTest extends TestCase {
         MockResponse response = new MockResponse();
 
         set.initialise();
-        set.execute(request, response);
+        set.execute(null, toMatcher, request, response);
         assertEquals("v", ((Cookie) response.getCookies().get(0)).getName());
         assertEquals("1234", ((Cookie) response.getCookies().get(0)).getValue());
+
+    }
+
+    public void testVariableWithDollar() {
+        SetAttribute set = new SetAttribute();
+        set.setName("v");
+        set.setValue("%{parameter:v}");
+        MockRequest request = new MockRequest();
+        request.setParameter("v", "$2");
+        MockResponse response = new MockResponse();
+
+        set.initialise();
+        set.execute(null, toMatcher, request, response);
+        assertEquals("$2", request.getAttribute("v"));
 
     }
 
@@ -101,7 +135,7 @@ public class SetAttributeTest extends TestCase {
         long before = System.currentTimeMillis() + oneDayPlusTwoHours;
         Thread.sleep(100);
 
-        set.execute(request, response);
+        set.execute(null, toMatcher, request, response);
 
         Thread.sleep(100);
         long after = System.currentTimeMillis() + oneDayPlusTwoHours;
@@ -117,7 +151,7 @@ public class SetAttributeTest extends TestCase {
         MockRequest request = new MockRequest();
         MockResponse response = new MockResponse();
         set.initialise();
-        set.execute(request, response);
+        set.execute(null, toMatcher, request, response);
         assertEquals(999, response.getStatus());
     }
 
@@ -129,7 +163,7 @@ public class SetAttributeTest extends TestCase {
         MockRequest request = new MockRequest();
         MockResponse response = new MockResponse();
         set.initialise();
-        set.execute(request, response);
+        set.execute(null, toMatcher, request, response);
         Cookie cookie = (Cookie) response.getCookies().get(0);
         assertEquals("blah.com", cookie.getDomain());
         assertEquals(89009, cookie.getMaxAge());
@@ -150,7 +184,7 @@ public class SetAttributeTest extends TestCase {
         MockRequest request = new MockRequest();
         MockResponse response = new MockResponse();
         set.initialise();
-        set.execute(request, response);
+        set.execute(null, toMatcher, request, response);
         assertEquals("slang", response.getLocale().getVariant());
     }
 
