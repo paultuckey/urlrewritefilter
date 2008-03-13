@@ -23,6 +23,12 @@ public class VariableReplacerTest extends TestCase {
         assertEquals("", result);
     }
 
+    public final void testQueryStringValue() {
+        request.setQueryString("keyword=$2");
+        final String result = VariableReplacer.replace("%{query-string}", request);
+        assertEquals("keyword=$2", result);
+    }
+
     public final void testReplace() {
         request.getSession(true).setAttribute("color", "red");
         final String result = VariableReplacer.replace("%{session-attribute:color}", request);
