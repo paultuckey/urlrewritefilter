@@ -103,6 +103,23 @@ public class UrlRewriterTest extends TestCase {
         assertEquals("/bbb%20", rewrittenRequest.getTarget());
     }
 
+    public void testDefaultDecode() throws IOException, ServletException, InvocationTargetException {
+        Conf conf = new Conf();
+        NormalRule rule1 = new NormalRule();
+        rule1.setFrom("^/ca&amp;t/(.*)$");
+        rule1.setTo("/search/?c=y&amp;q=$1");
+        conf.addRule(rule1);
+        conf.initialise();
+
+        assertTrue(!conf.isDecodeRequired());
+        UrlRewriter urlRewriter = new UrlRewriter(conf);
+        MockRequest request = new MockRequest("/ca&amp;t/abc");
+        NormalRewrittenUrl rewrittenRequest = (NormalRewrittenUrl) urlRewriter.processRequest(request, response);
+
+        assertTrue(rewrittenRequest.isForward());
+        assertEquals("/search/?c=y&amp;q=abc", rewrittenRequest.getTarget());
+    }
+
     public void testAbsoluteRedir() throws IOException, ServletException, InvocationTargetException {
         Conf conf = new Conf();
         NormalRule rule1 = new NormalRule();
@@ -217,7 +234,8 @@ public class UrlRewriterTest extends TestCase {
     /**
      * Goal is to be able to process 2000 reqs a second for a simple rule set of 10000.
      * Performance is obviously very CPU dependant, so we establish a benchmark for the machine the
-     * test is running on then base performance on that.
+     * test is running on then base performance on that. This is a horribly rough way of determining
+     * performance, but it is good enough for this simple test case. 
      */
     public void testLoadsOfRules() throws IOException, ServletException, InvocationTargetException {
         // turn off logging
@@ -337,23 +355,18 @@ public class UrlRewriterTest extends TestCase {
 
     public void testRuleDecode() throws IOException, ServletException, InvocationTargetException {
         Conf conf = new Conf();
-
         NormalRule rule = new NormalRule();
-        rule.setFrom("^/test-decode/(.+?)$");
+        rule.setFrom("^/test decode/(.+?)$");
         rule.setTo("/TestHandler$1");
         conf.addRule(rule);
-        conf.setDecodeUsing("null");
-
+        conf.setDecodeUsing("utf-8");
         conf.initialise();
         UrlRewriter urlRewriter = new UrlRewriter(conf);
-
-        MockRequest request = new MockRequest("/test-decode/?string=black%26white");
+        MockRequest request = new MockRequest("/test+decode/?string=black%26white+green");
         MockResponse response = new MockResponse();
-        //request.setQueryString("black%26white");
         RewrittenUrl rewrittenUrl = urlRewriter.processRequest(request, response);
-
         assertEquals("forward should be default type", "forward", rule.getToType());
-        assertEquals("/TestHandler?string=black%26white", rewrittenUrl.getTarget());
+        assertEquals("/TestHandler?string=black&white green", rewrittenUrl.getTarget());
     }
 
 
