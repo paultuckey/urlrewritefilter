@@ -34,7 +34,6 @@
  */
 package org.tuckey.web.filters.urlrewrite.json;
 
-import org.tuckey.web.filters.urlrewrite.annotation.HttpJsonRpc;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 
 import javax.servlet.http.HttpServletRequest;
@@ -46,6 +45,9 @@ import java.util.HashMap;
 
 /**
  * Processor for RPC requests.
+ *
+ * todo: future: json work on hold for now
+ * 
  */
 public class JSONProcessor {
 
@@ -92,8 +94,6 @@ public class JSONProcessor {
                 Method methodFound = null;
                 Method[] methods = classToAccess.getMethods();
                 for (Method method : methods) {
-                    HttpJsonRpc httpJsonRpc = method.getAnnotation(HttpJsonRpc.class);
-                    if (httpJsonRpc == null) continue;
                     if (method.getName().equalsIgnoreCase(methodToAccess)) {
                         if (methodFound != null)
                             log.error("multiple methods found with same name (" + methodToAccess + "), this is not supported");

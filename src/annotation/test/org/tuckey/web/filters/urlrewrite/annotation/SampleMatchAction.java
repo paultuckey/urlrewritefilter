@@ -99,18 +99,6 @@ public class SampleMatchAction {
 
     }
 
-    @HttpUrl(value = "^/rpc/search/(clients|staff)/$", handler = "json")
-    public ClientBean rpcGetClient(String searchType, @HttpParam String firstName, @HttpParam("lName") String lastName)
-            throws SQLException {
-        return new ClientBean();
-    }
-
-    @HttpJsonRpc
-    public ClientBean rpcGetClient2(String searchType, @HttpParam String firstName, @HttpParam("lName") String lastName)
-            throws SQLException {
-        return new ClientBean();
-    }
-
     class ClientBean {
         private String name = "Bob";
     }
