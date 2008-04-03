@@ -52,41 +52,6 @@
 
 <div id="main">
 
-<!--
-
- todo: example for inclusion
-Takasho <takasho@gmail.com>
-to UrlRewrite
-
-show details
-	 12/8/06
-
-Thanks for such a quick response. That works great :)
-
-Please could you add some examples to your documentation such as the
-following:
-
-<rule>
-  <condition type="query-string">(.*)</condition>
-  <from>^/servlet/redirect</from>
-  <to type="permanent-redirect" last="true">/redirect?%1</to>
-</rule>
-<rule>
-  <condition type="query-string"
-operator="equal">(.*)myParam=true(.*)</condition>
-  <from>^(.*)$</from>
-  <to type="permanent-redirect">$1?changedParam=true%2&amp;%1</to>
-</rule>
-<rule>
-  <condition type="query-string">(.*)</condition>
-  <from>^/sitemap.jsp</from>
-  <to type="permanent-redirect"
-last="true">/site?addedParam=myValue&amp;%1</to>
-</rule>
-
--->
-
-
 <h1>Examples</h1>
 
 <p>Redirect one url</p>
@@ -452,9 +417,6 @@ Cross context forwarding.
 <p>Examples of mod_rewrite style conf vs urlrewrite filter conf are below, there are all examples copied directly from
     Apache 2.0's official <a href="http://httpd.apache.org/docs-2.0/misc/rewriteguide.html">rewrite guide</a>.</p>
 
-<!--
-todo: tidy
--->
 <pre><code>
 
 &lt;rule&gt;
