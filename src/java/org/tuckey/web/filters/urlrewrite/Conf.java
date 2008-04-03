@@ -82,7 +82,7 @@ public final class Conf {
     protected boolean useQueryString;
     protected boolean useContext;
 
-    private static final String DEFAULT_DECODE_USING = "utf-8";
+    private static final String DEFAULT_DECODE_USING = "null";
     private static final String NONE_DECODE_USING = "null";
     protected String decodeUsing = DEFAULT_DECODE_USING;
 

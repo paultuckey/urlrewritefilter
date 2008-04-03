@@ -94,12 +94,9 @@ public class UrlRewriter {
 
     private RuleChain getNewChain(final HttpServletRequest hsRequest, FilterChain parentChain) {
 
-        //String originalUrl = StringUtils.trim(hsRequest.getRequestURI());
+        String originalUrl = hsRequest.getRequestURI();
 
-        // prepare base part of url
-        String servletPath = hsRequest.getServletPath();   // /servlet/MyServlet
-
-        if (servletPath == null) {
+        if (originalUrl == null) {
             // for some reason the engine is not giving us the url
             // this isn't good
             log.debug("unable to fetch request uri from request.  This shouldn't happen, it may indicate that " +
@@ -107,19 +104,17 @@ public class UrlRewriter {
             return null;
         }
 
-        String originalUrl = servletPath;
         if (log.isDebugEnabled()) {
             log.debug("processing request for " + originalUrl);
         }
 
-        String pathInfo = hsRequest.getPathInfo();         // /a/b;c=123
-        if (pathInfo != null) originalUrl = originalUrl + pathInfo;
-
-        // add context if required
+        // remove context if required
         String contextPath = hsRequest.getContextPath();
-        if (contextPath != null && conf.isUseContext()) {
-            log.debug("context added");
-            originalUrl = contextPath + originalUrl;
+        if (contextPath != null && !conf.isUseContext()) {
+            if ( originalUrl.startsWith(contextPath) ) {
+                log.debug("context removed from url");
+                originalUrl = originalUrl.substring(contextPath.length());
+            }
         }
 
         // add the query string on uri (note, some web app containers do this)
