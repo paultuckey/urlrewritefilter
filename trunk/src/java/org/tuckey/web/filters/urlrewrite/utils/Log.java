@@ -418,21 +418,39 @@ public class Log {
 
         usingSystemOut = false;
         usingSystemErr = false;
-        if (level != null) {
-            if (level.startsWith("SYSOUT:")) {
-                usingSystemOut = true;
-                level = level.substring("SYSOUT:".length());
+        // check for log type on the front
+        if ("LOG4J".equalsIgnoreCase(level)) {
+            usingLog4j = true;
+        } else if ("COMMONS".equalsIgnoreCase(level)) {
+            usingCommonsLogging = true;
+        } else {
+            // log need to parse level also
+            if (level != null) {
+                if (level.startsWith("SYSOUT:")) {
+                    usingSystemOut = true;
+                    level = level.substring("SYSOUT:".length());
+                }
+                if (level.startsWith("STDOUT:")) {
+                    usingSystemOut = true;
+                    level = level.substring("STDOUT:".length());
+                }
+                if (level.startsWith("STDERR:")) {
+                    usingSystemErr = true;
+                    level = level.substring("STDERR:".length());
+                }
+                if (level.startsWith("SYSERR:")) {
+                    usingSystemErr = true;
+                    level = level.substring("SYSERR:".length());
+                }
             }
-            if (level.startsWith("STDOUT:")) {
-                usingSystemOut = true;
-                level = level.substring("STDOUT:".length());
-            }
-            if (level.startsWith("STDERR:")) {
-                usingSystemErr = true;
-                level = level.substring("STDERR:".length());
-            }
+            setLevelInternal(level);
         }
+    }
 
+    /**
+     * actually set the level.  setLevel is really setting type.
+     */
+    private static void setLevelInternal(String level) {
         // reset all level info
         traceLevelEnabled = false;
         debugLevelEnabled = false;
@@ -511,7 +529,6 @@ public class Log {
 
     private StringBuffer getMsg(String level, Object o) {
         StringBuffer msg = new StringBuffer();
-        msg.append(extraInfo());
         if (clazz == null) {
             msg.append("null");
         } else {
@@ -522,15 +539,6 @@ public class Log {
         msg.append(": ");
         msg.append(o.toString());
         return msg;
-    }
-
-    private String extraInfo() {
-        return "";
-        /*
-        String logLineStr = logCounter++ + "";
-        while ( logLineStr.length() < 6 ) logLineStr = "0" + logLineStr;
-        return Thread.currentThread().getName() + " " + logLineStr + " ";
-        */
     }
 
     /**
@@ -566,14 +574,7 @@ public class Log {
             logLevelConf = StringUtils.trim(logLevelConf);
         }
 
-        if ("LOG4J".equalsIgnoreCase(logLevelConf)) {
-            usingLog4j = true;
-        } else if ("COMMONS".equalsIgnoreCase(logLevelConf)) {
-            usingCommonsLogging = true;
-        } else {
-            setLevel(logLevelConf);
-        }
-
+        setLevel(logLevelConf);
         localLog.debug("logLevel set to " + logLevelConf);
     }
 
