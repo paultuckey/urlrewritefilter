@@ -226,14 +226,6 @@ public class SetAttribute {
             log.debug("setting expires");
             hsResponse.setDateHeader("Expires", System.currentTimeMillis() + expiresValueAdd);
 
-        } else if (type == SET_TYPE_PARAM) {
-            if ( hsRequest instanceof UrlRewriteWrappedRequest ) {
-                log.debug("setting parameter");
-                ((UrlRewriteWrappedRequest) hsRequest).setParameter(name, value);
-            }   else {
-                log.debug("not setting parameter as request is not wrapped");
-            }
-
         } else {
             log.warn("unknown type" + type);
         }
