@@ -36,6 +36,7 @@ package org.tuckey.web.filters.urlrewrite;
 
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
+import org.tuckey.web.filters.urlrewrite.utils.ModRewriteConfLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -100,23 +101,43 @@ public final class Conf {
     }
 
     /**
-     * Normal constructor.
+     * Constructor for use only when loading XML style configuration.
      *
      * @param fileName to display on status screen
      */
     public Conf(ServletContext context, final InputStream inputStream, String fileName, String systemId) {
+        this(context, inputStream, fileName, systemId, false);
+    }
+
+    /**
+     * Normal constructor.
+     *
+     * @param fileName to display on status screen
+     * @param modRewriteStyleConf true if loading mod_rewrite style conf
+     */
+    public Conf(ServletContext context, final InputStream inputStream, String fileName, String systemId,
+                boolean modRewriteStyleConf) {
         // make sure context is setup before calling initialise()
         this.context = context;
         this.fileName = fileName;
         this.confSystemId = systemId;
-        loadDom(inputStream);
+        if ( modRewriteStyleConf ) {
+            loadModRewriteStyle(inputStream);
+        }   else {
+            loadDom(inputStream);
+        }
         if ( docProcessed ) initialise();
         loadedDate = new Date();
     }
 
-//    public Conf(ServletContext context, final InputStream inputStream, String fileName) {
-//        this(context, inputStream, fileName, null);
-//    }
+    private void loadModRewriteStyle(InputStream inputStream) {
+        ModRewriteConfLoader loader = new ModRewriteConfLoader();
+        try {
+            loader.process(inputStream, this);
+        } catch (IOException e) {
+            addError("Exception loading conf " + " " + e.getMessage(), e);
+        }
+    }
 
     /**
      * Constructor when run elements don't need to be initialised correctly, for docuementation etc.

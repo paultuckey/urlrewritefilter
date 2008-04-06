@@ -5,6 +5,10 @@ import org.tuckey.web.filters.urlrewrite.Conf;
 import org.tuckey.web.filters.urlrewrite.NormalRule;
 import org.tuckey.web.filters.urlrewrite.SetAttribute;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -17,34 +21,45 @@ public class ModRewriteConfLoader {
 
     private static Log log = Log.getLog(ModRewriteConfLoader.class);
 
-    Pattern LOG_LEVEL_PATTERN = Pattern.compile("RewriteLogLevel\\s+([0-9]+)\\s*$");
-    Pattern ENGINE_PATTERN = Pattern.compile("RewriteEngine\\s+([a-zA-Z0-9]+)\\s*$");
-    Pattern CONDITION_PATTERN = Pattern.compile("RewriteCond\\s+(.*)$");
-    Pattern RULE_PATTERN = Pattern.compile("RewriteRule\\s+(.*)$");
+    private final Pattern LOG_LEVEL_PATTERN = Pattern.compile("RewriteLogLevel\\s+([0-9]+)\\s*$");
+    private final Pattern LOG_TYPE_PATTERN = Pattern.compile("RewriteLog\\s+(.*)$");
+    private final Pattern ENGINE_PATTERN = Pattern.compile("RewriteEngine\\s+([a-zA-Z0-9]+)\\s*$");
+    private final Pattern CONDITION_PATTERN = Pattern.compile("RewriteCond\\s+(.*)$");
+    private final Pattern RULE_PATTERN = Pattern.compile("RewriteRule\\s+(.*)$");
 
-    public Conf process(String modRewriteStyleConf) {
-        Conf conf = new Conf();
+    public void process(InputStream is, Conf conf) throws IOException {
+        String line;
+        BufferedReader in = new BufferedReader(new InputStreamReader(is));
+        StringBuffer buffer = new StringBuffer();
+        while ((line = in.readLine()) != null) {
+            buffer.append(line);
+            buffer.append("\n");
+        }
+        process(buffer.toString(), conf);
+    }
 
+    public void process(String modRewriteStyleConf, Conf conf) {
         String[] lines = modRewriteStyleConf.split("\n");
         List conditionsBuffer = new ArrayList();
         StringBuffer notesBuffer = new StringBuffer();
+        String logLevelStr = null;
+        String logTypeStr = null;
 
         for (int i = 0; i < lines.length; i++) {
             String line = StringUtils.trimToNull(lines[i]);
             if (line == null) continue;
+            log.debug("processing line: " + line);
 
             if (line.startsWith("#")) {
-                log.debug("found a note line " + line);
+                log.debug("adding note line (line starting with #)");
                 if (notesBuffer.length() > 0) notesBuffer.append("\n");
                 String noteLine = StringUtils.trim(line.substring(1));
                 notesBuffer.append(noteLine);
 
             } else if (line.startsWith("RewriteBase")) {
-                // todo: could this be used to set a context?
                 log.info("RewriteBase not supported, ignored");
 
             } else if (line.startsWith("RewriteCond")) {
-                log.debug("about to parse condition " + line);
                 Condition condition = processRewriteCond(line);
                 if (condition != null) conditionsBuffer.add(condition);
 
@@ -54,43 +69,72 @@ public class ModRewriteConfLoader {
             } else if (line.startsWith("RewriteLock")) {
                 log.error("RewriteLock not supported, ignored");
 
-            } else if (line.startsWith("RewriteLog")) {
-                log.error("RewriteLog not supported, ignored");
-
             } else if (line.startsWith("RewriteLogLevel")) {
-                int logLevel = 1; // todo:
-                Matcher logLevelMatcher = LOG_LEVEL_PATTERN.matcher(line);
-                if (logLevelMatcher.matches()) {
-                    logLevel = NumberUtils.stringToInt(logLevelMatcher.group(1));
-                } else {
-                    log.error("cannot parse " + line);
-                }
+                logLevelStr = parseLogLevel(logLevelStr, line);
+
+            } else if (line.startsWith("RewriteLog")) {
+                logTypeStr = parseLogType(logTypeStr, line);
 
             } else if (line.startsWith("RewriteMap")) {
-                log.error("RewriteLog not supported, ignored");
+                log.error("RewriteMap not supported, ignored");
 
             } else if (line.startsWith("RewriteOptions")) {
-                log.error("RewriteLog not supported, ignored");
+                log.error("RewriteOptions not supported, ignored");
 
             } else if (line.startsWith("RewriteRule")) {
-                NormalRule rule = processRule(line);
-
-                for (int j = 0; j < conditionsBuffer.size(); j++) {
-                    Condition condition = (Condition) conditionsBuffer.get(j);
-                    rule.addCondition(condition);
-                }
-                conditionsBuffer = new ArrayList();
-
-                if (notesBuffer.length() > 0) rule.setNote(notesBuffer.toString());
+                parseRule(conf, conditionsBuffer, notesBuffer, line);
                 notesBuffer = new StringBuffer();
-
-                conf.addRule(rule);
+                conditionsBuffer = new ArrayList();
             }
+        }
+        if (logTypeStr != null || logLevelStr != null) {
+            String logStr = (logTypeStr == null ? "" : logTypeStr) + (logLevelStr == null ? "" : ":" + logLevelStr);
+            log.debug("setting log to: " + logStr);
+            Log.setLevel(logStr);
         }
         if (conditionsBuffer.size() > 0) {
             log.error("conditions left over without a rule");
         }
-        return conf;
+    }
+
+    private void parseRule(Conf conf, List conditionsBuffer, StringBuffer notesBuffer, String line) {
+        NormalRule rule = processRule(line);
+        for (int j = 0; j < conditionsBuffer.size(); j++) {
+            Condition condition = (Condition) conditionsBuffer.get(j);
+            rule.addCondition(condition);
+        }
+        if (notesBuffer.length() > 0) rule.setNote(notesBuffer.toString());
+        conf.addRule(rule);
+    }
+
+    private String parseLogType(String logTypeStr, String line) {
+        Matcher logTypeMatcher = LOG_TYPE_PATTERN.matcher(line);
+        if (logTypeMatcher.matches()) {
+            logTypeStr = StringUtils.trimToNull(logTypeMatcher.group(1));
+            if (logTypeStr != null) {
+                logTypeStr = logTypeStr.replaceAll("\"", "");
+                log.debug("RewriteLog parsed as " + logTypeStr);
+            }
+        }
+        return logTypeStr;
+    }
+
+    private String parseLogLevel(String logLevelStr, String line) {
+        log.debug("found a RewriteLogLevel");
+        Matcher logLevelMatcher = LOG_LEVEL_PATTERN.matcher(line);
+        if (logLevelMatcher.matches()) {
+            int logLevel = NumberUtils.stringToInt(logLevelMatcher.group(1));
+            if (logLevel <= 1) logLevelStr = "FATAL";
+            else if (logLevel == 2) logLevelStr = "ERROR";
+            else if (logLevel == 3) logLevelStr = "INFO";
+            else if (logLevel == 4) logLevelStr = "WARN";
+            else if (logLevel >= 5) logLevelStr = "DEBUG";
+            log.debug("RewriteLogLevel parsed as " + logLevel);
+
+        } else {
+            log.error("cannot parse " + line);
+        }
+        return logLevelStr;
     }
 
     private NormalRule processRule(String line) {
@@ -132,12 +176,12 @@ public class ModRewriteConfLoader {
         boolean enabled = true;
         Matcher engineMatcher = ENGINE_PATTERN.matcher(line);
         if (engineMatcher.matches()) {
-            String enabledStr = engineMatcher.group(1);
+            String enabledStr = StringUtils.trim(engineMatcher.group(1));
             log.debug("RewriteEngine value parsed as '" + enabledStr + "'");
-            if ("0".equalsIgnoreCase(enabledStr)) enabled = false;
-            if ("false".equalsIgnoreCase(enabledStr)) enabled = false;
-            if ("no".equalsIgnoreCase(enabledStr)) enabled = false;
-            if ("off".equalsIgnoreCase(enabledStr)) enabled = false;
+            if ("0".equalsIgnoreCase(enabledStr) ||
+                    "false".equalsIgnoreCase(enabledStr) ||
+                    "no".equalsIgnoreCase(enabledStr) ||
+                    "off".equalsIgnoreCase(enabledStr)) enabled = false;
             log.debug("RewriteEngine as boolean '" + enabled + "'");
         } else {
             log.error("cannot parse " + line);
@@ -322,6 +366,7 @@ public class ModRewriteConfLoader {
     }
 
     private Condition processRewriteCond(String rewriteCondLine) {
+        log.debug("about to parse condition");
         Condition condition = new Condition();
         Matcher condMatcher = CONDITION_PATTERN.matcher(rewriteCondLine);
         if (condMatcher.matches()) {
@@ -385,8 +430,7 @@ public class ModRewriteConfLoader {
                     } else if (part.equalsIgnoreCase("%{SERVER_PORT}")) {
                         condition.setType("port");
 
-
-                        //todo: this block!!!
+                        //todo: bits below this comment
                     } else if (part.equalsIgnoreCase("%{REMOTE_PORT}")) {
                         log.error("REMOTE_PORT currently unsupported, ignoring");
                     } else if (part.equalsIgnoreCase("%{REMOTE_IDENT}")) {
