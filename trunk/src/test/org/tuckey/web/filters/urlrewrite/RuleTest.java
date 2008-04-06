@@ -675,32 +675,6 @@ public class RuleTest extends TestCase {
     }
 
 
-    public void testRuleSetAttr() throws IOException, ServletException, InvocationTargetException {
-        Condition c = new Condition();
-        c.setType("param");
-        c.setName("param1");
-        c.setValue("foo");
-
-        SetAttribute s = new SetAttribute();
-        NormalRule rule = new NormalRule();
-        s.setType("parameter");
-        s.setName("param1");
-        s.setValue("bar");
-        rule.setFrom("/blah");
-        rule.setTo("/to");
-        rule.addCondition(c);
-        rule.addSetAttribute(s);
-        rule.initialise(null);
-        MockRequest request = new MockRequest("/blah");
-        request.addParameter("param1", "foo");
-        UrlRewriteWrappedRequest urlRewriteWrappedRequest = new UrlRewriteWrappedRequest(request);
-
-        rule.matches(request.getRequestURI(), urlRewriteWrappedRequest, response);
-
-        assertEquals("forward should be default type", "forward", rule.getToType());
-        assertEquals("bar", urlRewriteWrappedRequest.getParameter("param1"));
-    }
-
     public void testRuleNoFrom() throws IOException, ServletException, InvocationTargetException {
         NormalRule rule = new NormalRule();
         rule.setTo("to");
