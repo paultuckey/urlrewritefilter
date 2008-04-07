@@ -7,7 +7,6 @@
 
     <property name="app.version" value="3.1.0"/>
     <property name="app.manual-version" value="3.1"/>
-    <property name="app.stable-version" value="2.6"/>
     <property name="app.year" value="2007"/>
 
     <property name="build.home" value="build"/>
@@ -151,7 +150,7 @@
     </target>
 
 
-    <target name="dist" depends="clean,dist-jar,javadoc,test,compile-docs"
+    <target name="dist" depends="clean,dist-jar,javadoc,test,urlrewrite-doc,docs-version-update"
             description="Create binary distribution">
 
         <!-- copy in webapp dependencies for bin dist -->
@@ -160,10 +159,12 @@
 
         <!-- copy in other dependencies for src dist -->
         <copy todir="dist/urlrewrite-${app.version}/lib/">
-            <fileset dir="lib/"/>
+            <fileset dir="lib/">
+                <exclude name="groovy*"/>
+            </fileset>
         </copy>
-        <copy todir="dist/urlrewrite-${app.version}/manual/">
-            <fileset dir="www/manual/"/>
+        <copy todir="dist/urlrewrite-${app.version}/manual">
+            <fileset dir="src/doc/manual/${app.manual-version}"/>
         </copy>
         <copy file="build.xml"
               todir="dist/urlrewrite-${app.version}/"/>
@@ -193,26 +194,25 @@
         </checksum>
 
         <!-- copy into www -->
-        <copy todir="www/dist">
-            <fileset dir="dist/" includes="urlrewritefilter*"/>
-        </copy>
-    </target>
-
-
-    <target name="compile-docs" depends="urlrewrite-doc" description="only for tuckey.org dist">
-
         <copy todir="www/" overwrite="true">
             <fileset dir="src/doc/"/>
         </copy>
+        <copy todir="www/dist">
+            <fileset dir="dist/" includes="urlrewritefilter*"/>
+        </copy>
 
-        <replace dir="www/">
-            <include name="**/*.html"/>
-            <replacefilter token="@version@" value="${app.version}"/>
-            <replacefilter token="@manual-version@" value="${app.manual-version}"/>
-            <replacefilter token="@stable-version@" value="${app.stable-version}"/>
-            <replacefilter token="@year@" value="${app.year}"/>
-        </replace>
+    </target>
 
+
+    <target name="docs-version-update" depends="urlrewrite-doc" description="replace version info in docs">
+        <replaceregexp match="&lt;!--@ver--&gt;.*&lt;!--/@ver--&gt;"
+                replace="&lt;!--@ver--&gt;${app.version}&lt;!--/@ver--&gt;">
+            <fileset dir="src/doc/manual/${app.manual-version}"/>
+        </replaceregexp>
+        <replaceregexp match="&lt;!--@year--&gt;.*&lt;!--/@year--&gt;"
+                replace="&lt;!--@year--&gt;${app.year}&lt;!--/@year--&gt;">
+            <fileset dir="src/doc/manual/${app.manual-version}"/>
+        </replaceregexp>
     </target>
 
     <target name="test" depends="compile-test" if="junit.present">
