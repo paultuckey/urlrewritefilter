@@ -1,0 +1,5 @@
+
+
+- run dist
+- ftp up all dist files
+- submit to maven http://maven.apache.org/reference/repository-upload.html

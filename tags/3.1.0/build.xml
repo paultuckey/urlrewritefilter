@@ -1,0 +1,359 @@
+<project name="UrlRewriteFilter" default="dist" basedir=".">
+
+    <!-- Give user a chance to override without editing this file (and without typing -D each time) -->
+    <property file="${user.home}/urlrewrite.build.properties"/>
+    <property file="${user.home}/build.properties"/>
+    <property file="${basedir}/build.properties"/>
+
+    <property name="app.version" value="3.1.0"/>
+    <property name="app.manual-version" value="3.1"/>
+    <property name="app.year" value="2007"/>
+
+    <property name="build.home" value="build"/>
+
+    <property name="tomcat.home" value="/java/apache-tomcat-5.5.23"/>
+
+    <property name="compile.debug" value="true"/>
+    <property name="compile.deprecation" value="false"/>
+    <property name="compile.optimize" value="true"/>
+
+    <property name="jar.groovy" value="groovy-all-1.0.jar"/>
+
+    <path id="compile.classpath">
+        <fileset dir="lib/">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="ant.classpath">
+        <fileset dir="${ant.home}/lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <path id="compiled.classpath">
+        <fileset dir="lib/">
+            <include name="*.jar"/>
+        </fileset>
+        <path path="${build.home}/java"/>
+    </path>
+
+    <path id="test.classpath">
+        <fileset dir="lib/">
+            <include name="*.jar"/>
+        </fileset>
+        <path path="${build.home}/java"/>
+        <path path="${build.home}/test"/>
+    </path>
+
+    <target name="prepare">
+        <available classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask" property="junit.present"/>
+    </target>
+
+    <target name="clean">
+        <delete dir="${build.home}/"/>
+        <delete dir="dist/"/>
+        <delete dir="www/api/"/>
+        <delete dir="www/test-report/"/>
+        <delete dir="www/manual/"/>
+
+        <delete dir="dist-annotation/"/>
+    </target>
+
+
+    <target name="compile" depends="prepare" description="Compile Java sources">
+        <touch mkdirs="true" file="${build.home}/java/org/tuckey/web/filters/urlrewrite/build.number.properties"/>
+        <buildnumber file="${build.home}/java/org/tuckey/web/filters/urlrewrite/build.number.properties"/>
+
+        <mkdir dir="${build.home}/java"/>
+        <javac srcdir="src/java"
+               destdir="${build.home}/java"
+               debug="${compile.debug}"
+               deprecation="${compile.deprecation}"
+               source="1.3"
+               target="1.3"
+               optimize="${compile.optimize}">
+            <classpath refid="compile.classpath"/>
+        </javac>
+
+        <!-- Copy application resources -->
+        <copy todir="${build.home}/java">
+            <fileset dir="src/java" excludes="**/*.java"/>
+        </copy>
+
+    </target>
+
+    <target name="compile-test" depends="compile, get-libs">
+
+        <mkdir dir="${build.home}/test"/>
+        <javac srcdir="src/test"
+               destdir="${build.home}/test"
+               debug="${compile.debug}"
+               deprecation="${compile.deprecation}"
+               source="1.3"
+               target="1.3"
+               optimize="${compile.optimize}">
+            <classpath refid="compile.classpath"/>
+            <classpath path="${build.home}/java"/>
+            <exclude name="**/*ContainerTest.java"/>
+        </javac>
+
+        <taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpathref="compile.classpath"/>
+        
+        <groovyc srcdir="src/test" destdir="${build.home}/test">
+            <classpath refid="compile.classpath"/>
+            <classpath path="${build.home}/java"/>
+        </groovyc>
+
+        <copy todir="${build.home}/test">
+            <fileset dir="src/test">
+                <exclude name="**/*.java"/>
+                <exclude name="**/*.groovy"/>
+            </fileset>
+        </copy>
+
+    </target>
+
+    <target name="dist-jar" depends="clean,compile,dist-annotation" description="Create binary distribution">
+        <!-- create JAR file -->
+        <delete dir="dist/urlrewrite-${app.version}/webapp"/>
+        <mkdir dir="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib/"/>
+
+        <copy file="LICENSE.txt" todir="${build.home}/java/META-INF"/>
+        <copy file="src/MANIFEST.MF" todir="${build.home}/java/META-INF"/>
+        <replace file="${build.home}/java/META-INF/MANIFEST.MF">
+            <replacefilter token="@version@" value="${app.version}"/>
+        </replace>
+
+        <jar jarfile="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib/urlrewrite-${app.version}.jar"
+             basedir="${build.home}/java"
+             manifest="${build.home}/java/META-INF/MANIFEST.MF"/>
+
+    </target>
+
+    <target name="maven-bundle">
+        <!-- make jar for maven -->
+        <mkdir dir="dist/maven-bundle/"/>
+        <copy file="LICENSE.txt" todir="dist/maven-bundle/"/>
+        <copy file="src/maven/pom.xml" todir="dist/maven-bundle/"/>
+        <copy file="src/maven/request.txt" tofile="dist/maven-request.txt"/>
+        <replace file="dist/maven-bundle/pom.xml">
+            <replacefilter token="@version@" value="${app.version}"/>
+        </replace>
+        <replace file="dist/maven-request.txt">
+            <replacefilter token="@version@" value="${app.version}"/>
+        </replace>
+        <copy tofile="dist/maven-bundle/urlrewritefilter-${app.version}.jar"
+              file="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib/urlrewrite-${app.version}.jar"/>
+        <jar jarfile="dist/urlrewritefilter-${app.version}-maven-bundle.jar"
+             basedir="dist/maven-bundle/"/>
+    </target>
+
+
+    <target name="dist" depends="clean,dist-jar,javadoc,test,urlrewrite-doc,docs-version-update"
+            description="Create binary distribution">
+
+        <!-- copy in webapp dependencies for bin dist -->
+        <copy file="src/java/org/tuckey/web/filters/urlrewrite/conf-dist.xml"
+              tofile="dist/urlrewrite-${app.version}/webapp/WEB-INF/urlrewrite.xml"/>
+
+        <!-- copy in other dependencies for src dist -->
+        <copy todir="dist/urlrewrite-${app.version}/lib/">
+            <fileset dir="lib/">
+                <exclude name="groovy*"/>
+            </fileset>
+        </copy>
+        <copy todir="dist/urlrewrite-${app.version}/manual">
+            <fileset dir="src/doc/manual/${app.manual-version}"/>
+        </copy>
+        <copy file="build.xml"
+              todir="dist/urlrewrite-${app.version}/"/>
+        <copy file="LICENSE.txt"
+              todir="dist/urlrewrite-${app.version}/"/>
+        <copy todir="dist/urlrewrite-${app.version}/api/">
+            <fileset dir="www/api/"/>
+        </copy>
+        <copy todir="dist/urlrewrite-${app.version}/test-report/" failonerror="false">
+            <fileset dir="www/test-report/"/>
+        </copy>
+        <copy todir="dist/urlrewrite-${app.version}/src/">
+            <fileset dir="src/"/>
+        </copy>
+
+        <!-- zip it -->
+        <zip destfile="dist/urlrewritefilter-${app.version}.zip"
+             basedir="dist/urlrewrite-${app.version}/webapp/" includes="**"/>
+        <zip destfile="dist/urlrewritefilter-${app.version}-src.zip">
+            <zipfileset prefix="urlrewrite-${app.version}-src"
+                        dir="dist/urlrewrite-${app.version}/"/>
+        </zip>
+
+        <!-- make checksums -->
+        <checksum algorithm="MD5" fileext=".md5">
+            <fileset dir="dist/" includes="*.zip"/>
+        </checksum>
+
+        <!-- copy into www -->
+        <copy todir="www/" overwrite="true">
+            <fileset dir="src/doc/"/>
+        </copy>
+        <copy todir="www/dist">
+            <fileset dir="dist/" includes="urlrewritefilter*"/>
+        </copy>
+
+    </target>
+
+
+    <target name="docs-version-update" depends="urlrewrite-doc" description="replace version info in docs">
+        <replaceregexp match="&lt;!--@ver--&gt;.*&lt;!--/@ver--&gt;"
+                replace="&lt;!--@ver--&gt;${app.version}&lt;!--/@ver--&gt;">
+            <fileset dir="src/doc/manual/${app.manual-version}"/>
+        </replaceregexp>
+        <replaceregexp match="&lt;!--@year--&gt;.*&lt;!--/@year--&gt;"
+                replace="&lt;!--@year--&gt;${app.year}&lt;!--/@year--&gt;">
+            <fileset dir="src/doc/manual/${app.manual-version}"/>
+        </replaceregexp>
+    </target>
+
+    <target name="test" depends="compile-test" if="junit.present">
+        <delete dir="www/test-report/"/>
+        <mkdir dir="www/test-report/xml/"/>
+        <!--
+           MAKE sure that junit.jar is in your ANT_HOME/lib/ directory
+           see http://ant.apache.org/manual/OptionalTasks/junit.html
+        -->
+        <taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask"/>
+        <junit printsummary="yes">
+            <classpath refid="test.classpath"/>
+            <formatter type="xml"/>
+            <test fork="yes"
+                todir="www/test-report/xml/"
+                name="${test.class.name}"
+                if="test.class.name"
+            />
+            <batchtest fork="yes"
+                todir="www/test-report/xml/"
+                unless="test.class.name"
+            >
+                <fileset dir="${build.home}/test">
+                    <include name="**/*Test.class"/>
+                    <include name="**/*TestGroo.class"/>
+                    <exclude name="**/*ContainerTest.class"/>
+                </fileset>
+            </batchtest>
+        </junit>
+        <junitreport todir="www/test-report/">
+            <fileset dir="www/test-report/xml/">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report todir="www/test-report/"/>
+        </junitreport>
+        <delete dir="www/test-report/xml/"/>
+    </target>
+
+
+    <!--  description="Create Javadoc API documentation" -->
+    <target name="javadoc" depends="compile">
+        <delete dir="www/api/"/>
+        <mkdir dir="www/api/"/>
+        <javadoc sourcepath="src/java/" destdir="www/api/"
+                 use="true" author="true" version="true"
+                 packagenames="org.tuckey.web.filters.urlrewrite.*">
+            <classpath refid="compile.classpath"/>
+            <classpath refid="ant.classpath"/>
+        </javadoc>
+    </target>
+
+
+    <target name="urlrewrite-doc" depends="compile" description="Create UrlRewriteFilter conf documentation">
+        <taskdef name="urlrewritedoc" classname="org.tuckey.web.filters.urlrewrite.UrlRewriteDocTask"
+                 classpathref="compiled.classpath"/>
+        <mkdir dir="www/manual/${app.manual-version}/"/>
+        <urlrewritedoc
+                conf="src/test-web/WEB-INF/urlrewrite.xml"
+                dest="src/doc/manual/${app.manual-version}/urlrewrite-conf-overview-sample.html"/>
+    </target>
+
+
+    <!--
+     annotation processor
+    -->
+
+    <target name="build-annotation">
+        <!-- compile apt processor -->
+        <delete dir="${build.home}/annotation/classes"/>
+        <mkdir dir="${build.home}/annotation/classes"/>
+        <javac srcdir="src/annotation/java/"
+               destdir="${build.home}/annotation/classes/"
+               debug="${compile.debug}"
+               deprecation="${compile.deprecation}"
+               source="1.5"
+               optimize="${compile.optimize}">
+            <classpath refid="compile.classpath"/>
+            <classpath refid="compiled.classpath"/>
+        </javac>
+
+    </target>
+
+    <target name="dist-annotation" depends="build-annotation">
+        <!-- build a nice jar -->
+        <unzip src="lib/servlet-api.jar" dest="${build.home}/annotation/classes"/>
+        <mkdir dir="dist/urlrewrite-${app.version}/annotation/"/>
+        <jar jarfile="dist/urlrewrite-${app.version}/annotation/urlrewrite-annotation-${app.version}.jar"
+             basedir="${build.home}/annotation/classes"/>
+    </target>
+
+    <target name="test-annotation" depends="dist-annotation">
+        <path id="annotation-classpath">
+            <fileset file="dist/urlrewrite-${app.version}/annotation/urlrewrite-annotation-${app.version}.jar"/>
+            <fileset file="lib/servlet-api.jar"/>
+        </path>
+        <mkdir dir="${build.home}/annotation/web/WEB-INF/"/>
+        <apt compile="false" factory="org.tuckey.web.filters.urlrewrite.annotation.HttpUrlAPTFactory"
+             srcdir="src/annotation/test/" classpathref="annotation-classpath">
+            <option name="saveRulesTo" value="${build.home}/annotation/web/WEB-INF/urlrewrite-generated.xml"/>
+        </apt>
+    </target>
+
+    <!-- sample for documentation -->
+    <target name="urlrewrite-annotations" depends="compile">
+        <path id="annotation-classpath">
+            <fileset file="dist/urlrewrite-${app.version}/annotation/urlrewrite-annotation-${app.version}.jar"/>
+            <fileset file="lib/servlet-api.jar"/>
+        </path>
+        <mkdir dir="build/WEB-INF/"/>
+        <apt compile="false" factory="org.tuckey.web.filters.urlrewrite.annotation.HttpUrlAPTFactory"
+             srcdir="src/annotation/test/" classpathref="annotation-classpath">
+            <option name="saveRulesTo" value="build/WEB-INF/urlrewrite-generated.xml"/>
+        </apt>
+    </target>
+
+    <target name="copy-for-cvs" depends="clean">
+        <mkdir dir="../urlrewrite-cvs/"/>
+        <copy todir="../urlrewrite-cvs/">
+            <fileset dir="./">
+                <include name="src/**"/>
+                <include name="lib/**"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="get-libs-check">
+        <available file="lib/${jar.groovy}" property="lib.complete"/>
+    </target>
+
+    <target name="get-libs" depends="get-libs-check" unless="lib.complete">
+        <description>
+
+            Download necessary libs from the web. You may need to set a proxy via ANT_OPTS
+            if you're behind a firewall. Something like:
+
+            % export ANT_OPTS="-Dhttp.proxyHost=foo.org -Dhttp.proxyPort=8080 -Dhttps.proxyHost=foo.org -Dhttps.proxyPort=8080"
+
+        </description>
+        <get dest="lib/${jar.groovy}" usetimestamp="true"
+             src="http://www.ibiblio.org/maven/groovy/jars/${jar.groovy}"/>
+    </target>
+
+
+</project>
