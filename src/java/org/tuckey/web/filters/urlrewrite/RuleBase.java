@@ -42,6 +42,7 @@ import org.tuckey.web.filters.urlrewrite.utils.StringMatchingPattern;
 import org.tuckey.web.filters.urlrewrite.utils.StringMatchingPatternSyntaxException;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 import org.tuckey.web.filters.urlrewrite.utils.WildcardPattern;
+import org.tuckey.web.filters.urlrewrite.utils.FunctionReplacer;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -92,6 +93,7 @@ public class RuleBase implements Runnable {
 
     private boolean toContainsVariable = false;
     private boolean toContainsBackReference = false;
+    private boolean toContainsFunction = false;
 
     public static final String MATCH_TYPE_WILDCARD = "wildcard";
     public static final String DEFAULT_MATCH_TYPE = "regex";
@@ -230,6 +232,10 @@ public class RuleBase implements Runnable {
                 if (toContainsBackReference) {
                     replacedTo = BackReferenceReplacer.replace(lastConditionMatch, replacedTo);
                 }
+                // do variable replacement
+                if (toContainsFunction) {
+                    replacedTo = FunctionReplacer.replace(replacedTo);
+                }
             }
 
             // get existing eg, $1 items
@@ -332,6 +338,10 @@ public class RuleBase implements Runnable {
             if (VariableReplacer.containsVariable(to)) {
                 toContainsVariable = true;
             }
+            // look for functions
+            if (FunctionReplacer.containsFunction(to)) {
+                toContainsFunction = true;
+            }
         }
 
         if (ok) {
@@ -356,6 +366,10 @@ public class RuleBase implements Runnable {
 
     public boolean isToContainsVariable() {
         return toContainsVariable;
+    }
+
+    public boolean isToContainsFunction() {
+        return toContainsFunction;
     }
 
     public String getFullDisplayName() {
