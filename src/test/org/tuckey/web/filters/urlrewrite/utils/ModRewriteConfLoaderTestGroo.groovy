@@ -1,34 +1,34 @@
 package org.tuckey.web.filters.urlrewrite.utils
 
 import groovy.util.GroovyTestCase
+import org.tuckey.web.filters.urlrewrite.Conf
 
 class ModRewriteConfLoaderTestGroo extends GroovyTestCase {
     def loader = new ModRewriteConfLoader()
+    def conf
 
     void setUp() {
         Log.setLevel("DEBUG")
+        conf = new Conf()
     }
 
     void testEngineOn() {
-        def conf = loader.process("RewriteEngine on")
-        assertNotNull conf
+        loader.process("RewriteEngine on", conf)
         assertTrue conf.engineEnabled
     }
 
     void testEngineOff() {
-        def conf = loader.process("RewriteEngine off")
-        assertNotNull conf
+        loader.process("RewriteEngine off", conf)
         assertFalse conf.engineEnabled
     }
 
     void testSimpleRule() {
-        def conf = loader.process('''
+        loader.process('''
             # redirect mozilla to another area
             RewriteCond %{HTTP_USER_AGENT} ^Mozilla.*
             RewriteRule ^/$                /homepage.max.html [L]
-        ''')
+        ''', conf)
 
-        assertNotNull conf
         assertNotNull conf.rules
         assertEquals 1, conf.rules.size()
 
@@ -48,11 +48,10 @@ class ModRewriteConfLoaderTestGroo extends GroovyTestCase {
     }
 
     void testSimpleRedirect() {
-        def conf = loader.process('''
+        loader.process('''
             RewriteRule ^/$     http://www.foo.com [R]
-        ''')
+        ''', conf)
 
-        assertNotNull conf
         assertNotNull conf.rules
         assertEquals 1, conf.rules.size()
 
@@ -64,11 +63,10 @@ class ModRewriteConfLoaderTestGroo extends GroovyTestCase {
     }
 
     void testPermanentRedirect() {
-        def conf = loader.process('''
+        loader.process('''
             RewriteRule ^/$     http://www.foo.com [R=301]
-        ''')
+        ''', conf)
 
-        assertNotNull conf
         assertNotNull conf.rules
         assertEquals 1, conf.rules.size()
 
@@ -80,11 +78,10 @@ class ModRewriteConfLoaderTestGroo extends GroovyTestCase {
     }
 
     void testTemporaryRedirect() {
-        def conf = loader.process('''
+        loader.process('''
             RewriteRule ^/$     http://www.foo.com [R=302]
-        ''')
+        ''', conf)
 
-        assertNotNull conf
         assertNotNull conf.rules
         assertEquals 1, conf.rules.size()
 
