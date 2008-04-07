@@ -42,7 +42,7 @@
     <property name="optimize" value="off"/>
     <property name="deprecation" value="off"/>
 
-    <property name="tomcat.home" value="/java/jakarta-tomcat-5.0.28"/>
+    <property name="tomcat.home" value="/java/apache-tomcat-5.5.23"/>
 
     <!-- Properties for the Cactus tests -->
     <property name="cactus.port" value="8080"/>
@@ -107,8 +107,6 @@
     </path>
 
     <!-- Libraries required for the Cactus tests -->
-    <property name="clover.jar"
-        location="${cactus.dir}/lib/clover.jar"/>
     <property name="aspectjrt.jar"
         location="${cactus.dir}/lib/aspectjrt-1.2.1.jar"/>
     <property name="cactus.jar"
@@ -293,8 +291,6 @@
             <!-- Orion fails on a servlet filter that is not mapped to an actual
                  resource, to trick it -->
             <filterredirector mapping="/test/filterRedirector.jsp"/>
-            <!-- Needed for Clover coverage reports -->
-            <lib file="${clover.jar}"/>
         </cactifywar>
 
         <!-- Prepare the directories for the JUnit reports -->
@@ -321,16 +317,8 @@
             <cactusproperty server="true"
                 propertiesFile="${target.dir.normalized}/logging_server.properties"/>
 
-            <!-- Additional jars that will be added to the classpath used to start the
-               container (in addition to the container jars themseleves which are
-               automatically added by the <cactus> task -->
-            <containerclasspath>
-                <pathelement location="${clover.jar}"/>
-            </containerclasspath>
-
             <classpath>
                 <path refid="project.classpath"/>
-                <pathelement location="${clover.jar}"/>
                 <pathelement location="${httpunit.jar}"/>
                 <pathelement location="${nekohtml.jar}"/>
                 <pathelement location="${target.classes.java.dir}"/>
@@ -358,7 +346,7 @@
                 <tomcat4x if="cactus.home.tomcat4x"
                     dir="${cactus.home.tomcat4x}" port="${cactus.port}"
                     output="${target.testreports.dir}/tomcat4x.out"
-                    todir="${target.testreports.dir}/tomcat4x"/>
+                    todir="${target.testreports.dir}/tomcat4x"/> 
                 <tomcat5x if="cactus.home.tomcat5x"
                     dir="${cactus.home.tomcat5x}" port="${cactus.port}"
                     output="${target.testreports.dir}/tomcat5x.out"
