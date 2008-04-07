@@ -34,19 +34,14 @@
  */
 package org.tuckey.web.filters.urlrewrite.utils;
 
-import org.tuckey.web.filters.urlrewrite.Function;
 import org.tuckey.web.filters.urlrewrite.VariableReplacer;
+import org.tuckey.web.filters.urlrewrite.functions.StringFunctions;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Helper class for variable replacement.
+ * Helper class for function replacement.
  *
  * @author Paul Tuckey
  * @version $Revision: 1 $ $Date: 2006-08-01 21:40:28 +1200 (Tue, 01 Aug 2006) $
@@ -58,13 +53,11 @@ public class FunctionReplacer {
     private static Pattern functionPattern = Pattern.compile("(?<!\\\\)\\$\\{(.*?)\\}");
 
     public static boolean containsFunction(String to) {
-        Matcher variableMatcher = functionPattern.matcher(to);
-        return variableMatcher.find();
+        Matcher functionMatcher = functionPattern.matcher(to);
+        return functionMatcher.find();
     }
 
-
-    public static String replace(String subjectOfReplacement, Map functions, HttpServletRequest hsRequest)
-            throws IOException, InvocationTargetException, ServletException {
+    public static String replace(String subjectOfReplacement) {
         Matcher functionMatcher = functionPattern.matcher(subjectOfReplacement);
         StringBuffer sb = new StringBuffer();
         boolean anyMatches = false;
@@ -82,7 +75,7 @@ public class FunctionReplacer {
             String varStr = functionMatcher.group(1);
             String varValue = "";
             if (varStr != null) {
-                varValue = functionReplace(varStr, functions, hsRequest);
+                varValue = functionReplace(varStr);
                 if (log.isDebugEnabled()) log.debug("resolved to: " + varValue);
             } else {
                 if (log.isDebugEnabled()) log.debug("variable reference is null " + functionMatcher);
@@ -101,9 +94,7 @@ public class FunctionReplacer {
     /**
      * Handles the fetching of the variable value from the request.
      */
-    private static String functionReplace(String originalVarStr, Map functions,
-                                          HttpServletRequest hsRequest)
-            throws InvocationTargetException, IOException, ServletException {
+    private static String functionReplace(String originalVarStr) {
         // get the sub name if any ie for headers etc header:user-agent
         String varSubName = null;
         String varType;
@@ -117,13 +108,26 @@ public class FunctionReplacer {
             varType = originalVarStr;
             if (log.isDebugEnabled()) log.debug("function ${" + originalVarStr + "} type: " + varType);
         }
-        Function function = (Function) functions.get(varType);
-        if (function != null) {
-            return function.execute(varSubName, hsRequest);
+        String functionResult = "";
+        // check for some built in functions
+        if ("replace".equalsIgnoreCase(varType) || "replaceAll".equalsIgnoreCase(varType)) {
+            functionResult = StringFunctions.replaceAll(varSubName);
+        } else if ("replaceFirst".equalsIgnoreCase(varType)) {
+            functionResult = StringFunctions.replaceFirst(varSubName);
+        } else if ("escape".equalsIgnoreCase(varType)) {
+            functionResult = StringFunctions.escape(varSubName);
+        } else if ("unescape".equalsIgnoreCase(varType)) {
+            functionResult = StringFunctions.unescape(varSubName);
+        } else if ("lower".equalsIgnoreCase(varType) || "toLower".equalsIgnoreCase(varType)) {
+            functionResult = StringFunctions.toLower(varSubName);
+        } else if ("upper".equalsIgnoreCase(varType) || "toUpper".equalsIgnoreCase(varType)) {
+            functionResult = StringFunctions.toUpper(varSubName);
+        } else if ("trim".equalsIgnoreCase(varType)) {
+            functionResult = StringFunctions.trim(varSubName);
         } else {
             log.error("function ${" + originalVarStr + "} type '" + varType + "' not a valid type");
-            return "";
         }
+        return functionResult;
     }
 
 

@@ -38,6 +38,7 @@ import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.utils.NumberUtils;
 import org.tuckey.web.filters.urlrewrite.utils.StringMatchingMatcher;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
+import org.tuckey.web.filters.urlrewrite.utils.FunctionReplacer;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -83,6 +84,7 @@ public class SetAttribute {
     private long expiresValueAdd = 0;
     private boolean valueContainsVariable = false;
     private boolean valueContainsBackRef = false;
+    private boolean valueContainsFunction = false;
     private static Pattern replacementVarPattern = Pattern.compile("(?<!\\\\)\\$([0-9])");
 
     public String getType() {
@@ -181,6 +183,9 @@ public class SetAttribute {
         if (valueContainsVariable) {
             value = VariableReplacer.replace(value, hsRequest);
         }
+        if (valueContainsFunction) {
+            value = FunctionReplacer.replace(value);
+        }
 
         if (type == SET_TYPE_REQUEST) {
             log.debug("setting request attrib");
@@ -241,6 +246,9 @@ public class SetAttribute {
             }
             if (VariableReplacer.containsVariable(value)) {
                 valueContainsVariable = true;
+            }
+            if (FunctionReplacer.containsFunction(value)) {
+                valueContainsFunction = true;
             }
         }
 
