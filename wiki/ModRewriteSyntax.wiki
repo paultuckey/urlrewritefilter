@@ -1,5 +1,4 @@
 #summary Configuration may be specified in mod_rewrite style from version 3.1 onwards.
-#labels Phase-Design
 
 =Configuration mod_rewrite style=
 
