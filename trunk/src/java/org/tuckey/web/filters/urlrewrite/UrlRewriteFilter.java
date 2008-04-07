@@ -178,6 +178,9 @@ public class UrlRewriteFilter implements Filter {
     private boolean statusEnabled = true;
     private String statusPath = "/rewrite-status";
 
+    private boolean modRewriteStyleConf = false;
+    public static final String DEFAULT_MOD_REWRITE_STYLE_CONF_PATH = "/WEB-INF/.htaccess";
+
     private ServerNameMatcher statusServerNameMatcher;
     private static final String DEFAULT_STATUS_ENABLED_ON_HOSTS = "localhost, local, 127.0.0.1";
 
@@ -241,10 +244,15 @@ public class UrlRewriteFilter implements Filter {
             confReloadCheckEnabled = false;
         }
 
+        String modRewriteConf = filterConfig.getInitParameter("modRewriteConf");
+        if (!StringUtils.isBlank(modRewriteConf)) {
+            modRewriteStyleConf = "true".equals(StringUtils.trim(modRewriteConf).toLowerCase());
+        }
+
         if (!StringUtils.isBlank(confPathStr)) {
             confPath = StringUtils.trim(confPathStr);
         } else {
-            confPath = DEFAULT_WEB_CONF_PATH;
+            confPath = modRewriteStyleConf ? DEFAULT_MOD_REWRITE_STYLE_CONF_PATH : DEFAULT_WEB_CONF_PATH;
         }
         log.debug("confPath set to " + confPath);
 
@@ -270,23 +278,26 @@ public class UrlRewriteFilter implements Filter {
         }
         statusServerNameMatcher = new ServerNameMatcher(statusEnabledOnHosts);
 
-        loadUrlRewriter(filterConfig);
+        // now load conf from snippet in web.xml if modRewriteStyleConf is set
+        String modRewriteConfText = filterConfig.getInitParameter("modRewriteConfText");
+        if (!StringUtils.isBlank(modRewriteConfText)) {
+            ModRewriteConfLoader loader = new ModRewriteConfLoader();
+            Conf conf = new Conf();
+            loader.process(modRewriteConfText, conf);
+            checkConf(conf);
+            confLoadedFromFile = false;
+
+        }   else {
+
+            loadUrlRewriter(filterConfig);
+        }
     }
 
     /**
      * Separate from init so that it can be overidden.
      */
     protected void loadUrlRewriter(FilterConfig filterConfig) throws ServletException {
-        String modRewriteStyleConf = filterConfig.getInitParameter("conf");
-        if (!StringUtils.isBlank(modRewriteStyleConf)) {
-            ModRewriteConfLoader loader = new ModRewriteConfLoader();
-            Conf conf = loader.process(modRewriteStyleConf);
-            checkConf(conf);
-
-        } else {
-            confLoadedFromFile = true;
-            loadUrlRewriter();
-        }
+        loadUrlRewriter();
     }
 
 
@@ -311,7 +322,7 @@ public class UrlRewriteFilter implements Filter {
             }
 
         } else {
-            Conf conf = new Conf(context, inputStream, confPath, confUrlStr);
+            Conf conf = new Conf(context, inputStream, confPath, confUrlStr, modRewriteStyleConf);
             checkConf(conf);
         }
     }
@@ -385,7 +396,6 @@ public class UrlRewriteFilter implements Filter {
         final HttpServletResponse hsResponse = (HttpServletResponse) response;
         UrlRewriteWrappedResponse urlRewriteWrappedResponse = new UrlRewriteWrappedResponse(hsResponse, hsRequest,
                 urlRewriter);
-        //UrlRewriteWrappedRequest urlRewriteWrappedRequest = new UrlRewriteWrappedRequest(hsRequest);
 
         // check for status request
         if (statusEnabled && statusServerNameMatcher.isMatch(request.getServerName())) {
