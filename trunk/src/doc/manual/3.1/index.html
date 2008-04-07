@@ -36,6 +36,7 @@
             <li><a href="#filterparams">Filter Parameters</a></li>
             <li><a href="#configuration">Configuration File</a></li>
             <li><a href="#anttask">Ant Task</a></li>
+            <li><a href="index.html#mod_rewrite_conf">mod_rewrite Style</a></li>
         </ul>
     </li>
     <li><a href="annotation.html">Annotations</a></li>
@@ -46,7 +47,6 @@
             <li><a href="guide.html#mod_re">mod_rewrite vs UrlRewriteFilter</a></li>
         </ul>
     </li>
-    <li><a href="annotation.html">Annotations</a></li>
 </ul>
 </div>
 
@@ -107,7 +107,7 @@
         can be a valid integer (0 denotes check every time,
         -1 denotes no reload check, default -1) --&gt;
         &lt;init-param&gt;
-            &lt;param-name&gt;confReloadCheckInterval&lt;/param-name&gt;
+            &lt;param-name&gt;<b>confReloadCheckInterval</b>&lt;/param-name&gt;
             &lt;param-value&gt;60&lt;/param-value&gt;
         &lt;/init-param&gt;
 
@@ -115,7 +115,7 @@
         it is specified as a path relative to the root of your context
         (default /WEB-INF/urlrewrite.xml) --&gt;
         &lt;init-param&gt;
-            &lt;param-name&gt;confPath&lt;/param-name&gt;
+            &lt;param-name&gt;<b>confPath</b>&lt;/param-name&gt;
             &lt;param-value&gt;/WEB-INF/urlrewrite.xml&lt;/param-value&gt;
         &lt;/init-param&gt;
 
@@ -125,7 +125,7 @@
         if you are having trouble using normal levels use sysout:DEBUG
         (default WARN) --&gt;
         &lt;init-param&gt;
-            &lt;param-name&gt;logLevel&lt;/param-name&gt;
+            &lt;param-name&gt;<b>logLevel</b>&lt;/param-name&gt;
             &lt;param-value&gt;DEBUG&lt;/param-value&gt;
         &lt;/init-param&gt;
 
@@ -133,14 +133,14 @@
         conflict with your installed apps (note, defaults
         to /rewrite-status) note, must start with / --&gt;
         &lt;init-param&gt;
-            &lt;param-name&gt;statusPath&lt;/param-name&gt;
+            &lt;param-name&gt;<b>statusPath</b>&lt;/param-name&gt;
             &lt;param-value&gt;/status&lt;/param-value&gt;
         &lt;/init-param&gt;
 
         &lt;!-- you can disable status page if desired
         can be: true, false (default true) --&gt;
         &lt;init-param&gt;
-            &lt;param-name&gt;statusEnabled&lt;/param-name&gt;
+            &lt;param-name&gt;<b>statusEnabled</b>&lt;/param-name&gt;
             &lt;param-value&gt;true&lt;/param-value&gt;
         &lt;/init-param&gt;
 
@@ -148,9 +148,35 @@
         statusEnabledOnHosts is a comma delimited list of hosts, * can
         be used as a wildcard (defaults to "localhost, local, 127.0.0.1") --&gt;
         &lt;init-param&gt;
-            &lt;param-name&gt;statusEnabledOnHosts&lt;/param-name&gt;
+            &lt;param-name&gt;<b>statusEnabledOnHosts</b>&lt;/param-name&gt;
             &lt;param-value&gt;localhost, dev.*.myco.com, *.uat.mycom.com&lt;/param-value&gt;
         &lt;/init-param&gt;
+
+        &lt;!-- you may want to allow more hosts to look at the status page
+        statusEnabledOnHosts is a comma delimited list of hosts, * can
+        be used as a wildcard (defaults to "localhost, local, 127.0.0.1") --&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;<b>statusEnabledOnHosts</b>&lt;/param-name&gt;
+            &lt;param-value&gt;localhost, dev.*.myco.com, *.uat.mycom.com&lt;/param-value&gt;
+        &lt;/init-param&gt;
+
+        &lt;!-- defaults to false. use mod_rewrite style configuration file (if this is true and confPath
+        is not specified confPath will be set to /WEB-INF/.htaccess) --&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;<b>modRewriteConf</b>&lt;/param-name&gt;
+            &lt;param-value&gt;false&lt;/param-value&gt;
+        &lt;/init-param&gt;
+
+        &lt;!-- load mod_rewrite style configuration from this parameter's value.
+                note, Setting this parameter will mean that all other conf parameters are ignored.
+            &lt;init-param&gt;
+                &lt;param-name&gt;<b>modRewriteConfText</b>&lt;/param-name&gt;
+                &lt;param-value&gt;
+                    RewriteRule ^/~([^/]+)/?(.*) /u/$1/$2 [R]
+                    RewriteRule ^/([uge])/([^/]+)$ /$1/$2/ [R]
+                &lt;/param-value&gt;
+            &lt;/init-param&gt;
+        --&gt;
 
     &lt;/filter&gt;
 
@@ -846,6 +872,58 @@
 
 <p>Valid types are condition types, see <a href="#condition">condition</a> for a full description.</p>
 
+<a name="functions"></a>
+<h4>Functions</h4>
+
+<pre><code>
+    ${FUNCTION:PARAMS}
+</code></pre>
+
+ <p>Functions can be places in <code>set</code> and <code>to</code> elements.</p>
+
+<table>
+     <tr>
+     <th>name</th>
+     <th>example</th>
+     <th>example returns</th>
+     </tr>
+     <tr>
+         <td>replace</td>
+         <td><code>${replace:my cat is a blue cat:cat:dog}</code></td>
+         <td>my dog is a blue dog</td>
+     </tr>
+     <tr>
+         <td>replaceFirst</td>
+         <td><code>${replace:my cat is a blue cat:cat:dog}</code></td>
+         <td>my cat is a blue dog</td>
+     </tr>
+     <tr>
+         <td>escape</td>
+         <td><code>${escape:a b c}</code></td>
+         <td>a+b+c</td>
+     </tr>
+     <tr>
+         <td>unescape</td>
+         <td><code>${unescape:a+b+c}</code></td>
+         <td>a b c</td>
+     </tr>
+     <tr>
+         <td>lower</td>
+         <td><code>${lower:Hello World}</code></td>
+         <td>hello world</td>
+     </tr>
+     <tr>
+         <td>upper</td>
+         <td><code>${upper:hello}</code></td>
+         <td>HELLO</td>
+     </tr>
+     <tr>
+         <td>trim</td>
+         <td><code>${trim: abc def }</code></td>
+         <td>abc def</td>
+     </tr>
+ </table>
+    
 
 <h3>&lt;set&gt; element</h3>
 
@@ -1125,6 +1203,93 @@
         dest="urlrewrite-conf-overview.html" /&gt;
     &lt;/target&gt;
 </code></pre>
+
+
+<a name="mod_rewrite_conf"></a>
+
+<h2>mod_rewrite Style Configuration</h2>
+
+<p>Support for mod_rewrite is considered beta quality. Set modRewriteConf to true in filter parameters and
+add a WEB-INF/.htaccess file with your mod_rewrite style configuration in it.</p>
+
+<p>Sample web.xml snippet (see also modRewriteConf and modRewriteConfText in <a href="#filterparams">Filter Parameters</a>):</p>
+<pre><code>
+    &lt;filter&gt;
+        &lt;filter-name&gt;UrlRewriteFilter&lt;/filter-name&gt;
+        &lt;filter-class&gt;org.tuckey.web.filters.urlrewrite.UrlRewriteFilter&lt;/filter-class&gt;
+
+        &lt;!-- defaults to false. use mod_rewrite style configuration file (if this is true and confPath
+        is not specified confPath will be set to /WEB-INF/.htaccess) --&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;<b>modRewriteConf</b>&lt;/param-name&gt;
+            &lt;param-value&gt;true&lt;/param-value&gt;
+        &lt;/init-param&gt;
+
+    &lt;/filter&gt;
+
+    &lt;filter-mapping&gt;
+        &lt;filter-name&gt;UrlRewriteFilter&lt;/filter-name&gt;
+        &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+    &lt;/filter-mapping&gt;
+</code></pre>
+
+ <p>Sample: WEB-INF/.htaccess</p>
+ <pre><code>
+     # redirect mozilla to another area
+     RewriteCond  %{HTTP_USER_AGENT}  ^Mozilla.*
+     RewriteRule  ^/no-moz-here$                 /homepage.max.html  [L]
+ </code></pre>
+
+<p>
+
+     <a href="http://httpd.apache.org/docs/2.2/mod/mod_rewrite.html">Documentation for the original mod_rewrite library</a>
+     mostly applies, differences are documented below.</p>
+
+ <table cellspacing="0">
+     <tr>
+         <th>Attribute</th>
+         <th>Explanation</th>
+     </tr>
+     <tr>
+         <td>RewriteLogLevel</td>
+         <td>Specified as int, trasnlated as: &lt;= 1 - FATAL, 2 - ERROR, 3 - INFO, 4 - WARN, &gt;= 5 DEBUG</td>
+     </tr>
+     <tr>
+         <td>RewriteLog</td>
+         <td>SYSOUT, SYSERR, log4j, commons (if not set context logging will be used)</td>
+     </tr>
+     <tr>
+         <td>RewriteRule</td>
+         <td>Certain flags not supported:
+         <ul>
+             <li>chain flag [C] not supported</li>
+             <li>env flag [E] not supported</li>
+             <li>next flag [N] not supported</li>
+             <li>nosubreq flag [NS] not supported</li>
+             <li>Proxy flag [P] not supported</li>
+             <li>qsappend flag [QSA] not supported</li>
+             <li>Skip flag [S] not supported</li>
+         </ul>
+         </td>
+     </tr>
+     <tr>
+         <td>RewriteBase</td>
+         <td>Not supported</td>
+     </tr>
+     <tr>
+         <td>RewriteLock</td>
+         <td>Not supported</td>
+     </tr>
+     <tr>
+         <td>RewriteMap</td>
+         <td>Not supported</td>
+     </tr>
+     <tr>
+         <td>RewriteOptions</td>
+         <td>Not supported</td>
+     </tr>
+</table>
+
 
 </div>
 

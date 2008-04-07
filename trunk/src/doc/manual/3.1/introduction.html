@@ -36,6 +36,7 @@
             <li><a href="index.html#filterparams">Filter Parameters</a></li>
             <li><a href="index.html#configuration">Configuration File</a></li>
             <li><a href="index.html#anttask">Ant Task</a></li>
+            <li><a href="index.html#mod_rewrite_conf">mod_rewrite Style</a></li>
         </ul>
     </li>
     <li><a href="annotation.html">Annotations</a></li>
@@ -46,7 +47,6 @@
             <li><a href="guide.html#mod_re">mod_rewrite vs UrlRewriteFilter</a></li>
         </ul>
     </li>
-    <li><a href="annotation.html">Annotations</a></li>
 </ul>
 </div>
 
@@ -168,10 +168,18 @@ The original URL can also be reconstructed from more basic components available 
  <a name="changelog"></a>
  <h2>Changelog</h2>
 
+    <ul>
+        <li>3.1 beta - Rules are now allowed to have only condition and set
+            <ul>
+                <li>bug fix, xml entites containing jndi protocol now correctly loaded</li>
+                <li>expiremental <a href="index.html#mod_rewrite_conf">mod_rewrite style configuration</a></li>
+                <li>basic <a href="index.html#functions">functions</a> in "set", and "to" elements eg, ${trim:%1}</li>
+           </ul>
+        </li>
+     </ul>
+
  <p>
-     3.1 - Rules are now allowed to have only condition and set
-       bug fix, xml entites containing jndi protocol now correctly loaded
-     <br/>3.0.4 Beta - Bug fix - cookie value not being set with variable replacement
+     3.0.4 Beta - Bug fix - cookie value not being set with variable replacement
      <br/>3.0.3 Beta - Bug fix - annotation processor rule sorting
      <br/>Bug Fix - evaluation boolean result was incorrect on failed condition instance matches 
      <br/>3.0.2 Beta - Rule chaining bug fixes
