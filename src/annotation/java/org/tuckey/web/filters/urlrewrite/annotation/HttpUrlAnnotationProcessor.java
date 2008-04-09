@@ -44,7 +44,6 @@ import com.sun.mirror.declaration.MethodDeclaration;
 import com.sun.mirror.declaration.ParameterDeclaration;
 import com.sun.mirror.util.SourcePosition;
 
-import javax.servlet.FilterChain;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -58,9 +57,6 @@ import java.util.Set;
 
 /**
  * Annotation processor for UrlRewrite. Will search compiled classes for annotations and generate XML.
- * todo: validate nethodname?
- * todo: validate classname
- * todo: what about private methods???
  */
 public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
 
@@ -69,8 +65,9 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
     private AnnotationTypeDeclaration httpExceptionHandlerDeclaration;
     private List<ProcessedHttpUrlAnnotation> processedAnnotations = new ArrayList<ProcessedHttpUrlAnnotation>();
     private List<ProcessedHttpExceptionAnnotation> httpExceptionHandlers = new ArrayList<ProcessedHttpExceptionAnnotation>();
-    Messager messager;
+    private Messager messager;
     private boolean showPositionsOfAnnotations = false;
+    private boolean debug = false;
 
     public HttpUrlAnnotationProcessor(AnnotationProcessorEnvironment env) {
         environment = env;
@@ -81,31 +78,32 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
     }
 
     public void process() {
-
         Map<String, String> options = environment.getOptions();
         Set<String> keys = options.keySet();
-        String confOption = null;
+        String saveRulesTo = null;
         for (String key : keys) {
             if (key.startsWith("-AsaveRulesTo=")) {
-                confOption = key.substring("-AsaveRulesTo=".length());
+                saveRulesTo = key.substring("-AsaveRulesTo=".length());
             }
             if (key.startsWith("-AshowPositions=")) {
                 showPositionsOfAnnotations = "true".equalsIgnoreCase(key.substring("-AshowPositions=".length()));
             }
+            if (key.startsWith("-Adebug=")) {
+                debug = "true".equalsIgnoreCase(key.substring("-Adebug=".length()));
+            }
         }
-        if (confOption == null) {
+        debugMsg("Processing");
+        if (saveRulesTo == null) {
             messager.printError("ERROR: conf option must be specified");
             return;
         }
 
-        File confFile = new File(confOption);
+        File confFile = new File(saveRulesTo);
         PrintWriter pw;
         boolean delFile = false;
         try {
             if (!confFile.exists()) {
-                if ( !confFile.getParentFile().exists() ) {
-                    confFile.getParentFile().mkdir();
-                }
+                checkDirsExistMkdir(confFile.getParentFile());
                 confFile.createNewFile();
             }
             if (!confFile.canWrite()) throw new IOException("cannot write to " + confFile.getName());
@@ -117,6 +115,7 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
         try {
 
             // Get all declarations that use the HttpUrl annotation.
+            debugMsg("Looking for @HttpUrl");
             Collection<Declaration> urlDeclarations = environment.getDeclarationsAnnotatedWith(httpUrlDeclaration);
             for (Declaration declaration : urlDeclarations) {
                 ProcessedHttpUrlAnnotation pa = processHttpUrlAnnotation(declaration);
@@ -125,6 +124,7 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
             }
 
             // Get all declarations that use the HttpExceptionHandler annotation.
+            debugMsg("Looking for @HttpExceptionHandler");
             Collection<Declaration> exceptionDeclarations = environment.getDeclarationsAnnotatedWith(httpExceptionHandlerDeclaration);
             for (Declaration declaration : exceptionDeclarations) {
                 ProcessedHttpExceptionAnnotation phea = processHttpExceptionHandlerAnnotation(declaration);
@@ -143,41 +143,12 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
 
             if (!delFile) {
                 environment.getMessager().printNotice("Writing to " + confFile);
-                for (ProcessedHttpUrlAnnotation pa : processedAnnotations) {
-                    pw.println("<rule>");
-                    pw.println("    <name>" + pa.sourceRef + "</name>");
-                    if (!isBlank(pa.docComment)) {
-                        pw.println("    <note>");
-                        pw.println(padEachLine("        ", escapeXML(pa.docComment)));
-                        pw.println("    </note>");
-                    }
-                    pw.println("    <from>" + pa.value + "</from>");
-                    pw.println("    <run class=\"" + pa.className + "\" method=\"" + pa.methodName + pa.paramsFormatted +
-                            "\" />");
-                    if (!pa.chainUsed) {
-                        pw.println("    <to>null</to>");
-                    }
-                    pw.println("</rule>");
-                    pw.flush();
-                }
-
-                for (ProcessedHttpExceptionAnnotation pa : httpExceptionHandlers) {
-                    pw.println("<catch class=\"" + pa.exceptionName + "\">");
-                    if (!isBlank(pa.docComment)) {
-                        pw.println("    <note>");
-                        pw.println(padEachLine("        ", escapeXML(pa.docComment)));
-                        pw.println("    </note>");
-                    }
-                    pw.println("    <run class=\"" + pa.className + "\" method=\"" + pa.methodName + pa.paramsFormatted + "\"/>");
-                    pw.println("</catch>");
-                    pw.flush();
-
-                }
+                outputRules(pw);
+                outputExceptionHandlers(pw);
 
             } else {
                 confFile.delete();
             }
-
 
         } catch (Throwable t) {
             delFile = true;
@@ -189,6 +160,40 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
         }
 
         pw.close();
+    }
+
+    private void outputRules(PrintWriter pw) {
+        for (ProcessedHttpUrlAnnotation pa : processedAnnotations) {
+            pw.println("<rule>");
+            pw.println("    <name>" + pa.sourceRef + "</name>");
+            if (!isBlank(pa.docComment)) {
+                pw.println("    <note>");
+                pw.println(padEachLine("        ", escapeXML(pa.docComment)));
+                pw.println("    </note>");
+            }
+            pw.println("    <from>" + pa.value + "</from>");
+            pw.println("    <run class=\"" + pa.className + "\" method=\"" + pa.methodName + pa.paramsFormatted +
+                    "\" />");
+            if (!pa.chainUsed) {
+                pw.println("    <to>null</to>");
+            }
+            pw.println("</rule>");
+            pw.flush();
+        }
+    }
+
+    private void outputExceptionHandlers(PrintWriter pw) {
+        for (ProcessedHttpExceptionAnnotation pa : httpExceptionHandlers) {
+            pw.println("<catch class=\"" + pa.exceptionName + "\">");
+            if (!isBlank(pa.docComment)) {
+                pw.println("    <note>");
+                pw.println(padEachLine("        ", escapeXML(pa.docComment)));
+                pw.println("    </note>");
+            }
+            pw.println("    <run class=\"" + pa.className + "\" method=\"" + pa.methodName + pa.paramsFormatted + "\"/>");
+            pw.println("</catch>");
+            pw.flush();
+        }
     }
 
     private ProcessedHttpUrlAnnotation processHttpUrlAnnotation(Declaration declaration) {
@@ -234,8 +239,8 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
         public String methodName;
         public String className;
         public String docComment;
-        public boolean valid = true;
         public String sourceRef;
+        private static final String FILTER_CHAIN_CLASS_NAME = "javax.servlet.FilterChain";
 
         public ProcessedHttpUrlAnnotation() {
             // empty
@@ -255,7 +260,6 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
             sourceRef = positionInCode.file().getName() + ":" + positionInCode.line();
             if (!(declaration instanceof MethodDeclaration)) {
                 messager.printWarning(positionInCode, "@" + typeNameShort + " declared on a non-method " + positionInCode);
-                valid = false;
             }
             if (showPositionsOfAnnotations) {
                 messager.printNotice(positionInCode, "@" + typeNameShort + " value " + value + " weight " + weight);
@@ -282,7 +286,7 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
                 int i = 1;
                 for (ParameterDeclaration paramDeclaration : params) {
                     String paramType = paramDeclaration.getType().toString();
-                    if (FilterChain.class.getName().equals(paramType)) {
+                    if (FILTER_CHAIN_CLASS_NAME.equals(paramType)) {
                         chainUsed = true;
                     }
                     paramsFormatted += (i == 1 ? "" : ", ") + paramType;
@@ -321,7 +325,7 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
      * @param s string to escape
      * @return the escaped string
      */
-    public static String escapeXML(String s) {
+    private static String escapeXML(String s) {
         if (s == null) {
             return null;
         }
@@ -347,8 +351,7 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
         return b.toString();
     }
 
-
-    public static String padEachLine(String padWith, String str) {
+    private static String padEachLine(String padWith, String str) {
         StringBuffer out = new StringBuffer();
         String[] lines = str.split("\n");
         int i = 0;
@@ -362,8 +365,22 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
         return out.toString();
     }
 
-    public static boolean isBlank(final String str) {
+    private static boolean isBlank(final String str) {
         return str == null || "".equals(str) || "".equals(str.trim());
+    }
+
+    private static void checkDirsExistMkdir(File dir) {
+        if (!dir.getParentFile().exists()) {
+            checkDirsExistMkdir(dir.getParentFile());
+        }
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+    }
+
+    private void debugMsg(String msg) {
+        if ( ! debug ) return;
+        messager.printNotice("Debug: " + msg);
     }
 
 }
