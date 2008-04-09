@@ -41,11 +41,12 @@ import com.sun.mirror.apt.AnnotationProcessors;
 import com.sun.mirror.declaration.AnnotationTypeDeclaration;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
-
+/**
+ * Annotation Processor Factory for UrlRewriteFilter annotations.
+ */
 public class HttpUrlAPTFactory implements AnnotationProcessorFactory {
 
     /**
@@ -88,6 +89,7 @@ public class HttpUrlAPTFactory implements AnnotationProcessorFactory {
         Set<String> set = new HashSet<String>();
         set.add("-AsaveRulesTo");
         set.add("-AshowPositions");
+        set.add("-Adebug");
         return set;
     }
 }

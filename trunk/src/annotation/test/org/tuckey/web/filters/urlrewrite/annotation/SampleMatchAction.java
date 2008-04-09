@@ -40,7 +40,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
 
 
 public class SampleMatchAction {
@@ -56,6 +55,13 @@ public class SampleMatchAction {
      */
     @HttpUrl("^/clientinfo/(*)/$")
     public void clientDetails(int clientId)
+            throws SQLException {
+
+    }
+
+    @HttpUrl("^/search/(clients|staff)/$")
+    public void addClientFilterSecond(String searchType, @HttpParam String firstName,
+                                      @HttpParam("lName")String lastName)
             throws SQLException {
 
     }
@@ -81,20 +87,11 @@ public class SampleMatchAction {
 
     }
 
-    // todo: add getParameter and post-param to condition type
-
-
     /**
      * In file 5th. Should be 2nd.
      */
     @HttpUrl(value = "^/clientinfo/(*)/$", weight = 1)
     public void addClientFilterSecond(int clientId, FilterChain chain)
-            throws SQLException {
-
-    }
-
-    @HttpUrl("^/search/(clients|staff)/$")
-    public void addClientFilterSecond(String searchType, @HttpParam String firstName, @HttpParam("lName") String lastName)
             throws SQLException {
 
     }
@@ -114,16 +111,5 @@ public class SampleMatchAction {
             throws SQLException {
 
     }
-
-/*
-    @HttpRule ({
-        @Condition(type= "header", name = "userAgent", value = "(.*)"), // condition element
-        @Param("firstName"), // or same as next line
-        @Condition(type= "parameter", name = "firstName", value = "(.*)"),
-        @From()
-    }) // weight
-    or
-    @HttpUrl("regex to match request url ie, from eleent")  // weight
-*/
 
 }
