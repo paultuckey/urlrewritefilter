@@ -80,12 +80,15 @@ public class HttpUrlAPTFactory implements AnnotationProcessorFactory {
     }
 
     /**
-     * No options are supported by this annotation processor.
+     * Options supported by this annotation processor.
      *
-     * @return an empty list.
+     * @return collection of options.
      */
     public Collection<String> supportedOptions() {
-        return Collections.emptyList();
+        Set<String> set = new HashSet<String>();
+        set.add("-AsaveRulesTo");
+        set.add("-AshowPositions");
+        return set;
     }
 }
 
