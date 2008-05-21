@@ -408,5 +408,36 @@ public class UrlRewriterTest extends TestCase {
         assertTrue("run2 should be invoked after chain " + diff, diff > 0 );
     }
 
+
+	public void testNoSubstitutionLast() throws IOException, ServletException, InvocationTargetException {
+		final NormalRule rule1 = new NormalRule();
+		rule1.setFrom("noSub");
+		rule1.setTo("-");
+		rule1.setToLast("true");
+		rule1.initialise(null);
+
+		final NormalRule rule2 = new NormalRule();
+		rule2.setFrom("noS");
+		rule2.setTo("changed");
+		rule2.initialise(null);
+
+		final Conf conf = new Conf();
+		conf.addRule(rule1);
+		conf.addRule(rule2);
+
+		conf.initialise();
+		final UrlRewriter urlRewriter = new UrlRewriter(conf);
+
+		final MockRequest request1 = new MockRequest("/path/noSub");
+		final RewrittenUrl rewrittenUrl1 = urlRewriter.processRequest(request1, response);
+		assertNotNull(rewrittenUrl1);
+		assertEquals("/path/noSub", rewrittenUrl1.getTarget());
+
+		final MockRequest request2 = new MockRequest("/path/noSu");
+		final RewrittenUrl rewrittenUrl2 = urlRewriter.processRequest(request2, response);
+		assertNotNull(rewrittenUrl2);
+		assertEquals("/path/changedu", rewrittenUrl2.getTarget());
+	}
+
 }
 

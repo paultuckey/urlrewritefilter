@@ -56,7 +56,7 @@ public class RewrittenUrlTest extends TestCase {
     MockFilterChain chain;
 
     public void setUp() {
-        Log.setLevel("DEBUG");
+        Log.setLevel("SYSOUT:TRACE");
         response = new MockResponse();
         request = new MockRequest();
         chain = new MockFilterChain();
@@ -118,5 +118,10 @@ public class RewrittenUrlTest extends TestCase {
         assertTrue(MockRequestDispatcher.getCurrent().isIncluded() && chain.isDoFilterRun());
     }
 
+	public void testNoSubstitution() throws IOException, ServletException {
+    	NormalRewrittenUrl rewrittenUrl = new NormalRewrittenUrl("/hi");
+    	rewrittenUrl.setNoSubstitution(true);
+    	assertFalse(rewrittenUrl.doRewrite(request, response, chain));
+    }
 
 }

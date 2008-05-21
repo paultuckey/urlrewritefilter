@@ -90,6 +90,7 @@ public class RuleBase implements Runnable {
     private final List runs = new ArrayList(2);
     protected final List setAttributes = new ArrayList(2);
     private boolean stopFilterChainOnMatch = false;
+    private boolean noSubstitution = false;
 
     private boolean toContainsVariable = false;
     private boolean toContainsBackReference = false;
@@ -158,7 +159,7 @@ public class RuleBase implements Runnable {
                 }
                 return null;
             }
-            if (!toEmpty) {
+            if (!toEmpty && !noSubstitution) {
                 performToReplacement = true;
             }
         }
@@ -250,6 +251,13 @@ public class RuleBase implements Runnable {
             return null;
         }
 
+        // Check for "no substitution" (-)
+        if (noSubstitution) {
+        	log.debug("'to' is '-', no substitution, passing through URL");
+        	ruleExecutionOutput.setNoSubstitution(true);
+        	ruleExecutionOutput.setReplacedUrl(url);
+        }
+
         // when match found but need to stop filter chain
         if (stopFilterChainOnMatch) {
             ruleExecutionOutput.setStopFilterMatch(true);
@@ -327,6 +335,8 @@ public class RuleBase implements Runnable {
             addError("to is not valid because it is blank (it is allowed to be blank when there is a 'set' specified)");
         } else if ("null".equalsIgnoreCase(to)) {
             stopFilterChainOnMatch = true;
+        } else if ("-".equals(to)) {
+			noSubstitution = true;
         } else if (StringUtils.isBlank(to)) {
             toEmpty = true;
         } else if (!StringUtils.isBlank(to)) {
@@ -569,4 +579,7 @@ public class RuleBase implements Runnable {
         return filter;
     }
 
+    public boolean isNoSubstitution() {
+		return noSubstitution;
+	}
 }
