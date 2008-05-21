@@ -5,8 +5,8 @@
     <property file="${user.home}/build.properties"/>
     <property file="${basedir}/build.properties"/>
 
-    <property name="app.version" value="3.1.0"/>
-    <property name="app.manual-version" value="3.1"/>
+    <property name="app.version" value="3.2.0"/>
+    <property name="app.manual-version" value="3.2"/>
     <property name="app.year" value="2007"/>
 
     <property name="build.home" value="build"/>
