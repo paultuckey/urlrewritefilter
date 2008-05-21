@@ -131,6 +131,8 @@ import java.util.Properties;
  * <p/>
  * todo: debug screen, ie, this request matches the following rules
  *
+ * todo: capture original full url (incl query string) into request attr so it can be used later
+ *
  * @author Paul Tuckey
  * @version $Revision: 51 $ $Date: 2006-12-08 11:37:07 +1300 (Fri, 08 Dec 2006) $
  */
