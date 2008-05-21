@@ -34,14 +34,14 @@
  */
 package org.tuckey.web.filters.urlrewrite;
 
-import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.extend.RewriteMatch;
+import org.tuckey.web.filters.urlrewrite.utils.Log;
 
+import javax.servlet.FilterChain;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.RequestDispatcher;
 import java.io.IOException;
 
 
@@ -64,6 +64,7 @@ public class NormalRewrittenUrl implements RewrittenUrl {
     private String target;
     private boolean encode;
     private boolean stopFilterChain = false;
+    private boolean noSubstitution = false;
     private RewriteMatch rewriteMatch;
 
     /**
@@ -75,6 +76,7 @@ public class NormalRewrittenUrl implements RewrittenUrl {
         this.target = ruleExecutionOutput.getReplacedUrl();
         this.stopFilterChain = ruleExecutionOutput.isStopFilterMatch();
         this.rewriteMatch = ruleExecutionOutput.getRewriteMatch();
+        this.noSubstitution = ruleExecutionOutput.isNoSubstitution();
     }
 
     /**
@@ -177,7 +179,7 @@ public class NormalRewrittenUrl implements RewrittenUrl {
         if (log.isTraceEnabled()) {
             log.trace("doRewrite called");
         }
-        if ( rewriteMatch != null ) {
+        if (rewriteMatch != null) {
             // todo: exception handling?
             rewriteMatch.execute(hsRequest, hsResponse);
         }
@@ -186,6 +188,10 @@ public class NormalRewrittenUrl implements RewrittenUrl {
             log.trace("stopping filter chain");
             requestRewritten = true;
 
+        } else if (isNoSubstitution()) {
+            log.trace("no substitution");
+            requestRewritten = false;
+
         } else if (isForward()) {
             if (hsResponse.isCommitted()) {
                 log.error("response is comitted cannot forward to " + target +
@@ -193,7 +199,7 @@ public class NormalRewrittenUrl implements RewrittenUrl {
             } else {
                 final RequestDispatcher rq = getRequestDispatcher(hsRequest, target);
                 rq.forward(hsRequest, hsResponse);
-                if ( log.isTraceEnabled() ) log.trace("forwarded to " + target);
+                if (log.isTraceEnabled()) log.trace("forwarded to " + target);
             }
             requestRewritten = true;
 
@@ -202,14 +208,14 @@ public class NormalRewrittenUrl implements RewrittenUrl {
             rq.include(hsRequest, hsResponse);
             chain.doFilter(hsRequest, hsResponse);
             requestRewritten = true;
-            if ( log.isTraceEnabled() ) log.trace("preinclded " + target);
+            if (log.isTraceEnabled()) log.trace("preinclded " + target);
 
         } else if (isPostInclude()) {
             final RequestDispatcher rq = getRequestDispatcher(hsRequest, target);
             chain.doFilter(hsRequest, hsResponse);
             rq.include(hsRequest, hsResponse);
             requestRewritten = true;
-            if ( log.isTraceEnabled() ) log.trace("postinclded " + target);
+            if (log.isTraceEnabled()) log.trace("postinclded " + target);
 
         } else if (isRedirect()) {
             if (hsResponse.isCommitted()) {
@@ -220,7 +226,7 @@ public class NormalRewrittenUrl implements RewrittenUrl {
                     target = hsResponse.encodeRedirectURL(target);
                 }
                 hsResponse.sendRedirect(target);
-                if ( log.isTraceEnabled() ) log.trace("redirected to " + target);
+                if (log.isTraceEnabled()) log.trace("redirected to " + target);
             }
             requestRewritten = true;
 
@@ -234,7 +240,7 @@ public class NormalRewrittenUrl implements RewrittenUrl {
                 }
                 hsResponse.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
                 hsResponse.setHeader("Location", target);
-                if ( log.isTraceEnabled() ) log.trace("temporarily redirected to " + target);
+                if (log.isTraceEnabled()) log.trace("temporarily redirected to " + target);
             }
             requestRewritten = true;
 
@@ -248,7 +254,7 @@ public class NormalRewrittenUrl implements RewrittenUrl {
                 }
                 hsResponse.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
                 hsResponse.setHeader("Location", target);
-                if ( log.isTraceEnabled() ) log.trace("permanently redirected to " + target);
+                if (log.isTraceEnabled()) log.trace("permanently redirected to " + target);
             }
             requestRewritten = true;
 
@@ -264,5 +270,14 @@ public class NormalRewrittenUrl implements RewrittenUrl {
         }
         return rq;
     }
+
+    public boolean isNoSubstitution() {
+        return noSubstitution;
+    }
+
+    public void setNoSubstitution(boolean noSubstitution) {
+        this.noSubstitution = noSubstitution;
+    }
+
 
 }

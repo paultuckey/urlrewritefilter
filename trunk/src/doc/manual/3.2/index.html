@@ -840,6 +840,8 @@
 <p>Note, "to" can be null ie, <code>&lt;to&gt;null&lt;/to&gt;</code>, this will mean that the request will go no
     further if the rule is matched (ie, this filter will not call <code>chain.doFilter</code>).</p>
 
+<p>If "to" is set to -, no substitution will take place and the request will go on like nothing happened (ie, this filter will call <code>chain.doFilter</code>).</p>
+
 <pre><code>
     &lt;to&gt;/world.jsp?country=$1&lt;/to&gt;
 </code></pre>

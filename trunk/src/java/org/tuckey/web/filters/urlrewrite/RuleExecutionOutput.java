@@ -45,6 +45,7 @@ public class RuleExecutionOutput {
     private String replacedUrl;
     private boolean ruleMatched = false;
     private boolean stopFilterMatch = false;
+    private boolean noSubstitution = false;
     private RewriteMatch rewriteMatch;
 
     /**
@@ -57,7 +58,11 @@ public class RuleExecutionOutput {
         NormalRewrittenUrl rewrittenRequest = new NormalRewrittenUrl(ruleExecutionOutput);
         String toUrl = ruleExecutionOutput.getReplacedUrl();
 
-        if (toType == NormalRule.TO_TYPE_REDIRECT) {
+        if (ruleExecutionOutput.isNoSubstitution()) {
+            if (log.isDebugEnabled()) {
+                log.debug("needs no substitution");
+            }
+        } else if (toType == NormalRule.TO_TYPE_REDIRECT) {
             if (log.isDebugEnabled()) {
                 log.debug("needs to be redirected to " + toUrl);
             }
@@ -134,5 +139,12 @@ public class RuleExecutionOutput {
         return rewriteMatch;
     }
 
+    public boolean isNoSubstitution() {
+    	return noSubstitution;
+    }
+
+    public void setNoSubstitution(boolean noSubstitution) {
+    	this.noSubstitution = noSubstitution;
+    }
 
 }
