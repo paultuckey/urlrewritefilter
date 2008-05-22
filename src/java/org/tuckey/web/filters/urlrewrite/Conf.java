@@ -64,7 +64,7 @@ import java.util.List;
  * @author Paul Tuckey
  * @version $Revision: 43 $ $Date: 2006-10-31 17:29:59 +1300 (Tue, 31 Oct 2006) $
  */
-public final class Conf {
+public class Conf {
 
     private static Log log = Log.getLog(Conf.class);
 

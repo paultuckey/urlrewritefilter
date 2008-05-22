@@ -54,7 +54,7 @@ import java.util.Calendar;
  * @author Paul Tuckey
  * @version $Revision: 48 $ $Date: 2006-11-27 16:53:31 +1300 (Mon, 27 Nov 2006) $
  */
-public final class Condition extends TypeConverter {
+public class Condition extends TypeConverter {
 
     private static Log log = Log.getLog(Condition.class);
 
