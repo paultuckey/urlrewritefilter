@@ -49,7 +49,7 @@ import java.util.List;
 /**
  * Chain of rules.  Implemented as a chain so that java rules can filter the request, resposne.
  */
-class RuleChain implements FilterChain {
+public class RuleChain implements FilterChain {
 
     private static Log log = Log.getLog(UrlRewriter.class);
 
