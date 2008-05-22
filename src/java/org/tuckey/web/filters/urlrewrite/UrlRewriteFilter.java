@@ -77,61 +77,6 @@ import java.util.Properties;
  * <p/>
  * Thanks also to Ralf S. Engelschall (www.engelschall.com) the inventor of mod_rewrite.
  * <p/>
- * <p/>
- * <p/>
- * <p/>
- * <p/>
- * todo: user in role throw 403 if no match?
- * <p/>
- * todo: ability to test new conf without having to reload, via status page
- * <p/>
- * todo: allow condition matching on get-param or post-param as well as just parameter
- * <p/>
- * todo: store list of robots and hide jsessionid when a robot also have condition
- * <p/>
- * todo: allow mounting of packages from /xxxyyy/aaa.gif to org.tuckey.xxx.static."aaa.gif" http://wiki.opensymphony.com/pages/viewpage.action?pageId=4476
- * <p/>
- * todo: random condition type
- * 2. A randomized condition, i.e. a condition which is
- * true with a certain probability.
- * 3. A round robin condition, i.e. a condition which is
- * true every n-th time.
- * <p/>
- * todo: backrefs in sets
- * <p/>
- * todo: better debugging of server name matcher
- * <p/>
- * todo: debugging tool especially googlebot client debugger, possibly googlebot tag
- * <p/>
- * todo: ability to set request parameters
- * <p/>
- * todo: ability to specify a $1 as $encode($1) (or something like that)
- * <p/>
- * todo: <to-servlet>struts</to-servlet>  will call context.getNamedDispatcher() to similar
- * <p/>
- * todo: grouping of rule for default settings
- * <p/>
- * todo: capture original (pre match) url into request attr so that people can use it
- * <p/>
- * <p/>
- * todo: wieselt to UrlRewrite is there a way to compare ALL parameters with a pattern? As far as i
- * understand the manual i allways have to provide a name when using
- * type="parameter" in a condition.
- * <p/>
- * todo: javaFreak 12/13/06
- * In Apache: RewriteEngine on
- * RewriteMap upper2lower int:tolower
- * RewriteRule ^/(.*)$ /${upper2lower:$1}
- * <p/>
- * todo: Rostislav Hristov  12/29/06
- * Is there an analogue to this mod_rewrite feature and can we expect it
- * in the upcoming versions?
- * RewriteCond      %{REQUEST_FILENAME}   !-f
- * RewriteCond      %{REQUEST_FILENAME}   !-d
- * <p/>
- * todo: debug screen, ie, this request matches the following rules
- *
- * todo: capture original full url (incl query string) into request attr so it can be used later
  *
  * @author Paul Tuckey
  * @version $Revision: 51 $ $Date: 2006-12-08 11:37:07 +1300 (Fri, 08 Dec 2006) $
@@ -140,7 +85,7 @@ public class UrlRewriteFilter implements Filter {
 
     private static Log log = Log.getLog(UrlRewriteFilter.class);
 
-    public static final String VERSION = "3.1.0";
+    public static final String VERSION = "3.2.0";
 
     public static final String DEFAULT_WEB_CONF_PATH = "/WEB-INF/urlrewrite.xml";
 
