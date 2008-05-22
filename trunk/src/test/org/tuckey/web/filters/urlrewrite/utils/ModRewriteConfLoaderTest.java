@@ -53,5 +53,49 @@ public class ModRewriteConfLoaderTest extends TestCase {
         assertEquals(true, ((NormalRule) conf.getRules().get(0)).isLast());
     }
 
+    public void testSimpleRedirect() {
+        loader.process("\n" +
+                "   RewriteRule ^/$     http://www.foo.com [R]              \n" +
+                "", conf);
+
+        assertNotNull(conf.getRules());
+        assertEquals(1, conf.getRules().size());
+
+        NormalRule rule = (NormalRule) conf.getRules().get(0);
+        assertNotNull(rule);
+        assertEquals("redirect", rule.getToType());
+        assertEquals("^/$", rule.getFrom());
+        assertEquals("http://www.foo.com", rule.getTo());
+    }
+
+    public void testPermanentRedirect() {
+        loader.process("\n" +
+                "   RewriteRule ^/$     http://www.foo.com [R=301]          \n" +
+                "", conf);
+
+        assertNotNull(conf.getRules());
+        assertEquals(1, conf.getRules().size());
+
+        NormalRule rule = (NormalRule) conf.getRules().get(0);
+        assertNotNull(rule);
+        assertEquals("permanent-redirect", rule.getToType());
+        assertEquals("^/$", rule.getFrom());
+        assertEquals("http://www.foo.com", rule.getTo());
+    }
+
+    public void testTemporaryRedirect() {
+        loader.process("\n" +
+                "   RewriteRule ^/$     http://www.foo.com [R=302]          \n" +
+                "", conf);
+
+        assertNotNull(conf.getRules());
+        assertEquals(1, conf.getRules().size());
+
+        NormalRule rule = (NormalRule) conf.getRules().get(0);
+        assertNotNull(rule);
+        assertEquals("temporary-redirect", rule.getToType());
+        assertEquals("^/$", rule.getFrom());
+        assertEquals("http://www.foo.com", rule.getTo());
+    }
 
 }
