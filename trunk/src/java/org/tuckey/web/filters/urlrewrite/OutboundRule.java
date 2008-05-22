@@ -49,7 +49,7 @@ import java.lang.reflect.InvocationTargetException;
  * @author Paul Tuckey
  * @version $Revision: 36 $ $Date: 2006-09-19 18:32:39 +1200 (Tue, 19 Sep 2006) $
  */
-public final class OutboundRule extends RuleBase {
+public class OutboundRule extends RuleBase {
 
     private static final Log log = Log.getLog(OutboundRule.class);
 
