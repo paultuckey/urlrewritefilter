@@ -4,11 +4,14 @@
     <groupId>org.tuckey</groupId>
     <artifactId>urlrewritefilter</artifactId>
     <packaging>jar</packaging>
-    <version>3.0.4</version>
+    <version>3.2.0</version>
     <name>UrlRewriteFilter</name>
     <url>http://tuckey.org/urlrewrite/</url>
     <inceptionYear>2001</inceptionYear>
-    <description>A Java Web Filter for any J2EE compliant web application server (such as Resin, Orion or Tomcat), which allows you to rewrite URLs before they get to your code. It is a very powerful tool just like Apache's mod_rewrite.</description>
+    <description>A Java Web Filter for any J2EE compliant web application server (such as Resin, Orion or Tomcat), which
+        allows you to rewrite URLs before they get to your code. It is a very powerful tool just like Apache's
+        mod_rewrite.
+    </description>
 
     <licenses>
         <license>
@@ -18,16 +21,30 @@
     </licenses>
 
     <scm>
-      <url>http://code.google.com/p/urlrewritefilter/source</url>
+        <connection>scm:svn:http://urlrewritefilter.googlecode.com/svn/trunk/</connection>
     </scm>
 
     <build>
         <directory>target</directory>
-        <outputDirectory>target/classes</outputDirectory>
         <finalName>${artifactId}-${version}</finalName>
-        <testOutputDirectory>target/test-classes</testOutputDirectory>
         <sourceDirectory>src/java</sourceDirectory>
         <testSourceDirectory>src/test</testSourceDirectory>
+        <resources>
+            <resource>
+                <directory>src/java</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>src/test</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
     </build>
 
     <dependencies>
@@ -35,14 +52,15 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
-            <version>2.3</version>
-            <scope>provided</scope>
+            <version>2.4</version>
+            <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>ant</groupId>
             <artifactId>ant</artifactId>
@@ -61,10 +79,27 @@
             <version>1.0</version>
             <optional>true</optional>
         </dependency>
+
+        <dependency>
+            <groupId>cactus</groupId>
+            <artifactId>cactus</artifactId>
+            <version>13-1.7.1</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <reporting>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <testExcludes>
+                        <testExclude>**/*ContainerTest.java</testExclude>
+                    </testExcludes>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
