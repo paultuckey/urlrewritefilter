@@ -41,7 +41,7 @@ import javax.servlet.ServletContext;
 /**
  * Log copies the style of commons logging.  The only reason this exists is that many problems
  * were had with Log4j and commons-logging interfering with peoples installed configuration.
- * It is very easy to change this to log4j or commons-logging by settting log level to "log4j" or "commons"
+ * It is very easy to change this to log4j, slf4j or commons-logging by settting log level to "log4j", "slf4j" or "commons"
  * Note, this will fall back to system.log if not initialised with a context.
  *
  * @author Paul Tuckey
@@ -57,6 +57,7 @@ public class Log {
     private static boolean usingSystemOut = false;
     private static boolean usingSystemErr = false;
     private static boolean usingLog4j = false;
+    private static boolean usingSlf4j = false;
     private static boolean usingCommonsLogging = false;
 
     private static boolean traceLevelEnabled = false;
@@ -69,12 +70,14 @@ public class Log {
     private Class clazz = null;
 
     private org.apache.log4j.Logger log4jLogger = null;
+    private org.slf4j.Logger slf4jLogger = null;
     private org.apache.commons.logging.Log commonsLog = null;
 
     private Log(Class clazz) {
         this.clazz = clazz;
         // check for log4j or commons
         isUsingLog4j();
+        isUsingSlf4j();
         isUsingCommonsLogging();
     }
 
@@ -83,6 +86,13 @@ public class Log {
             this.log4jLogger = org.apache.log4j.Logger.getLogger(clazz);
         }
         return usingLog4j;
+    }
+
+    private boolean isUsingSlf4j() {
+        if (usingSlf4j && slf4jLogger == null) {
+            this.slf4jLogger = org.slf4j.LoggerFactory.getLogger(clazz);
+        }
+        return usingSlf4j;
     }
 
     public boolean isUsingCommonsLogging() {
@@ -94,36 +104,42 @@ public class Log {
 
     public boolean isTraceEnabled() {
         if (isUsingLog4j()) return log4jLogger.isEnabledFor(org.apache.log4j.Priority.DEBUG);
+        if (isUsingSlf4j()) return slf4jLogger.isTraceEnabled();
         if (isUsingCommonsLogging()) return commonsLog.isTraceEnabled();
         return traceLevelEnabled;
     }
 
     public boolean isDebugEnabled() {
         if (isUsingLog4j()) return log4jLogger.isEnabledFor(org.apache.log4j.Priority.DEBUG);
+        if (isUsingSlf4j()) return slf4jLogger.isDebugEnabled();
         if (isUsingCommonsLogging()) return commonsLog.isDebugEnabled();
         return traceLevelEnabled || debugLevelEnabled;
     }
 
     public boolean isInfoEnabled() {
         if (isUsingLog4j()) return log4jLogger.isEnabledFor(org.apache.log4j.Priority.INFO);
+        if (isUsingSlf4j()) return slf4jLogger.isInfoEnabled();
         if (isUsingCommonsLogging()) return commonsLog.isInfoEnabled();
         return traceLevelEnabled || debugLevelEnabled || infoLevelEnabled;
     }
 
     public boolean isWarnEnabled() {
         if (isUsingLog4j()) return log4jLogger.isEnabledFor(org.apache.log4j.Priority.WARN);
+        if (isUsingSlf4j()) return slf4jLogger.isWarnEnabled();
         if (isUsingCommonsLogging()) return commonsLog.isWarnEnabled();
         return traceLevelEnabled || debugLevelEnabled || infoLevelEnabled || warnLevelEnabled;
     }
 
     public boolean isErrorEnabled() {
         if (isUsingLog4j()) return log4jLogger.isEnabledFor(org.apache.log4j.Priority.ERROR);
+        if (isUsingSlf4j()) return slf4jLogger.isErrorEnabled();
         if (isUsingCommonsLogging()) return commonsLog.isErrorEnabled();
         return traceLevelEnabled || debugLevelEnabled || infoLevelEnabled || warnLevelEnabled || errorLevelEnabled;
     }
 
     public boolean isFatalEnabled() {
         if (isUsingLog4j()) return log4jLogger.isEnabledFor(org.apache.log4j.Priority.FATAL);
+        if (isUsingSlf4j()) return slf4jLogger.isErrorEnabled(); // note: SLF4J has no fatal level
         if (isUsingCommonsLogging()) return commonsLog.isFatalEnabled();
         return traceLevelEnabled || debugLevelEnabled || infoLevelEnabled || warnLevelEnabled || errorLevelEnabled || fatalLevelEnabled;
     }
@@ -135,6 +151,10 @@ public class Log {
         }
         if (isUsingLog4j()) {
             log4jLogger.debug(o);
+            return;
+        }
+        if (isUsingSlf4j()) {
+            slf4jLogger.trace(String.valueOf(o));
             return;
         }
         if (isUsingCommonsLogging()) {
@@ -152,6 +172,10 @@ public class Log {
             log4jLogger.debug(o, throwable);
             return;
         }
+        if (isUsingSlf4j()) {
+            slf4jLogger.trace(String.valueOf(o), throwable);
+            return;
+        }
         if (isUsingCommonsLogging()) {
             commonsLog.trace(o, throwable);
             return;
@@ -165,6 +189,10 @@ public class Log {
         }
         if (isUsingLog4j()) {
             log4jLogger.debug(throwable);
+            return;
+        }
+        if (isUsingSlf4j()) {
+            slf4jLogger.trace("", throwable);
             return;
         }
         if (isUsingCommonsLogging()) {
@@ -182,6 +210,10 @@ public class Log {
             log4jLogger.debug(o);
             return;
         }
+        if (isUsingSlf4j()) {
+            slf4jLogger.debug(String.valueOf(o));
+            return;
+        }
         if (isUsingCommonsLogging()) {
             commonsLog.debug(o);
             return;
@@ -195,6 +227,10 @@ public class Log {
         }
         if (isUsingLog4j()) {
             log4jLogger.debug(o, throwable);
+            return;
+        }
+        if (isUsingSlf4j()) {
+            slf4jLogger.debug(String.valueOf(o), throwable);
             return;
         }
         if (isUsingCommonsLogging()) {
@@ -212,6 +248,10 @@ public class Log {
             log4jLogger.debug(throwable);
             return;
         }
+        if (isUsingSlf4j()) {
+            slf4jLogger.debug("", throwable);
+            return;
+        }
         if (isUsingCommonsLogging()) {
             commonsLog.debug(throwable);
             return;
@@ -225,6 +265,10 @@ public class Log {
         }
         if (isUsingLog4j()) {
             log4jLogger.info(o);
+            return;
+        }
+        if (isUsingSlf4j()) {
+            slf4jLogger.info(String.valueOf(o));
             return;
         }
         if (isUsingCommonsLogging()) {
@@ -242,6 +286,10 @@ public class Log {
             log4jLogger.info(o, throwable);
             return;
         }
+        if (isUsingSlf4j()) {
+            slf4jLogger.info(String.valueOf(o), throwable);
+            return;
+        }
         if (isUsingCommonsLogging()) {
             commonsLog.info(o, throwable);
             return;
@@ -255,6 +303,10 @@ public class Log {
         }
         if (isUsingLog4j()) {
             log4jLogger.info(throwable);
+            return;
+        }
+        if (isUsingSlf4j()) {
+            slf4jLogger.info("", throwable);
             return;
         }
         if (isUsingCommonsLogging()) {
@@ -272,6 +324,10 @@ public class Log {
             log4jLogger.warn(o);
             return;
         }
+        if (isUsingSlf4j()) {
+            slf4jLogger.warn(String.valueOf(o));
+            return;
+        }
         if (isUsingCommonsLogging()) {
             commonsLog.warn(o);
             return;
@@ -285,6 +341,10 @@ public class Log {
         }
         if (isUsingLog4j()) {
             log4jLogger.warn(o, throwable);
+            return;
+        }
+        if (isUsingSlf4j()) {
+            slf4jLogger.warn(String.valueOf(o), throwable);
             return;
         }
         if (isUsingCommonsLogging()) {
@@ -302,6 +362,10 @@ public class Log {
             log4jLogger.warn(throwable);
             return;
         }
+        if (isUsingSlf4j()) {
+            slf4jLogger.warn("", throwable);
+            return;
+        }
         if (isUsingCommonsLogging()) {
             commonsLog.warn(throwable);
             return;
@@ -315,6 +379,10 @@ public class Log {
         }
         if (isUsingLog4j()) {
             log4jLogger.error(o);
+            return;
+        }
+        if (isUsingSlf4j()) {
+            slf4jLogger.error(String.valueOf(o));
             return;
         }
         if (isUsingCommonsLogging()) {
@@ -332,6 +400,10 @@ public class Log {
             log4jLogger.error(o, throwable);
             return;
         }
+        if (isUsingSlf4j()) {
+            slf4jLogger.error(String.valueOf(o), throwable);
+            return;
+        }
         if (isUsingCommonsLogging()) {
             commonsLog.error(o, throwable);
             return;
@@ -345,6 +417,10 @@ public class Log {
         }
         if (isUsingLog4j()) {
             log4jLogger.error(throwable);
+            return;
+        }
+        if (isUsingSlf4j()) {
+            slf4jLogger.error("", throwable);
             return;
         }
         if (isUsingCommonsLogging()) {
@@ -362,6 +438,10 @@ public class Log {
             log4jLogger.fatal(o);
             return;
         }
+        if (isUsingSlf4j()) {
+            slf4jLogger.error(String.valueOf(o)); // note: SLF4J has no fatal level
+            return;
+        }
         if (isUsingCommonsLogging()) {
             commonsLog.fatal(o);
             return;
@@ -377,6 +457,10 @@ public class Log {
             log4jLogger.fatal(o, throwable);
             return;
         }
+        if (isUsingSlf4j()) {
+            slf4jLogger.error(String.valueOf(o), throwable); // note: SLF4J has no fatal level
+            return;
+        }
         if (isUsingCommonsLogging()) {
             commonsLog.fatal(o, throwable);
             return;
@@ -390,6 +474,10 @@ public class Log {
         }
         if (isUsingLog4j()) {
             log4jLogger.fatal(throwable);
+            return;
+        }
+        if (isUsingSlf4j()) {
+            slf4jLogger.error("", throwable); // note: SLF4J has no fatal level
             return;
         }
         if (isUsingCommonsLogging()) {
@@ -421,6 +509,8 @@ public class Log {
         // check for log type on the front
         if ("LOG4J".equalsIgnoreCase(level)) {
             usingLog4j = true;
+        } else if ("SLF4J".equalsIgnoreCase(level)) {
+            usingSlf4j = true;
         } else if ("COMMONS".equalsIgnoreCase(level)) {
             usingCommonsLogging = true;
         } else {
@@ -550,6 +640,7 @@ public class Log {
         Log.usingSystemOut = false;
         Log.usingSystemErr = false;
         Log.usingLog4j = false;
+        Log.usingSlf4j = false;
         Log.usingCommonsLogging = false;
     }
 
