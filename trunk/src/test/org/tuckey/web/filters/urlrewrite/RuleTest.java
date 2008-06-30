@@ -721,4 +721,19 @@ public class RuleTest extends TestCase {
         assertEquals("ie", request.getAttribute("browser"));
     }
 
+    public void testForum20080613() throws InvocationTargetException, IOException, ServletException {
+        NormalRule rule = new NormalRule();
+        rule.setFrom("^/[^/]+/(.+)-S_[0-9]+\\.html$");
+        rule.setTo("/liste/query/${replace:$1:-:+}/");
+        rule.initialise(null);
+        MockRequest request = new MockRequest("/ab/as-as-S_12.html");
+        NormalRewrittenUrl rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
+
+        assertEquals("forward should be default type", "forward", rule.getToType());
+        assertEquals("/liste/query/as+as/", rewrittenUrl.getTarget());
+        assertTrue("Should be a forward", rewrittenUrl.isForward());
+    }
+
+
+
 }

@@ -233,14 +233,21 @@ public class RuleBase implements Runnable {
                 if (toContainsBackReference) {
                     replacedTo = BackReferenceReplacer.replace(lastConditionMatch, replacedTo);
                 }
-                // do variable replacement
-                if (toContainsFunction) {
-                    replacedTo = FunctionReplacer.replace(replacedTo);
-                }
+            }
+
+            if ( replacedTo != null && toContainsFunction ) {
+                // escape the function start sequence so it doesn't cause problems with $x item replacement
+                replacedTo = replacedTo.replaceAll("\\$\\{", "\\\\\\$\\{");
             }
 
             // get existing eg, $1 items
             replacedTo = matcher.replaceAll(replacedTo);
+
+            if ( replacedTo != null && toContainsFunction ) {
+                // do variable replacement
+                replacedTo = FunctionReplacer.replace(replacedTo);
+            }
+
         }
 
         RuleExecutionOutput ruleExecutionOutput = new RuleExecutionOutput(replacedTo, true, lastRunMatch);
