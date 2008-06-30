@@ -27,7 +27,7 @@ public class SampleMultiUrlRewriteFilter extends UrlRewriteFilter {
             Conf conf1 = new Conf(filterConfig.getServletContext(), new FileInputStream("someconf.xml"), "someconf.xml", "");
             urlrewriters.add(new UrlRewriter(conf1));
 
-            Conf conf2 = new Conf(new URL("urlrewrite-special.xml"));
+            Conf conf2 = new SampleConfExt();
             urlrewriters.add(new UrlRewriter(conf2));
 
         } catch (Exception e) {

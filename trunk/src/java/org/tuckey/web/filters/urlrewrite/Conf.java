@@ -35,8 +35,8 @@
 package org.tuckey.web.filters.urlrewrite;
 
 import org.tuckey.web.filters.urlrewrite.utils.Log;
-import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 import org.tuckey.web.filters.urlrewrite.utils.ModRewriteConfLoader;
+import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -49,11 +49,11 @@ import javax.servlet.ServletContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.io.IOException;
-import java.net.URLDecoder;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -111,7 +111,7 @@ public class Conf {
     /**
      * Normal constructor.
      *
-     * @param fileName to display on status screen
+     * @param fileName            to display on status screen
      * @param modRewriteStyleConf true if loading mod_rewrite style conf
      */
     public Conf(ServletContext context, final InputStream inputStream, String fileName, String systemId,
@@ -120,16 +120,16 @@ public class Conf {
         this.context = context;
         this.fileName = fileName;
         this.confSystemId = systemId;
-        if ( modRewriteStyleConf ) {
+        if (modRewriteStyleConf) {
             loadModRewriteStyle(inputStream);
-        }   else {
+        } else {
             loadDom(inputStream);
         }
-        if ( docProcessed ) initialise();
+        if (docProcessed) initialise();
         loadedDate = new Date();
     }
 
-    private void loadModRewriteStyle(InputStream inputStream) {
+    protected void loadModRewriteStyle(InputStream inputStream) {
         ModRewriteConfLoader loader = new ModRewriteConfLoader();
         try {
             loader.process(inputStream, this);
@@ -151,11 +151,10 @@ public class Conf {
         } catch (IOException e) {
             addError("Exception loading conf " + " " + e.getMessage(), e);
         }
-        if ( docProcessed ) initialise();
+        if (docProcessed) initialise();
         loadedDate = new Date();
     }
 
-    /**
     /**
      * Constructor when run elements don't need to be initialised correctly, for docuementation etc.
      */
@@ -164,9 +163,13 @@ public class Conf {
     }
 
     /**
+     * Load the dom document from the inputstream
+     * <p/>
+     * Note, protected so that is can be extended.
+     *
      * @param inputStream stream of the conf file to load
      */
-    private synchronized void loadDom(final InputStream inputStream) {
+    protected synchronized void loadDom(final InputStream inputStream) {
         if (inputStream == null) {
             log.error("inputstream is null");
             return;
@@ -208,7 +211,12 @@ public class Conf {
         }
     }
 
-    private void processConfDoc(Document doc) {
+    /**
+     * Process dom document and populate Conf object.
+     * <p/>
+     * Note, protected so that is can be extended.
+     */
+    protected void processConfDoc(Document doc) {
         Element rootElement = doc.getDocumentElement();
 
         if ("true".equalsIgnoreCase(getAttrValue(rootElement, "use-query-string"))) setUseQueryString(true);
@@ -407,7 +415,7 @@ public class Conf {
         if (decodeUsing == null) decodeUsing = DEFAULT_DECODE_USING;
         if (NONE_DECODE_USING.equalsIgnoreCase(decodeUsing)) {
             decodeUsing = null;
-        }   else {
+        } else {
             try {
                 URLDecoder.decode("testUrl", decodeUsing);
             } catch (UnsupportedEncodingException e) {
@@ -518,7 +526,7 @@ public class Conf {
     }
 
     public Date getLoadedDate() {
-        return (Date)loadedDate.clone();
+        return (Date) loadedDate.clone();
     }
 
     public String getFileName() {
