@@ -169,13 +169,15 @@ The original URL can also be reconstructed from more basic components available 
  <h2>Changelog</h2>
 
     <ul>
-        <li>Version 3.2
+        <li>Version 3.2.0
             <ul>
                 <li>Added "no substitution" ability with to element eg, &lt;to&gt;-&lt;/to&gt;</li>
                 <li>In urlrewrite.xml allow rule, class-rule and outbound-rule elements in any order</li>
+                <li>Fixed bug with handling of references in functions (ie, to allow this: ${replace:$1:-:+})</li>
+                <li>Added slf4j support for logLevel (filter parameter)</li>
             </ul>
         </li>
-        <li>Version 3.1
+        <li>Version 3.1.0
             <ul>
                 <li>Rules are now allowed to have only condition and set elements</li>
                 <li>Basic <a href="index.html#functions">functions</a> in "set", and "to" elements eg, ${trim:%1}</li>
