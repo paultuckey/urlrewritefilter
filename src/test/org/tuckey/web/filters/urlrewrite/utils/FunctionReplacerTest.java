@@ -43,5 +43,10 @@ public class FunctionReplacerTest  extends TestCase {
         assertEquals("ab b", FunctionReplacer.replace("a${trim: b } b"));
     }
 
+    public void testSimple7() throws InvocationTargetException, IOException, ServletException {
+        assertTrue(FunctionReplacer.containsFunction("a${length:asdf} b"));
+        assertEquals("a4 b", FunctionReplacer.replace("a${length:asdf} b"));
+    }
+
 
 }

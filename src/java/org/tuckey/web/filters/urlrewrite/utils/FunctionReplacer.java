@@ -124,6 +124,8 @@ public class FunctionReplacer {
             functionResult = StringFunctions.toUpper(varSubName);
         } else if ("trim".equalsIgnoreCase(varType)) {
             functionResult = StringFunctions.trim(varSubName);
+        } else if ("length".equalsIgnoreCase(varType)) {
+            functionResult = StringFunctions.length(varSubName);
         } else {
             log.error("function ${" + originalVarStr + "} type '" + varType + "' not a valid type");
         }

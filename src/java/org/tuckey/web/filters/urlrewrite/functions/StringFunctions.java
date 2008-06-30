@@ -28,6 +28,13 @@ public class StringFunctions {
         return str.trim();
     }
 
+    public static String length(final String str) {
+        if (str == null) {
+            return "0";
+        }
+        return String.valueOf(str.length());
+    }
+
     /**
      * escape string "as as" will return "as+as"
      * note, encoding can be specified after colon eg, "as:UTF-16"
