@@ -193,6 +193,27 @@ public class OutboundRuleTest extends TestCase {
     }
 
     //todo: test multiple outbound rules with encodefirst on and off
+
+
+
+    public void testVarWithSpaces() {
+        Conf conf = new Conf();
+        OutboundRule rule1 = new OutboundRule();
+        rule1.setFrom("browse.ac\\?countryCode=([a-z]+)&amp;stateCode=([a-z])&amp;city=([a-z\\s]+)$");
+        rule1.setTo("%{context-path}/location/$1/$2/$3");
+        conf.addOutboundRule(rule1);
+        conf.initialise();
+
+        UrlRewriter urlRewriter = new UrlRewriter(conf);
+
+        MockRequest request = new MockRequest("/");
+        UrlRewriteWrappedResponse urlRewriteWrappedResponse = new UrlRewriteWrappedResponse(response, request, urlRewriter);
+
+        assertEquals("browse.ac;mockencoded=test?countryCode=US&stateCode=NY&city=New York", urlRewriteWrappedResponse.encodeURL("browse.ac?countryCode=US&stateCode=NY&city=New York"));
+
+    }
+
+
 }
 
 //      "^/dir/([\\&a-zA-Z0-9\\s\\+\\/\\%&amp;]+).([a-zA-Z\\s\\+&amp;\\/]+).([a-zA-Z\\s]{2,})$"
