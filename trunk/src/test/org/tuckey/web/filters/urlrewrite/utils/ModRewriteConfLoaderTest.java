@@ -83,6 +83,29 @@ public class ModRewriteConfLoaderTest extends TestCase {
         assertEquals("http://www.foo.com", rule.getTo());
     }
 
+    public void testMobile() {
+        loader.process("\n" +
+                "  # mobile redirect\n" +
+                "RewriteCond %{HTTP_HOST} from.com\n" +
+                "RewriteCond %{HTTP:accept} (hdml|wml|xhtml-mp|vnd\\.wap\\.) [OR]\n" +
+                "RewriteCond %{HTTP:x-wap-profile} .+ [OR]\n" +
+                "RewriteCond %{HTTP:user-agent} (Windows\\ CE) [OR]\n" +
+                "RewriteCond %{HTTP:user-agent} (iPhone) [OR]\n" +
+                "RewriteCond %{HTTP:user-agent} (iPod) [OR]\n" +
+                "RewriteRule ^(.*)$ http://to.com [L,R]" +
+                "", conf);
+
+        assertNotNull(conf.getRules());
+        assertEquals(1, conf.getRules().size());
+
+        NormalRule rule = (NormalRule) conf.getRules().get(0);
+        assertNotNull(rule);
+        assertEquals("redirect", rule.getToType());
+        assertEquals("^(.*)$", rule.getFrom());
+        assertTrue(rule.isLast());
+        assertEquals("http://to.com", rule.getTo());
+    }
+
     public void testTemporaryRedirect() {
         loader.process("\n" +
                 "   RewriteRule ^/$     http://www.foo.com [R=302]          \n" +
