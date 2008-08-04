@@ -445,6 +445,7 @@ public class UrlRewriteFilter implements Filter {
         Status status = new Status(confLastLoaded, this);
         status.displayStatusInContainer(request);
 
+        response.setContentType("text/html; charset=UTF-8");
         response.setContentLength(status.getBuffer().length());
 
         final PrintWriter out = response.getWriter();
