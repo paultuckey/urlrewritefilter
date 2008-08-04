@@ -237,15 +237,16 @@
 
 
 
-<p>When executing a rule the filter will (very simplified) do something like this psuedo code:</p>
+<p>When executing a rule the filter will (very simplified) loop over all rules and for each do something like this psuedo code:</p>
 
 <pre><code>
     Pattern.compile(&lt;from&gt; element);
-    pattern.matcher(each request url);
+    pattern.matcher(request url);
     matcher.replaceAll(&lt;to&gt; element);
-    if ( &lt;condition&gt; elements match && pattern matched ) {
-       execute &lt;run&gt; elements (if any)
-       perform &lt;to&gt; element (if any)
+    if ( &lt;condition&gt; elements match && matcher.find() ) {
+        handle &lt;set&gt; elements (if any)
+        execute &lt;run&gt; elements (if any)
+        perform &lt;to&gt; element (if any)
     }
 </code></pre>
 
