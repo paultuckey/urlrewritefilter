@@ -304,7 +304,7 @@ public class ModRewriteConfLoader {
                 Note: mod_proxy must be enabled in order to use this flag.
                 */
                 if ("proxy".equalsIgnoreCase(flag) || "P".equalsIgnoreCase(flag)) {
-                    log.info("Proxy flag [P] not supported");
+                    rule.setToType("proxy");
                 }
                 /*
                 # 'passthrough|PT' (pass through to next handler)
