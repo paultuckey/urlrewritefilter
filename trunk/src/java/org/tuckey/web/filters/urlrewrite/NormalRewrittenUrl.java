@@ -68,6 +68,7 @@ public class NormalRewrittenUrl implements RewrittenUrl {
     private boolean stopFilterChain = false;
     private boolean noSubstitution = false;
     private RewriteMatch rewriteMatch;
+    private ServletContext targetContext = null;
 
     /**
      * Holds information about the rewirtten url.
@@ -76,6 +77,7 @@ public class NormalRewrittenUrl implements RewrittenUrl {
      */
     public NormalRewrittenUrl(RuleExecutionOutput ruleExecutionOutput) {
         this.target = ruleExecutionOutput.getReplacedUrl();
+        this.targetContext = ruleExecutionOutput.getReplacedUrlContext();
         this.stopFilterChain = ruleExecutionOutput.isStopFilterMatch();
         this.rewriteMatch = ruleExecutionOutput.getRewriteMatch();
         this.noSubstitution = ruleExecutionOutput.isNoSubstitution();
@@ -207,21 +209,21 @@ public class NormalRewrittenUrl implements RewrittenUrl {
                 log.error("response is comitted cannot forward to " + target +
                         " (check you haven't done anything to the response (ie, written to it) before here)");
             } else {
-                final RequestDispatcher rq = getRequestDispatcher(hsRequest, target);
+          		final RequestDispatcher rq = getRequestDispatcher(hsRequest, target, targetContext);
                 rq.forward(hsRequest, hsResponse);
                 if (log.isTraceEnabled()) log.trace("forwarded to " + target);
             }
             requestRewritten = true;
 
         } else if (isPreInclude()) {
-            final RequestDispatcher rq = getRequestDispatcher(hsRequest, target);
+      		final RequestDispatcher rq = getRequestDispatcher(hsRequest, target, targetContext);
             rq.include(hsRequest, hsResponse);
             chain.doFilter(hsRequest, hsResponse);
             requestRewritten = true;
             if (log.isTraceEnabled()) log.trace("preinclded " + target);
 
         } else if (isPostInclude()) {
-            final RequestDispatcher rq = getRequestDispatcher(hsRequest, target);
+      		final RequestDispatcher rq = getRequestDispatcher(hsRequest, target, targetContext);
             chain.doFilter(hsRequest, hsResponse);
             rq.include(hsRequest, hsResponse);
             requestRewritten = true;
@@ -282,13 +284,28 @@ public class NormalRewrittenUrl implements RewrittenUrl {
         return requestRewritten;
     }
 
-    private RequestDispatcher getRequestDispatcher(final HttpServletRequest hsRequest, String toUrl) throws ServletException {
-        final RequestDispatcher rq = hsRequest.getRequestDispatcher(toUrl);
+    private RequestDispatcher getRequestDispatcher(final HttpServletRequest hsRequest, String toUrl,
+                                                   ServletContext targetContext) throws ServletException {
+        final RequestDispatcher rq = (targetContext != null) ? targetContext.getRequestDispatcher(target) : hsRequest.getRequestDispatcher(toUrl);
         if (rq == null) {
             // this might be a 404 possibly something else, could re-throw a 404 but is best to throw servlet exception
             throw new ServletException("unable to get request dispatcher for " + toUrl);
         }
         return rq;
+    }
+
+    /**
+     * @return the targetContext
+     */
+    public ServletContext getTargetContext() {
+        return targetContext;
+    }
+
+    /**
+     * @param targetContext the targetContext to set
+     */
+    public void setTargetContext(ServletContext targetContext) {
+        this.targetContext = targetContext;
     }
 
     public boolean isNoSubstitution() {

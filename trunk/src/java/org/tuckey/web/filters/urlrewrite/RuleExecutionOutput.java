@@ -34,6 +34,8 @@
  */
 package org.tuckey.web.filters.urlrewrite;
 
+import javax.servlet.ServletContext;
+
 import org.tuckey.web.filters.urlrewrite.extend.RewriteMatch;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 
@@ -43,6 +45,7 @@ public class RuleExecutionOutput {
     private static Log log = Log.getLog(RuleExecutionOutput.class);
 
     private String replacedUrl;
+    private ServletContext replacedUrlContext = null;
     private boolean ruleMatched = false;
     private boolean stopFilterMatch = false;
     private boolean noSubstitution = false;
@@ -144,6 +147,20 @@ public class RuleExecutionOutput {
 
     public RewriteMatch getRewriteMatch() {
         return rewriteMatch;
+    }
+
+    /**
+     * @return the replacedUrlContext
+     */
+    public ServletContext getReplacedUrlContext() {
+        return replacedUrlContext;
+    }
+
+    /**
+     * @param replacedUrlContext the replacedUrlContext to set
+     */
+    public void setReplacedUrlContext(ServletContext replacedUrlContext) {
+        this.replacedUrlContext = replacedUrlContext;
     }
 
     public boolean isNoSubstitution() {

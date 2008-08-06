@@ -842,6 +842,20 @@
                 href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/http/HttpServletResponse.html#encodeURL(java.lang.String)">encodeURL</a>([to])
             will NOT be called.</td>
     </tr>
+    <tr>
+        <td>context <br/><small>(optional)</small></td>
+        <td></td>
+        <td>If your application server is configured to allow "cross context" communication then this attribute can be used
+            to forward (and only forward, not redirect or other "to" types) requests to a named servlet context.
+            <br/>
+            <br/>On Tomcat, for instance, the application contexts in the server configuration (server.xml or
+            context.xml) need the option crossContext="true".  For instance, the two applications mentioned before
+            ("app" and "forum") have to be defined as:
+            <br/>
+            <br/><code>&lt;Context docBase="app" path="/app" reloadable="true" crossContext="true"/&gt;</code>
+            <br/><code>&lt;Context docBase="forum" path="/forum" reloadable="true" crossContext="true"/&gt;</code>
+        </td>
+    </tr>
 </table>
 
 <p>Note, "to" can be null ie, <code>&lt;to&gt;null&lt;/to&gt;</code>, this will mean that the request will go no
@@ -945,7 +959,7 @@
         <th>Explanation</th>
     </tr>
     <tr>
-        <td rowspan="10">type <br/><small>(optional)</small></td>
+        <td rowspan="9">type <br/><small>(optional)</small></td>
         <td>request (default)</td>
         <td>The same as <code>request.<a
                 href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/ServletRequest.html#setAttribute(java.lang.String,%20java.lang.Object)">setAttribute</a>([name],

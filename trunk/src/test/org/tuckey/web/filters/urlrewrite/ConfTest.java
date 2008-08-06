@@ -78,6 +78,7 @@ public class ConfTest extends TestCase {
         SetAttribute set = (SetAttribute) rule.getSetAttributes().get(0);
         assertEquals("name of set, it's " + set.getName(), "valuenull", set.getName());
         assertNull("value of set should be null, it's " + set.getValue(), set.getValue());
+        assertEquals("othercontext", rule.getToContextStr());
 
         NormalRule rule1 = (NormalRule) rules.get(1);
         assertEquals("basicfrom2", rule1.getFrom());
