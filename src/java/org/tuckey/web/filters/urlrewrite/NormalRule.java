@@ -64,6 +64,7 @@ public class NormalRule extends RuleBase implements Rule {
     public static final short TO_TYPE_TEMPORARY_REDIRECT = 3;
     public static final short TO_TYPE_PRE_INCLUDE = 4;
     public static final short TO_TYPE_POST_INCLUDE = 5;
+    public static final short TO_TYPE_PROXY = 6;
 
     private boolean encodeToUrl = false;
 
@@ -141,6 +142,8 @@ public class NormalRule extends RuleBase implements Rule {
         } else if ("forward".equals(toTypeStr) || "passthrough".equals(toTypeStr) ||
                 StringUtils.isBlank(toTypeStr)) {
             toType = TO_TYPE_FORWARD;
+        } else if ("proxy".equals(toTypeStr)) {
+            toType = TO_TYPE_PROXY;
         } else {
             addError("type (" + toTypeStr + ") is not valid");
         }
@@ -157,6 +160,7 @@ public class NormalRule extends RuleBase implements Rule {
         if (toType == TO_TYPE_TEMPORARY_REDIRECT) return "temporary-redirect";
         if (toType == TO_TYPE_PRE_INCLUDE) return "pre-include";
         if (toType == TO_TYPE_POST_INCLUDE) return "post-include";
+        if (toType == TO_TYPE_PROXY) return "proxy";
         return "forward";
     }
 
