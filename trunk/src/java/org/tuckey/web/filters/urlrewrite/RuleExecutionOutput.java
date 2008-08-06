@@ -99,7 +99,14 @@ public class RuleExecutionOutput {
                 log.debug("needs to be forwarded to " + toUrl);
             }
             rewrittenRequest.setForward(true);
+        } else if (toType == NormalRule.TO_TYPE_PROXY) {
+            // pass the request to the "to" url
+            if (log.isDebugEnabled()) {
+                log.debug("needs to be proxied from " + toUrl);
+            }
+            rewrittenRequest.setProxy(true);
         }
+
         if (encodeToUrl) {
             rewrittenRequest.setEncode(true);
         } else {

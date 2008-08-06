@@ -60,6 +60,12 @@
             <version>2.4</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+            <scope>compile</scope>
+        </dependency>
 
         <dependency>
             <groupId>ant</groupId>

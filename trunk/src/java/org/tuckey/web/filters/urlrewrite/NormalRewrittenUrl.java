@@ -39,6 +39,7 @@ import org.tuckey.web.filters.urlrewrite.utils.Log;
 
 import javax.servlet.FilterChain;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -61,6 +62,7 @@ public class NormalRewrittenUrl implements RewrittenUrl {
     private boolean temporaryRedirect = false;
     private boolean preInclude = false;
     private boolean postInclude = false;
+    private boolean proxy = false;
     private String target;
     private boolean encode;
     private boolean stopFilterChain = false;
@@ -161,6 +163,14 @@ public class NormalRewrittenUrl implements RewrittenUrl {
         this.stopFilterChain = stopFilterChain;
     }
 
+    public boolean isProxy() {
+        return proxy;
+    }
+
+    public void setProxy(boolean proxy) {
+        this.proxy = proxy;
+    }
+
     /**
      * The method that actually handles the outcome and rewrites.
      *
@@ -258,6 +268,16 @@ public class NormalRewrittenUrl implements RewrittenUrl {
             }
             requestRewritten = true;
 
+        } else if (isProxy()) {
+            if (hsResponse.isCommitted()) {
+                log.error("response is committed. cannot proxy " + target + ". Check that you havn't written to the response before.");
+            } else {
+                RequestProxy.execute(target, hsRequest, hsResponse);
+                if (log.isTraceEnabled()) {
+                    log.trace("Proxied request to " + target);
+                }
+            }
+            requestRewritten = true;
         }
         return requestRewritten;
     }

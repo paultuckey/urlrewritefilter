@@ -56,7 +56,7 @@ name CDATA  #IMPLIED
 
 <!ELEMENT to (#PCDATA)>
 <!ATTLIST to
-type (redirect|temporary-redirect|permanent-redirect|pre-include|post-include|forward|passthrough) "forward"
+type (redirect|temporary-redirect|permanent-redirect|pre-include|post-include|forward|passthrough|proxy) "forward"
 last (true|false) "false"
 encode (true|false) #IMPLIED
 >
