@@ -772,7 +772,7 @@
         <th>Explanation</th>
     </tr>
     <tr>
-        <td rowspan="7">type <br/><small>(optional)</small></td>
+        <td rowspan="8">type <br/><small>(optional)</small></td>
         <td>forward (default)</td>
         <td>Requests matching the "conditions" for this "rule", and the URL in the "from" element will be internally
             forwarded
@@ -813,6 +813,12 @@
     <tr>
         <td>post-include</td>
         <td></td>
+    </tr>
+    <tr>
+        <td>proxy</td>
+        <td>The request will be proxied to the full url specified.  commons-http and commons-codec must both be in the
+            classpath to use this feature.
+        </td>
     </tr>
     <tr>
         <td rowspan="2">last <br/><small>(optional)</small></td>
