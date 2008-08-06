@@ -51,7 +51,7 @@ import java.util.Set;
 public class MockServletContext implements ServletContext {
 
     public ServletContext getContext(String s) {
-        return null;
+        return new MockServletContext();
     }
 
     public int getMajorVersion() {

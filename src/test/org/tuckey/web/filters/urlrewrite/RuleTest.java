@@ -38,6 +38,7 @@ import junit.framework.TestCase;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.testhelper.MockRequest;
 import org.tuckey.web.testhelper.MockResponse;
+import org.tuckey.web.testhelper.MockServletContext;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -732,6 +733,21 @@ public class RuleTest extends TestCase {
         assertEquals("forward should be default type", "forward", rule.getToType());
         assertEquals("/liste/query/as+as/", rewrittenUrl.getTarget());
         assertTrue("Should be a forward", rewrittenUrl.isForward());
+    }
+
+
+    public void testContext() throws InvocationTargetException, IOException, ServletException {
+        NormalRule rule = new NormalRule();
+        rule.setFrom("^/goanothercontext/");
+        rule.setTo("/other/");
+        rule.setToContextStr("othercontext");
+        rule.initialise(new MockServletContext());
+        MockRequest request = new MockRequest("/goanothercontext/aaa.html");
+        NormalRewrittenUrl rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
+
+        assertEquals("forward should be default type", "forward", rule.getToType());
+        assertEquals("/other/aaa.html", rewrittenUrl.getTarget());
+        assertNotNull("Should be not empty", rewrittenUrl.getTargetContext());
     }
 
 

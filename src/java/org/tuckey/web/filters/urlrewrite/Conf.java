@@ -244,6 +244,7 @@ public class Conf {
                 Node toNode = ruleElement.getElementsByTagName("to").item(0);
                 rule.setTo(getNodeValue(toNode));
                 rule.setToType(getAttrValue(toNode, "type"));
+                rule.setToContextStr(getAttrValue(toNode, "context"));
                 rule.setToLast(getAttrValue(toNode, "last"));
                 if ("true".equalsIgnoreCase(getAttrValue(toNode, "encode"))) rule.setEncodeToUrl(true);
 
@@ -304,22 +305,22 @@ public class Conf {
     }
 
     private void processRuleBasics(Element ruleElement, RuleBase rule) {
-        if ("false".equalsIgnoreCase(getAttrValue(ruleElement, "enabled"))) rule.setEnabled(false);
+      if ("false".equalsIgnoreCase(getAttrValue(ruleElement, "enabled"))) rule.setEnabled(false);
 
-        String ruleMatchType = getAttrValue(ruleElement, "match-type");
-        if (StringUtils.isBlank(ruleMatchType)) ruleMatchType = defaultMatchType;
-        rule.setMatchType(ruleMatchType);
+      String ruleMatchType = getAttrValue(ruleElement, "match-type");
+      if (StringUtils.isBlank(ruleMatchType)) ruleMatchType = defaultMatchType;
+      rule.setMatchType(ruleMatchType);
 
-        Node nameNode = ruleElement.getElementsByTagName("name").item(0);
-        rule.setName(getNodeValue(nameNode));
+      Node nameNode = ruleElement.getElementsByTagName("name").item(0);
+      rule.setName(getNodeValue(nameNode));
 
-        Node noteNode = ruleElement.getElementsByTagName("note").item(0);
-        rule.setNote(getNodeValue(noteNode));
+      Node noteNode = ruleElement.getElementsByTagName("note").item(0);
+      rule.setNote(getNodeValue(noteNode));
 
-        Node fromNode = ruleElement.getElementsByTagName("from").item(0);
-        rule.setFrom(getNodeValue(fromNode));
-        if ("true".equalsIgnoreCase(getAttrValue(fromNode, "casesensitive"))) rule.setFromCaseSensitive(true);
-    }
+      Node fromNode = ruleElement.getElementsByTagName("from").item(0);
+      rule.setFrom(getNodeValue(fromNode));
+      if ("true".equalsIgnoreCase(getAttrValue(fromNode, "casesensitive"))) rule.setFromCaseSensitive(true);
+  }
 
     private static void processSetAttributes(Element ruleElement, RuleBase rule) {
         NodeList setNodes = ruleElement.getElementsByTagName("set");

@@ -59,6 +59,7 @@ name CDATA  #IMPLIED
 type (redirect|temporary-redirect|permanent-redirect|pre-include|post-include|forward|passthrough|proxy) "forward"
 last (true|false) "false"
 encode (true|false) #IMPLIED
+context CDATA  #IMPLIED
 >
 
 <!--

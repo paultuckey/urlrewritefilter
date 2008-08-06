@@ -8,7 +8,7 @@
         <condition next="or" type="header" name="user-agent">basicvalue1</condition>
         <from>basicfrom1</from>
         <set name="valuenull"/>
-        <to last="false">basicto1</to>
+        <to last="false" context="othercontext">basicto1</to>
     </rule>
     <rule enabled="false">
         <name>Mega Rule</name>

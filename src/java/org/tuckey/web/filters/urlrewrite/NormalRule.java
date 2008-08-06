@@ -67,6 +67,8 @@ public class NormalRule extends RuleBase implements Rule {
     public static final short TO_TYPE_PROXY = 6;
 
     private boolean encodeToUrl = false;
+    private String toContextStr = null;
+    private ServletContext toServletContext = null;
 
     /**
      * Constructor.
@@ -91,6 +93,7 @@ public class NormalRule extends RuleBase implements Rule {
             // no match, or run/set only match
             return null;
         }
+        if ( toServletContext != null ) ruleExecutionOutput.setReplacedUrlContext(toServletContext);
         return RuleExecutionOutput.getRewritenUrl(toType, encodeToUrl, ruleExecutionOutput);
     }
 
@@ -115,6 +118,21 @@ public class NormalRule extends RuleBase implements Rule {
         } else {
             log.debug("loaded rule " + getDisplayName() + " (" + from + ", " + to + " " + toType + ")");
         }
+
+        if ( !StringUtils.isBlank(toContextStr)) {
+            log.debug("looking for context " + toContextStr);
+            if ( context == null) {
+                addError("unable to look for context as current context null");
+            }   else {
+                toServletContext = context.getContext("/" + toContextStr);
+                if ( toServletContext == null ) {
+                    addError("could not get servlet context " + toContextStr);
+                }   else {
+                    log.debug("got context ok");
+                }
+            }
+        }
+
         if (errors.size() > 0) {
             ok = false;
         }
@@ -192,4 +210,15 @@ public class NormalRule extends RuleBase implements Rule {
         this.encodeToUrl = encodeToUrl;
     }
 
+    public String getToContextStr() {
+        return toContextStr;
+    }
+
+    public void setToContextStr(String toContextStr) {
+        this.toContextStr = toContextStr;
+    }
+
+    public ServletContext getToServletContext() {
+        return toServletContext;
+    }
 }
