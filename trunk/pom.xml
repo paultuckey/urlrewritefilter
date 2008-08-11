@@ -25,7 +25,6 @@
     </scm>
 
     <build>
-        <directory>target</directory>
         <finalName>${artifactId}-${version}</finalName>
         <sourceDirectory>src/java</sourceDirectory>
         <testSourceDirectory>src/test</testSourceDirectory>
@@ -90,13 +89,6 @@
             <artifactId>commons-logging</artifactId>
             <version>1.0</version>
             <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>cactus</groupId>
-            <artifactId>cactus</artifactId>
-            <version>13-1.7.1</version>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>
