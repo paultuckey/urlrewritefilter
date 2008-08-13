@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!DOCTYPE urlrewrite
-        PUBLIC "-//tuckey.org//DTD UrlRewrite 3.0//EN"
-        "http://tuckey.org/res/dtds/urlrewrite3.0.dtd">
+        PUBLIC "-//tuckey.org//DTD UrlRewrite 3.2//EN"
+        "http://tuckey.org/res/dtds/urlrewrite3.2.dtd">
 
 <urlrewrite>
 
@@ -76,7 +76,7 @@
 
     <rule>
         <from>^/services/(.*)</from>
-        <to type="redirect">/axis/services/$1</to>
+        <to type="redirect" encode="true">/axis/services/$1</to>
     </rule>
 
     <rule>
@@ -100,7 +100,7 @@
 
     <rule>
         <name>encode test</name>
-        <from>/went to bahamas/</from>
+        <from>/went%20to%20bahamas/</from>
         <to type="redirect" encode="true">/bahamas/</to>
     </rule>
 
