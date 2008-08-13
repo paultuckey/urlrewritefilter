@@ -76,7 +76,7 @@
 
     <rule>
         <from>^/services/(.*)</from>
-        <to type="redirect" encode="true">/axis/services/$1</to>
+        <to type="redirect" encode="true">%{context-path}/axis/services/$1</to>
     </rule>
 
     <rule>
@@ -101,14 +101,14 @@
     <rule>
         <name>encode test</name>
         <from>/went%20to%20bahamas/</from>
-        <to type="redirect" encode="true">/bahamas/</to>
+        <to type="redirect" encode="true">%{context-path}/bahamas/</to>
     </rule>
 
 
     <rule>
         <name>utf test</name>
         <from>/utf/(.*)</from>
-        <to type="redirect">/utf-redir/$1</to>
+        <to type="redirect">%{context-path}/utf-redir/$1</to>
     </rule>
 
 
