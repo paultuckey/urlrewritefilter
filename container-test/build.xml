@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="Container Test UrlRewrite" default="test" basedir=".">
+<project name="Container Test UrlRewrite" default="container-tests" basedir=".">
 
     <!-- Give user a chance to override without editing this file (and without typing -D each time) -->
     <property file="${user.home}/urlrewrite.build.properties"/>
@@ -72,7 +72,6 @@
 
         <containerTest id="tomcat-5.5.23" containerid="tomcat5x"
                        installurl="http://www.ibiblio.org/pub/mirrors/apache/tomcat/tomcat-5/v5.5.26/bin/apache-tomcat-5.5.26.zip"/>
-        <!--
         <containerTest id="resin-3.1.6" containerid="resin3x"
                        installurl="http://www.caucho.com/download/resin-3.1.6.zip"/>
         <containerTest id="jetty-6.1.11" containerid="jetty6x"
@@ -81,7 +80,7 @@
                        installurl="http://voxel.dl.sourceforge.net/sourceforge/jboss/jboss-4.2.3.GA.zip"/>
         <containerTest id="orion2.0.7" containerid="orion2x"
                        installurl="http://www.orionserver.com/distributions/orion2.0.7.zip"/>
-        -->
+
         <echo append="true" file="${report.dir}/index.html"><![CDATA[
             </ul>
             </body>
