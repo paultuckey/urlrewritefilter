@@ -133,6 +133,10 @@
                 <attribute name="Implementation-Vendor" value="Paul Tuckey"/>
                 <attribute name="Implementation-Version" value="${app.version}"/>
             </manifest>
+            <service type="com.sun.mirror.apt.AnnotationProcessorFactory"
+                    provider="org.tuckey.web.filters.urlrewrite.annotation.HttpUrlAPTFactory"/>
+            <service type="javax.annotation.processing.Processor"
+                    provider="org.tuckey.web.filters.urlrewrite.annotation.UrlRewriteAnnotationProcessor"/>
         </jar>
         <copy file="dist/urlrewrite-${app.version}.jar" todir="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib"/>
 
