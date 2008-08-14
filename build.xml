@@ -81,6 +81,18 @@
 
     </target>
 
+    <target name="compile-annotation">
+        <!-- separated so that we can use language level 1.6 here not 1.3) -->
+        <javac srcdir="src/annotation/java" destdir="${build.home}/java"
+               debug="${compile.debug}" deprecation="${compile.deprecation}" optimize="${compile.optimize}">
+            <classpath refid="compile.classpath"/>
+            <classpath refid="compiled.classpath"/>
+        </javac>
+        <copy todir="${build.home}/java">
+            <fileset dir="src/annotation/java" excludes="**/*.java"/>
+        </copy>
+    </target>
+
     <target name="compile-test" depends="compile">
 
         <mkdir dir="${build.home}/test"/>
@@ -104,20 +116,25 @@
 
     </target>
 
-    <target name="dist-jar" depends="clean,compile,dist-annotation" description="Create binary distribution">
+    <target name="dist-jar" depends="clean,compile,compile-annotation" description="Create binary distribution">
         <!-- create JAR file -->
         <delete dir="dist/urlrewrite-${app.version}/webapp"/>
         <mkdir dir="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib/"/>
 
         <copy file="LICENSE.txt" todir="${build.home}/java/META-INF"/>
-        <copy file="src/MANIFEST.MF" todir="${build.home}/java/META-INF"/>
-        <replace file="${build.home}/java/META-INF/MANIFEST.MF">
-            <replacefilter token="@version@" value="${app.version}"/>
-        </replace>
 
-        <jar jarfile="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib/urlrewrite-${app.version}.jar"
-             basedir="${build.home}/java"
-             manifest="${build.home}/java/META-INF/MANIFEST.MF"/>
+        <jar jarfile="dist/urlrewrite-${app.version}.jar" basedir="${build.home}/java">
+            <manifest>
+                <attribute name="Extension-Name" value="urlrewritefilter"/>
+                <attribute name="Specification-Title" value="Url Rewrite Filter"/>
+                <attribute name="Specification-Vendor" value="Paul Tuckey"/>
+                <attribute name="Specification-Version" value="${app.version}"/>
+                <attribute name="Implementation-Title" value="Url Rewrite Filter"/>
+                <attribute name="Implementation-Vendor" value="Paul Tuckey"/>
+                <attribute name="Implementation-Version" value="${app.version}"/>
+            </manifest>
+        </jar>
+        <copy file="dist/urlrewrite-${app.version}.jar" todir="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib"/>
 
     </target>
 
@@ -246,8 +263,8 @@
 
 
     <target name="urlrewrite-doc" depends="compile" description="Create UrlRewriteFilter conf documentation">
-        <taskdef name="urlrewritedoc" classname="org.tuckey.web.filters.urlrewrite.UrlRewriteDocTask"
-                 classpathref="compiled.classpath"/>
+        <taskdef name="urlrewritedoc" classpath="dist/urlrewrite-3.2.0.jar"
+                 classname="org.tuckey.web.filters.urlrewrite.UrlRewriteDocTask" />
         <mkdir dir="www/manual/${app.manual-version}/"/>
         <urlrewritedoc
                 conf="src/test-web/WEB-INF/urlrewrite.xml"
@@ -255,67 +272,31 @@
     </target>
 
 
-    <!--
-     annotation processor
-    -->
+    <target name="annotation-test-compile-jdk5" depends="dist-jar" description="normal way to process annotations">
+        <mkdir dir="${build.home}/annotation"/>
+        <apt srcdir="src/annotation/test/" compile="false" factory="org.tuckey.web.filters.urlrewrite.annotation.HttpUrlAPTFactory">
+            <classpath path="dist/urlrewrite-${app.version}.jar"/>
+            <option name="saveRulesTo" value="${build.home}/annotation/urlrewrite-generated-test-jdk5.xml"/>
+        </apt>
+    </target>
 
-    <target name="build-annotation">
-        <!-- compile apt processor -->
-        <delete dir="${build.home}/annotation/classes"/>
-        <mkdir dir="${build.home}/annotation/classes"/>
-        <javac srcdir="src/annotation/java/"
-               destdir="${build.home}/annotation/classes/"
-               debug="${compile.debug}"
-               deprecation="${compile.deprecation}"
-               source="1.5"
-               optimize="${compile.optimize}">
+    <target name="annotation-test-compile-jdk6" depends="dist-jar" description="normal way to process annotations">
+        <mkdir dir="${build.home}/annotation/test-classes"/>
+        <javac srcdir="src/annotation/test/" destdir="${build.home}/annotation/test-classes">
+            <classpath path="dist/urlrewrite-${app.version}.jar"/>
             <classpath refid="compile.classpath"/>
-            <classpath refid="compiled.classpath"/>
+            <compilerarg line="-AurlrewriteDest=${build.home}/annotation/urlrewrite-generated.xml"/>
+            <!--
+            <compilerarg value="-AurlrewriteShowPositions=true"/>
+            <compilerarg value="-AurlrewriteDebug=true"/>
+
+            <compilerarg value="-proc:only"/>
+            <compilerarg value="-XprintRounds"/>
+            <compilerarg value="-XprintProcessorInfo"/>
+            -->
         </javac>
-
-    </target>
-
-    <target name="dist-annotation" depends="build-annotation">
-        <!-- build a nice jar -->
-        <unzip src="lib/servlet-api.jar" dest="${build.home}/annotation/classes"/>
-        <mkdir dir="dist/urlrewrite-${app.version}/annotation/"/>
-        <jar jarfile="dist/urlrewrite-${app.version}/annotation/urlrewrite-annotation-${app.version}.jar"
-             basedir="${build.home}/annotation/classes"/>
-    </target>
-
-    <target name="test-annotation" depends="dist-annotation">
-        <path id="annotation-classpath">
-            <fileset file="dist/urlrewrite-${app.version}/annotation/urlrewrite-annotation-${app.version}.jar"/>
-            <fileset file="lib/servlet-api.jar"/>
-        </path>
-        <mkdir dir="${build.home}/annotation/web/WEB-INF/"/>
-        <apt compile="false" factory="org.tuckey.web.filters.urlrewrite.annotation.HttpUrlAPTFactory"
-             srcdir="src/annotation/test/" classpathref="annotation-classpath">
-            <option name="saveRulesTo" value="${build.home}/annotation/web/WEB-INF/urlrewrite-generated.xml"/>
-        </apt>
-    </target>
-
-    <!-- sample for documentation -->
-    <target name="urlrewrite-annotations" depends="compile">
-        <path id="annotation-classpath">
-            <fileset file="dist/urlrewrite-${app.version}/annotation/urlrewrite-annotation-${app.version}.jar"/>
-            <fileset file="lib/servlet-api.jar"/>
-        </path>
-        <mkdir dir="build/WEB-INF/"/>
-        <apt compile="false" factory="org.tuckey.web.filters.urlrewrite.annotation.HttpUrlAPTFactory"
-             srcdir="src/annotation/test/" classpathref="annotation-classpath">
-            <option name="saveRulesTo" value="build/WEB-INF/urlrewrite-generated.xml"/>
-        </apt>
-    </target>
-
-    <target name="copy-for-cvs" depends="clean">
-        <mkdir dir="../urlrewrite-cvs/"/>
-        <copy todir="../urlrewrite-cvs/">
-            <fileset dir="./">
-                <include name="src/**"/>
-                <include name="lib/**"/>
-            </fileset>
-        </copy>
+        <available property="urlrewrite.generated" file="${build.home}/annotation/urlrewrite-generated.xml"/>
+        <fail unless="urlrewrite.generated" />
     </target>
 
 </project>

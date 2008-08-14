@@ -77,8 +77,9 @@ public class UrlRewriteAnnotationProcessor extends AbstractProcessor {
     }
 
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        if ( isBlank(dest) ) {
-            if ( roundEnv.processingOver() ) infoMsg(getClass().getSimpleName() + ": -AurlrewriteDest not specified, annotations ignored");
+        if (isBlank(dest)) {
+            if (roundEnv.processingOver())
+                infoMsg(getClass().getSimpleName() + ": -AurlrewriteDest not specified, annotations ignored");
             return true;
         }
         debugMsg(getClass().getSimpleName() + " process");
@@ -141,7 +142,7 @@ public class UrlRewriteAnnotationProcessor extends AbstractProcessor {
             pw.println("    <name>" + pa.sourceRef + "</name>");
             if (!isBlank(pa.docComment)) {
                 pw.println("    <note>");
-                pw.println(padEachLine("        " , escapeXML(pa.docComment)));
+                pw.println(padEachLine("        ", escapeXML(pa.docComment)));
                 pw.println("    </note>");
             }
             pw.println("    <from>" + pa.value + "</from>");
@@ -160,7 +161,7 @@ public class UrlRewriteAnnotationProcessor extends AbstractProcessor {
             pw.println("<catch class=\"" + pa.exceptionName + "\">");
             if (!isBlank(pa.docComment)) {
                 pw.println("    <note>");
-                pw.println(padEachLine("        " , escapeXML(pa.docComment)));
+                pw.println(padEachLine("        ", escapeXML(pa.docComment)));
                 pw.println("    </note>");
             }
             pw.println("    <run class=\"" + pa.className + "\" method=\"" + pa.methodName + pa.paramsFormatted + "\"/>");
@@ -178,7 +179,7 @@ public class UrlRewriteAnnotationProcessor extends AbstractProcessor {
 
         public ExecutableElement init(Element declaration) {
             if (!ElementKind.METHOD.equals(declaration.getKind())) {
-                errorMsg("declared on a non-method (type is " + declaration.getKind() + ")" , declaration);
+                errorMsg("declared on a non-method (type is " + declaration.getKind() + ")", declaration);
                 return null;
             }
             ExecutableElement methodDeclaration = (ExecutableElement) declaration;
