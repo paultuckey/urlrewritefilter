@@ -57,8 +57,10 @@ import java.util.Set;
 
 /**
  * Annotation processor for UrlRewrite. Will search compiled classes for annotations and generate XML.
- *
+ * <p/>
  * Processor for JDK 1.5.
+ *
+ * @deprecated use UrlRewriteAnnotationProcessor.
  */
 public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
 
@@ -381,7 +383,7 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
     }
 
     private void debugMsg(String msg) {
-        if ( ! debug ) return;
+        if (!debug) return;
         messager.printNotice("Debug: " + msg);
     }
 
