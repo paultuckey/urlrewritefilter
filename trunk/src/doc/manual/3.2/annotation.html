@@ -56,7 +56,7 @@
 
 <a name="annotation"></a>
 
-<p>Support for annotations has been added as part of version 3 development.  You must be using JDK 1.5 for this to work.</p>
+<p>Support for annotations has been added as part of version 3 development.  You must be using JDK 1.6 for this to work.</p>
 
     <p>The intention of annotations in UrlRewriteFilter is purely for conf file generation.  The is NO runtime
     dependency on the annotations.</p>
@@ -94,22 +94,32 @@
 
 <h2>Conf Generation</h2>
 
-    <p>Add a post-compile step to your ant build script (requires ant 1.7+).
-        note, the annotation jar is included in the src version of UrlRewriteFilter.</p>
+    <p>With Java 1.6 the javac tool handles annotation processing.  So this means all you need to do is have a
+        "urlrewriteDest" option specified and have urlrewritefilter jar in your classpath. Example of compilerarg
+        elements that would be used with javac ant task:</p>
 
-   <pre><code>
-    &lt;target name="compile-urlrewrite-conf"&gt;
-       &lt;path id="annotation-classpath"&gt;
-           &lt;fileset file="lib/urlrewrite-annotation-<!--@ver-->3.1.0<!--/@ver-->.jar"/&gt;
-           &lt;fileset file="lib/servlet-api.jar"/&gt;
-       &lt;/path&gt;
-       &lt;mkdir dir="build/WEB-INF/"/&gt;
-       &lt;apt compile="false" factory="org.tuckey.web.filters.urlrewrite.annotation.HttpUrlAPTFactory"
-            srcdir="src/annotation/test/" classpathref="annotation-classpath"&gt;
-           &lt;option name="saveRulesTo" value="build/WEB-INF/urlrewrite-generated.xml"/&gt;
-       &lt;/apt&gt;
-    &lt;/target&gt;
-    </code></pre>
+<pre><code>
+&lt;compilerarg line="-AurlrewriteDest=build/WEB-INF/urlrewrite-generated.xml"/&gt;
+<span style="color: gray;">&lt;!-- optional arguments
+&lt;compilerarg value="-AurlrewriteShowPositions=true"/&gt;
+&lt;compilerarg value="-AurlrewriteDebug=true"/&gt;
+--&gt;</span>
+</code></pre>
+
+    <p>An example compile ant task with urlrewrite option might look like:</p>
+
+<pre><code>
+<span style="color: gray;">&lt;target name="compile-urlrewrite-conf"&gt;
+   &lt;javac srcdir=&quot;src/&quot; destdir=&quot;build/WEB-INF/classes&quot;&gt;
+        &lt;classpath refid=&quot;compile.classpath&quot;/&gt;</span>
+        &lt;classpath path=&quot;lib/urlrewrite-<!--@ver-->3.2.0<!--/@ver-->.jar&quot;/&gt;
+        &lt;compilerarg line=&quot;-AurlrewriteDest=build/WEB-INF/urlrewrite-generated.xml&quot;/&gt;
+   <span style="color: gray;">&lt;/javac&gt;</span>
+   &lt;!-- check file generated ok (if not you may be using the wrong jdk version)--&gt;
+   &lt;available property=&quot;urlrewrite.generated&quot; file=&quot;build/WEB-INF/urlrewrite-generated.xml&quot;/&gt;
+   &lt;fail unless=&quot;urlrewrite.generated&quot; /&gt;
+<span style="color: gray;">&lt;/target&gt;</span>
+</code></pre>
 
     <p>This will generate to the file specified.  Any errors will be output to stdout using the standard APT method.
     Read the generated conf file and check it for errors.</p>
@@ -118,22 +128,22 @@
 <p>Include the compiled conf file in your normal conf.</p>
 
 <pre><code>
-    &lt;?xml version="1.0" encoding="utf-8"?&gt;
-    &lt;!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 3.0//EN"
-            "http://tuckey.org/res/dtds/urlrewrite3.0.dtd"
-    [
-        &lt;!ENTITY included SYSTEM "urlrewrite-generated.xml"&gt;
-    ]&gt;
-    &lt;urlrewrite&gt;
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 3.2//EN"
+        "http://tuckey.org/res/dtds/urlrewrite3.2.dtd"
+[
+    &lt;!ENTITY included SYSTEM "urlrewrite-generated.xml"&gt;
+]&gt;
+&lt;urlrewrite&gt;
 
-        &lt;!--
-            other rules...
-        --&gt;
+    &lt;!--
+        other rules...
+    --&gt;
 
-        &amp;included;
+    &amp;included;
 
 
-    &lt;/urlrewrite&gt;
+&lt;/urlrewrite&gt;
 </code></pre>
 
 
