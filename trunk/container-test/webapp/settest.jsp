@@ -1,0 +1,1 @@
+testsession: <%= session.getAttribute("testsession") %>
