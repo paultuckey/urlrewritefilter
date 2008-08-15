@@ -55,6 +55,7 @@
         <from>/settest/([0-9]+)</from>
         <set type="session" name="testsession">hello!</set>
         <set type="response-header" name="cache-control">none-fool</set>
+        <to>/settest.jsp</to>
     </rule>
 
     <rule>
@@ -496,6 +497,13 @@
         <from>^inlined-in-foo\.gif$</from>
         <set type="status">403</set>
     </rule>
+
+
+    <outbound-rule>
+        <from>/bahamas/</from>
+        <to>/bahamas/;jsess</to>
+    </outbound-rule>
+
 
 </urlrewrite>
 
