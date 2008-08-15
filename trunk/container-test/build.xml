@@ -58,6 +58,13 @@
             <classes dir="${build.java.dir}"/>
             <classes dir="${build.test.dir}"/>
         </war>
+        <war warfile="${target.dir}/webapp-mod-style.war" webxml="webapp-mod-style/WEB-INF/web.xml">
+            <fileset dir="webapp-mod-style">
+                <exclude name="WEB-INF/web.xml"/>
+            </fileset>
+            <classes dir="${build.java.dir}"/>
+            <classes dir="${build.test.dir}"/>
+        </war>
     </target>
 
     <target name="container-tests" depends="war" description="Run the tests on the defined containers">
