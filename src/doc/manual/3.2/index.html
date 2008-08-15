@@ -1319,13 +1319,19 @@
      </tr>
      <tr>
          <td>RewriteRule</td>
-         <td>Certain flags not supported:
+         <td>
+             Supported but note:
+             <ul>
+             <li>Proxy flag [P] supported if <a  href="http://hc.apache.org/httpclient-3.x/">commons-httpclient</a> and
+                 <a  href="http://commons.apache.org/codec/">commons-codec</a> in the classpath</li>
+                 </ul>
+
+             Certain flags not supported:
          <ul>
              <li>chain flag [C] not supported</li>
              <li>env flag [E] not supported</li>
              <li>next flag [N] not supported</li>
              <li>nosubreq flag [NS] not supported</li>
-             <li>Proxy flag [P] not supported</li>
              <li>qsappend flag [QSA] not supported</li>
              <li>Skip flag [S] not supported</li>
          </ul>
