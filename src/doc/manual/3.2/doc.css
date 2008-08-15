@@ -3,6 +3,10 @@ body {
     font: 13px arial, helvetica, sans-serif;
 }
 
+#logo {
+    vertical-align: middle;
+}
+
 h1 {
     color: #000000;
     font-size: 2.5em;
@@ -26,9 +30,7 @@ h1 {
     text-decoration: none;
     color: black;
 }
-#masthead img {
-    vertical-align: 15%;
-}
+
 
 h2 {
     font-family: georgia, times, serif;
