@@ -76,12 +76,14 @@
         parameters</a> for more options)
         <pre><code>
     &lt;filter&gt;
-       &lt;filter-name&gt;UrlRewriteFilter&lt;/filter-name&gt;
-       &lt;filter-class&gt;org.tuckey.web.filters.urlrewrite.UrlRewriteFilter&lt;/filter-class&gt;
+        &lt;filter-name&gt;UrlRewriteFilter&lt;/filter-name&gt;
+        &lt;filter-class&gt;org.tuckey.web.filters.urlrewrite.UrlRewriteFilter&lt;/filter-class&gt;
     &lt;/filter&gt;
     &lt;filter-mapping&gt;
-       &lt;filter-name&gt;UrlRewriteFilter&lt;/filter-name&gt;
-       &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+        &lt;filter-name&gt;UrlRewriteFilter&lt;/filter-name&gt;
+        &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+        &lt;dispatcher&gt;REQUEST&lt;/dispatcher&gt;
+        &lt;dispatcher&gt;FORWARD&lt;/dispatcher&gt;
     &lt;/filter-mapping&gt;
         </code></pre></li>
     <li>Add your own configuration to the WEB-INF/urlrewrite.xml that was created.</li>
@@ -183,6 +185,8 @@
     &lt;filter-mapping&gt;
         &lt;filter-name&gt;UrlRewriteFilter&lt;/filter-name&gt;
         &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+        &lt;dispatcher&gt;REQUEST&lt;/dispatcher&gt;
+        &lt;dispatcher&gt;FORWARD&lt;/dispatcher&gt;
     &lt;/filter-mapping&gt;
 </code></pre>
 
@@ -444,7 +448,7 @@
         <b>&lt;note&gt;
             Cleanly redirect world requests to JSP,
             a country and city must be specified.
-            &lt;/note&gt;</b>
+        &lt;/note&gt;</b>
         &lt;from&gt;^/world/([a-z]+)/([a-z]+)$&lt;/from&gt;
         &lt;to&gt;/world.jsp&lt;/to&gt;
     &lt;/rule&gt;
@@ -1218,8 +1222,7 @@
     &lt;target name="urlrewrite-doc" depends="compile"
         description="UrlRewriteFilter validation and documenting"&gt;
 
-    &lt;taskdef
-        name="urlrewritedoc"
+    &lt;taskdef name="urlrewritedoc" classpath="lib/urlrewrite-<!--@ver-->3.2.0<!--/@ver-->.jar"
         classname="org.tuckey.web.filters.urlrewrite.UrlRewriteDocTask" /&gt;
     &lt;urlrewritedoc
         conf="${build.home}/WEB-INF/urlrewrite.xml"
@@ -1232,10 +1235,40 @@
 
 <h2>mod_rewrite Style Configuration</h2>
 
-<p>Support for mod_rewrite is considered beta quality. Set modRewriteConf to true in filter parameters and
-add a WEB-INF/.htaccess file with your mod_rewrite style configuration in it.</p>
+<p>Sample web.xml snippet:</p>
 
-<p>Sample web.xml snippet (see also modRewriteConf and modRewriteConfText in <a href="#filterparams">Filter Parameters</a>):</p>
+<pre><code>
+     &lt;filter&gt;
+         &lt;filter-name&gt;UrlRewriteFilter&lt;/filter-name&gt;
+         &lt;filter-class&gt;org.tuckey.web.filters.urlrewrite.UrlRewriteFilter&lt;/filter-class&gt;
+
+         &lt;!-- defaults to false. use mod_rewrite style configuration file (if this is true and confPath
+         is not specified confPath will be set to /WEB-INF/.htaccess) --&gt;
+         &lt;init-param&gt;
+             &lt;param-name&gt;<b>modRewriteConfText</b>&lt;/param-name&gt;
+             &lt;param-value&gt;&lt;![CDATA[
+
+                 # redirect mozilla to another area
+                 RewriteCond  %{HTTP_USER_AGENT}  ^Mozilla.*
+                 RewriteRule  ^/no-moz-here$                 /homepage.max.html  [L]
+
+             ]]&gt;&lt;/param-value&gt;
+         &lt;/init-param&gt;
+
+     &lt;/filter&gt;
+
+     &lt;filter-mapping&gt;
+         &lt;filter-name&gt;UrlRewriteFilter&lt;/filter-name&gt;
+         &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+         &lt;dispatcher&gt;REQUEST&lt;/dispatcher&gt;
+         &lt;dispatcher&gt;FORWARD&lt;/dispatcher&gt;
+     &lt;/filter-mapping&gt;
+</code></pre>
+
+
+<p><b>OR</b> alternately set modRewriteConf to true in filter parameters and add a <code>WEB-INF/.htaccess</code> file with
+    your mod_rewrite style configuration in it.</p>
+
 <pre><code>
     &lt;filter&gt;
         &lt;filter-name&gt;UrlRewriteFilter&lt;/filter-name&gt;
@@ -1253,10 +1286,13 @@ add a WEB-INF/.htaccess file with your mod_rewrite style configuration in it.</p
     &lt;filter-mapping&gt;
         &lt;filter-name&gt;UrlRewriteFilter&lt;/filter-name&gt;
         &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+        &lt;dispatcher&gt;REQUEST&lt;/dispatcher&gt;
+        &lt;dispatcher&gt;FORWARD&lt;/dispatcher&gt;
     &lt;/filter-mapping&gt;
 </code></pre>
 
- <p>Sample: WEB-INF/.htaccess</p>
+<p>Sample: WEB-INF/.htaccess</p>
+
  <pre><code>
      # redirect mozilla to another area
      RewriteCond  %{HTTP_USER_AGENT}  ^Mozilla.*
