@@ -231,6 +231,7 @@ public class UrlRewriteFilter implements Filter {
             ModRewriteConfLoader loader = new ModRewriteConfLoader();
             Conf conf = new Conf();
             loader.process(modRewriteConfText, conf);
+            conf.initialise();
             checkConf(conf);
             confLoadedFromFile = false;
 
