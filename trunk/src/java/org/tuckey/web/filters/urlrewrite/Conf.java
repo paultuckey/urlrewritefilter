@@ -586,4 +586,8 @@ public class Conf {
     public void setEngineEnabled(boolean engineEnabled) {
         this.engineEnabled = engineEnabled;
     }
+
+    public boolean isLoadedFromFile() {
+        return fileName != null;
+    }
 }

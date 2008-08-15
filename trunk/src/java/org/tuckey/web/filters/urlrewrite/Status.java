@@ -183,7 +183,9 @@ public class Status {
     private void showConf() {
         if (conf == null) return;
 
-        println("<h2>Summary of " + conf.getFileName() + "</h2>");
+        println("<h2>Summary");
+        if ( conf.isLoadedFromFile() ) println(" of " + conf.getFileName());
+        println("</h2>");
 
         if (!conf.isOk()) {
             final List errors = conf.getErrors();
@@ -340,7 +342,9 @@ public class Status {
         if (!conf.isOk()) {
             println("<h3 class=\"err\">ERROR: UrlRewriteFilter NOT ACTIVE</h3>");
         }
-        println("<p>Conf file <code>" + conf.getFileName() + "</code> loaded <em>" + conf.getLoadedDate() + "</em>.</p>");
+        println("<p>Conf");
+        if ( conf.isLoadedFromFile() ) println("file <code>" + conf.getFileName() + "</code>");
+        println("loaded <em>" + conf.getLoadedDate() + "</em>.</p>");
         if (urlRewriteFilter != null) {
             if (urlRewriteFilter.isConfReloadCheckEnabled()) {
                 Date nextReloadCheckDate = new Date(urlRewriteFilter.getConfReloadLastCheck().getTime() +
