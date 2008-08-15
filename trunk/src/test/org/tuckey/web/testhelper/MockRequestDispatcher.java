@@ -51,6 +51,7 @@ public class MockRequestDispatcher implements RequestDispatcher {
     private String url;
     private boolean forwarded = false;
     private boolean included = false;
+    private long includeLastCalled = 0;
 
     public MockRequestDispatcher(String url) {
         this.url = url;
@@ -62,6 +63,7 @@ public class MockRequestDispatcher implements RequestDispatcher {
     }
 
     public void include(ServletRequest servletRequest, ServletResponse servletResponse) throws ServletException, IOException {
+        includeLastCalled = System.currentTimeMillis();
         included = true;
     }
 
@@ -79,5 +81,9 @@ public class MockRequestDispatcher implements RequestDispatcher {
 
     public boolean isIncluded() {
         return included;
+    }
+
+    public long getIncludeLastCalled() {
+        return includeLastCalled;
     }
 }

@@ -114,8 +114,8 @@ public class RewrittenUrlTest extends TestCase {
         rewrittenUrl.setPostInclude(true);
         rewrittenUrl.setEncode(true);
         rewrittenUrl.doRewrite(request, response, chain);
-        // todo: figure out how to ensure this is actually post
         assertTrue(MockRequestDispatcher.getCurrent().isIncluded() && chain.isDoFilterRun());
+        assertTrue(chain.getTimeInvoked() < MockRequestDispatcher.getCurrent().getIncludeLastCalled());
     }
 
 	public void testNoSubstitution() throws IOException, ServletException {
