@@ -40,6 +40,7 @@ import org.tuckey.web.testhelper.MockResponse;
 import org.tuckey.web.testhelper.MockServletContext;
 import org.tuckey.web.testhelper.MockFilterChain;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
+import org.tuckey.web.filters.urlrewrite.test.TestRunObj;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -66,7 +67,7 @@ public class RunTest extends TestCase {
 
     public void testRun01() throws IllegalAccessException, InvocationTargetException, InstantiationException, IOException, ServletException {
         Run run = new Run();
-        run.setClassStr(org.tuckey.web.filters.urlrewrite.TestRunObj.class.getName());
+        run.setClassStr(TestRunObj.class.getName());
         run.initialise(servletContext);
         assertTrue("Should be a initialised " + run.getError(), run.isValid());
         assertTrue("Should be created now", TestRunObj.getCreatedCount() == 1);
@@ -90,7 +91,7 @@ public class RunTest extends TestCase {
 
     public void testRunBadMethod() throws IOException, ServletException, InvocationTargetException {
         Run run = new Run();
-        run.setClassStr(org.tuckey.web.filters.urlrewrite.TestRunObj.class.getName());
+        run.setClassStr(TestRunObj.class.getName());
         run.setMethodStr("badMethod");
         run.initialise(servletContext);
         assertFalse("Should not be initialised " + run.getError(), run.isValid());
@@ -100,7 +101,7 @@ public class RunTest extends TestCase {
 
     public void testRunThatReturns() throws IOException, ServletException, InvocationTargetException {
         Run run = new Run();
-        run.setClassStr(org.tuckey.web.filters.urlrewrite.TestRunObj.class.getName());
+        run.setClassStr(TestRunObj.class.getName());
         run.setMethodStr("runThatReturns");
         run.initialise(servletContext);
         assertTrue("Should be initialised " + run.getError(), run.isValid());
@@ -110,7 +111,7 @@ public class RunTest extends TestCase {
 
     public void testRunNoParams() throws IOException, ServletException, InvocationTargetException {
         Run run = new Run();
-        run.setClassStr(org.tuckey.web.filters.urlrewrite.TestRunObj.class.getName());
+        run.setClassStr(TestRunObj.class.getName());
         run.setMethodStr("runWithNoParams()");
         run.initialise(servletContext);
         assertTrue("Should be initialised " + run.getError(), run.isValid());
@@ -121,7 +122,7 @@ public class RunTest extends TestCase {
 
     public void testRunCustomMethod() throws IOException, ServletException, InvocationTargetException {
         Run run = new Run();
-        run.setClassStr(org.tuckey.web.filters.urlrewrite.TestRunObj.class.getName());
+        run.setClassStr(TestRunObj.class.getName());
         run.setMethodStr("nonDefaultRun");
         run.initialise(servletContext);
         assertTrue("Should be initialised " + run.getError(), run.isValid());
@@ -133,7 +134,7 @@ public class RunTest extends TestCase {
 
     public void testRunMethodParams() throws IOException, ServletException, InvocationTargetException {
         Run run = new Run();
-        run.setClassStr(org.tuckey.web.filters.urlrewrite.TestRunObj.class.getName());
+        run.setClassStr(TestRunObj.class.getName());
         // run.setMethodStr("runWithParam(  int, String, d, long, req, res  )");
         run.setMethodStr("runWithParam(  int )");
         run.initialise(servletContext);
@@ -145,7 +146,7 @@ public class RunTest extends TestCase {
 
     public void testRunMethodParamNamed() throws IOException, ServletException, InvocationTargetException {
         Run run = new Run();
-        run.setClassStr(org.tuckey.web.filters.urlrewrite.TestRunObj.class.getName());
+        run.setClassStr(TestRunObj.class.getName());
         // run.setMethodStr("runWithParam(  int, String, d, long, req, res  )");
         run.setMethodStr("runWithParam(  int  id )");
         run.initialise(servletContext);
@@ -158,7 +159,7 @@ public class RunTest extends TestCase {
 
     public void testRunWithChainParam() throws IOException, ServletException, InvocationTargetException {
         Run run = new Run();
-        run.setClassStr(org.tuckey.web.filters.urlrewrite.TestRunObj.class.getName());
+        run.setClassStr(TestRunObj.class.getName());
         // run.setMethodStr("runWithParam(  int, String, d, long, req, res  )");
         run.setMethodStr("runWithChainParam( req, res, chain )");
         run.initialise(servletContext);
@@ -173,7 +174,7 @@ public class RunTest extends TestCase {
 
     public void testParamsPrimitive() throws Exception {
         Run run = new Run();
-        run.setClassStr(org.tuckey.web.filters.urlrewrite.TestRunObj.class.getName());
+        run.setClassStr(TestRunObj.class.getName());
         run.setMethodStr("runWithPrimitiveParam(int,  char , double, float,short, byte , boolean , String)");
         run.initialise(servletContext);
         assertTrue("Should be initialised " + run.getError(), run.isValid());
@@ -194,7 +195,7 @@ public class RunTest extends TestCase {
 
     public void testParamsObj() throws Exception {
         Run run = new Run();
-        run.setClassStr(org.tuckey.web.filters.urlrewrite.TestRunObj.class.getName());
+        run.setClassStr(TestRunObj.class.getName());
         run.setMethodStr("runWithObjParam(Integer , Character , Double , Float , Short , Byte , Boolean , String )");
         run.initialise(servletContext);
         assertTrue("Should be initialised " + run.getError(), run.isValid());
@@ -216,7 +217,7 @@ public class RunTest extends TestCase {
 
     private Throwable doExceptionRun(String methodName) {
         Run run = new Run();
-        run.setClassStr(org.tuckey.web.filters.urlrewrite.TestRunObj.class.getName());
+        run.setClassStr(TestRunObj.class.getName());
         run.setMethodStr(methodName);
         run.initialise(servletContext);
         assertTrue("Should be initialised, but: " + run.getError(), run.isValid());
@@ -310,7 +311,7 @@ public class RunTest extends TestCase {
 
     public void testRunPrivateMethod() throws IOException, ServletException, InvocationTargetException {
         Run run = new Run();
-        run.setClassStr(org.tuckey.web.filters.urlrewrite.TestRunObj.class.getName());
+        run.setClassStr(TestRunObj.class.getName());
         run.setMethodStr("privateRun");
         run.initialise(servletContext);
         assertFalse("Should not be initialised " + run.getError(), run.isValid());
@@ -320,7 +321,7 @@ public class RunTest extends TestCase {
 
     public void testRunNewEach() throws IOException, ServletException, InvocationTargetException {
         Run run = new Run();
-        run.setClassStr(org.tuckey.web.filters.urlrewrite.TestRunObj.class.getName());
+        run.setClassStr(TestRunObj.class.getName());
         run.setNewEachTime(true);
         run.initialise(servletContext);
         assertTrue("Should not have been created yet", TestRunObj.getCreatedCount() == 0);
@@ -333,7 +334,7 @@ public class RunTest extends TestCase {
 
     public void testInitParams() {
         Run run = new Run();
-        run.setClassStr(org.tuckey.web.filters.urlrewrite.TestRunObj.class.getName());
+        run.setClassStr(TestRunObj.class.getName());
         run.addInitParam("horse", "golden");
         run.addInitParam("debs", "nightout");
         run.initialise(servletContext);
@@ -344,7 +345,7 @@ public class RunTest extends TestCase {
 
     public void testRuleNoToWithRun() throws IOException, ServletException, InvocationTargetException {
         Run run = new Run();
-        run.setClassStr(org.tuckey.web.filters.urlrewrite.TestRunObj.class.getName());
+        run.setClassStr(TestRunObj.class.getName());
         run.setMethodStr("run");
         NormalRule rule = new NormalRule();
         rule.setFrom("from");

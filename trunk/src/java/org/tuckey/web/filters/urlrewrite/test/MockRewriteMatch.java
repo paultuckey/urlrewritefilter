@@ -32,7 +32,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.tuckey.web.testhelper;
+package org.tuckey.web.filters.urlrewrite.test;
 
 import org.tuckey.web.filters.urlrewrite.extend.RewriteMatch;
 
@@ -42,6 +42,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 
+/**
+ * Mock RewriteMatch that can be used for testing.  Included here and not in test folder as it needs to be deployed with
+ * the main library.
+ *
+ * @author Paul Tuckey
+ * @version $Revision: 33 $ $Date: 2006-09-12 16:41:56 +1200 (Tue, 12 Sep 2006) $
+ */
 public class MockRewriteMatch extends RewriteMatch {
 
     private static long calledTime = 0;

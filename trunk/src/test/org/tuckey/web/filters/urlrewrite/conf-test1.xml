@@ -46,19 +46,19 @@
 
     <rule>
         <from>/run-me</from>
-        <run class="org.tuckey.web.filters.urlrewrite.TestRunObj">
+        <run class="org.tuckey.web.filters.urlrewrite.test.TestRunObj">
             <init-param>
                 <param-name>testName</param-name>
                 <param-value>testValue</param-value>
             </init-param>
         </run>
-        <run class="org.tuckey.web.filters.urlrewrite.TestRunObj" method="nonDefaultRun"/>
+        <run class="org.tuckey.web.filters.urlrewrite.test.TestRunObj" method="nonDefaultRun"/>
 
     </rule>
 
     <rule>
         <from>^/runWithParam/([0-9])+/$</from>
-        <run class="org.tuckey.web.filters.urlrewrite.TestRunObj" method="runWithParam(int)"/>
+        <run class="org.tuckey.web.filters.urlrewrite.test.TestRunObj" method="runWithParam(int)"/>
     </rule>
 
     <rule>
@@ -79,7 +79,7 @@
 
 
     <catch class="java.lang.ClassNotFoundException">
-        <run class="org.tuckey.web.filters.urlrewrite.TestRunObj" method="trialException"/>
+        <run class="org.tuckey.web.filters.urlrewrite.test.TestRunObj" method="trialException"/>
     </catch>
 
 </urlrewrite>
