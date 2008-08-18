@@ -32,20 +32,22 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.tuckey.web.filters.urlrewrite;
+package org.tuckey.web.filters.urlrewrite.test;
 
 import org.tuckey.web.filters.urlrewrite.extend.RewriteMatch;
-import org.tuckey.web.testhelper.MockRewriteMatch;
 
+import javax.servlet.FilterChain;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
+ * RunObject that can be used for testing.  Included here and not in test folder as it needs to be deployed with the
+ * main library.
+ *
  * @author Paul Tuckey
  * @version $Revision: 33 $ $Date: 2006-09-12 16:41:56 +1200 (Tue, 12 Sep 2006) $
  */
@@ -168,18 +170,23 @@ public class TestRunObj {
             // YES we WANT a null pointer here
             aaa.toLowerCase();
         }
+
         public void doRuntime() {
             throw new RuntimeException("shit!");
         }
+
         public void doServlet() throws ServletException {
             throw new ServletException("serv");
         }
+
         public void doIO() throws IOException {
             throw new IOException("me i.o. has gone crazy");
         }
+
         public void doCustom() throws CustomException {
             throw new CustomException();
         }
+
         public class CustomException extends Exception {
 
         }
@@ -187,7 +194,7 @@ public class TestRunObj {
 
     public RewriteMatch trialException(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                                        ClassNotFoundException e) {
-        return new TestRewriteMatch();
+        return new MockRewriteMatch();
     }
 
     /**

@@ -40,8 +40,9 @@ import org.tuckey.web.testhelper.MockResponse;
 import org.tuckey.web.testhelper.BenchmarkRunner;
 import org.tuckey.web.testhelper.MockFilterChain;
 import org.tuckey.web.testhelper.MockServletContext;
-import org.tuckey.web.testhelper.MockRewriteMatch;
+import org.tuckey.web.filters.urlrewrite.test.MockRewriteMatch;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
+import org.tuckey.web.filters.urlrewrite.test.TestRunObj;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -374,7 +375,7 @@ public class UrlRewriterTest extends TestCase {
         Conf conf = new Conf(servletContext, null, null, null);
 
         Run run = new Run();
-        run.setClassStr(org.tuckey.web.filters.urlrewrite.TestRunObj.class.getName());
+        run.setClassStr(TestRunObj.class.getName());
         run.setMethodStr("runWithChainParam( req, res, chain )");
 
         NormalRule rule = new NormalRule();
@@ -383,7 +384,7 @@ public class UrlRewriterTest extends TestCase {
         conf.addRule(rule);
 
         Run run2 = new Run();
-        run2.setClassStr(org.tuckey.web.filters.urlrewrite.TestRunObj.class.getName());
+        run2.setClassStr(TestRunObj.class.getName());
         run2.setMethodStr("runWithReturnedObj");
 
         NormalRule rule2 = new NormalRule();
