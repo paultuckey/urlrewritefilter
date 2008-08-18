@@ -73,11 +73,11 @@
 
         can have as many as you want
         -->
-        <run class="org.tuckey.web.filters.urlrewrite.TestRunObj"/>
+        <run class="org.tuckey.web.filters.urlrewrite.test.TestRunObj"/>
 
-        <run class="org.tuckey.web.filters.urlrewrite.TestRunObj" method="run"/>
+        <run class="org.tuckey.web.filters.urlrewrite.test.TestRunObj" method="run"/>
 
-        <run class="org.tuckey.web.filters.urlrewrite.TestRunObj" method="nonDefaultRun">
+        <run class="org.tuckey.web.filters.urlrewrite.test.TestRunObj" method="nonDefaultRun">
             <init-param>
                 <param-name>aParam</param-name>
                 <param-value>10</param-value>
@@ -90,9 +90,9 @@
 
         can have as many as you want
         -->
-        <run class="org.tuckey.web.filters.urlrewrite.TestRunObj" method="nonDefaultRun" neweachtime="true"/>
+        <run class="org.tuckey.web.filters.urlrewrite.test.TestRunObj" method="nonDefaultRun" neweachtime="true"/>
 
-        <run class="org.tuckey.web.filters.urlrewrite.TestRunObj" method="nonDefaultRun" neweachtime="true">
+        <run class="org.tuckey.web.filters.urlrewrite.test.TestRunObj" method="nonDefaultRun" neweachtime="true">
             <init-param>
                 <param-name>someParam</param-name>
                 <param-value>10</param-value>
