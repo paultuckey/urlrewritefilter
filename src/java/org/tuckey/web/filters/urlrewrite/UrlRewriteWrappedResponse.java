@@ -37,6 +37,7 @@ package org.tuckey.web.filters.urlrewrite;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
+import java.util.HashMap;
 
 /**
  * Handles wrapping the response so we can encode the url's on the way "out" (ie, in JSP or servlet generation).
@@ -49,6 +50,8 @@ public class UrlRewriteWrappedResponse extends HttpServletResponseWrapper {
     private UrlRewriter urlRerwiter;
     private HttpServletResponse httpServletResponse;
     private HttpServletRequest httpServletRequest;
+    HashMap overridenRequestParameters;
+    String overridenMethod;
 
     public UrlRewriteWrappedResponse(HttpServletResponse httpServletResponse, HttpServletRequest httpServletRequest,
                                      UrlRewriter urlRerwiter) {
@@ -126,4 +129,20 @@ public class UrlRewriteWrappedResponse extends HttpServletResponseWrapper {
         return urlRerwiter.processEncodeURL(httpServletResponse, httpServletRequest, true, s);
     }
 
+    public void addOverridenRequestParameter(String k, String v) {
+        if ( overridenRequestParameters == null ) overridenRequestParameters = new HashMap();
+        overridenRequestParameters.put(k,v);
+    }
+
+    public HashMap getOverridenRequestParameters() {
+        return overridenRequestParameters;
+    }
+
+    public String getOverridenMethod() {
+        return overridenMethod;
+    }
+
+    public void setOverridenMethod(String overridenMethod) {
+        this.overridenMethod = overridenMethod;
+    }
 }

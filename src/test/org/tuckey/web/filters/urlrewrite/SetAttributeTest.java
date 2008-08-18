@@ -83,7 +83,6 @@ public class SetAttributeTest extends TestCase {
         set.initialise();
         set.execute(null, toMatcher, request, response);
         assertTrue(request.getAttribute("blah").equals("Capture group 1 is /query"));
-
     }
 
     public void testVariable() {
@@ -188,5 +187,29 @@ public class SetAttributeTest extends TestCase {
         assertEquals("slang", response.getLocale().getVariant());
     }
 
+    public void testSetParam() {
+        SetAttribute set = new SetAttribute();
+        set.setName("blah");
+        set.setType("parameter");
+        set.setValue("Capture group 1 is $1");
+        MockRequest request = new MockRequest();
+        UrlRewriteWrappedResponse response = new UrlRewriteWrappedResponse(new MockResponse(), request, null);
+
+        set.initialise();
+        set.execute(null, toMatcher, request, response);
+        assertTrue(response.getOverridenRequestParameters().get("blah").equals("Capture group 1 is /query"));
+    }
+
+    public void testSetMethod() {
+        SetAttribute set = new SetAttribute();
+        set.setType("method");
+        set.setValue("PUT");
+        MockRequest request = new MockRequest();
+        UrlRewriteWrappedResponse response = new UrlRewriteWrappedResponse(new MockResponse(), request, null);
+
+        set.initialise();
+        set.execute(null, toMatcher, request, response);
+        assertTrue(response.getOverridenMethod().equals("PUT"));
+    }
 
 }

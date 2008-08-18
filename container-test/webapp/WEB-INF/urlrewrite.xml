@@ -55,6 +55,8 @@
         <from>/settest/([0-9]+)</from>
         <set type="session" name="testsession">hello!</set>
         <set type="response-header" name="cache-control">none-fool</set>
+        <set type="parameter" name="settest1">$1</set>
+        <set type="method">PUT</set>
         <to>/settest.jsp</to>
     </rule>
 
@@ -138,7 +140,7 @@
     <rule>
         <name>Simple Run Test</name>
         <from>^/run/test/(.*)$</from>
-        <run class="org.tuckey.web.filters.urlrewrite.TestRunObj"/>
+        <run class="org.tuckey.web.filters.urlrewrite.test.TestRunObj"/>
         <to>null</to>
     </rule>
 
