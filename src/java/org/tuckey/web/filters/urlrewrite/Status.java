@@ -160,7 +160,6 @@ public class Status {
                 println("</pre>");
             }
         }
-        println("</pre>");
 
         // show headers from request
         println("<h4>Time info</h4>");
