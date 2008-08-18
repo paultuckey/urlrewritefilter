@@ -64,8 +64,8 @@
     If you have any suggestions/examples for this manual please post them to the
     <a href="http://groups-beta.google.com/group/urlrewrite">group</a>.</p>
 
-<a name="install"></a>
 
+<a name="install"> </a>
 <h2>Install</h2>
 
 <ol>
@@ -94,8 +94,8 @@
     (or whatever the address of your local webapp and context)
     to see output (note: this page is only viewable from localhost).</p>
 
-<a name="filterparams"></a>
 
+<a name="filterparams"> </a>
 <h2>Filter Parameters</h2>
 
 <p>There are a few advanced filter parameters for enabling conf file reloading etc. There are self-explanatory.</p>
@@ -196,9 +196,34 @@
     obviously you will need to have the jar for log4j or commons-logging in your classpath.</p>
 
 
-<a name="configuration"></a>
-
+<a name="configuration"> </a>
 <h2>Configuration File WEB-INF/urlrewrite.xml</h2>
+
+<table align="right">
+     <tr>
+         <td>
+             <small>
+                 <a href="#urlrewrite">&lt;urlrewrite&gt;</a> &nbsp;
+                 <a href="#rule">&lt;rule&gt;</a> &nbsp;
+                 <a href="#outbound-rule">&lt;outbound-rule&gt;</a> &nbsp;
+                 <a href="#class-rule">&lt;class-rule&gt;</a>
+                 <br/>
+                 <a href="#name">&lt;name&gt;</a> &nbsp;
+                 <a href="#note">&lt;note&gt;</a> &nbsp;
+                 <a href="#condition">&lt;condition&gt;</a> &nbsp;
+                 <a href="#from">&lt;from&gt;</a> &nbsp;
+                 <a href="#to">&lt;to&gt;</a> &nbsp;
+                 <a href="#set">&lt;set&gt;</a> &nbsp;
+                 <a href="#run">&lt;run&gt;</a> &nbsp;
+                 <br/>
+                 <a href="#backreferences">Back References</a> &nbsp;
+                 <a href="#variables">Variables</a> &nbsp;
+                 <a href="#functions">Functions</a> &nbsp;
+             </small>
+         </td>
+     </tr>
+</table>
+<br clear="all"/>
 
 <p>Configuration is done via a simple XML file that lives in your <code>WEB-INF</code> folder. It should be named
     urlrewrite.xml.
@@ -255,6 +280,7 @@
 </code></pre>
 
 
+<a name="urlrewrite"> </a>
 <h3>&lt;urlrewrite&gt; element</h3>
 
 <p>The top level element.</p>
@@ -317,6 +343,7 @@
 </table>
 
 
+<a name="rule"> </a>
 <h3>&lt;rule&gt; element</h3>
 
 <p>Zero or more. The basis of a rule.</p>
@@ -366,6 +393,7 @@
 </code></pre>
 
 
+<a name="outbound-rule"> </a>
 <h3>&lt;outbound-rule&gt; element</h3>
 
 <p>Zero or more. This is very similar to a normal rule but it is used for rewriting urls that go through
@@ -423,6 +451,8 @@
 
 <p>Note, If you are using JSTL (ie, &lt;c:url) this will work also.</p>
 
+
+<a name="name"> </a>
 <h3>&lt;name&gt; element</h3>
 
 <p>An optional element used for documenting the name of the rule. This can be used with rule and outbound-rule.
@@ -437,6 +467,7 @@
 </code></pre>
 
 
+<a name="note"> </a>
 <h3>&lt;note&gt; element</h3>
 
 <p>A simple optional element used for documentation of the rule. This can be used with rule and outbound-rule.
@@ -454,8 +485,8 @@
     &lt;/rule&gt;
 </code></pre>
 
-<a name="condition"></a>
 
+<a name="condition"> </a>
 <h3>&lt;condition&gt; element</h3>
 
 <p>An element that lets you choose condtions for the rule. Note, all conditions must be met for the rule to be run
@@ -734,6 +765,7 @@
 </code></pre>
 
 
+ <a name="from"> </a>
 <h3>&lt;from&gt; element</h3>
 
 <p>You must always have exactly one from for each rule or outbound-rule. Value can be a regular expression in the
@@ -764,7 +796,7 @@
     &lt;from&gt;^/world/([a-z]+)$&lt;/from&gt;
 </code></pre>
 
-
+<a name="to"> </a>
 <h3>&lt;to&gt; element</h3>
 
 <p>Value can be a regular replacement expression in the Perl5 style.</p>
@@ -812,11 +844,11 @@
     </tr>
     <tr>
         <td>pre-include</td>
-        <td></td>
+        <td> </td>
     </tr>
     <tr>
         <td>post-include</td>
-        <td></td>
+        <td> </td>
     </tr>
     <tr>
         <td>proxy</td>
@@ -848,7 +880,7 @@
     </tr>
     <tr>
         <td>context <br/><small>(optional)</small></td>
-        <td></td>
+        <td> </td>
         <td>If your application server is configured to allow "cross context" communication then this attribute can be used
             to forward (and only forward, not redirect or other "to" types) requests to a named servlet context.
             <br/>
@@ -873,7 +905,7 @@
 
 <p>To elements can contain backreferences and variables.</p>
 
-<a name="backreferences"></a>
+<a name="backreferences"> </a>
 <h4>Backreferences</h4>
 
 <pre><code>
@@ -884,7 +916,7 @@
     in the current rule.
     N must be less than 10 and greater than 0 (i.e. %1, %2, %3 etc).</p>
 
-<a name="variables"></a>
+<a name="variables"> </a>
 <h4>Variables</h4>
 
 <pre><code>
@@ -899,7 +931,7 @@
 
 <p>Valid types are condition types, see <a href="#condition">condition</a> for a full description.</p>
 
-<a name="functions"></a>
+<a name="functions"> </a>
 <h4>Functions</h4>
 
 <pre><code>
@@ -952,6 +984,7 @@
  </table>
     
 
+<a name="set"> </a>
 <h3>&lt;set&gt; element</h3>
 
 <p>Allows you to set varous things if the rule is matched.</p>
@@ -963,7 +996,7 @@
         <th>Explanation</th>
     </tr>
     <tr>
-        <td rowspan="9">type <br/><small>(optional)</small></td>
+        <td rowspan="11">type <br/><small>(optional)</small></td>
         <td>request (default)</td>
         <td>The same as <code>request.<a
                 href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/ServletRequest.html#setAttribute(java.lang.String,%20java.lang.Object)">setAttribute</a>([name],
@@ -1033,6 +1066,14 @@
         </td>
     </tr>
     <tr>
+        <td>parameter</td>
+        <td>Enables you to override a <code>request.getParameter(String)</code> wuth a custom value</td>
+    </tr>
+    <tr>
+        <td>method</td>
+        <td>Enables you to override <code>request.getMethod()</code> with a custom value</td>
+    </tr>
+    <tr>
         <td>name <br/><small>(optional)</small></td>
         <td>(can be anything)</td>
         <td>If type is request, session, response-header, cookie this specifies the name item.</td>
@@ -1057,6 +1098,7 @@
 </code></pre>
 
 
+<a name="run"> </a>
 <h3>&lt;run&gt; element</h3>
 
 <p>Allows you to run a method on an object when a rule and it's conditions are matched.</p>
@@ -1069,7 +1111,7 @@
     </tr>
     <tr>
         <td>class</td>
-        <td></td>
+        <td> </td>
         <td>The class you want to run a method on. Must be a fully qualified name.</td>
     </tr>
     <tr>
@@ -1121,6 +1163,7 @@
     so your container can handle them.</p>
 
 
+<a name="class-rule"> </a>
 <h3>&lt;class-rule&gt; element</h3>
 
 <p>Allows you to run a method every time a request come in for 100% dynamic rules. See the org.tuckey.web.filters.urlrewrite.sample package for an example.</p>
@@ -1155,9 +1198,8 @@
 </code></pre>
 
 
- <a name="tips"></a>
-
- <h2>Tips</h2>
+<a name="tips"> </a>
+<h2>Tips</h2>
 
 <ul>
     <li>When you want to put an "&amp;" in a rule you must enter it as the XML entity "&amp;amp;"</li>
@@ -1183,8 +1225,7 @@
  
 
 
- <a name="wildcard"></a>
-
+<a name="wildcard"> </a>
 <h2>Wildcard Matching Engine</h2>
 
 <p>The wildcard matching engine can be used instead of regex. It is supported in conditions and rules
@@ -1207,8 +1248,7 @@
 <p><small>Added in 3.0</small></p>
 
 
-<a name="anttask"></a>
-
+<a name="anttask"> </a>
 <h2>Ant Task</h2>
 
 <p>An Ant task has been written to allow validate the conf file and generation
@@ -1231,8 +1271,7 @@
 </code></pre>
 
 
-<a name="mod_rewrite_conf"></a>
-
+<a name="mod_rewrite_conf"> </a>
 <h2>mod_rewrite Style Configuration</h2>
 
 <p>Sample web.xml snippet:</p>

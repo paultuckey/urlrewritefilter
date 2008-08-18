@@ -7,7 +7,11 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 
 
-public class ModStyleHttpTest extends ContainerTestBase {
+/**
+ * @author Paul Tuckey
+ * @version $Revision: 33 $ $Date: 2006-09-12 16:41:56 +1200 (Tue, 12 Sep 2006) $
+ */
+public class WebappModStyleHttpTest extends ContainerTestBase {
 
     public void testSimpleTest() throws ServletException, IOException, SAXException {
         GetMethod method = new GetMethod(getBaseUrl() + "/simple/test");

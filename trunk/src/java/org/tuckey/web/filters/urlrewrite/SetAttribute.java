@@ -80,6 +80,7 @@ public class SetAttribute {
     private static final short SET_TYPE_STAUS = 7;
     private static final short SET_TYPE_PARAM = 8;
     private static final short SET_TYPE_EXPIRES = 9;
+    private static final short SET_TYPE_METHOD = 10;
 
     private long expiresValueAdd = 0;
     private boolean valueContainsVariable = false;
@@ -95,8 +96,9 @@ public class SetAttribute {
         if (type == SET_TYPE_CHARSET) return "charset";
         if (type == SET_TYPE_LOCALE) return "locale";
         if (type == SET_TYPE_STAUS) return "status";
-        if (type == SET_TYPE_PARAM) return "param";
+        if (type == SET_TYPE_PARAM) return "parameter";
         if (type == SET_TYPE_EXPIRES) return "expires";
+        if (type == SET_TYPE_METHOD) return "method";
         return "request";
     }
 
@@ -115,12 +117,14 @@ public class SetAttribute {
             type = SET_TYPE_LOCALE;
         } else if ("status".equals(typeStr)) {
             type = SET_TYPE_STAUS;
-        } else if ("param".equals(typeStr) || "parameter".equals(typeStr)) {
+        } else if ("parameter".equals(typeStr) || "param".equals(typeStr)) {
             type = SET_TYPE_PARAM;
         } else if ("expires".equals(typeStr)) {
             type = SET_TYPE_EXPIRES;
         } else if ("request".equals(typeStr) || StringUtils.isBlank(typeStr)) {
             type = SET_TYPE_REQUEST;
+        } else if ("method".equals(typeStr)) {
+            type = SET_TYPE_METHOD;
         } else {
             setError("type (" + typeStr + ") is not valid");
         }
@@ -190,6 +194,22 @@ public class SetAttribute {
         if (type == SET_TYPE_REQUEST) {
             log.debug("setting request attrib");
             hsRequest.setAttribute(name, value);
+
+        } else if (type == SET_TYPE_METHOD) {
+            log.debug("setting request method");
+            if ( hsResponse instanceof UrlRewriteWrappedResponse ) {
+                ((UrlRewriteWrappedResponse) hsResponse).setOverridenMethod(value);
+            }   else {
+                log.warn("unable to set request method as request not a UrlRewriteWrappedResponse");
+            }
+
+        } else if (type == SET_TYPE_PARAM) {
+            log.debug("setting request parameter");
+            if ( hsResponse instanceof UrlRewriteWrappedResponse ) {
+                ((UrlRewriteWrappedResponse) hsResponse).addOverridenRequestParameter(name, value);
+            }   else {
+                log.warn("unable to set request parameter as request not a UrlRewriteWrappedResponse");
+            }
 
         } else if (type == SET_TYPE_SESSION) {
             log.debug("setting session attrib");
