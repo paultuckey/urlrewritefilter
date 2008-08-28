@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Example</title>
+
+    <!-- jquery -->
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
+
+    <!-- http://code.google.com/p/reallysimplehistory/ -->
+    <script type="text/javascript" src="http://reallysimplehistory.googlecode.com/svn/trunk/json2007.js"></script>
+    <script type="text/javascript" src="http://reallysimplehistory.googlecode.com/svn/trunk/rsh.js"></script>
+
+    <!-- urlrewrite jquery plugin -->
+    <script type="text/javascript" src="jquery.urlrewrite.js"></script>
+
+    <script type="text/javascript">
+
+        // usage example w/o jquery
+        /*todo: do automatically instantiate our history object*/
+        window.dhtmlHistory.create();
+
+        $(document).ready(function() {
+
+            log("done3");
+
+            // when url is #person/[num]/view/
+            $.ifhash(/#person\/([0-9]+)\/view/, function(num) {
+                // hide elements with class person
+                $(".person").hide();
+                // show element id="person[num]"
+                $("#person" + num).show();
+            });
+
+            log("done4");
+
+            // run function with the context #somediv if url matches #person/123/view
+            $("#somediv").ifhash(/#person\/([0-9]+)\/view/, function(num) {
+                log("in somediv");
+                $(this).html("This is " + num);
+            });
+
+        });
+
+    </script>
+</head>
+<body>
+
+<h2>Via Jquery</h2>
+<ul>
+    <li><a href="#person/123/view">Bob Smith</a></li>
+    <li><a href="#person/124/view">Jane Smith</a></li>
+</ul>
+
+<div id="somediv">somediv</div>
+<div class="person" id="person123">Bob Smith Bio</div>
+<div class="person" id="person124">Jane Smith Bio</div>
+
+
+<div id="log"></div>
+</body>
+</html>
