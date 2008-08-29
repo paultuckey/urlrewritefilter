@@ -1273,9 +1273,7 @@ jQuery.fn.urllisten = function(re, funcToInvoke) {
 }
 
 // instantiate our history object
-window.dhtmlHistory.create({
-    toJSON: function(o) {
-        return urlrewriteJSON.stringify(o);
-    } , fromJSON: function(s) {
-        return urlrewriteJSON.parse(s);
-    }} );
+window.dhtmlHistory.create({ 
+	toJSON: urlrewriteJSON.stringify, 
+	fromJSON: urlrewriteJSON.parse 
+});
