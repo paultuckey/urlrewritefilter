@@ -1202,11 +1202,11 @@ window.historyStorage = {
  * @param to replacement string for the href
  */
 jQuery.urlrewrite = function(reFrom, to) {
-    console.log("on " + reFrom);
+    //console.log("on " + reFrom);
     jQuery("a[href]").each(function() {
         var href = jQuery(this).attr("href");
         var match = reFrom.exec(href);
-        console.log("got " + reFrom + " " + href + " " + match);
+        //console.log("got " + reFrom + " " + href + " " + match);
         if ( match ) {
             jQuery(this).attr("href", href.replace(reFrom, to));
         }
