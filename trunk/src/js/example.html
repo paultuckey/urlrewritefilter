@@ -14,8 +14,6 @@
 
         $(document).ready(function() {
 
-            console.log("done3");
-
             // rewrite url's person.jsp?id=123 to #person/123/view
             $.urlrewrite(/person\.jsp\?id=([0-9]+)/, "#person/$1/view");
 
@@ -30,8 +28,6 @@
                 // highlight links to this person
                 $("a[href='#person/" + num + "/view']").css("background-color", "yellow");
             });
-
-            console.log("done4");
 
             // run function with the context #somediv if url matches #person/123/view
             $("#somediv").urllisten(/#person\/([0-9]+)\/view/, function(num) {
