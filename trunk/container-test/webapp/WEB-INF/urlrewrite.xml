@@ -4,7 +4,7 @@
         PUBLIC "-//tuckey.org//DTD UrlRewrite 3.2//EN"
         "http://tuckey.org/res/dtds/urlrewrite3.2.dtd">
 
-<urlrewrite>
+<urlrewrite decode-using="utf8">
 
     <rule>
         <note>
@@ -144,6 +144,16 @@
         <to>null</to>
     </rule>
 
+    <rule>
+        <name>Proxy</name>
+        <from>^/enc-test/(.*)$</from>
+        <to encode="true" type="forward">/test$1.jsp</to>
+    </rule>
+
+    <rule>
+        <from>^/percenttest/([a-zA-Z0-9\-\%]+)$</from>
+        <to>/testD%,D.pdf.jsp</to>
+    </rule>
 
     <!--
 
