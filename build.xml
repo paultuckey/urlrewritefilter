@@ -82,7 +82,7 @@
     </target>
 
     <target name="compile-annotation">
-        <!-- separated so that we can use language level 1.6 here not 1.3) -->
+        <!-- separated so that we can use language level 1.5 here (not 1.3) -->
         <javac srcdir="src/annotation/java" destdir="${build.home}/java" source="1.5" target="1.5"
                debug="${compile.debug}" deprecation="${compile.deprecation}" optimize="${compile.optimize}">
             <classpath refid="compile.classpath"/>
