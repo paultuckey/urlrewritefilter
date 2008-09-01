@@ -138,4 +138,18 @@ public class WebappHttpTest extends ContainerTestBase {
         assertEquals("this is " + TestRunObj.class.getName(), method.getResponseBodyAsString());
     }
 
+    public void testEncoding() throws ServletException, IOException {
+        //GetMethod method = new GetMethod(getBaseUrl() + "/bom-auth/D%,D.pdf");
+        GetMethod method = new GetMethod(getBaseUrl() + "/enc-test/D%25%2cD.pdf");
+        method.setFollowRedirects(false);
+        client.executeMethod(method);
+        assertEquals("testjsp%, file contents", method.getResponseBodyAsString());
+    }
+
+    public void testPercentage() throws ServletException, IOException {
+        GetMethod method = new GetMethod(getBaseUrl() + "/percenttest/100%37");
+        client.executeMethod(method);
+        assertEquals("testjsp%, file contents", method.getResponseBodyAsString());
+    }
+
 }
