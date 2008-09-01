@@ -121,7 +121,7 @@
     &lt;rule&gt;
         &lt;name&gt;Domain Name Check&lt;/name&gt;
         &lt;condition name="host" operator="notequal"&gt;www.example.com&lt;/condition&gt;
-        &lt;from&gt;(.*)&lt;/from&gt;
+        &lt;from&gt;^(.*)$&lt;/from&gt;
         &lt;to type="redirect"&gt;http://www.example.com/context$1&lt;/to&gt;
     &lt;/rule&gt;
 </code></pre>
