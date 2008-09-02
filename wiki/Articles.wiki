@@ -1,4 +1,5 @@
 #summary Links to pages/articles/blog entries about UrlRewriteFilter
+#labels Featured
 
 =Articles=
 
