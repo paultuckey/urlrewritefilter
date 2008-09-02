@@ -3,8 +3,6 @@ Links to pages/articles/blog entries about UrlRewriteFilter
 
 [http://sziebert.net/posts/restful-urls-with-spring-mvc-and-urlrewritefilter/ RESTful URLs with Spring MVC and UrlRewriteFilter]
 
-[http://java.dzone.com/tips/clean-urls-seam-urlrewritefilt Clean URLs in Seam: URLRewriteFilter (dzone.com)]
-
 [http://seamframework.org/Community/UrlRewriteFilterAndSeamAuthentication UrlRewriteFilter and Seam Authentication]
 
 [http://www.warski.org/blog/?p=7 Clean URLs in Seam: URLRewriteFilter (warski.org)]
