@@ -10,6 +10,7 @@
 === [http://sujitpal.blogspot.com/2006/09/search-and-replace-with.html Search and Replace with UrlRewriteFilter] ===
 
 
+
 == Seam ==
 
 === [http://www.jtict.com/blog/seam-form-url-rewriting/ Seam and URL rewriting with parameters and forms] ===
@@ -24,3 +25,9 @@
 === [http://sziebert.net/posts/restful-urls-with-spring-mvc-and-urlrewritefilter/ RESTful URLs with Spring MVC and UrlRewriteFilter] ===
 
 === [http://www.carbonfive.com/community/archives/2007/06/using_urlrewrit.html Using UrlRewriteFilter with the Spring Framework] ===
+
+
+
+
+
+[http://technorati.com/search/urlrewritefilter Technorati search for UrlRewriteFilter]
