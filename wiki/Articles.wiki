@@ -1,10 +1,16 @@
 Links to pages/articles/blog entries about UrlRewriteFilter
 
 
-  * [http://sziebert.net/posts/restful-urls-with-spring-mvc-and-urlrewritefilter/ RESTful URLs with Spring MVC and UrlRewriteFilter]
-  * [http://seamframework.org/Community/UrlRewriteFilterAndSeamAuthentication UrlRewriteFilter and Seam Authentication]
-  * [http://www.warski.org/blog/?p=7 Clean URLs in Seam: URLRewriteFilter (warski.org)]
-  * [http://sujitpal.blogspot.com/2006/09/search-and-replace-with.html Search and Replace with UrlRewriteFilter]
-  * [http://blogs.bytecode.com.au/glen/2007/06/25/1182741843504.html Transparently Feedburning Pebble with UrlRewriteFilter]
-  * [http://www.carbonfive.com/community/archives/2007/06/using_urlrewrit.html Using UrlRewriteFilter with the Spring Framework]
-  * [http://www.jtict.com/blog/seam-form-url-rewriting/ Seam and URL rewriting with parameters and forms]
+=== [http://sziebert.net/posts/restful-urls-with-spring-mvc-and-urlrewritefilter/ RESTful URLs with Spring MVC and UrlRewriteFilter] ===
+
+=== [http://seamframework.org/Community/UrlRewriteFilterAndSeamAuthentication UrlRewriteFilter and Seam Authentication] ===
+
+=== [http://www.dzone.com/links/rss/clean_urls_in_seam_urlrewritefilter.html Clean URLs in Seam URLRewriteFilter] ===
+
+=== [http://sujitpal.blogspot.com/2006/09/search-and-replace-with.html Search and Replace with UrlRewriteFilter] ===
+
+=== [http://blogs.bytecode.com.au/glen/2007/06/25/1182741843504.html Transparently Feedburning Pebble with UrlRewriteFilter] ===
+
+=== [http://www.carbonfive.com/community/archives/2007/06/using_urlrewrit.html Using UrlRewriteFilter with the Spring Framework] ===
+
+=== [http://www.jtict.com/blog/seam-form-url-rewriting/ Seam and URL rewriting with parameters and forms] ===
