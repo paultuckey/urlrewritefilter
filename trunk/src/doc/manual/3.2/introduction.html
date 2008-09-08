@@ -170,18 +170,20 @@ The original URL can also be reconstructed from more basic components available 
  <h2>Changelog</h2>
 
     <ul>
-        <li>Version 3.2.0
+        <li>3.2.0
             <ul>
                 <li>Added "no substitution" ability with to element eg, &lt;to&gt;-&lt;/to&gt;</li>
                 <li>In urlrewrite.xml allow rule, class-rule and outbound-rule elements in any order</li>
                 <li>Fixed bug with handling of references in functions (ie, to allow this: ${replace:$1:-:+})</li>
-                <li>Added slf4j support for logLevel (filter parameter)</li>
+                <li>Added slf4j logging support for logLevel (filter parameter)</li>
                 <li>Added function for calculating string length (eg, ${length:asdf} would return 4)</li>
                 <li>Added "proxy" to type, to enable requests to be proxied to another server</li>
                 <li>Added "context" attribute to &lt;to&gt; type, to enable requests to sent to other contexts (assuming app server configured to do this)</li>
+                <li>JDK 6+ Annotation processor</li>
+                <li>JDK 5 & 6+ Annotation processors incluses in main jar file</li>
             </ul>
         </li>
-        <li>Version 3.1.0
+        <li>3.1.0
             <ul>
                 <li>Rules are now allowed to have only condition and set elements</li>
                 <li>Basic <a href="index.html#functions">functions</a> in "set", and "to" elements eg, ${trim:%1}</li>
@@ -189,88 +191,170 @@ The original URL can also be reconstructed from more basic components available 
                 <li>Bug fix: xml entites containing jndi protocol now correctly loaded</li>
             </ul>
         </li>
-     </ul>
+        <li>3.0.4 Beta
+            <ul>
+                <li>Bug fix - cookie value not being set with variable replacement</li>
+            </ul>
+        </li>
+        <li>3.0.3 Beta
+            <ul>
+                <li>Bug fix - annotation processor rule sorting</li>
+                <li>Bug Fix - evaluation boolean result was incorrect on failed condition instance matches</li>
+            </ul>
+        </li>
+        <li>3.0.2 Beta
+            <ul>
+                <li>Rule chaining bug fixes</li>
+            </ul>
+        </li>
+        <li>3.0.1 Beta
+            <ul>
+                <li>Added "class-rule" element to enable 100% dynamic "Java Rules"</li>
+                <li>Added experimental UrlrewriteTestCase to help with testing (see the source)</li>
+                <li>Added experimental "catch" element to handle exceptions generated from "run"'s</li>
+                <li>Added experimental <a href="annotation.html">annotation</a> (@HttpUrl, @HttpParam) processor</li>
+                <li>Minor Bug fixes</li>
+            </ul>
+        </li>
+        <li>3.0 Beta
+            <ul>
+                <li>Support for wildcard matching.</li>
+                <li>Added "match-type" attribute to rule and outbound-rule.</li>
+                <li>Added ability to specify charset decoding ("decodeusing" attribute to "urlrewrite" element)</li>
+                <li>Swapped "to" variable replacement and run processing, run processing now comes before "to"
+                variable replacement is done.  dtd it has been swapped make sure you change the reference in your conf file.
+                Make sure element order is from, set, run, to.</li>
+                <li>Context addition to the url is now optional</li>
+                <li>Query string matching on rule is now optional (defaults to false)
+                <br/>before 3.0 you would specify
+                <br/>&lt;from&gt;/blah.jsp?a=b&lt;/from&gt;
+                <br/>3.0 and up (unless use-query-string on urlrewrite element is set to true)
+                <br/>&lt;condition name="a"&gt;b&lt;/condition&gt;
+                <br/>&lt;from&gt;/blah.jsp&lt;/from&gt;</li>
+            </ul>
+        </li>
+        <li>2.6
+            <ul>
+                <li>fixed bug with encode on to element defaulting to incorrect boolean (change to dtd)</li>
+            </ul>
+        </li>
+        <li>2.5.3
+            <ul>
+                <li>cleaner exception handling when invoking "run" items, original exception thrown as if it were the
+                    original if it extends RuntimeException (eg, NullPointer), other exceptions wrapped in a ServletException and thrown</li>
+            </ul>
+        </li>
+        <li>2.5.2
+            <ul>
+                <li>fixed bug with encodefirst attr not being set</li>
+                <li>ability to specify wildcards on statusEnabledOnHosts</li>
+                <li>added backreferences and variables for to element value</li>
+                <li>logLevel init param can now include sysout:{level} ie, sysout:DEBUG for people who have trouble with context.log</li>
+            </ul>
+        </li>
+        <li>2.5.1
+            <ul>
+                <li>bug fixes, Log initialisation and null auth type condition values</li>
+            </ul>
+        </li>
+        <li>2.5
+            <ul>
+                <li>matcher changed to accept first match (not the whole string) please make sure you retest your rules
+     (ie, previously /res/js/l.js?aaa would not match /res/js/l.js, with this release it will)</li>
+                <li>support for logging to log4j or commons-logging (see filter params in manual)</li>
+                <li>fixed bug for when request.getCookies() returns null on some containers</li>
+                <li>added encodefirst outbound-rule, outbound-rule now respects encode on "to".</li>
+            </ul>
 
- <p>
-     3.0.4 Beta - Bug fix - cookie value not being set with variable replacement
-     <br/>3.0.3 Beta - Bug fix - annotation processor rule sorting
-     <br/>Bug Fix - evaluation boolean result was incorrect on failed condition instance matches 
-     <br/>3.0.2 Beta - Rule chaining bug fixes
-     <br/>3.0.1 Beta
-     <br/>Added "class-rule" element to enable 100% dynamic "Java Rules"
-     <br/>Added experimental UrlrewriteTestCase to help with testing (see the source)
-     <br/>Added experimental "catch" element to handle exceptions generated from "run"'s
-     <br/>Added experimental <a href="annotation.html">annotation</a> (@HttpUrl, @HttpParam) processor
-     <br/>Bug fixes
-
-    <br/>3.0 Beta - Support for wildcard matching.
-     <br/>Added "match-type" attribute to rule and outbound-rule.
-     <br />Added ability to specify charset decoding ("decodeusing" attribute to "urlrewrite" element)
-
-     <br />Swapped "to" variable replacement and run processing, run processing now comes before "to"
-     variable replacement is done.  dtd it has been swapped make sure you change the reference in your conf file.
-     Make sure element order is from, set, run, to.
-
-     <br/>Context addition to the url is now optional
-     <br/>Query string matching on rule is now optional (defaults to false)
-     <br/>before 3.0 you would specify
-     <br/>&lt;from&gt;/blah.jsp?a=b&lt;/from&gt;
-     <br/>3.0 and up (unless use-query-string on urlrewrite element is set to true)
-     <br/>&lt;condition name="a"&gt;b&lt;/condition&gt;
-     <br/>&lt;from&gt;/blah.jsp&lt;/from&gt;
-
-     <br/>2.6 - fixed bug with encode on to element defaulting to incorrect boolean (change to dtd)
-     <br/>2.5.3 - cleaner exception handling when invoking "run" items, original exception thrown as if it were the
-     original if
-     it extends RuntimeException (eg, NullPointer), other exceptions wrapped in a ServletException and thrown
-     <br/>2.5.2 - fixed bug with encodefirst attr not being set,
-     ability to specify wildcards on statusEnabledOnHosts,
-     added backreferences and variables for to element value,
-     logLevel init param can now include sysout:{level} ie, sysout:DEBUG for people who have trouble with context.log
-     <br/>2.5.1 - bug fixes, Log initialisation and null auth type condition values
-     <br/>2.5 - matcher changed to accept first match (not the whole string) please make sure you retest your rules
-     (ie, previously /res/js/l.js?aaa would not match /res/js/l.js, with this release it will),
-     <br/>- support for logging to log4j or commons-logging (see filter params in manual),
-     <br/>- fixed bug for when request.getCookies() returns null on some containers,
-     <br/>- added encodefirst outbound-rule, outbound-rule now respects encode on "to".
-     <br/>2.4 - removed all external library dependencies to make much more deploy friendly
-     <br/>- no longer uses Jakarta ORO, this should't mean any change in regular expression handling but you should test
-     your
-     existing rules just in case.
-     <br/>- fixed problem with rediredting to "null" this will now not proceed with the request if the rule is matched
-     (ie, chain.doFilter will not be called)
-     <br/>- fixed problem with ant dependency on status page.
-     <br/>2.3 (4/2005) - Added new outbound-rule for rewriting hyperlinks in JSP's, improved status page, added ability
-     to
-     run methods when a rule is matched
-     <br/>2.0.1 (2/2005) - Fixed bug with rule processing when to element doesn't exist.
-     <br/>2.0 (1/2005) - Minor bug fixes, last attribute on rule now defaults to false (thanks to Vineet Kumar for his
-     assistance).
-     <br/>2.0-beta (12/2004) - Minor bug fixes, documentation improvements, ALL matches now done case insensitively by
-     default, case sensitivity can be set (see from and condition elements).
-     <br/>2.0-alpha (11/2004) - First 2.0 release, added many new condition types, many new set types.
-     <br/>1.2 (6/2004) - Added set element (ability to set random attributes on request, thanks for the idea
+        </li>
+        <li>2.4
+            <ul>
+                <li>removed all external library dependencies to make much more deploy friendly</li>
+                <li>no longer uses Jakarta ORO, this should't mean any change in regular expression handling but you should test
+     your existing rules just in case.</li>
+                <li>fixed problem with rediredting to "null" this will now not proceed with the request if the rule is matched
+     (ie, chain.doFilter will not be called)</li>
+                <li>fixed problem with ant dependency on status page</li>
+            </ul>
+        </li>
+        <li>2.3 (4/2005)
+            <ul>
+                <li>Added new outbound-rule for rewriting hyperlinks in JSP's, improved status page, added ability
+     to run methods when a rule is matched</li>
+            </ul>
+        </li>
+        <li>2.0.1 (2/2005)
+            <ul>
+                <li>Fixed bug with rule processing when to element doesn't exist.</li>
+            </ul>
+        </li>
+        <li>2.0 (1/2005)
+            <ul>
+                <li>Minor bug fixes, last attribute on rule now defaults to false (thanks to Vineet Kumar for his
+     assistance).</li>
+            </ul>
+        </li>
+        <li>2.0-beta (12/2004)
+            <ul>
+                <li>Minor bug fixes, documentation improvements, ALL matches now done case insensitively by
+     default, case sensitivity can be set (see from and condition elements).</li>
+            </ul>
+        </li>
+        <li>2.0-alpha (11/2004)
+            <ul>
+                <li>First 2.0 release, added many new condition types, many new set types.</li>
+            </ul>
+        </li>
+        <li>1.2 (6/2004)
+            <ul>
+                <li>Added set element (ability to set random attributes on request, thanks for the idea
      <a href="http://russellbeattie.com/notebook/">Russell</a>), from now matches RELATIVE to context NOT root (if you
-     are
-     upgrading this may mean a change for you).
-     <br/>1.1 (4/2004) - Ability to disable rules, Refactored to enable rewriter to be embedded,
+     are upgrading this may mean a change for you).</li>
+            </ul>
+        </li>
+        <li>1.1 (4/2004)
+            <ul>
+                <li>Ability to disable rules, Refactored to enable rewriter to be embedded,
      changed logging to enable log level to be set, added name and note elements to rule for documentation,
      ability to disable status page, ability to change status prefix, javadoc style ant task for an HTML
-     configuration report.
-     <br/>1.0 (3/2004) - General tidy up of logging, tidy up of all code, dist now includes manual, log4j and junit
-     removed
-     from bin release.
-     <br/>0.9 (2/2004) - Fixed conf loading problem in Resin, resolved concurrency issue with Perl5Compiler and
-     Perl5Matcher
-     (thanks Scott Askew!)
-     <br/>0.8 (2/2004) - Removed dependency on "Commons Lang", Changed DTD path (bug fix), added ability to put time
-     fields in
-     "condition" element, added ability to put "operators" in the "condition" element, fixed multiple rules issue (bug
-     fix)
-     <br/>0.7 (11/2003) - Improved test cases, documentation
-     <br/>0.6 (8/2003) - Improved error handling, status page and condition matching
-     <br/>0.5 (6/2003) - Improved configuration error handling
-</p>
+     configuration report.</li>
+            </ul>
+        </li>
+        <li>1.0 (3/2004)
+            <ul>
+                <li>General tidy up of logging, tidy up of all code, dist now includes manual, log4j and junit
+     removed from bin release.</li>
+            </ul>
+        </li>
+        <li>0.9 (2/2004)
+            <ul>
+                <li>Fixed conf loading problem in Resin, resolved concurrency issue with Perl5Compiler and
+     Perl5Matcher (thanks Scott Askew!)</li>
+            </ul>
+        </li>
+        <li>0.8 (2/2004)
+            <ul>
+                <li>Removed dependency on "Commons Lang", Changed DTD path (bug fix), added ability to put time
+     fields in "condition" element, added ability to put "operators" in the "condition" element, fixed multiple rules issue (bug fix)</li>
+            </ul>
+        </li>
+        <li>0.7 (11/2003)
+            <ul>
+                <li>Improved test cases, documentation</li>
+            </ul>
+        </li>
+        <li>0.6 (8/2003)
+            <ul>
+                <li>Improved error handling, status page and condition matching</li>
+            </ul>
+        </li>
+        <li>0.5 (6/2003)
+            <ul>
+                <li>Improved configuration error handling</li>
+            </ul>
+        </li>
+    </ul>
+
 
 
 </div>
