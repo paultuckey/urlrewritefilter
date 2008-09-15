@@ -112,4 +112,10 @@ public class SampleMatchAction {
 
     }
 
+    @HttpJson
+    public String clientDetailsRpc(@HttpParam int clientId)
+            throws SQLException {
+        return "Hello World";
+    }
+
 }

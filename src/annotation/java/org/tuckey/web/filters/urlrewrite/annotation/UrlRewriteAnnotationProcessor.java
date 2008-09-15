@@ -70,6 +70,7 @@ import java.util.Set;
 public class UrlRewriteAnnotationProcessor extends AbstractProcessor {
 
     private List<ProcessedHttpUrlAnnotation> processedAnnotations = new ArrayList<ProcessedHttpUrlAnnotation>();
+    private List<ProcessedHttpJsonAnnotation> processedJsonAnnotations = new ArrayList<ProcessedHttpJsonAnnotation>();
     private List<ProcessedHttpExceptionAnnotation> httpExceptionHandlers = new ArrayList<ProcessedHttpExceptionAnnotation>();
     private Messager messager;
     private Elements elementUtils;
@@ -77,6 +78,7 @@ public class UrlRewriteAnnotationProcessor extends AbstractProcessor {
     private boolean debug = false;
     private boolean errorDuringProcessing = false;
     private String dest = null;
+    private String rpcBase = "/rpc/";
 
     public UrlRewriteAnnotationProcessor() {
         // needed
@@ -87,6 +89,7 @@ public class UrlRewriteAnnotationProcessor extends AbstractProcessor {
         options.add("urlrewriteDest");
         options.add("urlrewriteShowPositions");
         options.add("urlrewriteDebug");
+        options.add("urlrewriteRpcBase");
         return options;
     }
 
@@ -99,15 +102,18 @@ public class UrlRewriteAnnotationProcessor extends AbstractProcessor {
         for (String key : keys) {
             if (key.equalsIgnoreCase("urlrewriteDest")) {
                 dest = options.get(key);
-            }
-            if (key.equalsIgnoreCase("urlrewriteShowPositions")) {
+
+            }   else if (key.equalsIgnoreCase("urlrewriteShowPositions")) {
                 showPositions = "true".equalsIgnoreCase(options.get(key));
-            }
-            if (key.equalsIgnoreCase("urlrewriteDebug")) {
+
+            }   else if (key.equalsIgnoreCase("urlrewriteDebug")) {
                 debug = "true".equalsIgnoreCase(options.get(key));
+
+            }   else if (key.equalsIgnoreCase("urlrewriteRpcBase")) {
+                rpcBase = options.get(key);
             }
         }
-        debugMsg(getClass().getSimpleName() + " init");
+        debugMsg("init");
     }
 
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
@@ -116,11 +122,16 @@ public class UrlRewriteAnnotationProcessor extends AbstractProcessor {
                 infoMsg(getClass().getSimpleName() + ": -AurlrewriteDest not specified, annotations ignored");
             return true;
         }
-        debugMsg(getClass().getSimpleName() + " process");
+        debugMsg("process");
 
         Set<? extends Element> urlDeclarations = roundEnv.getElementsAnnotatedWith(HttpUrl.class);
         for (Element element : urlDeclarations) {
             processedAnnotations.add(new ProcessedHttpUrlAnnotation(element));
+        }
+
+        Set<? extends Element> jsonDeclarations = roundEnv.getElementsAnnotatedWith(HttpJson.class);
+        for (Element element : jsonDeclarations) {
+            processedJsonAnnotations.add(new ProcessedHttpJsonAnnotation(element));
         }
 
         Set<? extends Element> exceptionDeclarations = roundEnv.getElementsAnnotatedWith(HttpExceptionHandler.class);
@@ -131,8 +142,13 @@ public class UrlRewriteAnnotationProcessor extends AbstractProcessor {
         if (roundEnv.processingOver()) {
             if (processedAnnotations.size() > 0) {
                 infoMsg("Got " + processedAnnotations.size() + " @HttpUrl annotations");
-                Collections.sort(processedAnnotations);
             }
+            if (processedJsonAnnotations.size() > 0) {
+                infoMsg("Got " + processedJsonAnnotations.size() + " @HttpJson annotations");
+                processedAnnotations.addAll(processedJsonAnnotations);
+            }
+            Collections.sort(processedAnnotations);
+
             if (httpExceptionHandlers.size() > 0) {
                 infoMsg("Got " + httpExceptionHandlers.size() + " @HttpExceptionHandler annotations");
                 Collections.sort(httpExceptionHandlers);
@@ -172,8 +188,9 @@ public class UrlRewriteAnnotationProcessor extends AbstractProcessor {
 
     private void outputRules(PrintWriter pw) {
         for (ProcessedHttpUrlAnnotation pa : processedAnnotations) {
+            boolean jsonHandler = pa instanceof ProcessedHttpJsonAnnotation;
             pw.println("<rule>");
-            pw.println("    <name>" + pa.sourceRef + "</name>");
+            pw.println("    <name>" + pa.className + "." + pa.methodName + "</name>");
             if (!isBlank(pa.docComment)) {
                 pw.println("    <note>");
                 pw.println(padEachLine("        ", escapeXML(pa.docComment)));
@@ -181,7 +198,7 @@ public class UrlRewriteAnnotationProcessor extends AbstractProcessor {
             }
             pw.println("    <from>" + pa.value + "</from>");
             pw.println("    <run class=\"" + pa.className + "\" method=\"" + pa.methodName + pa.paramsFormatted +
-                    "\" />");
+                    "\""+ (jsonHandler ? " handler=\"json\"" : "") +" />");
             if (!pa.chainUsed) {
                 pw.println("    <to>null</to>");
             }
@@ -258,6 +275,27 @@ public class UrlRewriteAnnotationProcessor extends AbstractProcessor {
 
     }
 
+    class ProcessedHttpJsonAnnotation extends ProcessedHttpUrlAnnotation {
+        public ProcessedHttpJsonAnnotation(Element declaration) {
+            ExecutableElement methodDeclaration = init(declaration);
+            if (methodDeclaration == null) return;
+
+            HttpJson httpJson = declaration.getAnnotation(HttpJson.class);
+            if ("[ unassigned ]".equals(httpJson.value()) ) {
+                this.value = rpcBase + this.className + "/" + this.methodName;
+            }   else {
+                this.value = httpJson.value();
+            }
+            this.weight = httpJson.weight();
+            setParams(methodDeclaration.getParameters());
+
+            if (showPositions) {
+                messager.printMessage(Diagnostic.Kind.NOTE, "@HttpJson value " + value + " weight " + weight, methodDeclaration);
+            }
+        }
+
+    }
+
     class ProcessedHttpUrlAnnotation extends ProcessedUrlRewriteFilterAnnotation {
         public int weight = 0;
         public String value;
@@ -315,10 +353,12 @@ public class UrlRewriteAnnotationProcessor extends AbstractProcessor {
             exceptionName = httpExceptionHandler.value();
 
             // out exceptionName might not be set
-            if ("[ unassigned ]".equals(exceptionName) && methodDeclaration.getParameters().size() > 0) {
+            if ("[ unassigned ]".equals(exceptionName) ) {
                 // use first param
-                exceptionName = methodDeclaration.getParameters().get(0).getSimpleName().toString();
+                exceptionName = methodDeclaration.getParameters().get(0).asType().toString();
             }
+            setParams(methodDeclaration.getParameters());
+
             if (showPositions) {
                 messager.printMessage(Diagnostic.Kind.NOTE, "@HttpExceptionHandlerUrl exceptionName " + exceptionName, methodDeclaration);
             }
@@ -395,7 +435,7 @@ public class UrlRewriteAnnotationProcessor extends AbstractProcessor {
 
     private void debugMsg(String msg) {
         if (!debug) return;
-        messager.printMessage(Diagnostic.Kind.OTHER, msg);
+        messager.printMessage(Diagnostic.Kind.OTHER, getClass().getSimpleName() + " " + msg);
     }
 
     private void infoMsg(String msg) {
