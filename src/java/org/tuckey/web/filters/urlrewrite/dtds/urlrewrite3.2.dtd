@@ -76,6 +76,7 @@ eg,
 <!ATTLIST run
 class  CDATA  #IMPLIED
 method  CDATA  #IMPLIED
+jsonhandler (true|false) "false"
 neweachtime (true|false) "false"
 >
 
