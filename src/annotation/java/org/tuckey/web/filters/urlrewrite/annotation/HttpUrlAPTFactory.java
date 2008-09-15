@@ -46,6 +46,8 @@ import java.util.Set;
 
 /**
  * Annotation Processor Factory for UrlRewriteFilter annotations.
+ *
+ * @deprecated Use UrlRewriteAnnotationProcessor
  */
 public class HttpUrlAPTFactory implements AnnotationProcessorFactory {
 
