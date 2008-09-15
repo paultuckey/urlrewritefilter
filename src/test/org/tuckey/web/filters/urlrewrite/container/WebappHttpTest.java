@@ -53,10 +53,13 @@ public class WebappHttpTest extends ContainerTestBase {
 
     private String CONTENT = "<p>some content</p>";
 
-    protected String getBaseUrl() {
-        return super.getBaseUrl() + "/webapp";
+    protected String getApp() {
+        return "webapp";
     }
 
+    public void testStatusRecord() throws IOException {
+        super.recordRewriteStatus();
+    }
 
     public void testProduct() throws IOException, SAXException, InterruptedException {
         GetMethod method = new GetMethod(getBaseUrl() + "/products/987");
