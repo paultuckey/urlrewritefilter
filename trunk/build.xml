@@ -123,6 +123,11 @@
 
         <copy file="LICENSE.txt" todir="${build.home}/java/META-INF"/>
 
+        <!-- making service files sometimes seemed to fail using jar task so do it manually -->
+        <mkdir dir="${build.home}/java/META-INF/services"/>
+        <echo file="${build.home}/java/META-INF/services/javax.annotation.processing.Processor">org.tuckey.web.filters.urlrewrite.annotation.UrlRewriteAnnotationProcessor</echo>
+        <echo file="${build.home}/java/META-INF/services/com.sun.mirror.apt.AnnotationProcessorFactory">org.tuckey.web.filters.urlrewrite.annotation.HttpUrlAPTFactory</echo>
+
         <jar jarfile="dist/urlrewrite-${app.version}.jar" basedir="${build.home}/java">
             <manifest>
                 <attribute name="Extension-Name" value="urlrewritefilter"/>
@@ -133,10 +138,6 @@
                 <attribute name="Implementation-Vendor" value="Paul Tuckey"/>
                 <attribute name="Implementation-Version" value="${app.version}"/>
             </manifest>
-            <service type="com.sun.mirror.apt.AnnotationProcessorFactory"
-                    provider="org.tuckey.web.filters.urlrewrite.annotation.HttpUrlAPTFactory"/>
-            <service type="javax.annotation.processing.Processor"
-                    provider="org.tuckey.web.filters.urlrewrite.annotation.UrlRewriteAnnotationProcessor"/>
         </jar>
         <copy file="dist/urlrewrite-${app.version}.jar" todir="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib"/>
 
@@ -286,14 +287,20 @@
 
     <target name="annotation-test-compile-jdk6" depends="dist-jar" description="normal way to process annotations">
         <mkdir dir="${build.home}/annotation/test-classes"/>
-        <javac srcdir="src/annotation/test/" destdir="${build.home}/annotation/test-classes">
+        <javac srcdir="src/annotation/test/" destdir="${build.home}/annotation/test-classes" target="1.6">
             <classpath path="dist/urlrewrite-${app.version}.jar"/>
             <classpath refid="compile.classpath"/>
             <compilerarg line="-AurlrewriteDest=${build.home}/annotation/urlrewrite-generated.xml"/>
             <!--
+            manually specify the processor ie, don't rely on jar service loader...
+            <compilerarg value="-processor"/>
+            <compilerarg value="org.tuckey.web.filters.urlrewrite.annotation.UrlRewriteAnnotationProcessor"/>
+
+            options for processor...
             <compilerarg value="-AurlrewriteShowPositions=true"/>
             <compilerarg value="-AurlrewriteDebug=true"/>
 
+            javac specific options...
             <compilerarg value="-proc:only"/>
             <compilerarg value="-XprintRounds"/>
             <compilerarg value="-XprintProcessorInfo"/>
@@ -301,6 +308,11 @@
         </javac>
         <available property="urlrewrite.generated" file="${build.home}/annotation/urlrewrite-generated.xml"/>
         <fail unless="urlrewrite.generated" />
+    </target>
+
+    <target name="check-service-loader" depends="dist-jar">
+        <!-- check that annotation processor has made it into ServiceLoader -->
+        <java classname="org.tuckey.web.filters.urlrewrite.annotation.ProcessorServiceLoaderCheck" classpath="dist/urlrewrite-${app.version}.jar"/>
     </target>
 
 </project>
