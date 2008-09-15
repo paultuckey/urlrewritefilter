@@ -358,6 +358,7 @@ public class Conf {
             }
             run.setClassStr(getAttrValue(runNode, "class"));
             run.setMethodStr(getAttrValue(runNode, "method"));
+            run.setJsonHandler("true".equalsIgnoreCase(getAttrValue(runNode, "jsonhandler")));
             run.setNewEachTime("true".equalsIgnoreCase(getAttrValue(runNode, "neweachtime")));
             runnable.addRun(run);
         }

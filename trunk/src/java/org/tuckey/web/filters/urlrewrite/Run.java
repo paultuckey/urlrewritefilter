@@ -39,6 +39,7 @@ import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.utils.StringMatchingMatcher;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 import org.tuckey.web.filters.urlrewrite.utils.TypeUtils;
+import org.tuckey.web.filters.urlrewrite.json.JsonRewriteMatch;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -71,6 +72,8 @@ public class Run {
      * Weather or not the user wants the classStr created for each run.
      */
     private boolean newEachTime = false;
+
+    private boolean jsonHandler = false;
 
     private String classStr;
 
@@ -411,10 +414,12 @@ public class Run {
 
         try {
             Object objReturned = runMethod.invoke(classInstanceToRun, (Object[]) params);
-                if (objReturned != null && objReturned instanceof RewriteMatch) {
-                    // if we get a rewriteMatch object then return it for execution later
-                    returned = (RewriteMatch) objReturned;
-                }
+            if ( jsonHandler ) {
+                returned = new JsonRewriteMatch(objReturned);
+            }   else if (objReturned != null && objReturned instanceof RewriteMatch) {
+                // if we get a rewriteMatch object then return it for execution later
+                returned = (RewriteMatch) objReturned;
+            }
 
         } catch (IllegalAccessException e) {
             if (log.isDebugEnabled()) log.debug(e);
@@ -699,6 +704,10 @@ public class Run {
 
     public boolean isFilter() {
         return filter;
+    }
+
+    public void setJsonHandler(boolean jsonHandler) {
+        this.jsonHandler = jsonHandler;
     }
 
 }
