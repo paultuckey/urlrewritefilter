@@ -9,7 +9,7 @@
 
 === [http://sujitpal.blogspot.com/2006/09/search-and-replace-with.html Search and Replace with UrlRewriteFilter] ===
 
-
+=== [http://www.megadix.it/node/79 UrlRewriteFilter - un mod_rewrite per le servlet] (Italian) ===
 
 == Seam ==
 
