@@ -32,7 +32,7 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.tuckey.web.filters.urlrewrite.container;
+package org.tuckey.web.filters.urlrewriteviacontainer;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -42,7 +42,6 @@ import org.xml.sax.SAXException;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.net.URLEncoder;
 
 
 /**
@@ -81,7 +80,7 @@ public class WebappHttpTest extends ContainerTestBase {
         assertNotNull(method.getResponseHeader("cache-control"));
         assertEquals("testsession: hello!, " +
                 "param.settest1: 674, " +
-                "method: PUT", method.getResponseBodyAsString());
+                "method: DELETE", method.getResponseBodyAsString());
     }
 
     public void testMultipleProduct() throws ServletException, IOException, SAXException {
@@ -125,34 +124,10 @@ public class WebappHttpTest extends ContainerTestBase {
         assertEquals(getBaseUrl() + "/bahamas/;jsess", method.getResponseHeader("Location").getValue());
     }
 
-    /**
-     * note, had trouble keeping true utf (multi byte) chars as cvs buggers them up!
-     */
-    public void testTestUtf() throws ServletException, IOException {
-        GetMethod method = new GetMethod(getBaseUrl() + "/utf/" + URLEncoder.encode("Fêtel'haïvolapük", "UTF8") + "/");
-        method.setFollowRedirects(false);
-        client.executeMethod(method);
-        assertEquals(getBaseUrl() + "/utf-redir/" + URLEncoder.encode("Fêtel'haïvolapük", "UTF8") + "/", method.getResponseHeader("Location").getValue());
-    }
-
     public void testSimpleRun() throws ServletException, IOException {
         GetMethod method = new GetMethod(getBaseUrl() + "/run/test/test1");
         client.executeMethod(method);
         assertEquals("this is " + TestRunObj.class.getName(), method.getResponseBodyAsString());
-    }
-
-    public void testEncoding() throws ServletException, IOException {
-        //GetMethod method = new GetMethod(getBaseUrl() + "/bom-auth/D%,D.pdf");
-        GetMethod method = new GetMethod(getBaseUrl() + "/enc-test/D%25%2cD.pdf");
-        method.setFollowRedirects(false);
-        client.executeMethod(method);
-        assertEquals("testjsp%, file contents", method.getResponseBodyAsString());
-    }
-
-    public void testPercentage() throws ServletException, IOException {
-        GetMethod method = new GetMethod(getBaseUrl() + "/percenttest/100%37");
-        client.executeMethod(method);
-        assertEquals("testjsp%, file contents", method.getResponseBodyAsString());
     }
 
 }
