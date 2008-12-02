@@ -36,6 +36,7 @@ package org.tuckey.web.filters.urlrewrite;
 
 import junit.framework.TestCase;
 import org.tuckey.web.testhelper.MockRequest;
+import org.tuckey.web.testhelper.MockServletContext;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 
 import java.io.BufferedOutputStream;
@@ -59,8 +60,8 @@ public class StatusTest extends TestCase {
 
         MockRequest hsRequest = new MockRequest();
         InputStream is = ConfTest.class.getResourceAsStream(ConfTest.BASE_XML_PATH + "conf-test1.xml");
-        Conf conf = new Conf(is, "conf-test1.xml");
-        assertTrue(conf.isOk());
+        Conf conf = new Conf(new MockServletContext(), is, "conf-test1.xml", "conf-test1.xml");
+        assertTrue(conf.getErrors().toString(), conf.isOk());
         UrlRewriter urlRewriter = new UrlRewriter(conf);
         UrlRewriteFilter urlRewriteFilter = new UrlRewriteFilter();
 
