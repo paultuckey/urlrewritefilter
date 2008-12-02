@@ -77,17 +77,26 @@
             <ul>
         ]]></echo>
 
-        <containerTest id="tomcat-5.5.23" containerid="tomcat5x"
-                       installurl="http://www.ibiblio.org/pub/mirrors/apache/tomcat/tomcat-5/v5.5.26/bin/apache-tomcat-5.5.26.zip"/>
-        <containerTest id="resin-3.1.6" containerid="resin3x"
-                       installurl="http://www.caucho.com/download/resin-3.1.6.zip"/>
+        <!-- 5.0.29 doesn't compile jsp's unser 1.5 jdk... see here http://mail-archives.apache.org/mod_mbox/tomcat-dev/200410.mbox/%3C416EB794.8000501@ptc.com%3E
+        <containerTest id="tomcat-5.0.29" containerid="tomcat5x" home="N:\java\appservers\jakarta-tomcat-5.0.29" /> -->
+
+        <containerTest id="tomcat-4.1.31" containerid="tomcat5x" home="N:\java\appservers\jakarta-tomcat-4.1.31" />
+        <containerTest id="tomcat-5.5.5" containerid="tomcat5x" home="N:\java\appservers\jakarta-tomcat-5.5.5" />
+        <containerTest id="tomcat-6.0.18" containerid="tomcat5x" home="C:\java\apache-tomcat-6.0.18"/>
+        <containerTest id="orion2.0.5" containerid="orion2x" home="N:\java\appservers\orion-2.0.5"/>
+
+        <!-- <containerTest id="tomcat-5.5.23" containerid="tomcat5x"
+                       installurl="http://www.ibiblio.org/pub/mirrors/apache/tomcat/tomcat-5/v5.5.26/bin/apache-tomcat-5.5.26.zip"/> -->
+        <!-- cargo cannot start this
+        <containerTest id="resin-3.1.6" containerid="resin3x" home="N:\java\resin-3.1.6"/> -->
+        <!-- cargo can't do this
         <containerTest id="jetty-6.1.11" containerid="jetty6x"
-                       installurl="http://dist.codehaus.org/jetty/jetty-6.1.11/jetty-6.1.11.zip"/>
+                       installurl="http://dist.codehaus.org/jetty/jetty-6.1.11/jetty-6.1.11.zip"/> -->
+        <!-- cargo cannot start this
         <containerTest id="jboss-4.2.3.GA" containerid="jboss4x"
                        installurl="http://voxel.dl.sourceforge.net/sourceforge/jboss/jboss-4.2.3.GA.zip"/>
         <containerTest id="orion2.0.7" containerid="orion2x"
-                       installurl="http://www.orionserver.com/distributions/orion2.0.7.zip"/>
-
+                       installurl="http://www.orionserver.com/distributions/orion2.0.7.zip"/> -->
         <echo append="true" file="${report.dir}/index.html"><![CDATA[
             </ul>
             </body>
@@ -103,17 +112,18 @@
     <macrodef name="containerTest">
         <attribute name="id"/>
         <attribute name="containerid"/>
-        <attribute name="installurl"/>
+        <attribute name="home"/>
         <sequential>
             <echo>Running test for @{id}</echo>
 
-            <cargo id="@{id}" containerId="@{containerid}" action="start" wait="false" log="${target.dir}/log.log">
-                <zipUrlInstaller installUrl="@{installurl}">
+            <cargo id="@{id}" home="@{home}" containerId="@{containerid}" action="start" wait="false" log="${target.dir}/log.log">
+                <!-- <zipUrlInstaller installUrl="@{installurl}">
                     <proxy host="proxy" port="8080"/>
-                </zipUrlInstaller>
+                </zipUrlInstaller> -->
                 <configuration>
                     <property name="cargo.servlet.port" value="${container.port}"/>
                     <deployable type="war" file="${target.dir}/webapp.war"/>
+                    <deployable type="war" file="${target.dir}/webapp-mod-style.war"/>
                 </configuration>
             </cargo>
 
@@ -122,10 +132,12 @@
             <junit printsummary="yes" fork="true">
                 <classpath refid="test.classpath"/>
                 <formatter type="xml"/>
-                <sysproperty key="test.base.url" value="http://localhost:${container.port}/webapp"/>
+                <sysproperty key="test.base.url" value="http://localhost:${container.port}"/>
+                <sysproperty key="test.base.reports" value="${report.dir}"/>
+                <sysproperty key="test.container.id" value="@{id}"/>
                 <batchtest todir="${target.dir}/@{id}">
                     <fileset dir="../build/test">
-                        <include name="**/container/*.class"/>
+                        <include name="org/tuckey/web/filters/urlrewriteviacontainer/**/*Test.class"/>
                     </fileset>
                 </batchtest>
             </junit>
@@ -137,7 +149,7 @@
             <cargo refId="@{id}" action="stop"/>
 
             <echo append="true" file="${report.dir}/index.html"><![CDATA[
-                <a href="@{id}/index.html">@{id}</a>
+                <li><a href="@{id}/index.html">@{id}</a></li>
             ]]></echo>
         </sequential>
     </macrodef>

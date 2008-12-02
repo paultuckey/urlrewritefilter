@@ -4,7 +4,7 @@
         PUBLIC "-//tuckey.org//DTD UrlRewrite 3.2//EN"
         "http://tuckey.org/res/dtds/urlrewrite3.2.dtd">
 
-<urlrewrite decode-using="utf8">
+<urlrewrite>
 
     <rule>
         <note>
@@ -14,7 +14,7 @@
         <from>/test/status/</from>
         <to type="redirect">%{context-path}/rewrite-status</to>
     </rule>
-
+<!-- todo remove?
     <rule>
         <from>^/([a-z]+)/index.jsp$</from>
         <to type="redirect">/$1/</to>
@@ -24,7 +24,7 @@
         <from>^/([a-z]+)/$</from>
         <to>/$1/index.jsp</to>
     </rule>
-
+-->
     <rule>
         <from>/spelling/([a-z]+)</from>
         <to>/spelling/index.jsp?spell=$1</to>
@@ -52,11 +52,11 @@
     </rule>
 
     <rule>
-        <from>/settest/([0-9]+)</from>
+        <from>^/settest/([0-9]+)$</from>
         <set type="session" name="testsession">hello!</set>
         <set type="response-header" name="cache-control">none-fool</set>
         <set type="parameter" name="settest1">$1</set>
-        <set type="method">PUT</set>
+        <set type="method">DELETE</set>
         <to>/settest.jsp</to>
     </rule>
 
@@ -103,17 +103,9 @@
 
     <rule>
         <name>encode test</name>
-        <from>/went%20to%20bahamas/</from>
+        <from>/went to bahamas/</from>
         <to type="redirect" encode="true">%{context-path}/bahamas/</to>
     </rule>
-
-
-    <rule>
-        <name>utf test</name>
-        <from>/utf/(.*)</from>
-        <to type="redirect">%{context-path}/utf-redir/$1</to>
-    </rule>
-
 
     <rule>
         <name>Bad referers test</name>
@@ -142,17 +134,6 @@
         <from>^/run/test/(.*)$</from>
         <run class="org.tuckey.web.filters.urlrewrite.test.TestRunObj"/>
         <to>null</to>
-    </rule>
-
-    <rule>
-        <name>Proxy</name>
-        <from>^/enc-test/(.*)$</from>
-        <to encode="true" type="forward">/test$1.jsp</to>
-    </rule>
-
-    <rule>
-        <from>^/percenttest/([a-zA-Z0-9\-\%]+)$</from>
-        <to>/testD%,D.pdf.jsp</to>
     </rule>
 
     <!--

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE urlrewrite
+        PUBLIC "-//tuckey.org//DTD UrlRewrite 3.2//EN"
+        "http://tuckey.org/res/dtds/urlrewrite3.2.dtd">
+
+<urlrewrite decode-using="null">
+    <!-- decode-using="null" means we refer to url's in this file in encoded form -->
+
+
+    <rule>
+        <name>utf test</name>
+        <from>/utf/(F%C3%AAtel%27ha%C3%AFvolap%C3%BCk)/</from><!-- todo: put % encoded in from -->
+        <to encode="false" type="redirect">%{context-path}/utf-redir/done/$1/</to>
+    </rule>
+
+    <rule>
+        <name>utf test</name>
+        <from>/utf/(F%C3%AAtel%27ha%C3%AFvolap%C3%BCk)/to-browser/</from><!-- todo: put % encoded in from -->
+        <to charencode="header"  type="redirect">%{context-path}/utf-redir/done/$1/</to>
+    </rule>
+
+    <rule>
+        <name>utf test</name>
+        <from>/utf/(F%C3%AAtel%27ha%C3%AFvolap%C3%BCk)/to-utf8/</from>
+        <to charencode="utf8" type="redirect">%{context-path}/utf-redir/done/$1/</to>
+    </rule>
+
+</urlrewrite>
