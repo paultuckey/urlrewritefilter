@@ -115,6 +115,7 @@ public class RewrittenUrlTest extends TestCase {
         rewrittenUrl.setEncode(true);
         rewrittenUrl.doRewrite(request, response, chain);
         assertTrue(MockRequestDispatcher.getCurrent().isIncluded() && chain.isDoFilterRun());
+        System.out.println("time diff: " + (MockRequestDispatcher.getCurrent().getIncludeLastCalled() - chain.getTimeInvoked()) + "ms" );
         assertTrue(chain.getTimeInvoked() < MockRequestDispatcher.getCurrent().getIncludeLastCalled());
     }
 
