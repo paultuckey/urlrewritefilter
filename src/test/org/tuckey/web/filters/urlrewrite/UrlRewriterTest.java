@@ -78,7 +78,7 @@ public class UrlRewriterTest extends TestCase {
         conf.setDecodeUsing("null");
         conf.initialise();
 
-        assertFalse(conf.isDecodeRequired());
+        assertFalse(conf.isDecodeUsingCustomCharsetRequired());
 
         UrlRewriter urlRewriter = new UrlRewriter(conf);
 
@@ -112,12 +112,13 @@ public class UrlRewriterTest extends TestCase {
         conf.addRule(rule1);
         conf.initialise();
 
-        assertTrue(!conf.isDecodeRequired());
+        assertTrue("isDecodeUsingEncodingHeader should be true", conf.isDecodeUsingEncodingHeader());
+        assertTrue("isDecodeUsingCustomCharsetRequired should be true", conf.isDecodeUsingCustomCharsetRequired());
         UrlRewriter urlRewriter = new UrlRewriter(conf);
         MockRequest request = new MockRequest("/ca&amp;t/abc");
         NormalRewrittenUrl rewrittenRequest = (NormalRewrittenUrl) urlRewriter.processRequest(request, response);
 
-        assertTrue(rewrittenRequest.isForward());
+        assertTrue("should be forward", rewrittenRequest.isForward());
         assertEquals("/search/?c=y&amp;q=abc", rewrittenRequest.getTarget());
     }
 

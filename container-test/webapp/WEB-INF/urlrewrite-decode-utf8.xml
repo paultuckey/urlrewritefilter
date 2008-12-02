@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE urlrewrite
+        PUBLIC "-//tuckey.org//DTD UrlRewrite 3.2//EN"
+        "http://tuckey.org/res/dtds/urlrewrite3.2.dtd">
+
+<urlrewrite decode-using="utf8">
+    <!-- decode-using="null" means we refer to url's in this file in encoded form -->
+
+    <rule>
+        <name>utf test</name>
+        <from>^/utf/Fêtel'haïvolapük/$</from>
+        <to type="redirect">%{context-path}/utf-redir/done/</to>
+    </rule>
+
+    <rule>
+        <name>utf test</name>
+        <from>^/utf/(Fêtel'haïvolapük)/to-null/$</from>
+        <to charencode="null" type="redirect">%{context-path}/utf-redir/done/to-null/$1/</to>
+    </rule>
+
+</urlrewrite>
