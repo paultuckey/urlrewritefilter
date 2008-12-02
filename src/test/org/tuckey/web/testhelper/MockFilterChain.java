@@ -54,7 +54,7 @@ public class MockFilterChain implements FilterChain {
         timeInvoked = System.currentTimeMillis();
         // make sure we wait a little so time elapses
         try {
-            Thread.sleep(10);
+            Thread.sleep(100);
         } catch (InterruptedException e) {
             //
         }
