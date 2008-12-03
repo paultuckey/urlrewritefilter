@@ -105,6 +105,11 @@ public class UrlRewriteFilter implements Filter {
     private int confReloadCheckInterval = 0;
 
     /**
+     * A user defined setting that will allow configuration to be swapped via an HTTP to rewrite-status.
+     */
+    private boolean allowConfSwapViaHttp = false;
+
+    /**
      * The last time that the conf file was loaded.
      */
     private long confLastLoad = 0;
@@ -168,6 +173,11 @@ public class UrlRewriteFilter implements Filter {
         String statusPathConf = filterConfig.getInitParameter("statusPath");
         String statusEnabledConf = filterConfig.getInitParameter("statusEnabled");
         String statusEnabledOnHosts = filterConfig.getInitParameter("statusEnabledOnHosts");
+
+        String allowConfSwapViaHttpStr = filterConfig.getInitParameter("allowConfSwapViaHttp");
+        if (!StringUtils.isBlank(allowConfSwapViaHttpStr)) {
+            allowConfSwapViaHttp = "true".equalsIgnoreCase(allowConfSwapViaHttpStr);
+        }
 
         // confReloadCheckInterval (default to null)
         if (!StringUtils.isBlank(confReloadCheckIntervalStr)) {
@@ -245,11 +255,10 @@ public class UrlRewriteFilter implements Filter {
      * Separate from init so that it can be overidden.
      */
     protected void loadUrlRewriter(FilterConfig filterConfig) throws ServletException {
-        loadUrlRewriter();
+        loadUrlRewriterLocal();
     }
 
-
-    private void loadUrlRewriter() {
+    private void loadUrlRewriterLocal() {
         InputStream inputStream = context.getResourceAsStream(confPath);
         URL confUrl = null;
         try {
@@ -275,7 +284,14 @@ public class UrlRewriteFilter implements Filter {
         }
     }
 
-    private void checkConf(Conf conf) {
+    /**
+     * Separate from checkConfLocal so that it can be overidden.
+     */
+    protected void checkConf(Conf conf) {
+        checkConfLocal(conf);
+    }
+
+    private void checkConfLocal(Conf conf) {
         if (log.isDebugEnabled()) {
             if (conf.getRules() != null) {
                 log.debug("inited with " + conf.getRules().size() + " rules");
@@ -413,7 +429,7 @@ public class UrlRewriteFilter implements Filter {
             // reload conf
             confLastLoad = System.currentTimeMillis();
             log.info("conf file modified since last load, reloading");
-            loadUrlRewriter();
+            loadUrlRewriterLocal();
         } else {
             log.debug("conf is not modified");
         }
@@ -442,6 +458,14 @@ public class UrlRewriteFilter implements Filter {
             throws IOException {
 
         log.debug("showing status");
+
+        if ( allowConfSwapViaHttp ) {
+            String newConfPath = request.getParameter("conf");
+            if ( !StringUtils.isBlank(newConfPath)) {
+                confPath = newConfPath;
+                loadUrlRewriterLocal();
+            }
+        }
 
         Status status = new Status(confLastLoaded, this);
         status.displayStatusInContainer(request);
