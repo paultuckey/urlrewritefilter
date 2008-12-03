@@ -505,6 +505,59 @@ public class ConditionTest extends TestCase {
         assertNotNull("condition must match", condition.getConditionMatch(request));
     }
 
+    // Condition: Equal, Pattern: Null, Value: Null, Result should be: Match.
+    public void testParameterNull1() throws UnsupportedEncodingException {
+        MockRequest request = new MockRequest();
+        Condition condition = new Condition();
+        condition.setType("parameter");
+        condition.setName("reqparam");
+        condition.setValue("");
+        condition.setOperator("equal");
+        condition.initialise();
+        assertNull("condition must match", condition.getConditionMatch(request));
+    }
+
+    // Condition: Equal, Pattern: Null, Value: Not Null, Result should be: No match.
+    public void testParameterNull2() throws UnsupportedEncodingException {
+        MockRequest request = new MockRequest();
+        Condition condition = new Condition();
+        condition.setType("parameter");
+        condition.setName("reqparam");
+        condition.setValue("");
+        condition.setOperator("equal");
+        condition.initialise();
+        request.addParameter("reqparam", "1000245");
+        assertNotNull("condition must not match", condition.getConditionMatch(request));
+    }
+
+    // Condition: Not Equal, Pattern: Null, Value: Null, Result should be: No match.
+    public void testParameterNull3() throws UnsupportedEncodingException {
+        MockRequest request = new MockRequest();
+        Condition condition = new Condition();
+        condition.setType("parameter");
+        condition.setName("reqparam");
+        condition.setValue("");
+        condition.setOperator("notequal");
+        condition.initialise();
+        assertNotNull("condition must not match", condition.getConditionMatch(request));
+        request.addParameter("reqparam", "1000245");
+    // Condition: Not Equal, Pattern: Null, Value: Not Null, Result should be: match.
+        assertNull("condition must match", condition.getConditionMatch(request));
+    }
+
+    // Condition: Not Equal, Pattern: Null, Value: Not Null, Result should be: match.
+    public void testParameterNull4() throws UnsupportedEncodingException {
+        MockRequest request = new MockRequest();
+        Condition condition = new Condition();
+        condition.setType("parameter");
+        condition.setName("reqparam");
+        condition.setValue("");
+        condition.setOperator("notequal");
+        condition.initialise();
+        request.addParameter("reqparam", "1000245");
+        assertNull("condition must match", condition.getConditionMatch(request));
+    }
+
     public void testPathInfo() throws UnsupportedEncodingException {
         MockRequest request = new MockRequest();
         Condition condition = new Condition();
