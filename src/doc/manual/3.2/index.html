@@ -180,6 +180,14 @@
             &lt;/init-param&gt;
         --&gt;
 
+        &lt;!-- defaults to false. allow conf file to be set by calling /rewrite-status/?conf=/WEB-INF/urlrewrite2.xml
+                designed to be used for testing only
+            &lt;init-param&gt;
+                &lt;param-name&gt;<b>allowConfSwapViaHttp</b>&lt;/param-name&gt;
+                &lt;param-value&gt;false&lt;/param-value&gt;
+            &lt;/init-param&gt;
+        --&gt;
+
     &lt;/filter&gt;
 
     &lt;filter-mapping&gt;
@@ -304,19 +312,33 @@
             (unless <code>match-type</code> is specified on a rule).</td>
     </tr>
     <tr>
-        <td rowspan="3">decode-using <br/><small>(optional)</small></td>
-        <td><b>utf8</b> (default)</td>
-        <td>When URL is decoded UTF-8 will be used.</td>
+        <td rowspan="5">decode-using <br/><small>(optional)</small></td>
+        <td><b>header,utf8</b> (default)</td>
+        <td>When URL is decoded request.getCharacterEncoding() will be used, if that is empty UTF-8 will be used.
+        </td>
     </tr>
     <tr>
         <td>null</td>
-        <td>Do not decode.</td>
+        <td>Do not decode at all. (note, this means the literal string null e.g. decode-using="null") </td>
+    </tr>
+    <tr>
+        <td>header</td>
+        <td>Only use request.getCharacterEncoding() to decode.</td>
     </tr>
     <tr>
         <td>[encoding]</td>
-        <td>Any string representing a supported character encoding eg, ISO-8859-1.
+        <td>Only use a specific character encoding eg, ISO-8859-1.
             See <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/charset/Charset.html">Java Charset Object</a>
-            for more info.
+            for all character encodings.
+        </td>
+    </tr>
+    <tr>
+        <td>header,[encoding]</td>
+        <td>
+            When URL is decoded request.getCharacterEncoding() will be used, if that is empty a specific character
+            encoding eg, ISO-8859-1.
+            See <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/charset/Charset.html">Java Charset Object</a>
+            for all character encodings.
         </td>
     </tr>
 
