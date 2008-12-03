@@ -130,4 +130,10 @@ public class WebappHttpTest extends ContainerTestBase {
         assertEquals("this is " + TestRunObj.class.getName(), method.getResponseBodyAsString());
     }
 
+    public void testQueryStringEscape() throws IOException {
+        GetMethod method = new GetMethod(getBaseUrl() + "/query-string-escape/jack+%26+jones");
+        method.setFollowRedirects(false);
+        client.executeMethod(method);
+        assertEquals("http://query-string-escape-result.com/?q=jack+%26+jones&another=jack & jones", method.getResponseHeader("Location").getValue());
+    }
 }
