@@ -82,9 +82,12 @@ public class Conf {
     protected boolean useQueryString;
     protected boolean useContext;
 
-    private static final String DEFAULT_DECODE_USING = "null";
     private static final String NONE_DECODE_USING = "null";
+    private static final String HEADER_DECODE_USING = "header";
+    private static final String DEFAULT_DECODE_USING = "header,utf-8";
+
     protected String decodeUsing = DEFAULT_DECODE_USING;
+    private boolean decodeUsingEncodingHeader;
 
     protected String defaultMatchType = null;
 
@@ -412,18 +415,7 @@ public class Conf {
             log.debug("now initialising conf");
         }
 
-        // check decode
-        decodeUsing = StringUtils.trimToNull(decodeUsing);
-        if (decodeUsing == null) decodeUsing = DEFAULT_DECODE_USING;
-        if (NONE_DECODE_USING.equalsIgnoreCase(decodeUsing)) {
-            decodeUsing = null;
-        } else {
-            try {
-                URLDecoder.decode("testUrl", decodeUsing);
-            } catch (UnsupportedEncodingException e) {
-                addError("unsupported 'decodeusing' " + decodeUsing + " see Java SDK docs for supported encodings");
-            }
-        }
+        initDecodeUsing(decodeUsing);
 
         boolean rulesOk = true;
         for (int i = 0; i < rules.size(); i++) {
@@ -449,6 +441,37 @@ public class Conf {
         }
         if (rulesOk) {
             ok = true;
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("conf status " + ok);
+        }
+    }
+
+    private void initDecodeUsing(String decodeUsingSetting) {
+        decodeUsingSetting = StringUtils.trimToNull(decodeUsingSetting);
+        if (decodeUsingSetting == null) decodeUsingSetting = DEFAULT_DECODE_USING;
+
+        if ( decodeUsingSetting.equalsIgnoreCase(HEADER_DECODE_USING)) { // is 'header'
+            decodeUsingEncodingHeader = true;
+            decodeUsingSetting = null;
+
+        }   else if ( decodeUsingSetting.startsWith(HEADER_DECODE_USING + ",")) { // is 'header,xxx'
+            decodeUsingEncodingHeader = true;
+            decodeUsingSetting = decodeUsingSetting.substring((HEADER_DECODE_USING + ",").length());
+
+        }
+        if (NONE_DECODE_USING.equalsIgnoreCase(decodeUsingSetting)) {
+            decodeUsingSetting = null;
+        }
+        if ( decodeUsingSetting != null ) {
+            try {
+                URLDecoder.decode("testUrl", decodeUsingSetting);
+                this.decodeUsing = decodeUsingSetting;
+            } catch (UnsupportedEncodingException e) {
+                addError("unsupported 'decodeusing' " + decodeUsingSetting + " see Java SDK docs for supported encodings");
+            }
+        }   else {
+            this.decodeUsing = null;
         }
     }
 
@@ -576,7 +599,7 @@ public class Conf {
         return catchElems;
     }
 
-    public boolean isDecodeRequired() {
+    public boolean isDecodeUsingCustomCharsetRequired() {
         return decodeUsing != null;
     }
 
@@ -590,5 +613,9 @@ public class Conf {
 
     public boolean isLoadedFromFile() {
         return fileName != null;
+    }
+
+    public boolean isDecodeUsingEncodingHeader() {
+        return decodeUsingEncodingHeader;
     }
 }

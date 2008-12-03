@@ -35,12 +35,14 @@
 package org.tuckey.web.filters.urlrewrite;
 
 import org.tuckey.web.filters.urlrewrite.utils.Log;
+import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URLDecoder;
 import java.util.List;
@@ -92,9 +94,81 @@ public class UrlRewriter {
     }
 
 
+    /**
+     * Return the path within the web application for the given request.
+     * <p>Detects include request URL if called within a RequestDispatcher include.
+     */
+    public String getPathWithinApplication(HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        if (requestUri == null) requestUri = "";
+        String decodedRequestUri = decodeRequestString(request, requestUri);
+        String contextPath = getContextPath(request);
+        String path;
+        if (StringUtils.startsWithIgnoreCase(decodedRequestUri, contextPath) && !conf.isUseContext()) {
+            // Normal case: URI contains context path.
+            path = decodedRequestUri.substring(contextPath.length());
+
+        } else if (!StringUtils.startsWithIgnoreCase(decodedRequestUri, contextPath) && conf.isUseContext()) {
+            // add the context path on
+            path = contextPath + decodedRequestUri;
+
+        } else {
+            path = decodedRequestUri;
+        }
+        return StringUtils.isBlank(path) ? "/" : path;
+    }
+
+    /**
+     * Return the context path for the given request, detecting an include request
+     * URL if called within a RequestDispatcher include.
+     * <p>As the value returned by <code>request.getContextPath()</code> is <i>not</i>
+     * decoded by the servlet container, this method will decode it.
+     */
+    public String getContextPath(HttpServletRequest request) {
+        String contextPath = request.getContextPath();
+        if ("/".equals(contextPath)) {
+            // Invalid case, but happens for includes on Jetty: silently adapt it.
+            contextPath = "";
+        }
+        return decodeRequestString(request, contextPath);
+    }
+
+    /**
+     * Decode the string with a URLDecoder. The encoding will be taken
+     * from the request, falling back to the default for your platform ("ISO-8859-1" on windows).
+     */
+    public String decodeRequestString(HttpServletRequest request, String source) {
+        if (conf.isDecodeUsingEncodingHeader()) {
+            String enc = request.getCharacterEncoding();
+            if (enc != null) {
+                try {
+                    return URLDecoder.decode(source, enc);
+                } catch (UnsupportedEncodingException ex) {
+                    if (log.isWarnEnabled()) {
+                        log.warn("Could not decode: " + source + " (header encoding: '" + enc + "'); exception: " + ex.getMessage());
+                    }
+                }
+            }
+        }
+        if (conf.isDecodeUsingCustomCharsetRequired()) {
+            String enc = conf.getDecodeUsing();
+            if (enc != null) {
+                try {
+                    return URLDecoder.decode(source, enc);
+                } catch (UnsupportedEncodingException ex) {
+                    if (log.isWarnEnabled()) {
+                        log.warn("Could not decode: " + source + " (encoding: '" + enc + "') using default encoding; exception: " + ex.getMessage());
+                    }
+                }
+            }
+        }
+        return source;
+    }
+
+
     private RuleChain getNewChain(final HttpServletRequest hsRequest, FilterChain parentChain) {
 
-        String originalUrl = hsRequest.getRequestURI();
+        String originalUrl = getPathWithinApplication(hsRequest);
 
         if (originalUrl == null) {
             // for some reason the engine is not giving us the url
@@ -108,15 +182,6 @@ public class UrlRewriter {
             log.debug("processing request for " + originalUrl);
         }
 
-        // remove context if required
-        String contextPath = hsRequest.getContextPath();
-        if (contextPath != null && !conf.isUseContext()) {
-            if ( originalUrl.startsWith(contextPath) ) {
-                log.debug("context removed from url");
-                originalUrl = originalUrl.substring(contextPath.length());
-            }
-        }
-
         // add the query string on uri (note, some web app containers do this)
         if (originalUrl != null && originalUrl.indexOf("?") == -1 && conf.isUseQueryString()) {
             String query = hsRequest.getQueryString();
@@ -126,19 +191,6 @@ public class UrlRewriter {
                     originalUrl = originalUrl + "?" + query;
                     log.debug("query string added");
                 }
-            }
-        }
-
-        // decode the url as required
-        if (conf.isDecodeRequired()) {
-            try {
-                originalUrl = URLDecoder.decode(originalUrl, conf.getDecodeUsing());
-                if (log.isDebugEnabled()) {
-                    log.debug("after " + conf.getDecodeUsing() + " decoding " + originalUrl);
-                }
-            } catch (java.io.UnsupportedEncodingException e) {
-                log.warn("the jvm doesn't seem to support decoding " + conf.getDecodeUsing() + ", matches may not occur correctly.");
-                return null;
             }
         }
 
@@ -190,10 +242,10 @@ public class UrlRewriter {
         if (log.isDebugEnabled()) {
             log.debug("exception unhandled", e);
         }
-        if (originalThrowable instanceof Error) throw(Error) originalThrowable;
-        if (originalThrowable instanceof RuntimeException) throw(RuntimeException) originalThrowable;
-        if (originalThrowable instanceof ServletException) throw(ServletException) originalThrowable;
-        if (originalThrowable instanceof IOException) throw(IOException) originalThrowable;
+        if (originalThrowable instanceof Error) throw (Error) originalThrowable;
+        if (originalThrowable instanceof RuntimeException) throw (RuntimeException) originalThrowable;
+        if (originalThrowable instanceof ServletException) throw (ServletException) originalThrowable;
+        if (originalThrowable instanceof IOException) throw (IOException) originalThrowable;
         throw new ServletException(originalThrowable);
     }
 
@@ -212,7 +264,6 @@ public class UrlRewriter {
                 throw new ServletException(e);
             }
         }
-        // todo: is this right?
         // unwrap if exception is a ServletException
         if (originalThrowable instanceof ServletException) {
             ServletException se = (ServletException) originalThrowable;
@@ -306,3 +357,6 @@ public class UrlRewriter {
     }
 
 }
+
+
+
