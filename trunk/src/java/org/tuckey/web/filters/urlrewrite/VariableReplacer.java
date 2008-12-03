@@ -188,16 +188,17 @@ public class VariableReplacer {
                 return StringUtils.notNull(requestUrlStr);
             case TypeConverter.TYPE_SESSION_ATTRIBUTE:
                 Object sessionAttributeValue = null;
-                if (hsRequest.getSession() != null && varSubName != null) {
-                    sessionAttributeValue = hsRequest.getSession().getAttribute(varSubName);
+                HttpSession session = hsRequest.getSession(false);
+                if (session != null && varSubName != null) {
+                    sessionAttributeValue = session.getAttribute(varSubName);
                 }
                 return attributeVariable(sessionAttributeValue, varSubName);
 
             case TypeConverter.TYPE_SESSION_IS_NEW:
                 boolean sessionNew = false;
-                HttpSession session = hsRequest.getSession();
-                if (session != null) {
-                    sessionNew = session.isNew();
+                HttpSession sessionIsNew = hsRequest.getSession(false);
+                if (sessionIsNew != null) {
+                    sessionNew = sessionIsNew.isNew();
                 }
                 return String.valueOf(sessionNew);
             case TypeConverter.TYPE_SERVER_PORT:
