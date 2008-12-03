@@ -214,16 +214,17 @@ public class Condition extends TypeConverter {
                 return evaluateStringCondition(requestUrlStr);
             case TYPE_SESSION_ATTRIBUTE:
                 Object sessionAttributeValue = null;
-                if (hsRequest.getSession() != null && name != null) {
-                    sessionAttributeValue = hsRequest.getSession().getAttribute(name);
+                final HttpSession session = hsRequest.getSession(false);
+                if (session != null && name != null) {
+                    sessionAttributeValue = session.getAttribute(name);
                 }
                 return evaluateAttributeCondition(sessionAttributeValue);
 
             case TYPE_SESSION_IS_NEW:
                 boolean sessionNew = false;
-                HttpSession session = hsRequest.getSession();
-                if (session != null) {
-                    sessionNew = session.isNew();
+                final HttpSession sessionIsNew = hsRequest.getSession(false);
+                if (sessionIsNew != null) {
+                    sessionNew = sessionIsNew.isNew();
                 }
                 return evaluateBoolCondition(sessionNew);
             case TYPE_SERVER_PORT:
