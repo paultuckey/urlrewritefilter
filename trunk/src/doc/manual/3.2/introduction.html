@@ -174,13 +174,16 @@ The original URL can also be reconstructed from more basic components available 
             <ul>
                 <li>Added "no substitution" ability with to element eg, &lt;to&gt;-&lt;/to&gt;</li>
                 <li>In urlrewrite.xml allow rule, class-rule and outbound-rule elements in any order</li>
-                <li>Fixed bug with handling of references in functions (ie, to allow this: ${replace:$1:-:+})</li>
+                <li>Fixed bug with handling of references in functions (ie, to allow this: ${replace:$1:-:+} )</li>
                 <li>Added slf4j logging support for logLevel (filter parameter)</li>
                 <li>Added function for calculating string length (eg, ${length:asdf} would return 4)</li>
                 <li>Added "proxy" to type, to enable requests to be proxied to another server</li>
                 <li>Added "context" attribute to &lt;to&gt; type, to enable requests to sent to other contexts (assuming app server configured to do this)</li>
                 <li>JDK 6+ Annotation processor</li>
-                <li>JDK 5 & 6+ Annotation processors incluses in main jar file</li>
+                <li>JDK 5 & 6+ Annotation processors included in main jar file</li>
+                <li>Fixed bug with decoding urls and added ability to specify 'header' type decoding</li>
+                <li>Added ability to specify "charencode" attribute on "to" element.</li>
+                <li>Added allowConfSwapViaHttp filter parameter to allow configuration swap out at runtime.</li>
             </ul>
         </li>
         <li>3.1.0
