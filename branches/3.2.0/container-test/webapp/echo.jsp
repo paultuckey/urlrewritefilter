@@ -1,1 +1,0 @@
-echo <%= request.getParameter("echo") %>
