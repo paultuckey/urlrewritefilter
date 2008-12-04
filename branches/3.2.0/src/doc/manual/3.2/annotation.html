@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+    <title>UrlRewriteFilter - Annotation</title>
+    <style type="text/css">
+        @import url( "doc.css" );
+    </style>
+</head>
+
+<body>
+
+<div id="masthead">
+    <a href="http://tuckey.org/urlrewrite/">
+        <img id="logo" src="urf.gif" border="0" alt="Tuckey Logo" />
+        Url Rewrite Filter <!--@ver-->3.2.0<!--/@ver--></a>
+</div>
+
+<div id="menu">
+<ul>
+    <li><a href="http://tuckey.org/urlrewrite/">Home</a></li>
+    <li><a href="http://tuckey.org/urlrewrite/#download">Download</a></li>
+    <li><a href="http://code.google.com/p/urlrewritefilter/source">svn access</a></li> 
+    <li><a href="http://groups-beta.google.com/group/urlrewrite">UrlRewrite google group</a><br/>&nbsp;</li>
+
+    <li><b>Background</b>
+        <ul>
+            <li><a href="introduction.html#license">License</a></li>
+            <li><a href="introduction.html#changelog">Changelog</a></li>
+        </ul>
+    </li>
+    <li><a href="index.html">Configuration</a>
+        <ul>
+            <li><a href="index.html#install">Install</a></li>
+            <li><a href="index.html#tips">Tips</a></li>
+            <li><a href="index.html#filterparams">Filter Parameters</a></li>
+            <li><a href="index.html#configuration">Configuration File</a></li>
+            <li><a href="index.html#anttask">Ant Task</a></li>
+            <li><a href="index.html#mod_rewrite_conf">mod_rewrite Style</a></li>
+        </ul>
+    </li>
+    <li><b>Annotations</b></li>
+    <li><a href="guide.html">Examples</a>
+        <ul>
+            <li><a href="guide.html#method">Method Invocation</a></li>
+            <li><a href="guide.html#urlabs">URL Abstraction</a></li>
+            <li><a href="guide.html#mod_re">mod_rewrite vs UrlRewriteFilter</a></li>
+        </ul>
+    </li>
+</ul>
+</div>
+
+<div id="main">
+
+ <h1>URL Matching Annotations</h1>
+
+<a name="annotation"></a>
+
+<p>Support for annotations has been added as part of version 3 development.  You must be using JDK 1.6 for this to work.</p>
+
+    <p>The intention of annotations in UrlRewriteFilter is purely for conf file generation.  The is NO runtime
+    dependency on the annotations.</p>
+
+    <h2>Annotations</h2>
+
+    <h3>@HttpUrl</h3>
+
+    <p>Set the method up to be used when the url is Matched, matched groups are assigned to method paramters (if any).</p>
+
+    <pre><code>
+    @HttpUrl("^/do-something/([0-9]+)$")
+    public void doSomething(Long id)
+    </code></pre>
+
+    <p>When a request for /do-something/1234, doSomething is called with id set to 1234.</p>
+
+    <h3>@HttpParam</h3>
+
+    <p>Sets the parameter from request.getParameter (handles type conversion as necessary)</p>
+
+    <pre><code>
+    void doSomething(@HttpParam String name, @HttpParam long id, @HttpParam("uid") Long userId)
+    </code></pre>
+
+    <p>The above example will:
+        <br/>name = request.getParameter("name");
+        <br/>id = convertTolongDefault0(request.getParameter("id"));
+        <br/>userId = convertToLongDefaultNull(request.getParameter("uid"));
+        <br/>An exception will never be thown during type conversion
+    </p>
+
+
+
+
+<h2>Conf Generation</h2>
+
+    <p>With Java 1.6 the javac tool handles annotation processing.  So this means all you need to do is have a
+        "urlrewriteDest" option specified and have urlrewritefilter jar in your classpath. Example of compilerarg
+        elements that would be used with javac ant task:</p>
+
+<pre><code>
+&lt;compilerarg line="-AurlrewriteDest=build/WEB-INF/urlrewrite-generated.xml"/&gt;
+<span style="color: gray;">&lt;!-- optional arguments
+&lt;compilerarg value="-AurlrewriteShowPositions=true"/&gt;
+&lt;compilerarg value="-AurlrewriteDebug=true"/&gt;
+--&gt;</span>
+</code></pre>
+
+    <p>An example compile ant task with urlrewrite option might look like:</p>
+
+<pre><code>
+<span style="color: gray;">&lt;target name="compile-urlrewrite-conf"&gt;
+   &lt;javac srcdir=&quot;src/&quot; destdir=&quot;build/WEB-INF/classes&quot;&gt;
+        &lt;classpath refid=&quot;compile.classpath&quot;/&gt;</span>
+        &lt;classpath path=&quot;lib/urlrewrite-<!--@ver-->3.2.0<!--/@ver-->.jar&quot;/&gt;
+        &lt;compilerarg line=&quot;-AurlrewriteDest=build/WEB-INF/urlrewrite-generated.xml&quot;/&gt;
+   <span style="color: gray;">&lt;/javac&gt;</span>
+   &lt;!-- check file generated ok (if not you may be using the wrong jdk version)--&gt;
+   &lt;available property=&quot;urlrewrite.generated&quot; file=&quot;build/WEB-INF/urlrewrite-generated.xml&quot;/&gt;
+   &lt;fail unless=&quot;urlrewrite.generated&quot; /&gt;
+<span style="color: gray;">&lt;/target&gt;</span>
+</code></pre>
+
+    <p>This will generate to the file specified.  Any errors will be output to stdout using the standard APT method.
+    Read the generated conf file and check it for errors.</p>
+
+
+<p>Include the compiled conf file in your normal conf.</p>
+
+<pre><code>
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 3.2//EN"
+        "http://tuckey.org/res/dtds/urlrewrite3.2.dtd"
+[
+    &lt;!ENTITY included SYSTEM "urlrewrite-generated.xml"&gt;
+]&gt;
+&lt;urlrewrite&gt;
+
+    &lt;!--
+        other rules...
+    --&gt;
+
+    &amp;included;
+
+
+&lt;/urlrewrite&gt;
+</code></pre>
+
+
+<p>Check your /rewrite-status for errors if things start going strange.</p>
+
+</div>
+
+<div id="footer">
+Copyright Paul Tuckey <!--@year-->2007<!--/@year-->
+    - <a href="http://tuckey.org/urlrewrite/">UrlRewirteFilter</a>
+</div>
+
+</body>
+</html>
+

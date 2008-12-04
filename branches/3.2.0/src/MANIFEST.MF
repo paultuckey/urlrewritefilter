@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Extension-Name: urlrewritefilter
+Specification-Title: Url Rewrite Filter
+Specification-Vendor: Paul Tuckey
+Specification-Version: @version@
+Implementation-Title: Url Rewrite Filter
+Implementation-Vendor: Paul Tuckey
+Implementation-Version: @version@

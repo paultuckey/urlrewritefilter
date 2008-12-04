@@ -1,0 +1,1122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+    <title>UrlRewriteFilter - Manual</title>
+    <style type="text/css">
+        @import url( "doc.css" );
+    </style>
+</head>
+
+<body>
+
+<div id="masthead">
+    <a href="http://tuckey.org/urlrewrite/">
+        <img src="http://tuckey.org/img/urlrewrite.gif" border="0" alt="Tuckey Logo" />
+        Url Rewrite Filter 3.0</a>
+</div>
+
+<div id="menu">
+<ul>
+    <li><a href="http://tuckey.org/urlrewrite/">Home</a></li>
+    <li><a href="http://tuckey.org/urlrewrite/#download">Download</a></li>
+    <li><a href="http://code.google.com/p/urlrewritefilter/source">svn access</a></li>
+    <li><a href="http://groups-beta.google.com/group/urlrewrite">UrlRewrite google group</a><br/>&nbsp;</li>
+
+    <li><a href="introduction.html">Background</a>
+        <ul>
+            <li><a href="introduction.html#license">License</a></li>
+            <li><a href="introduction.html#changelog">Changelog</a></li>
+        </ul>
+    </li>
+    <li><b>Configuration</b>
+        <ul>
+            <li><a href="#install">Install</a></li>
+            <li><a href="#tips">Tips</a></li>
+            <li><a href="#filterparams">Filter Parameters</a></li>
+            <li><a href="#configuration">Configuration File</a></li>
+            <li><a href="#anttask">Ant Task</a></li>
+        </ul>
+    </li>
+    <li><a href="annotation.html">Annotations</a></li>
+    <li><a href="guide.html">Examples</a>
+        <ul>
+            <li><a href="guide.html#method">Method Invocation</a></li>
+            <li><a href="guide.html#urlabs">URL Abstraction</a></li>
+            <li><a href="guide.html#mod_re">mod_rewrite vs UrlRewriteFilter</a></li>
+        </ul>
+    </li>
+    <li><a href="annotation.html">Annotations</a></li>
+</ul>
+</div>
+
+<div id="main">
+
+ <h1>Manual</h1>
+
+
+<p>For commercial support contact <a href="mailto:sales@tuckey.co.nz">sales@tuckey.co.nz</a>. Community
+    support is avaliable at <a href="http://groups-beta.google.com/group/urlrewrite">urlrewrite google group</a>.</p>
+
+<p>Read <b><a href="guide.html">examples of usage</a></b> and a
+    <a href="urlrewrite-conf-overview-sample.html">sample</a> of the <a href="#anttask">ant task</a> report.
+    If you have feedback, or conf you want to share with the world <a href="mailto:paul@tuckey.org">email me</a>.
+    If you have any suggestions/examples for this manual please post them to the
+    <a href="http://groups-beta.google.com/group/urlrewrite">group</a>.</p>
+
+<a name="install"></a>
+
+<h2>Install</h2>
+
+<ol>
+    <li><a href="http://tuckey.org/urlrewrite/#download">Download</a> the zip (or tar.gz) and extract it into your
+        context's directory ie, so that urlrewrite.xml goes into the WEB-INF directory.</li>
+    <li>Add the following to your WEB-INF/web.xml (add it near the top above your
+        servlet mappings (if you have any)): (see <a href="http://tuckey.org/urlrewrite/manual/3.0/#filterparams">filter
+        parameters</a> for more options)
+        <pre><code>
+    &lt;filter&gt;
+       &lt;filter-name&gt;UrlRewriteFilter&lt;/filter-name&gt;
+       &lt;filter-class&gt;org.tuckey.web.filters.urlrewrite.UrlRewriteFilter&lt;/filter-class&gt;
+    &lt;/filter&gt;
+    &lt;filter-mapping&gt;
+       &lt;filter-name&gt;UrlRewriteFilter&lt;/filter-name&gt;
+       &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+    &lt;/filter-mapping&gt;
+        </code></pre></li>
+    <li>Add your own configuration to the WEB-INF/urlrewrite.xml that was created.</li>
+    <li>Restart the context.</li>
+</ol>
+
+<p>You can visit <a href="http://127.0.0.1:8080/rewrite-status">http://127.0.0.1:8080/rewrite-status</a>
+    (or whatever the address of your local webapp and context)
+    to see output (note: this page is only viewable from localhost).</p>
+
+<a name="filterparams"></a>
+
+<h2>Filter Parameters</h2>
+
+<p>There are a few advanced filter parameters for enabling conf file reloading etc. There are self-explanatory.</p>
+
+<pre><code>
+    &lt;filter&gt;
+        &lt;filter-name&gt;UrlRewriteFilter&lt;/filter-name&gt;
+        &lt;filter-class&gt;org.tuckey.web.filters.urlrewrite.UrlRewriteFilter&lt;/filter-class&gt;
+
+        &lt;!-- set the amount of seconds the conf file will be checked for reload
+        can be a valid integer (0 denotes check every time,
+        -1 denotes no reload check, default -1) --&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;confReloadCheckInterval&lt;/param-name&gt;
+            &lt;param-value&gt;60&lt;/param-value&gt;
+        &lt;/init-param&gt;
+
+        &lt;!-- if you need to the conf file path can be changed
+        it is specified as a path relative to the root of your context
+        (default /WEB-INF/urlrewrite.xml) --&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;confPath&lt;/param-name&gt;
+            &lt;param-value&gt;/WEB-INF/urlrewrite.xml&lt;/param-value&gt;
+        &lt;/init-param&gt;
+
+        &lt;!-- sets up log level (will be logged to context log)
+        can be: TRACE, DEBUG, INFO (default), WARN, ERROR, FATAL, log4j, commons,
+        sysout:{level} (ie, sysout:DEBUG)
+        if you are having trouble using normal levels use sysout:DEBUG
+        (default WARN) --&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;logLevel&lt;/param-name&gt;
+            &lt;param-value&gt;DEBUG&lt;/param-value&gt;
+        &lt;/init-param&gt;
+
+        &lt;!-- you can change status path so that it does not
+        conflict with your installed apps (note, defaults
+        to /rewrite-status) note, must start with / --&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;statusPath&lt;/param-name&gt;
+            &lt;param-value&gt;/status&lt;/param-value&gt;
+        &lt;/init-param&gt;
+
+        &lt;!-- you can disable status page if desired
+        can be: true, false (default true) --&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;statusEnabled&lt;/param-name&gt;
+            &lt;param-value&gt;true&lt;/param-value&gt;
+        &lt;/init-param&gt;
+
+        &lt;!-- you may want to allow more hosts to look at the status page
+        statusEnabledOnHosts is a comma delimited list of hosts, * can
+        be used as a wildcard (defaults to "localhost, local, 127.0.0.1") --&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;statusEnabledOnHosts&lt;/param-name&gt;
+            &lt;param-value&gt;localhost, dev.*.myco.com, *.uat.mycom.com&lt;/param-value&gt;
+        &lt;/init-param&gt;
+
+    &lt;/filter&gt;
+
+    &lt;filter-mapping&gt;
+        &lt;filter-name&gt;UrlRewriteFilter&lt;/filter-name&gt;
+        &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+    &lt;/filter-mapping&gt;
+</code></pre>
+
+<p>Note, setting <code>logLevel</code> to <code>log4j</code> or <code>commons</code> will cause the built in loging to
+    call either <a href="http://logging.apache.org/log4j/docs/index.html">log4j</a> or
+    <a href="http://jakarta.apache.org/commons/logging/">commons-logging</a> as if they were the logging framework,
+    obviously you will need to have the jar for log4j or commons-logging in your classpath.</p>
+
+
+<a name="configuration"></a>
+
+<h2>Configuration File WEB-INF/urlrewrite.xml</h2>
+
+<p>Configuration is done via a simple XML file that lives in your <code>WEB-INF</code> folder. It should be named
+    urlrewrite.xml.
+    It may be helpful to read the <a href="http://tuckey.org/res/dtds/urlrewrite3.0.dtd">UrlRewriteFilter DTD
+    (Document Type Definition)</a>. Please also make sure you look at the <a href="guide.html">examples</a>. A simple
+    configuration file looks like:</p>
+
+<pre><code>
+    &lt;?xml version="1.0" encoding="utf-8"?&gt;
+
+    &lt;!DOCTYPE urlrewrite
+        PUBLIC "-//tuckey.org//DTD UrlRewrite 3.0//EN"
+        "http://tuckey.org/res/dtds/urlrewrite3.0.dtd"&gt;
+
+    &lt;urlrewrite&gt;
+
+        &lt;rule&gt;
+           &lt;from&gt;^/some/olddir/(.*)$&lt;/from&gt;
+           &lt;to type="redirect"&gt;/very/newdir/$1&lt;/to&gt;
+        &lt;/rule&gt;
+
+        &lt;rule match-type="wildcard"&gt;
+           &lt;from&gt;/blog/archive/**&lt;/from&gt;
+           &lt;to type="redirect"&gt;/roller/history/$1&lt;/to&gt;
+        &lt;/rule&gt;
+
+    &lt;/urlrewrite&gt;
+</code></pre>
+
+
+<p>The urlrewrite.xml file must have a root element called "urlrewrite" and must contain
+    at least one "rule" element.</p>
+
+<p>A "rule" must contain a "from" and a "to", and can have zero or more "condition" elements and zero or more and/or
+    "set" elements.</p>
+
+<p>When a "rule" is processed against an incoming request, all the "condition" elements must be met, then
+    the "from" will be applied to the request URL and the final URL generated by applying the
+    "to" to the "from" pattern. So long as the rule has matched then the "set" will be run.</p>
+
+
+
+ <p>When executing a rule the filter will (very simplified) loop over all rules and for each do something like this psuedo code:</p>
+
+ <pre><code>
+     Pattern.compile(&lt;from&gt; element);
+     pattern.matcher(request url);
+     matcher.replaceAll(&lt;to&gt; element);
+     if ( &lt;condition&gt; elements match && matcher.find() ) {
+         handle &lt;set&gt; elements (if any)
+         execute &lt;run&gt; elements (if any)
+         perform &lt;to&gt; element (if any)
+     }
+ </code></pre>
+
+
+<h3>&lt;urlrewrite&gt; element</h3>
+
+<p>The top level element.</p>
+
+<table cellspacing="0">
+    <tr>
+        <th>Attribute</th>
+        <th>Possible Value</th>
+        <th>Explanation</th>
+    </tr>
+    <tr>
+        <td rowspan="2">default-match-type <br/><small>(optional)</small></td>
+        <td><b>regex</b> (default)</td>
+        <td>All rules and thier conditions will be processed using the Java Regular Expression engine (unless
+            <code>match-type</code> is specified on a rule).</td>
+    </tr>
+    <tr>
+        <td>wildcard</td>
+        <td>All rules and thier conditions will be processed using the <a href="#wildcard">Wildcard Expression
+            engine</a>
+            (unless <code>match-type</code> is specified on a rule).</td>
+    </tr>
+    <tr>
+        <td rowspan="3">decode-using <br/><small>(optional)</small></td>
+        <td><b>utf8</b> (default)</td>
+        <td>When URL is decoded UTF-8 will be used.</td>
+    </tr>
+    <tr>
+        <td>null</td>
+        <td>Do not decode.</td>
+    </tr>
+    <tr>
+        <td>[encoding]</td>
+        <td>Any string representing a supported character encoding eg, ISO-8859-1.
+            See <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/nio/charset/Charset.html">Java Charset Object</a>
+            for more info.
+        </td>
+    </tr>
+
+    <tr>
+        <td rowspan="2">use-query-string <br/><small>(optional)</small></td>
+        <td><b>false</b> (default)</td>
+        <td>The query string will <em>not</em> be appended to the url that the "from" element matches against.</td>
+    </tr>
+    <tr>
+        <td>true</td>
+        <td>The query string will be appended to the url that the "from" element matches against.</td>
+    </tr>
+
+    <tr>
+        <td rowspan="2">use-context <br/><small>(optional)</small></td>
+        <td><b>false</b> (default)</td>
+        <td>The context path will <em>not</em> be added to the url that the "from" element matches against.</td>
+    </tr>
+    <tr>
+        <td>true</td>
+        <td>The context path will be added to the url that the "from" element matches against.</td>
+    </tr>
+
+</table>
+
+
+<h3>&lt;rule&gt; element</h3>
+
+<p>Zero or more. The basis of a rule.</p>
+
+<table cellspacing="0">
+    <tr>
+        <th>Attribute</th>
+        <th>Possible Value</th>
+        <th>Explanation</th>
+    </tr>
+    <tr>
+        <td rowspan="2">enabled <br/><small>(optional)</small></td>
+        <td><b>true</b> (default)</td>
+        <td>Enable this rule.</td>
+    </tr>
+    <tr>
+        <td><b>false</b></td>
+        <td>Disable this rule.</td>
+    </tr>
+    <tr>
+        <td rowspan="36">match-type <br/><small>(optional)</small></td>
+        <td><b>regex</b> (default)</td>
+        <td>This rule and it's conditions will be processed using the Java Regular Expression engine.</td>
+    </tr>
+    <tr>
+        <td><b>wildcard</b></td>
+        <td>This rule and it's conditions will be processed using the <a href="#wildcard">Wildcard Expression engine</a>.
+        </td>
+    </tr>
+</table>
+
+<p>In the following example requests for <code>/world/usa/nyc</code> will be transparently forwarded to
+    <code>/world.jsp</code></p>
+
+<pre><code>
+    &lt;rule match-type="regex"&gt;
+       &lt;from&gt;^/world/([a-z]+)/([a-z]+)$&lt;/from&gt;
+       &lt;to&gt;/world.jsp&lt;/to&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+<pre><code>
+    &lt;rule match-type="wildcard"&gt;
+       &lt;from&gt;/world/*/*&lt;/from&gt;
+       &lt;to&gt;/world.jsp&lt;/to&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+
+<h3>&lt;outbound-rule&gt; element</h3>
+
+<p>Zero or more. This is very similar to a normal rule but it is used for rewriting urls that go through
+    <code>response.encodeURL()</code>.</p>
+
+<table cellspacing="0">
+    <tr>
+        <th>Attribute</th>
+        <th>Possible Value</th>
+        <th>Explanation</th>
+    </tr>
+    <tr>
+        <td rowspan="2">enabled <br/><small>(optional)</small></td>
+        <td><b>true</b> (default)</td>
+        <td>Enable this rule.</td>
+    </tr>
+    <tr>
+        <td>false</td>
+        <td>Disable this rule.</td>
+    </tr>
+    <tr>
+        <td rowspan="2">encodefirst <br/><small>(optional)</small></td>
+        <td><b>false</b> (default)</td>
+        <td>Run encodeURL() <b>after</b> running this outbound rule.</td>
+    </tr>
+    <tr>
+        <td>true</td>
+        <td>Run encodeURL() <b>before</b> running this outbound rule.</td>
+    </tr>
+
+</table>
+
+<p>May contain "run", "from", "to" and "set" element(s) also. Example:</p>
+
+<pre><code>
+    &lt;outbound-rule&gt;
+        &lt;from&gt;^/world.jsp?country=([a-z]+)&amp;amp;city=([a-z]+)$&lt;/from&gt;
+        &lt;to&gt;/world/$1/$2&lt;/to&gt;
+    &lt;/outbound-rule&gt;
+</code></pre>
+
+<p>Using the example above JSP's with the code
+    <br/><code>&lt;a href="&lt;%= response.encodeURL("/world.jsp?country=usa&amp;amp;city=nyc")
+    %&gt;"&gt;nyc&lt;/a&gt;</code>
+    <br/>will output
+    <br/><code>&lt;a href="/world/usa/nyc"&gt;nyc&lt;/a&gt;</code>
+</p>
+
+<p>Or JSTL
+    <br/><code>&lt;a href="&lt;c:url value="/world.jsp?country=${country}&amp;amp;city=${city}"
+    /&gt;"&gt;nyc&lt;/a&gt;</code>
+    <br/>will output
+    <br/><code>&lt;a href="/world/usa/nyc"&gt;nyc&lt;/a&gt;</code>
+</p>
+
+<p>Note, If you are using JSTL (ie, &lt;c:url) this will work also.</p>
+
+<h3>&lt;name&gt; element</h3>
+
+<p>An optional element used for documenting the name of the rule. This can be used with rule and outbound-rule.
+    See <a href="#anttask">ant task</a>.</p>
+
+<pre><code>
+    &lt;rule&gt;
+        <b>&lt;name&gt;World Rule&lt;/name&gt;</b>
+        &lt;from&gt;^/world/([a-z]+)/([a-z]+)$&lt;/from&gt;
+        &lt;to&gt;/world.jsp?country=$1&amp;amp;city=$2&lt;/to&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+
+<h3>&lt;note&gt; element</h3>
+
+<p>A simple optional element used for documentation of the rule. This can be used with rule and outbound-rule.
+    See <a href="#anttask">ant task</a>.</p>
+
+<pre><code>
+    &lt;rule&gt;
+        &lt;name&gt;World Rule&lt;/name&gt;
+        <b>&lt;note&gt;
+            Cleanly redirect world requests to JSP,
+            a country and city must be specified.
+            &lt;/note&gt;</b>
+        &lt;from&gt;^/world/([a-z]+)/([a-z]+)$&lt;/from&gt;
+        &lt;to&gt;/world.jsp&lt;/to&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+<a name="condition"></a>
+
+<h3>&lt;condition&gt; element</h3>
+
+<p>An element that lets you choose condtions for the rule. Note, all conditions must be met for the rule to be run
+    (unless "next" is set to "or" obvoiusly).</p>
+
+<p>Value can be any <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html">Regular Expression</a>.</p>
+
+<table cellspacing="0">
+<tr>
+    <th>Attribute</th>
+    <th>Possible Value</th>
+    <th>Explanation</th>
+</tr>
+<tr>
+    <td rowspan="36">type <br/><small>(optional)</small></td>
+    <td><b>header</b> (default)</td><td>If used, the header name must be specified in the "name" attribute.</td></tr>
+
+<tr><td>method</td><td>The method of the request. GET, POST, HEAD etc.</td></tr>
+
+<tr><td>port</td><td>The port that the web application server is running on.</td></tr>
+
+<tr><td>time</td><td>
+    Current time at the server (this will be the number of seconds since 00:00:00 1970-01-01 UTC otherwise known as unix
+    time).
+    <br/>i.e. <code>(new Date()).getTime()</code>
+    <br/>This can be used for making sure content goes live only at a time you set.
+</td></tr>
+
+<tr><td>year</td><td>
+    Current year at the server.
+    <br/>i.e. <code>(Calendar.getInstance()).get(Calendar.<a
+        href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Calendar.html#YEAR">YEAR</a>)</code>
+</td></tr>
+
+<tr><td>month</td><td>
+    Month at the server. January is 0
+    <br/>i.e. <code>(Calendar.getInstance()).get(Calendar.<a
+        href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Calendar.html#MONTH">MONTH</a>)</code>
+</td></tr>
+<tr><td>dayofmonth</td><td>
+    Day of the month at the server. March first is 1
+    <br/>i.e. <code>(Calendar.getInstance()).get(Calendar.<a
+        href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Calendar.html#DAY_OF_MONTH">DAY_OF_MONTH</a>)</code>
+</td></tr>
+<tr><td>dayofweek</td><td>
+    Day of the week at the server. Saturday is 1, Sunday is 7
+    <br/>i.e. <code>(Calendar.getInstance()).get(Calendar.<a
+        href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Calendar.html#DAY_OF_WEEK">DAY_OF_WEEK</a>)</code>
+</td></tr>
+<tr><td>ampm</td><td>
+    AM or PM time at the server.
+    <br/>i.e. <code>(Calendar.getInstance()).get(Calendar.<a
+        href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Calendar.html#AM_PM">AM_PM</a>)</code>
+</td></tr>
+<tr><td>hourofday</td><td>
+    The hour of the day (24 hour clock) at the server. 10pm is 22
+    <br/>i.e. <code>(Calendar.getInstance()).get(Calendar.<a
+        href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Calendar.html#HOUR_OF_DAY">HOUR_OF_DAY</a>)</code>
+</td></tr>
+<tr><td>minute</td><td>
+    The minute field of the current time at the server.
+    <br/>i.e. <code>(Calendar.getInstance()).get(Calendar.<a
+        href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Calendar.html#MINUTE">MINUTE</a>)</code>
+</td></tr>
+<tr><td>second</td><td>
+    The second field of the current time at the server.
+    <br/>i.e. <code>(Calendar.getInstance()).get(Calendar.<a
+        href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Calendar.html#SECOND">SECOND</a>)</code>
+</td></tr>
+<tr><td>millisecond</td><td>
+    The millisecond field of the current time at the server.
+    <br/>i.e. <code>(Calendar.getInstance()).get(Calendar.<a
+        href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Calendar.html#MILLISECOND">MILLISECOND</a>)</code>
+</td></tr>
+
+<tr><td>attribute</td><td>
+    Will check the value of a request attribute (don't confuse this with parameter!), <code>name</code> must be set when
+    using this type.
+    <br/>i.e. <code>request.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/ServletRequest.html#getAttribute(java.lang.String)">getAttribute</a>([name])
+</code>
+</td></tr>
+
+<tr><td>auth-type</td><td>
+    Will check the value of a request attribute (don't confuse this with parameter!)
+    <br/>i.e. <code>request.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/http/HttpServletRequest.html#getAuthType()">getAuthType</a>()
+</code>
+</td></tr>
+
+<tr><td>character-encoding</td><td>
+    The character encoding of the imcoming request.
+    <br/>i.e. <code>request.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/ServletRequest.html#getCharacterEncoding()">getCharacterEncoding</a>()
+</code>
+</td></tr>
+
+<tr><td>content-length</td><td>
+    The length of the imcoming request (can be useful if you want to deny large requests).
+    <br/>i.e. <code>request.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/ServletRequest.html#getContentLength()">getContentLength</a>()
+</code>
+</td></tr>
+
+<tr><td>content-type</td><td>
+    The type of the imcoming request. (this is probably not that useful)
+    <br/>i.e. <code>request.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/ServletRequest.html#getContentType()">getContentType</a>()
+</code>
+</td></tr>
+
+<tr><td>context-path</td><td>
+    The context path of the imcoming request.
+    <br/>i.e. <code>request.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/http/HttpServletRequest.html#getContextPath()">getContextPath</a>()
+</code>
+</td></tr>
+
+<tr><td>cookie</td><td>
+    The value of a cookie, note, <code>name</code> must be specified to use this
+    <br/>i.e. <code>request.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/http/HttpServletRequest.html#getCookies()">getCookies</a>()
+</code> the find we the one with [name] specified and check the value.
+</td></tr>
+
+<tr><td>parameter</td><td>
+    A tidier way of checking request parameters than looking for them in the query string. This will check for the
+    parameter in GET or POST, note, <code>name</code> must be specified.
+    <br/>i.e. <code>request.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/ServletRequest.html#getParameter(java.lang.String)">getParameter</a>([name])
+</code>
+</td></tr>
+
+<tr><td>path-info</td><td>
+    i.e. <code>request.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/http/HttpServletRequest.html#getPathInfo()">getPathInfo</a>()
+</code>
+</td></tr>
+
+<tr><td>path-translated</td><td>
+    i.e. <code>request.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/http/HttpServletRequest.html#getPathTranslated()">getPathTranslated</a>()
+</code>
+</td></tr>
+
+<tr><td>protocol</td><td>The protocol used to make the request, e.g. HTTP/1.1
+    <br/>i.e. <code>request.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/ServletRequest.html#getProtocol()">getProtocol</a>()
+</code>
+</td></tr>
+
+<tr><td>query-string</td><td>The query string used to make the request (if any), e.g. id=2345&name=bob
+    <br/>i.e. <code>request.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/http/HttpServletRequest.html#getQueryString()">getQueryString</a>()
+</code>
+</td></tr>
+
+<tr><td>remote-addr</td><td>The IP address of the host making the request, e.g. 123.123.123.12
+    <br/>i.e. <code>request.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/ServletRequest.html#getRemoteAddr()">getRemoteAddr</a>()
+</code>
+</td></tr>
+
+<tr><td>remote-host</td><td>The host name of the host making the request, e.g. 123qw-dsl.att.com (note,
+    this will only work if your app server is configured to lookup host names, most aren't).
+    <br/>i.e. <code>request.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/ServletRequest.html#getRemoteHost()">getRemoteHost</a>()
+</code>
+</td></tr>
+
+<tr><td>remote-user</td><td>The login of the user making this request, if the user has been authenticated, e.g. bobt
+    <br/>i.e. <code>request.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/http/HttpServletRequest.html#getRemoteUser()">getRemoteUser</a>()
+</code>
+</td></tr>
+
+<tr><td>requested-session-id</td><td>Returns the session ID specified by the client, e.g. 2344asd234sada4
+    <br/>i.e. <code>request.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/http/HttpServletRequest.html#getRequestedSessionId()">getRequestedSessionId</a>()
+</code>
+</td></tr>
+
+<tr><td>request-uri</td><td>Returns the part of this request's URL from the protocol name up to the query
+    string in the first line of the HTTP request
+    <br/>i.e. <code>request.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/http/HttpServletRequest.html#getRequestURI()">getRequestURI()</a>
+</code>
+</td></tr>
+
+<tr><td>request-url</td><td>Reconstructs the URL the client used to make the request. The returned URL
+    contains a protocol, server name, port number, and server path, but it does not include query string parameters.
+    <br/>i.e. <code>request.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/http/HttpServletRequest.html#getRequestURL()">getRequestURL()</a>
+</code>
+</td></tr>
+
+<tr><td>session-attribute</td><td>
+    (note, name must be set)
+    <br/>i.e. <code>session.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/http/HttpSession.html#getAttribute(java.lang.String)">getAttribute([name])</a>
+</code>
+</td></tr>
+
+<tr><td>session-isnew</td><td>
+    Weather the session is new or not.
+    <br/>i.e. <code>session.<a href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/http/HttpSession.html#isNew()">isNew()</a>
+</code>
+</td></tr>
+
+<tr><td>server-name</td><td>
+    The host name of the server to which the request was sent (from the host header not the machine name).
+    <br/>i.e. <code>request.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/ServletRequest.html#getServerName()">getServerName()</a>
+</code>
+</td></tr>
+
+<tr><td>scheme</td><td>
+    The scheme used for the request, e.g. http or https
+    <br/>i.e. <code>request.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/ServletRequest.html#getScheme()">getScheme()</a>
+</code>
+</td></tr>
+
+<tr><td>user-in-role</td><td>
+    (Note, the value for this cannot be a regular expression)
+    <br/>i.e. <code>request.<a
+        href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/http/HttpServletRequest.html#isUserInRole(java.lang.String)">isUserInRole([value])</a>
+</code>
+</td></tr>
+
+
+<tr>
+    <td>name <br/><small>(optional)</small></td>
+    <td>(can be anything)</td>
+    <td>If type is header, this specifies the name of the HTTP header used to run the value
+        against.</td>
+</tr>
+
+
+<tr>
+    <td rowspan="2">next <br/><small>(optional)</small></td>
+    <td><b>and</b> (default)</td><td>The next "rule" <b>and</b> this "rule" must match.</td></tr>
+<tr><td>or</td><td>The next "rule" <b>or</b> this "condition" may match.</td></tr>
+
+
+<tr>
+    <td rowspan="6">operator <br/><small>(optional)</small></td>
+    <td><b>equal</b> (default)</td>
+    <td>Equals. The operator to be used when the condition is run, the regular expression matches or the values are
+        equal.</td></tr>
+<tr><td>notequal</td><td>Not equal to. (i.e. request value != condition value). Note, this operator only work with
+    numeric rule types.</td></tr>
+<tr><td>greater</td><td>Greater than. (i.e. request value &gt; condition value). Note, this operator only work with
+    numeric
+    rule types.</td></tr>
+<tr><td>less</td><td>Less than. (i.e. request value &lt; condition value). Note, this operator only work with numeric
+    rule types.</td></tr>
+<tr><td>greaterorequal</td><td>Greater to or equal to. (i.e. request value &gt;= condition value). Note, this operator
+    only
+    work with numeric rule types.</td></tr>
+<tr><td>lessorequal</td><td>Less than or equal to. (i.e. request value &lt;= condition value). Note, this operator only
+    work with numeric rule types.</td></tr>
+</table>
+
+<p>Examples:</p>
+
+<pre><code>
+    &lt;condition name="user-agent" operator="notequal"&gt;Mozilla/[1-4]&lt;/condition&gt;
+
+    &lt;condition type="user-in-role" operator="notequal"&gt;bigboss&lt;/condition&gt;
+
+    &lt;condition name="host" operator="notequal"&gt;www.example.com&lt;/condition&gt;
+
+    &lt;condition type="method" next="or"&gt;PROPFIND&lt;/condition&gt;
+    &lt;condition type="method"&gt;PUT&lt;/condition&gt;
+</code></pre>
+
+
+<h3>&lt;from&gt; element</h3>
+
+<p>You must always have exactly one from for each rule or outbound-rule. Value can be a regular expression in the
+    Perl5 style. Note, from url's are relative to the context.</p>
+
+<table>
+    <tr>
+        <th>Attribute</th>
+        <th>Possible Value</th>
+        <th>Explanation</th>
+    </tr>
+    <tr>
+        <td rowspan="2">casesensitive <br/><small>(optional)</small></td>
+        <td>false (default)</td>
+        <td>This value will be matched using case insentitive match. ie, "/WellingtoN" will match "/wellington".
+        </td>
+    </tr>
+    <tr>
+        <td>true</td>
+        <td>This value will be matched using case sentitive match. ie, "/aAa" will NOT match "/aaa".
+        </td>
+    </tr>
+</table>
+
+<p>Example:</p>
+
+<pre><code>
+    &lt;from&gt;^/world/([a-z]+)$&lt;/from&gt;
+</code></pre>
+
+
+<h3>&lt;to&gt; element</h3>
+
+<p>Value can be a regular replacement expression in the Perl5 style.</p>
+
+<table cellspacing="0">
+    <tr>
+        <th>Attribute</th>
+        <th>Possible Value</th>
+        <th>Explanation</th>
+    </tr>
+    <tr>
+        <td rowspan="7">type <br/><small>(optional)</small></td>
+        <td>forward (default)</td>
+        <td>Requests matching the "conditions" for this "rule", and the URL in the "from" element will be internally
+            forwarded
+            to the URL specified in the "to" element. Note: In this case the "to" URL must be in the same context as
+            UrlRewriteFilter. This is the same as doing:
+            <br/><code>RequestDispatcher rq = request.getRequestDispatcher([to value]);
+            <br/>rq.forward(request, response);</code>
+        </td>
+    </tr>
+    <tr>
+        <td>passthrough</td>
+        <td>Identical to "forward".</td>
+    </tr>
+    <tr>
+        <td>redirect</td>
+        <td>Requests matching the "conditions" and the "from" for this rule will be HTTP redirected.
+            This is the same a doing:
+            <br/><code>HttpServletResponse.sendRedirect([to value]))</code></td>
+    </tr>
+    <tr>
+        <td>permanent-redirect</td>
+        <td>The same as doing:
+            <br/><code>response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+            <br/>response.setHeader("Location", [to value]);</code>
+            <br/>(note, SC_MOVED_PERMANENTLY is HTTP status code 301)</td>
+    </tr>
+    <tr>
+        <td>temporary-redirect</td>
+        <td>The same as doing:
+            <br/><code>response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+            <br/>response.setHeader("Location", [to value]);</code>
+            <br/>(note, SC_MOVED_TEMPORARILY is HTTP status code 302)</td>
+    </tr>
+    <tr>
+        <td>pre-include</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>post-include</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td rowspan="2">last <br/><small>(optional)</small></td>
+        <td>false (default)</td>
+        <td>The rest of the "rules" will be processed if this one succeeds.</td>
+    </tr>
+    <tr>
+        <td>true</td>
+        <td>No more "rules" will be processed if this one is a match.</td>
+    </tr>
+    <tr>
+        <td rowspan="2">encode <br/><small>(optional)</small></td>
+        <td>false (default if under rule)</td>
+        <td>response.<a
+                href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/http/HttpServletResponse.html#encodeURL(java.lang.String)">encodeURL</a>([to])
+            will be run on the to url before performing the rewrite.</td>
+    </tr>
+    <tr>
+        <td>true (default if under outbound-rule)</td>
+        <td>response.<a
+                href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/http/HttpServletResponse.html#encodeURL(java.lang.String)">encodeURL</a>([to])
+            will NOT be called.</td>
+    </tr>
+</table>
+
+<p>Note, "to" can be null ie, <code>&lt;to&gt;null&lt;/to&gt;</code>, this will mean that the request will go no
+    further if the rule is matched (ie, this filter will not call <code>chain.doFilter</code>).</p>
+
+<pre><code>
+    &lt;to&gt;/world.jsp?country=$1&lt;/to&gt;
+</code></pre>
+
+<p>To elements can contain backreferences and variables.</p>
+
+<a name="backreferences"></a>
+<h4>Backreferences</h4>
+
+<pre><code>
+    %N
+</code></pre>
+
+<p>Provides access to the grouped parts (parentheses) of the pattern from the last matched <a href="#condition">Condition</a>
+    in the current rule.
+    N must be less than 10 and greater than 0 (i.e. %1, %2, %3 etc).</p>
+
+<a name="variables"></a>
+<h4>Variables</h4>
+
+<pre><code>
+    %{VARIABLE-NAME}
+</code></pre>
+
+<p>Any valid condition type can be used as a variable name. ie,
+    '<code>%{port}</code>' will be translated to '<code>80</code>',
+    '<code>%{year}</code>' to '<code>2005</code>',
+    '<code>%{cookie:myCookie}</code>' would be translated to
+    '<code>myCookieValue</code>' (assuming the user had a cookie named myCookie with the value myCookieValue).</p>
+
+<p>Valid types are condition types, see <a href="#condition">condition</a> for a full description.</p>
+
+
+<h3>&lt;set&gt; element</h3>
+
+<p>Allows you to set varous things if the rule is matched.</p>
+
+<table cellspacing="0">
+    <tr>
+        <th>Attribute</th>
+        <th>Possible Value</th>
+        <th>Explanation</th>
+    </tr>
+    <tr>
+        <td rowspan="8">type <br/><small>(optional)</small></td>
+        <td>request (default)</td>
+        <td>The same as <code>request.<a
+                href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/ServletRequest.html#setAttribute(java.lang.String,%20java.lang.Object)">setAttribute</a>([name],
+            [value])</code>
+            (note, name must be set).</td>
+    </tr>
+    <tr>
+        <td>session</td>
+        <td>The same as <code>request.<a
+                href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/http/HttpServletRequest.html#getSession()">getSesison</a>(true).<a
+                href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/http/HttpSession.html#setAttribute(java.lang.String,%20java.lang.Object)">setAttribute</a>([name],
+            [value])</code>
+            (note, name must be set).</td>
+    </tr>
+    <tr>
+        <td>response-header</td>
+        <td>The same as <code>response.<a
+                href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/http/HttpServletResponse.html#setHeader(java.lang.String,%20java.lang.String)">setHeader</a>([name],
+            [value])</code>
+            (note, name must be set).</td>
+    </tr>
+    <tr>
+        <td>cookie</td>
+        <td>
+            Value can be in the format "[value][:domain[:lifetime[:path]]]".
+            This sets a cookie on the client's browser. The cookie's name is specified by the name attribute. The domain
+            field is the domain of the cookie, such as '.apache.org',the optional lifetime is the lifetime of the cookie
+            in
+            minutes, and the optional path is the path of the cookie (note, name must be set).
+        </td>
+    </tr>
+    <tr>
+        <td>status</td>
+        <td>The same as <code>response.<a
+                href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/http/HttpServletResponse.html#setStatus(int)">setStatus</a>([value])
+        </code></td>
+    </tr>
+    <tr>
+        <td>content-type</td>
+        <td>The same as <code>response.<a
+                href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/ServletResponse.html#setContentType(java.lang.String)">setContentType</a>([value])
+        </code></td>
+    </tr>
+    <tr>
+        <td>charset</td>
+        <td>The same as <code>response.<a
+                href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/ServletResponse.html#setCharacterEncoding(java.lang.String)">setCharacterEncoding</a>([value])
+        </code></td>
+    </tr>
+    <tr>
+        <td>locale</td>
+        <td>The same as <code>response.<a
+                href="http://java.sun.com/j2ee/1.4/docs/api/javax/servlet/ServletResponse.html#setLocale(java.util.Locale)">setLocale</a>([value])
+        </code>
+            specify the <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/Locale.html">Locale</a> in the format
+            (valid
+            locales are, zh, zh-CN, zh-CN-southern i.e. "-" separating the language, country and variant (if any)).
+        </td>
+    </tr>
+    <tr>
+        <td>name <br/><small>(optional)</small></td>
+        <td>(can be anything)</td>
+        <td>If type is request, session, response-header, cookie this specifies the name item.</td>
+    </tr>
+</table>
+
+<p>In the following example a request attribute "client" will be set to "AvantGo" or "Samsung SCH-6100", this can be
+    fetched in a servlet or
+    JSP using <code>request.getAttribute("client")</code>.</p>
+
+<pre><code>
+    &lt;rule&gt;
+        &lt;condition name="user-agent"&gt;Mozilla/3\.0 (compatible; AvantGo .*)&lt;/from&gt;
+        &lt;from&gt;.*&lt;/from&gt;
+        <b>&lt;set name="client"&gt;AvantGo&lt;/set&gt;</b>
+    &lt;/rule&gt;
+    &lt;rule&gt;
+        &lt;condition name="user-agent"&gt;UP\.Browser/3.*SC03 .* &lt;/from&gt;
+        &lt;from&gt;.*&lt;/from&gt;
+        <b>&lt;set name="client"&gt;Samsung SCH-6100&lt;/set&gt;</b>
+    &lt;/rule&gt;
+</code></pre>
+
+
+<h3>&lt;run&gt; element</h3>
+
+<p>Allows you to run a method on an object when a rule and it's conditions are matched.</p>
+
+<table cellspacing="0">
+    <tr>
+        <th>Attribute</th>
+        <th>Explanation</th>
+    </tr>
+    <tr>
+        <td>class</td>
+        <td>The class you want to run a method on. Must be a fully qualified name.</td>
+    </tr>
+    <tr>
+        <td>method (optional, default run)</td>
+        <td>The method you want to run, the method must have the parameters (HttpServletRequest, HttpServletResponse)
+            e.g. <code>run(HttpServletRequest request, HttpServletResponse response)</code>
+            <br/>Note, if <code>init(ServletConfig)</code> or <code>destroy()</code> is found they will be run at when
+            creating
+            or destroying an instance.
+        </td>
+    </tr>
+    <tr>
+        <td>neweachtime (optional, default false)</td>
+        <td>If you want new instance of the class to be created before running each time set to true.</td>
+    </tr>
+</table>
+
+<p>When the rule in the following example is matched, <code>WorldServlet.goGet(HttpServletRequest,
+    HttpServletResponse)</code>
+    will be invoked, the request will then be forwarded to <code>/world-presentation.jsp</code>.</p>
+
+<pre><code>
+    &lt;rule&gt;
+        &lt;from&gt;^/world/[a-z]+/[a-z]+$&lt;/from&gt;
+        <b>&lt;run class="com.blah.web.WorldServlet" method="doGet" /&gt;</b>
+        &lt;to&gt;/world-presentation.jsp&lt;/to&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+<p>Note, you can specify init-param's the same way you would for a servlet.</p>
+
+<pre><code>
+    &lt;run class="com.blah.web.MyServlet" method="doGet"&gt;
+        &lt;init-param&gt;
+            &lt;param-name&gt;someParamName&lt;/param-name&gt;
+            &lt;param-value&gt;10&lt;/param-value&gt;
+        &lt;/init-param&gt;
+    &lt;/run&gt;
+</code></pre>
+
+<p>If the method being called throws an Exception the original exception will be re-thrown as if it were the original
+    if it extends RuntimeException (eg, NullPointer), other exceptions are wrapped in a ServletException and thrown
+    so your container can handle them.</p>
+
+
+<h3>&lt;class-rule&gt; element</h3>
+
+<p>Allows you to run a method every time a request come in for 100% dynamic rules. See the org.tuckey.web.filters.urlrewrite.sample package for an example.</p>
+
+<table cellspacing="0">
+    <tr>
+        <th>Attribute</th>
+        <th>Explanation</th>
+    </tr>
+    <tr>
+        <td>class</td>
+        <td>The class you want to run a method on. Must be a fully qualified name.</td>
+    </tr>
+    <tr>
+        <td>method (optional, default matches)</td>
+        <td>The method you want to run, the method must have the parameters (HttpServletRequest, HttpServletResponse)
+            e.g. <code>run(HttpServletRequest request, HttpServletResponse response)</code>
+            <br/>Note, if <code>init(ServletConfig)</code> or <code>destroy()</code> is found they will be run at when
+            creating or destroying an instance.
+        </td>
+    </tr>
+    <tr>
+        <td>last (optional, default true</td>
+        <td>If false more rules will be processed following this rule even if it is matched (so that a better match may be found).</td>
+    </tr>
+</table>
+
+<p>Example:</p>
+
+<pre><code>
+    &lt;class-rule class="com.blah.web.MyRuleClass" /&gt;
+</code></pre>
+
+
+ <a name="tips"></a>
+
+ <h2>Tips</h2>
+
+<ul>
+    <li>When you want to put an "&amp;" in a rule you must enter it as the XML entity "&amp;amp;"</li>
+    <li>For simplicity you might want to start all from's with a <code>^</code> and end them with a <code>$</code>.
+        <br/><small>In regular expressions <code>^</code> specifies the start of
+        the string and <code>$</code> specifies the end.
+        <br/>ie, a request for <code>/my/url/path</code> will NOT match
+        <code>&lt;from&gt;^/url/$&lt;/from&gt;</code> but it will match <code>&lt;from&gt;/url/&lt;/from&gt;</code>
+    </small>
+    <li>If using <code>&lt;outbound-rule&gt;</code> remember all urls in your code must be encoded e.g.
+        <code>&lt;a href="<%= response.encodeURL("/some/olddir/b.jsp") %>"&gt;my link&lt;/a&gt;</code></li>
+    <li>Regular expressions are complex and a bit tricky at times, read
+        <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/util/regex/Pattern.html">regular expression syntax for
+            Java.</a>
+    </li>
+    <li>If you find regular expressions difficult use <a href="#wildcard">Wildcards</a>.</li>
+    <li>"Context" is important.  If you have an app with the context "/myapp" and you request the url
+        "/myapp/somefolder/somepage.jsp", the container tells UrlRewriteFilter that the url is "/somefolder/somepage.jsp".
+        This can be confusing, but basically your rules and conditions should not contain the context path
+        (it will be handled by the container).</li>
+</ul>
+
+ 
+
+
+ <a name="wildcard"></a>
+
+<h2>Wildcard Matching Engine</h2>
+
+<p>The wildcard matching engine can be used instead of regex. It is supported in conditions and rules
+    where <code>match-type</code> is set to <code>wildcard</code> (or default-match-type is set on the
+    urlrewrite element</p>
+
+<p>e.g. <code>/big/url/*</code> will match <code>/big/url/abc.html</code> but will NOT
+    match <code>/big/url/abc/dir/</code> or <code>/big/url/abc/</code>.
+
+<p><code>/big/url/**</code> will match <code>/big/url/abc.html</code>, <code>/big/url/abc/dir/</code> and
+    <code>/big/url/abc/</code>.
+
+<p>You can also use Regular expression style variable replacement, each match of a <code>*</code> will
+    be available for use in <code>to</code> and <code>set</code> elements using simple <code>$1</code>
+    <code>$2</code> variables.</p>
+
+<p>e.g. <code>/my/big/url/*</code> will match <code>/my/big/url/abc.html</code> and <code>$1</code>
+    will be set to <code>abc.html</code>.</p>
+
+<p><small>Added in 3.0</small></p>
+
+
+<a name="anttask"></a>
+
+<h2>Ant Task</h2>
+
+<p>An Ant task has been written to allow validate the conf file and generation
+    of documentation. You can view a <a href="urlrewrite-conf-overview-sample.html">sample</a>.</p>
+
+<p>Paste the following into your build.xml file, then change the <code>dest</code>
+    and <code>conf</code> to point to the correct places. Note, the urlrewrite jar
+    file will need to be in your classpath.</p>
+
+<pre><code>
+    &lt;target name="urlrewrite-doc" depends="compile"
+        description="UrlRewriteFilter validation and documenting"&gt;
+
+    &lt;taskdef
+        name="urlrewritedoc"
+        classname="org.tuckey.web.filters.urlrewrite.UrlRewriteDocTask" /&gt;
+    &lt;urlrewritedoc
+        conf="${build.home}/WEB-INF/urlrewrite.xml"
+        dest="urlrewrite-conf-overview.html" /&gt;
+    &lt;/target&gt;
+</code></pre>
+
+</div>
+
+<div id="footer">
+Copyright Paul Tuckey <!--@year-->2007<!--/@year-->
+    - <a href="http://tuckey.org/urlrewrite/">UrlRewirteFilter</a>
+</div>
+
+</body>
+</html>
+

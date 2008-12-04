@@ -1,0 +1,8 @@
+
+RewriteLog "SYSOUT"
+RewriteLogLevel 9
+
+# redirect mozilla to another area
+RewriteCond  %{HTTP_USER_AGENT}  ^Mozilla.*
+RewriteRule  ^/$                 /homepage.max.html  [L]
+

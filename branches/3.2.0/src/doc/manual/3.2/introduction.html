@@ -1,0 +1,371 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+    <title>UrlRewriteFilter - Background</title>
+    <style type="text/css">
+        @import url( "doc.css" );
+    </style>
+</head>
+
+<body>
+
+<div id="masthead">
+    <a href="http://tuckey.org/urlrewrite/">
+        <img id="logo" src="urf.gif" border="0" alt="Tuckey Logo" />
+        Url Rewrite Filter <!--@ver-->3.2.0<!--/@ver--></a>
+</div>
+
+<div id="menu">
+<ul>
+    <li><a href="http://tuckey.org/urlrewrite/">Home</a></li>
+    <li><a href="http://tuckey.org/urlrewrite/#download">Download</a></li>
+    <li><a href="http://code.google.com/p/urlrewritefilter/source">svn access</a></li>
+    <li><a href="http://groups-beta.google.com/group/urlrewrite">UrlRewrite google group</a><br/>&nbsp;</li>
+
+    <li><b>Background</b>
+        <ul>
+            <li><a href="introduction.html#license">License</a></li>
+            <li><a href="introduction.html#changelog">Changelog</a></li>
+        </ul>
+    </li>
+    <li><a href="index.html">Configuration</a>
+        <ul>
+            <li><a href="index.html#install">Install</a></li>
+            <li><a href="index.html#tips">Tips</a></li>
+            <li><a href="index.html#filterparams">Filter Parameters</a></li>
+            <li><a href="index.html#configuration">Configuration File</a></li>
+            <li><a href="index.html#anttask">Ant Task</a></li>
+            <li><a href="index.html#mod_rewrite_conf">mod_rewrite Style</a></li>
+        </ul>
+    </li>
+    <li><a href="annotation.html">Annotations</a></li>
+    <li><a href="guide.html">Examples</a>
+        <ul>
+            <li><a href="guide.html#method">Method Invocation</a></li>
+            <li><a href="guide.html#urlabs">URL Abstraction</a></li>
+            <li><a href="guide.html#mod_re">mod_rewrite vs UrlRewriteFilter</a></li>
+        </ul>
+    </li>
+</ul>
+</div>
+
+<div id="main">
+
+ <h1>Background</h1>
+
+<a name="background"></a>
+
+<p>A clean URL scheme is very important detail for any quality Web Application.  UrlRewriteFilter provides a
+    toolkit to let you set URL patterns however you want.</p>
+
+<p>See <a href="http://www.w3.org/Provider/Style/URI">Cool URIs don't change</a>, by World Wide Web creator
+    Tim Berners-Lee, for excellent arguments on why URLs should be clean and usable.</p>
+
+<p>With the Apache webserver there is <a href="http://httpd.apache.org/docs/2.0/mod/mod_rewrite.html">mod_rewrite</a> for URL manipulation.</p>
+
+<p>In J2EE land the Servlet specification (by Sun) standardises the approach for dealing with Java web server
+programming.  We have come a long way from basic Servlets, JSP's, MVC frameworks etc but Java Web Application
+Servers such as Tomcat are seldom used as front-line web servers, they almost always have Apache infront of them.</p>
+
+<p>If you want to use an app server as a front line web server UrlRewriteFilter will enable you to manage incoming
+URL's in a much more flexible way than the app server usually lets you.</p>
+
+<p>You can find test cases in the source distribution. UrlRewriteFilter should work on any J2EE web application server
+    and has been tested using <a href="http://cargo.codehaus.org/">Cargo</a> on the following web application
+    servers:</p>
+
+<ul>
+    <li><a href="http://tomcat.apache.org/">Apache Tomcat 4 & 5</a></li>
+    <li><a href="http://caucho.com/">Caucho Resin 3</a></li>
+    <li><a href="http://orionserver.com/">Orion 2</a></li>
+    <li><a href="http://www.jboss.org/">Jboss 3</a></li>
+    <li><a href="http://www.mortbay.org/jetty-6/">Jetty 6</a></li>
+</ul>
+
+ <p>The filter has been designed for maximum performance. Testing has indicated
+     that it should only slow down a request by 0.0005 of a second under normal circumstances
+     (depending on hardware and configuration etc.). Take a look at the source in the class
+     <code>UrlRewriterTest.testLoadsOfRules()</code> for more information.</p>
+
+
+
+ <a name="license"></a>
+ <h2>License</h2>
+
+ <p>UrlRewriteFilter is distributed under the BSD License. For more information on see
+      <a href="http://opensource.org/licenses">opensource.org/licenses</a>.</p>
+
+ <p>If you want to purchase ad-hoc support, a support contract, custom development or a commercial license
+      please email <a href="mailto:sales@tuckey.co.nz">sales@tuckey.co.nz</a>.</p>
+
+
+<!--
+
+This assumes some understanding of
+    <a href="http://en.wikipedia.org/wiki/Url">URL</a>
+
+scheme://host:port/path?query
+
+
+Getting the Requesting URL in a Servlet
+A servlet container breaks up the requesting URL into convenient components for the servlet. The standard API does not
+require the original requesting URL to be saved and therefore it is not possible to get the requesting URL exactly as
+the client sent it. However, a functional equivalent of the original URL can be constructed. The following example
+assumes the original requesting URL is:
+
+    http://hostname.com/mywebapp/servlet/MyServlet/a/b;c=123?d=789
+
+The most convenient method for reconstructing the original URL is to use ServletRequest.getRequestURL(), which returns all but the query string. Adding the query string reconstructs an equivalent of the original requesting URL:
+
+    // http://hostname.com/mywebapp/servlet/MyServlet/a/b;c=123?d=789
+    public static String getUrl(HttpServletRequest req) {
+        String reqUrl = req.getRequestURL().toString();
+        String queryString = req.getQueryString();   // d=789
+        if (queryString != null) {
+            reqUrl += "?"+queryString;
+        }
+        return reqUrl;
+    }
+
+If the hostname is not needed, ServletRequest.getRequestURI() should be used:
+
+    // /mywebapp/servlet/MyServlet/a/b;c=123?d=789
+    public static String getUrl2(HttpServletRequest req) {
+        String reqUri = req.getRequestURI().toString();
+        String queryString = req.getQueryString();   // d=789
+        if (queryString != null) {
+            reqUri += "?"+queryString;
+        }
+        return reqUri;
+    }
+
+The original URL can also be reconstructed from more basic components available to the servlet:
+
+    // http://hostname.com:80/mywebapp/servlet/MyServlet/a/b;c=123?d=789
+    public static String getUrl3(HttpServletRequest req) {
+        String scheme = req.getScheme();             // http
+        String serverName = req.getServerName();     // hostname.com
+        int serverPort = req.getServerPort();        // 80
+        String contextPath = req.getContextPath();   // /mywebapp
+        String servletPath = req.getServletPath();   // /servlet/MyServlet
+        String pathInfo = req.getPathInfo();         // /a/b;c=123
+        String queryString = req.getQueryString();          // d=789
+
+        // Reconstruct original requesting URL
+        String url = scheme+"://"+serverName+":"+serverPort+contextPath+servletPath;
+        if (pathInfo != null) {
+            url += pathInfo;
+        }
+        if (queryString != null) {
+            url += "?"+queryString;
+        }
+        return url;
+    }
+
+-->
+
+
+ <a name="changelog"></a>
+ <h2>Changelog</h2>
+
+    <ul>
+        <li>3.2.0
+            <ul>
+                <li>Added "no substitution" ability with to element eg, &lt;to&gt;-&lt;/to&gt;</li>
+                <li>In urlrewrite.xml allow rule, class-rule and outbound-rule elements in any order</li>
+                <li>Fixed bug with handling of references in functions (ie, to allow this: ${replace:$1:-:+} )</li>
+                <li>Added slf4j logging support for logLevel (filter parameter)</li>
+                <li>Added function for calculating string length (eg, ${length:asdf} would return 4)</li>
+                <li>Added "proxy" to type, to enable requests to be proxied to another server</li>
+                <li>Added "context" attribute to &lt;to&gt; type, to enable requests to sent to other contexts (assuming app server configured to do this)</li>
+                <li>JDK 6+ Annotation processor</li>
+                <li>JDK 5 & 6+ Annotation processors included in main jar file</li>
+                <li>Fixed bug with decoding urls and added ability to specify 'header' type decoding</li>
+                <li>Added allowConfSwapViaHttp filter parameter to allow configuration swap out at runtime.</li>
+            </ul>
+        </li>
+        <li>3.1.0
+            <ul>
+                <li>Rules are now allowed to have only condition and set elements</li>
+                <li>Basic <a href="index.html#functions">functions</a> in "set", and "to" elements eg, ${trim:%1}</li>
+                <li>Experimental <a href="index.html#mod_rewrite_conf">mod_rewrite style configuration</a></li>
+                <li>Bug fix: xml entites containing jndi protocol now correctly loaded</li>
+            </ul>
+        </li>
+        <li>3.0.4 Beta
+            <ul>
+                <li>Bug fix - cookie value not being set with variable replacement</li>
+            </ul>
+        </li>
+        <li>3.0.3 Beta
+            <ul>
+                <li>Bug fix - annotation processor rule sorting</li>
+                <li>Bug Fix - evaluation boolean result was incorrect on failed condition instance matches</li>
+            </ul>
+        </li>
+        <li>3.0.2 Beta
+            <ul>
+                <li>Rule chaining bug fixes</li>
+            </ul>
+        </li>
+        <li>3.0.1 Beta
+            <ul>
+                <li>Added "class-rule" element to enable 100% dynamic "Java Rules"</li>
+                <li>Added experimental UrlrewriteTestCase to help with testing (see the source)</li>
+                <li>Added experimental "catch" element to handle exceptions generated from "run"'s</li>
+                <li>Added experimental <a href="annotation.html">annotation</a> (@HttpUrl, @HttpParam) processor</li>
+                <li>Minor Bug fixes</li>
+            </ul>
+        </li>
+        <li>3.0 Beta
+            <ul>
+                <li>Support for wildcard matching.</li>
+                <li>Added "match-type" attribute to rule and outbound-rule.</li>
+                <li>Added ability to specify charset decoding ("decodeusing" attribute to "urlrewrite" element)</li>
+                <li>Swapped "to" variable replacement and run processing, run processing now comes before "to"
+                variable replacement is done.  dtd it has been swapped make sure you change the reference in your conf file.
+                Make sure element order is from, set, run, to.</li>
+                <li>Context addition to the url is now optional</li>
+                <li>Query string matching on rule is now optional (defaults to false)
+                <br/>before 3.0 you would specify
+                <br/>&lt;from&gt;/blah.jsp?a=b&lt;/from&gt;
+                <br/>3.0 and up (unless use-query-string on urlrewrite element is set to true)
+                <br/>&lt;condition name="a"&gt;b&lt;/condition&gt;
+                <br/>&lt;from&gt;/blah.jsp&lt;/from&gt;</li>
+            </ul>
+        </li>
+        <li>2.6
+            <ul>
+                <li>fixed bug with encode on to element defaulting to incorrect boolean (change to dtd)</li>
+            </ul>
+        </li>
+        <li>2.5.3
+            <ul>
+                <li>cleaner exception handling when invoking "run" items, original exception thrown as if it were the
+                    original if it extends RuntimeException (eg, NullPointer), other exceptions wrapped in a ServletException and thrown</li>
+            </ul>
+        </li>
+        <li>2.5.2
+            <ul>
+                <li>fixed bug with encodefirst attr not being set</li>
+                <li>ability to specify wildcards on statusEnabledOnHosts</li>
+                <li>added backreferences and variables for to element value</li>
+                <li>logLevel init param can now include sysout:{level} ie, sysout:DEBUG for people who have trouble with context.log</li>
+            </ul>
+        </li>
+        <li>2.5.1
+            <ul>
+                <li>bug fixes, Log initialisation and null auth type condition values</li>
+            </ul>
+        </li>
+        <li>2.5
+            <ul>
+                <li>matcher changed to accept first match (not the whole string) please make sure you retest your rules
+     (ie, previously /res/js/l.js?aaa would not match /res/js/l.js, with this release it will)</li>
+                <li>support for logging to log4j or commons-logging (see filter params in manual)</li>
+                <li>fixed bug for when request.getCookies() returns null on some containers</li>
+                <li>added encodefirst outbound-rule, outbound-rule now respects encode on "to".</li>
+            </ul>
+
+        </li>
+        <li>2.4
+            <ul>
+                <li>removed all external library dependencies to make much more deploy friendly</li>
+                <li>no longer uses Jakarta ORO, this should't mean any change in regular expression handling but you should test
+     your existing rules just in case.</li>
+                <li>fixed problem with rediredting to "null" this will now not proceed with the request if the rule is matched
+     (ie, chain.doFilter will not be called)</li>
+                <li>fixed problem with ant dependency on status page</li>
+            </ul>
+        </li>
+        <li>2.3 (4/2005)
+            <ul>
+                <li>Added new outbound-rule for rewriting hyperlinks in JSP's, improved status page, added ability
+     to run methods when a rule is matched</li>
+            </ul>
+        </li>
+        <li>2.0.1 (2/2005)
+            <ul>
+                <li>Fixed bug with rule processing when to element doesn't exist.</li>
+            </ul>
+        </li>
+        <li>2.0 (1/2005)
+            <ul>
+                <li>Minor bug fixes, last attribute on rule now defaults to false (thanks to Vineet Kumar for his
+     assistance).</li>
+            </ul>
+        </li>
+        <li>2.0-beta (12/2004)
+            <ul>
+                <li>Minor bug fixes, documentation improvements, ALL matches now done case insensitively by
+     default, case sensitivity can be set (see from and condition elements).</li>
+            </ul>
+        </li>
+        <li>2.0-alpha (11/2004)
+            <ul>
+                <li>First 2.0 release, added many new condition types, many new set types.</li>
+            </ul>
+        </li>
+        <li>1.2 (6/2004)
+            <ul>
+                <li>Added set element (ability to set random attributes on request, thanks for the idea
+     <a href="http://russellbeattie.com/notebook/">Russell</a>), from now matches RELATIVE to context NOT root (if you
+     are upgrading this may mean a change for you).</li>
+            </ul>
+        </li>
+        <li>1.1 (4/2004)
+            <ul>
+                <li>Ability to disable rules, Refactored to enable rewriter to be embedded,
+     changed logging to enable log level to be set, added name and note elements to rule for documentation,
+     ability to disable status page, ability to change status prefix, javadoc style ant task for an HTML
+     configuration report.</li>
+            </ul>
+        </li>
+        <li>1.0 (3/2004)
+            <ul>
+                <li>General tidy up of logging, tidy up of all code, dist now includes manual, log4j and junit
+     removed from bin release.</li>
+            </ul>
+        </li>
+        <li>0.9 (2/2004)
+            <ul>
+                <li>Fixed conf loading problem in Resin, resolved concurrency issue with Perl5Compiler and
+     Perl5Matcher (thanks Scott Askew!)</li>
+            </ul>
+        </li>
+        <li>0.8 (2/2004)
+            <ul>
+                <li>Removed dependency on "Commons Lang", Changed DTD path (bug fix), added ability to put time
+     fields in "condition" element, added ability to put "operators" in the "condition" element, fixed multiple rules issue (bug fix)</li>
+            </ul>
+        </li>
+        <li>0.7 (11/2003)
+            <ul>
+                <li>Improved test cases, documentation</li>
+            </ul>
+        </li>
+        <li>0.6 (8/2003)
+            <ul>
+                <li>Improved error handling, status page and condition matching</li>
+            </ul>
+        </li>
+        <li>0.5 (6/2003)
+            <ul>
+                <li>Improved configuration error handling</li>
+            </ul>
+        </li>
+    </ul>
+
+
+
+</div>
+
+<div id="footer">
+Copyright Paul Tuckey <!--@year-->2007<!--/@year-->
+    - <a href="http://tuckey.org/urlrewrite/">UrlRewirteFilter</a>
+</div>
+
+</body>
+</html>
+
