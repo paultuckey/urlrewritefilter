@@ -39,16 +39,6 @@ public class WebappDecodeNoneTest extends ContainerTestBase {
         assertEquals(getBaseUrl() + "/utf-redir/done/" + encodedStr + "/", method.getResponseHeader("Location").getValue());
     }
 
-    public void testTestUtfToBrowser() throws ServletException, IOException {
-        if ( "orion2.0.5".equals(getContainerId())) return; // orion not supported
-        String encodedStr = URLEncoder.encode("Fêtel'haïvolapük", "UTF8");
-        GetMethod method = new GetMethod(getBaseUrl() + "/utf/" + encodedStr + "/to-browser/");
-        method.setRequestHeader("Accept-Encoding", "utf8");
-        method.setFollowRedirects(false);
-        client.executeMethod(method);
-        assertEquals(getBaseUrl() + "/utf-redir/done/" + encodedStr + "/to-browser/", method.getResponseHeader("Location").getValue());
-    }
-
     public void testNoDecode() throws IOException {
         if ( "orion2.0.5".equals(getContainerId())) return; // jsp's with % in path not supported
         if ( "tomcat-4.1.31".equals(getContainerId())) return; // jsp's with % in path not supported

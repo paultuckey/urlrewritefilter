@@ -40,7 +40,7 @@ public class WebappDecodeUtf8Test extends ContainerTestBase {
 
 
     /**
-     * note, had trouble keeping true utf (multi byte) chars as cvs buggers them up!
+     *
      */
     public void testTestUtf() throws ServletException, IOException {
         String utfSampleString = "Fêtel'haïvolapük";
@@ -51,17 +51,7 @@ public class WebappDecodeUtf8Test extends ContainerTestBase {
         assertEquals(getBaseUrl() + "/utf-redir/done/", method.getResponseHeader("Location").getValue());
     }
 
-    public void testTestUtfToNull() throws ServletException, IOException {
-        String encodedStr = URLEncoder.encode("Fêtel'haïvolapük", "UTF8");
-        GetMethod method = new GetMethod(getBaseUrl() + "/utf/" + encodedStr + "/to-null/");
-        method.setRequestHeader("Accept-Encoding", "utf8");
-        method.setFollowRedirects(false);
-        client.executeMethod(method);
-        String locationHeader = method.getResponseHeader("Location").getValue();
-        assertTrue("should start with '" + getBaseUrl() + "/utf-redir/done/to-null/'" +
-                " got '" + locationHeader + "'",
-                locationHeader.startsWith(getBaseUrl() + "/utf-redir/done/to-null/"));
-    }
+
 
 
 }
