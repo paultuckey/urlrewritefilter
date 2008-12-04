@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<urlrewrite decode-using="NULL">
+
+    <rule>
+        <condition next="or" type="header" name="user-agent">basicvalue1</condition>
+        <from>basicfrom1</from>
+        <to last="false">basicto1</to>
+        <set name="valuenull"/>
+    </rule>
+
+</urlrewrite>
+

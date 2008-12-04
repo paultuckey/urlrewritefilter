@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>UrlRewrite JQuery Plugin Example</title>
+
+    <!-- jquery -->
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
+
+    <!-- urlrewrite jquery plugin -->
+    <script type="text/javascript" src="jquery.urlrewrite.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+
+            // rewrite url's person.jsp?id=123 to #person/123/view
+            $.urlrewrite(/person\.jsp\?id=([0-9]+)/, "#person/$1/view");
+
+            // when url is #person/123/view/
+            $.urllisten(/#person\/([0-9]+)\/view/, function(num) {
+                // hide elements with class person
+                $(".person").hide();
+                // show element id="person123"
+                $("#person" + num).show();
+                // un-highlight all hrefs starting with #person
+                $("a[href^='#person/']").css("background-color", "");
+                // highlight links to this person
+                $("a[href='#person/" + num + "/view']").css("background-color", "yellow");
+            });
+
+            // run function with the context #somediv if url matches #person/123/view
+            $("#somediv").urllisten(/#person\/([0-9]+)\/view/, function(num) {
+                $(this).hide();
+            });
+
+        });
+
+    </script>
+    <style type="text/css">
+        .person {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<h2>UrlRewrite <a href="http://jquery.com/">JQuery</a> Plugin Example</h2>
+
+<p><a href="about:blank">about:blank</a> (for testing off page forward-back)</p>
+
+<ul>
+    <li><a href="#person/123/view">Donald Bradman</a></li>
+    <li><a href="#person/124/view">Richie Benaud</a></li>
+    <li><a href="person.jsp?id=125">Dennis Lillee</a></li>
+</ul>
+
+<div id="somediv">Select a person above.</div>
+
+
+<div class="person" id="person123">
+    <p>Sir Donald George Bradman, AC (27 August 1908 – 25 February 2001), often referred to as The Don, was an
+        Australian cricketer, widely acknowledged as the greatest batsman of all time.[1] Bradman's career Test batting
+        average of 99.94 has been claimed to be statistically the greatest achievement in any major sport.[2]</p>
+    <a href="http://en.wikipedia.org/wiki/Donald_Bradman">Wikipedia page on Donald Bradman</a>
+</div>
+<div class="person" id="person124">
+    <p>Richard "Richie" Benaud OBE (born October 6, 1930 in Penrith, New South Wales) is an Australian former cricketer
+        who, since his retirement from international cricket in 1964, has become a highly regarded commentator on the
+        game.</p>
+    <a href="http://en.wikipedia.org/wiki/Richie_Benaud">Wikipedia page on Richie Benaud</a>
+</div>
+
+<div class="person" id="person125">
+    <p>Dennis Keith Lillee, MBE (born July 18, 1949 in Subiaco, Western Australia) is a former Australian cricketer
+        rated as the "outstanding fast bowler of his generation",[1] who held the world record for most Test wickets
+        when he retired in 1984.[2] Lillee was known for his fiery temperament, 'never-say-die' attitude and popularity
+        with the fans.</p>
+    <a href="http://en.wikipedia.org/wiki/Dennis_Lillee">Wikipedia page on Dennis Lillee</a>
+</div>
+
+</body>
+</html>
