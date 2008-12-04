@@ -13,10 +13,4 @@
         <to type="redirect">%{context-path}/utf-redir/done/</to>
     </rule>
 
-    <rule>
-        <name>utf test</name>
-        <from>^/utf/(Fêtel'haïvolapük)/to-null/$</from>
-        <to charencode="null" type="redirect">%{context-path}/utf-redir/done/to-null/$1/</to>
-    </rule>
-
 </urlrewrite>
