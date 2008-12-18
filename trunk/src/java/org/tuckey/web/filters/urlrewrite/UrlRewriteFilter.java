@@ -255,7 +255,12 @@ public class UrlRewriteFilter implements Filter {
      * Separate from init so that it can be overidden.
      */
     protected void loadUrlRewriter(FilterConfig filterConfig) throws ServletException {
-        loadUrlRewriterLocal();
+        try {
+            loadUrlRewriterLocal();
+        } catch(Throwable e) {
+            log.error(e);
+            throw new ServletException(e);
+        }
     }
 
     private void loadUrlRewriterLocal() {
