@@ -37,6 +37,14 @@ public class ModRewriteConfLoaderTest extends TestCase {
         assertEquals(1, conf.getRules().size());
     }
 
+    public void testLoadFromFile2() throws IOException {
+        InputStream is = ModRewriteConfLoaderTest.class.getResourceAsStream(BASE_PATH + "htaccess-test1.txt");
+        Conf conf = new Conf(null, is, "htaccess-test1.txt", null, true);
+        assertTrue(conf.isEngineEnabled());
+        assertTrue(conf.isOk());
+        assertEquals(1, conf.getRules().size());
+    }
+
     public void testSimple2() {
         loader.process("\n" +
                 "    # redirect mozilla to another area                         \n" +
