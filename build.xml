@@ -138,6 +138,7 @@
                 <attribute name="Implementation-Vendor" value="Paul Tuckey"/>
                 <attribute name="Implementation-Version" value="${app.version}"/>
             </manifest>
+            <zipfileset src="lib/gzipfilter-repackaged.jar"/>
         </jar>
         <copy file="dist/urlrewrite-${app.version}.jar" todir="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib"/>
 
@@ -312,6 +313,14 @@
     <target name="check-service-loader" depends="dist-jar">
         <!-- check that annotation processor has made it into ServiceLoader -->
         <java classname="org.tuckey.web.filters.urlrewrite.annotation.ProcessorServiceLoaderCheck" classpath="dist/urlrewrite-${app.version}.jar"/>
+    </target>
+
+    <target name="repackage-jars" description="one off task to repackage dependent jars into new jars">
+        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="lib/jarjar.jar"/>
+        <jarjar jarfile="lib/gzipfilter-repackaged.jar">
+            <zipfileset src="lib/gzipfilter.jar"/>
+            <rule pattern="com.atlassian.gzipfilter.**" result="org.tuckey.noclash.gzipfilter.@1"/>
+        </jarjar>
     </target>
 
 </project>
