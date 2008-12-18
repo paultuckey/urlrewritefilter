@@ -70,6 +70,7 @@ public class ConfHandler extends DefaultHandler {
         dtdPaths.put("-//tuckey.org//DTD UrlRewrite 3.0//EN", "/org/tuckey/web/filters/urlrewrite/dtds/urlrewrite3.0.dtd");
         dtdPaths.put("-//tuckey.org//DTD UrlRewrite 3.1//EN", "/org/tuckey/web/filters/urlrewrite/dtds/urlrewrite3.1.dtd");
         dtdPaths.put("-//tuckey.org//DTD UrlRewrite 3.2//EN", "/org/tuckey/web/filters/urlrewrite/dtds/urlrewrite3.2.dtd");
+        dtdPaths.put("-//tuckey.org//DTD UrlRewrite 3.3//EN", "/org/tuckey/web/filters/urlrewrite/dtds/urlrewrite3.3.dtd");
     }
 
     public ConfHandler(String confSystemId) {

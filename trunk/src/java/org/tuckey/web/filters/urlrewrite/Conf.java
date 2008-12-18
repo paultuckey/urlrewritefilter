@@ -37,6 +37,7 @@ package org.tuckey.web.filters.urlrewrite;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.utils.ModRewriteConfLoader;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
+import org.tuckey.web.filters.urlrewrite.utils.GzipFilterRun;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -136,6 +137,7 @@ public class Conf {
         ModRewriteConfLoader loader = new ModRewriteConfLoader();
         try {
             loader.process(inputStream, this);
+            docProcessed = true; // fixed
         } catch (IOException e) {
             addError("Exception loading conf " + " " + e.getMessage(), e);
         }
@@ -342,28 +344,42 @@ public class Conf {
         NodeList runNodes = ruleElement.getElementsByTagName("run");
         for (int j = 0; j < runNodes.getLength(); j++) {
             Node runNode = runNodes.item(j);
-
             if (runNode == null) continue;
             Run run = new Run();
-
-            if (runNode.getNodeType() == Node.ELEMENT_NODE) {
-                Element runElement = (Element) runNode;
-                NodeList initParamsNodeList = runElement.getElementsByTagName("init-param");
-                for (int k = 0; k < initParamsNodeList.getLength(); k++) {
-                    Node initParamNode = initParamsNodeList.item(k);
-                    if (initParamNode == null) continue;
-                    if (initParamNode.getNodeType() != Node.ELEMENT_NODE) continue;
-                    Element initParamElement = (Element) initParamNode;
-                    Node paramNameNode = initParamElement.getElementsByTagName("param-name").item(0);
-                    Node paramValueNode = initParamElement.getElementsByTagName("param-value").item(0);
-                    run.addInitParam(getNodeValue(paramNameNode), getNodeValue(paramValueNode));
-                }
-            }
+            processInitParams(runNode, run);
             run.setClassStr(getAttrValue(runNode, "class"));
             run.setMethodStr(getAttrValue(runNode, "method"));
             run.setJsonHandler("true".equalsIgnoreCase(getAttrValue(runNode, "jsonhandler")));
             run.setNewEachTime("true".equalsIgnoreCase(getAttrValue(runNode, "neweachtime")));
             runnable.addRun(run);
+        }
+
+        // gzip element is just a shortcut to run: org.tuckey.web.filters.urlrewrite.utils.GzipFilterRun
+        NodeList gzipNodes = ruleElement.getElementsByTagName("gzip");
+        for (int j = 0; j < gzipNodes.getLength(); j++) {
+            Node runNode = gzipNodes.item(j);
+            if (runNode == null) continue;
+            Run run = new Run();
+            run.setClassStr(GzipFilterRun.class.getName());
+            run.setMethodStr("run(HttpServletRequest, HttpServletResponse, FilterChain)");
+            processInitParams(runNode, run);
+            runnable.addRun(run);
+        }
+    }
+
+    private static void processInitParams(Node runNode, Run run) {
+        if (runNode.getNodeType() == Node.ELEMENT_NODE) {
+            Element runElement = (Element) runNode;
+            NodeList initParamsNodeList = runElement.getElementsByTagName("init-param");
+            for (int k = 0; k < initParamsNodeList.getLength(); k++) {
+                Node initParamNode = initParamsNodeList.item(k);
+                if (initParamNode == null) continue;
+                if (initParamNode.getNodeType() != Node.ELEMENT_NODE) continue;
+                Element initParamElement = (Element) initParamNode;
+                Node paramNameNode = initParamElement.getElementsByTagName("param-name").item(0);
+                Node paramValueNode = initParamElement.getElementsByTagName("param-value").item(0);
+                run.addInitParam(getNodeValue(paramNameNode), getNodeValue(paramValueNode));
+            }
         }
     }
 
