@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!DOCTYPE urlrewrite
-        PUBLIC "-//tuckey.org//DTD UrlRewrite 3.2//EN"
-        "http://tuckey.org/res/dtds/urlrewrite3.2.dtd">
+        PUBLIC "-//tuckey.org//DTD UrlRewrite 3.3//EN"
+        "http://tuckey.org/res/dtds/urlrewrite3.3.dtd">
 
 <urlrewrite>
 
@@ -500,6 +500,11 @@
     <rule>
         <from>^/query-string-escape/(.*)$</from>
         <to type="redirect">http://query-string-escape-result.com/?q=${escape:$1}&amp;another=$1</to>
+    </rule>
+
+    <rule>
+        <from>^/gzip-me.jsp$</from>
+        <gzip/>
     </rule>
 
 </urlrewrite>

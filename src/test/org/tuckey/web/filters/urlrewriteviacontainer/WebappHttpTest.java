@@ -41,7 +41,10 @@ import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 import org.xml.sax.SAXException;
 
 import javax.servlet.ServletException;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.GZIPInputStream;
 
 
 /**
@@ -135,5 +138,28 @@ public class WebappHttpTest extends ContainerTestBase {
         method.setFollowRedirects(false);
         client.executeMethod(method);
         assertEquals("http://query-string-escape-result.com/?q=jack+%26+jones&another=jack & jones", method.getResponseHeader("Location").getValue());
+    }
+
+    public void testGzip() throws IOException {
+        GetMethod method = new GetMethod(getBaseUrl() + "/gzip-me.jsp");
+        method.addRequestHeader("accept-encoding", "gzip");
+        client.executeMethod(method);
+        assertEquals("gzip", method.getResponseHeader("Content-Encoding").getValue());
+        assertEquals("hello world hello world hello world", inflateGzipToString(method.getResponseBodyAsStream()));
+    }
+
+    /**
+     * inflate a gzipped inputstream and return it as a string.
+     */
+    private String inflateGzipToString(InputStream is) throws IOException {
+        GZIPInputStream gis = new GZIPInputStream(is);
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        while (true) {
+            int bytesRead = gis.read(buffer);
+            if (bytesRead == -1) break;
+            os.write(buffer, 0, bytesRead);
+        }
+        return os.toString();
     }
 }
