@@ -11,6 +11,8 @@
 
 === [http://www.megadix.it/content/urlrewritefilter-un-modrewrite-le-servlet UrlRewriteFilter - un mod_rewrite per le servlet] (Italian) ===
 
+=== [http://www.joshlong.com/jl/entry/web_framework_utility_llibraries_urlrewrite Web Framework Utility Llibraries: URLRewrite, JAWR, DWR, and HeaderFilter] ===
+
 == Seam ==
 
 === [http://www.jtict.com/blog/seam-form-url-rewriting/ Seam and URL rewriting with parameters and forms] ===
