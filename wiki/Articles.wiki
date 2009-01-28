@@ -9,9 +9,11 @@
 
 === [http://sujitpal.blogspot.com/2006/09/search-and-replace-with.html Search and Replace with UrlRewriteFilter] ===
 
-=== [http://www.megadix.it/content/urlrewritefilter-un-modrewrite-le-servlet UrlRewriteFilter - un mod_rewrite per le servlet] (Italian) ===
+=== [http://www.megadix.it/content/urlrewritefilter-un-modrewrite-le-servlet UrlRewriteFilter - un mod_rewrite per le servlet] ===
 
 === [http://www.joshlong.com/jl/entry/web_framework_utility_llibraries_urlrewrite Web Framework Utility Llibraries: URLRewrite, JAWR, DWR, and HeaderFilter] ===
+
+=== [http://blog.csdn.net/hone033/archive/2009/01/05/3716302.aspx 用urlrewrite 实现URL 重写收藏 ] ===
 
 == Seam ==
 
