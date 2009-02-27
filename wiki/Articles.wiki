@@ -15,6 +15,10 @@
 
 === [http://blog.csdn.net/hone033/archive/2009/01/05/3716302.aspx 用urlrewrite 实现URL 重写收藏 ] ===
 
+== GWT ==
+
+=== [http://raibledesigns.com/rd/entry/enhancing_your_gwt_application_with Enhancing your GWT Application with the UrlRewriteFilter]
+
 == Seam ==
 
 === [http://www.jtict.com/blog/seam-form-url-rewriting/ Seam and URL rewriting with parameters and forms] ===
