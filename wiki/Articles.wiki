@@ -17,7 +17,7 @@
 
 == GWT ==
 
-=== [http://raibledesigns.com/rd/entry/enhancing_your_gwt_application_with Enhancing your GWT Application with the UrlRewriteFilter]
+=== [http://raibledesigns.com/rd/entry/enhancing_your_gwt_application_with Enhancing your GWT Application with the UrlRewriteFilter] ===
 
 == Seam ==
 
