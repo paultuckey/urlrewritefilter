@@ -265,6 +265,10 @@ public class UrlRewriteFilter implements Filter {
 
     private void loadUrlRewriterLocal() {
         InputStream inputStream = context.getResourceAsStream(confPath);
+        // attempt to retrieve from location other than local WEB-INF
+        if ( inputStream == null ) {
+            inputStream = ClassLoader.getSystemResourceAsStream(confPath);
+        }
         URL confUrl = null;
         try {
             confUrl = context.getResource(confPath);
