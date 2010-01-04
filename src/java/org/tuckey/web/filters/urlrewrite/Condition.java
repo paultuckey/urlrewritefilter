@@ -203,6 +203,12 @@ public class Condition extends TypeConverter {
                 return evaluateStringCondition(hsRequest.getRemoteUser());
             case TYPE_REQUESTED_SESSION_ID:
                 return evaluateStringCondition(hsRequest.getRequestedSessionId());
+            case TYPE_REQUESTED_SESSION_ID_FROM_COOKIE:
+              return evaluateBoolCondition(hsRequest.isRequestedSessionIdFromCookie());
+            case TYPE_REQUESTED_SESSION_ID_FROM_URL:
+                return evaluateBoolCondition(hsRequest.isRequestedSessionIdFromURL());
+            case TYPE_REQUESTED_SESSION_ID_VALID:
+              return evaluateBoolCondition(hsRequest.isRequestedSessionIdValid());
             case TYPE_REQUEST_URI:
                 return evaluateStringCondition(hsRequest.getRequestURI());
             case TYPE_REQUEST_URL:

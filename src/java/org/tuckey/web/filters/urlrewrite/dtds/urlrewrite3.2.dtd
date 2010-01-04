@@ -36,7 +36,7 @@ match-type  (regex|wildcard) #IMPLIED
 
 <!ELEMENT condition (#PCDATA)>
 <!ATTLIST condition
-type (time|year|month|dayofmonth|dayofweek|ampm|hourofday|minute|second|millisecond|attribute|auth-type|character-encoding|content-length|content-type|context-path|cookie|header|local-port|method|parameter|path-info|path-translated|protocol|query-string|remote-addr|remote-host|remote-user|requested-session-id|request-uri|request-url|session-attribute|session-isnew|port|server-name|scheme|user-in-role|exception) "header"
+type (time|year|month|dayofmonth|dayofweek|ampm|hourofday|minute|second|millisecond|attribute|auth-type|character-encoding|content-length|content-type|context-path|cookie|header|local-port|method|parameter|path-info|path-translated|protocol|query-string|remote-addr|remote-host|remote-user|requested-session-id|requested-session-id-from-cookie|requested-session-id-from-url|requested-session-id-valid|request-uri|request-url|session-attribute|session-isnew|port|server-name|scheme|user-in-role|exception) "header"
 name CDATA  #IMPLIED
 next (and|or)  "and"
 casesensitive (true|false) "false"

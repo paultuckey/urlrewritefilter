@@ -267,7 +267,38 @@ index.jsp#dfds
        &lt;condition name="user-agent"&gt;googlebot&lt;/condition&gt;
        &lt;from&gt;^(.*?)(?:\;jsessionid=[^\?#]*)?(\?[^#]*)?(#.*)?$&lt;/from&gt;
        &lt;to&gt;$1$2$3&lt;/to&gt;
-   &lt;/outbound-rule&lt;
+   &lt;/outbound-rule&gt;
+</code></pre>
+
+<p>Permanently redirect incoming URLs containing jsessionid.</p>
+
+<pre><code>
+  &lt;rule&gt;
+       &lt;name&gt;Strip URL Session ID's&lt;/name&gt;
+       &lt;note&gt;
+           Strip ;jsession=XXX from urls passed through
+response.encodeURL().
+           The characters ? and # are the only things we can use to
+find out where the jsessionid ends.
+           The expression in 'from' below contains three capture
+groups, the last two being optional.
+               1, everything before ;jesessionid
+               2, everything after ;jesessionid=XXX starting with a ?
+(to get the query string) up to #
+               3, everything ;jesessionid=XXX and optionally ?XXX
+starting with a # (to get the target)
+           eg,
+           from index.jsp;jsessionid=sss?qqq to index.jsp?qqq
+           from index.jsp;jsessionid=sss?qqq#ttt to index.jsp?qqq#ttt
+           from index.jsp;jsessionid=asdasdasdsadsadasd#dfds -
+index.jsp#dfds
+           from u.jsp;jsessionid=wert.hg - u.jsp
+           from /;jsessionid=tyu - /
+       &lt;/note&gt;
+       &lt;condition type="requested-session-id-from-url" operator="equal"&gt;true&lt;/condition&gt;
+       &lt;from&gt;^(.*?)(?:\;jsessionid=[^\?#]*)?(\?[^#]*)?(#.*)?$&lt;/from&gt;
+       &lt;to type="permanent-redirect"&gt;$1$2$3&lt;/to&gt;
+   &lt;/rule&gt;
 </code></pre>
 
 <a name="method"></a>

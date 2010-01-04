@@ -100,6 +100,9 @@ public class ConditionTest extends TestCase {
         typeSpecific("remote-host");
         typeSpecific("remote-user");
         typeSpecific("requested-session-id");
+        typeSpecific("requested-session-id-from-cookie");
+        typeSpecific("requested-session-id-from-url");
+        typeSpecific("requested-session-id-valid");
         typeSpecific("request-uri");
         typeSpecific("request-url");
 
@@ -652,6 +655,42 @@ public class ConditionTest extends TestCase {
         assertNull("condition must not match", condition.getConditionMatch(request));
 
         request.setRequestedSessionId("sdfjsdfhkjhk897fd.sec03");
+        assertNotNull("condition must match", condition.getConditionMatch(request));
+    }
+
+    public void testRequestedSessionIdFromCookie() throws UnsupportedEncodingException {
+        MockRequest request = new MockRequest();
+        Condition condition = new Condition();
+        condition.setType("requested-session-id-from-cookie");
+        condition.setValue("true");
+        condition.initialise();
+        assertNull("condition must not match", condition.getConditionMatch(request));
+
+        request.setRequestedSessionIdFromCookie(true);
+        assertNotNull("condition must match", condition.getConditionMatch(request));
+    }
+
+    public void testRequestedSessionIdFromURL() throws UnsupportedEncodingException {
+        MockRequest request = new MockRequest();
+        Condition condition = new Condition();
+        condition.setType("requested-session-id-from-url");
+        condition.setValue("true");
+        condition.initialise();
+        assertNull("condition must not match", condition.getConditionMatch(request));
+
+        request.setRequestedSessionIdFromURL(true);
+        assertNotNull("condition must match", condition.getConditionMatch(request));
+    }
+
+    public void testRequestedSessionIdValid() throws UnsupportedEncodingException {
+        MockRequest request = new MockRequest();
+        Condition condition = new Condition();
+        condition.setType("requested-session-id-valid");
+        condition.setValue("true");
+        condition.initialise();
+        assertNull("condition must not match", condition.getConditionMatch(request));
+
+        request.setRequestedSessionIdValid(true);
         assertNotNull("condition must match", condition.getConditionMatch(request));
     }
 

@@ -93,6 +93,9 @@ public class TypeConverter {
     public static final short TYPE_SCHEME = 37;
     public static final short TYPE_USER_IN_ROLE = 38;
     public static final short TYPE_EXCEPTION = 40;
+    public static final short TYPE_REQUESTED_SESSION_ID_FROM_COOKIE = 41;
+    public static final short TYPE_REQUESTED_SESSION_ID_FROM_URL = 42;
+    public static final short TYPE_REQUESTED_SESSION_ID_VALID = 43;
 
     /**
      * Will get the type code ie, method, port, header etc.
@@ -165,11 +168,16 @@ public class TypeConverter {
                 return "remote-user";
             case TYPE_REQUESTED_SESSION_ID:
                 return "requested-session-id";
+            case TYPE_REQUESTED_SESSION_ID_FROM_COOKIE:
+              return "requested-session-id-from-cookie";
+            case TYPE_REQUESTED_SESSION_ID_FROM_URL:
+              return "requested-session-id-from-url";
+            case TYPE_REQUESTED_SESSION_ID_VALID:
+              return "requested-session-id-valid";
             case TYPE_REQUEST_URI:
                 return "request-uri";
             case TYPE_REQUEST_URL:
                 return "request-url";
-
             case TYPE_SESSION_ATTRIBUTE:
                 return "session-attribute";
             case TYPE_SESSION_IS_NEW:
@@ -259,6 +267,12 @@ public class TypeConverter {
             this.type = TYPE_REMOTE_USER;
         } else if ("requested-session-id".equals(strType)) {
             this.type = TYPE_REQUESTED_SESSION_ID;
+        } else if ("requested-session-id-from-cookie".equals(strType)) {
+          this.type = TYPE_REQUESTED_SESSION_ID_FROM_COOKIE;
+        } else if ("requested-session-id-from-url".equals(strType)) {
+          this.type = TYPE_REQUESTED_SESSION_ID_FROM_URL;
+        } else if ("requested-session-id-valid".equals(strType)) {
+          this.type = TYPE_REQUESTED_SESSION_ID_VALID;
         } else if ("request-uri".equals(strType)) {
             this.type = TYPE_REQUEST_URI;
         } else if ("request-url".equals(strType)) {

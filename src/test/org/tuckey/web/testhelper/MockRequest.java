@@ -77,6 +77,9 @@ public class MockRequest implements HttpServletRequest {
     private String remoteHost;
     private String remoteUser;
     private String requestedSessionId;
+    private boolean requestedSessionIdFromCookie = false;
+    private boolean requestedSessionIdFromURL = false;
+    private boolean requestedSessionIdValid = false;
     private String requestUrl;
     private String serverName;
     private String servletPath;
@@ -207,15 +210,15 @@ public class MockRequest implements HttpServletRequest {
     }
 
     public boolean isRequestedSessionIdValid() {
-        return false;
+        return requestedSessionIdValid;
     }
 
     public boolean isRequestedSessionIdFromCookie() {
-        return false;
+        return requestedSessionIdFromCookie;
     }
 
     public boolean isRequestedSessionIdFromURL() {
-        return false;
+        return requestedSessionIdFromURL;
     }
 
     /**
@@ -437,5 +440,17 @@ public class MockRequest implements HttpServletRequest {
 
     public void setBody(String s) {
         body = s;
+    }
+
+    public void setRequestedSessionIdFromCookie(boolean requestedSessionIdFromCookie) {
+        this.requestedSessionIdFromCookie = requestedSessionIdFromCookie;
+    }
+
+    public void setRequestedSessionIdFromURL(boolean requestedSessionIdFromURL) {
+        this.requestedSessionIdFromURL = requestedSessionIdFromURL;
+    }
+
+    public void setRequestedSessionIdValid(boolean requestedSessionIdValid) {
+        this.requestedSessionIdValid = requestedSessionIdValid;
     }
 }
