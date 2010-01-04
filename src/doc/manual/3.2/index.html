@@ -1136,6 +1136,17 @@
     &lt;/rule&gt;
 </code></pre>
 
+<p>It is also possible to use regular replacement expressions as part of the
+    value similar to their usage in &lt;to&gt; elements:</p>
+
+<pre><code>
+    &lt;rule&gt;
+        &lt;from&gt;/products/(.*)/(.*)/index.html&lt;/from&gt;
+        <b>&lt;set name=&quot;urlrewrite.product.slug&quot;&gt;$1&lt;/set&gt;</b>
+        <b>&lt;set name=&quot;urlrewrite.product.id&quot;&gt;$2&lt;/set&gt;</b>
+        &lt;to&gt;/products?slug=$1&amp;id=$2&lt;/to&gt;
+    &lt;/rule&gt;
+</code></pre>
 
 <a name="run"> </a>
 <h3>&lt;run&gt; element</h3>
