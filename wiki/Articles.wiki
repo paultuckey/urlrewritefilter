@@ -15,6 +15,8 @@
 
 === [http://blog.csdn.net/hone033/archive/2009/01/05/3716302.aspx 用urlrewrite 实现URL 重写收藏 ] ===
 
+=== [http://www.frightanic.com/2010/05/10/solution-to-error-404-srve0190e-on-websphere-6-1/ Solution to “Error 404: SRVE0190E” on WebSphere 6.1] ===
+
 == GWT ==
 
 === [http://raibledesigns.com/rd/entry/enhancing_your_gwt_application_with Enhancing your GWT Application with the UrlRewriteFilter] ===
