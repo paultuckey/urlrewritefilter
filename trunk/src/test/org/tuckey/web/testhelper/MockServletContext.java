@@ -34,6 +34,8 @@
  */
 package org.tuckey.web.testhelper;
 
+import org.tuckey.web.filters.urlrewrite.UrlRewriteFilterTest;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
@@ -111,7 +113,9 @@ public class MockServletContext implements ServletContext {
     }
 
     public String getRealPath(String s) {
-        return null;
+        String basePath = UrlRewriteFilterTest.class.getResource("").getFile();
+        if (basePath.endsWith("/")) basePath = basePath.substring(0, basePath.length() - 1);
+        return basePath + (s == null ? "" : s);
     }
 
     public String getServerInfo() {
