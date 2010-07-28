@@ -429,6 +429,23 @@ public class ModRewriteConfLoader {
                         condition.setType("auth-type");
                     } else if (part.equalsIgnoreCase("%{SERVER_PORT}")) {
                         condition.setType("port");
+                    } else if (part.equalsIgnoreCase("%{REQUEST_URI}")) {
+                        condition.setType("request-uri");
+                    } else if (part.equalsIgnoreCase("%{REQUEST_FILENAME}")) {
+                        condition.setType("request-filename");
+
+                    } else if (part.equals("-f") || part.equals("-F")) {
+                        condition.setOperator("isfile");
+                    } else if (part.equals("-d")) {
+                        condition.setOperator("isdir");
+                    } else if (part.equalsIgnoreCase("-s")) {
+                        condition.setOperator("isfilewithsize");
+                    } else if (part.equals("!-f") || part.equals("!-F")) {
+                        condition.setOperator("notfile");
+                    } else if (part.equals("!-d")) {
+                        condition.setOperator("notdir");
+                    } else if (part.equalsIgnoreCase("!-s")) {
+                        condition.setOperator("notfilewithsize");
 
                         //todo: bits below this comment
                     } else if (part.equalsIgnoreCase("%{REMOTE_PORT}")) {
@@ -455,10 +472,6 @@ public class ModRewriteConfLoader {
                         log.error("API_VERSION currently unsupported, ignoring");
                     } else if (part.equalsIgnoreCase("%{THE_REQUEST}")) {
                         log.error("THE_REQUEST currently unsupported, ignoring");
-                    } else if (part.equalsIgnoreCase("%{REQUEST_URI}")) {
-                        log.error("REQUEST_URI currently unsupported, ignoring");
-                    } else if (part.equalsIgnoreCase("%{REQUEST_FILENAME}")) {
-                        log.error("REQUEST_FILENAME currently unsupported, ignoring");
                     } else if (part.equalsIgnoreCase("%{IS_SUBREQ}")) {
                         log.error("IS_SUBREQ currently unsupported, ignoring");
                     } else if (part.equalsIgnoreCase("%{HTTPS}")) {

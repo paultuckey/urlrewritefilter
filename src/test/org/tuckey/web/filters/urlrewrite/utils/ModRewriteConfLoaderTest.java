@@ -129,4 +129,44 @@ public class ModRewriteConfLoaderTest extends TestCase {
         assertEquals("http://www.foo.com", rule.getTo());
     }
 
+    public void testReqUri() {
+        loader.process("\n" +
+                "    RewriteCond  %{REQUEST_URI}  ^somepage.*                   \n" +
+                "    RewriteRule  ^/$                 /homepage.max.html  [L]   ", conf);
+        assertEquals(1, conf.getRules().size());
+        assertEquals(1, ((NormalRule) conf.getRules().get(0)).getConditions().size());
+        assertEquals("request-uri", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getType());
+        assertEquals("^somepage.*", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getValue());
+        assertEquals("^/$", ((NormalRule) conf.getRules().get(0)).getFrom());
+        assertEquals("/homepage.max.html", ((NormalRule) conf.getRules().get(0)).getTo());
+        assertEquals(true, ((NormalRule) conf.getRules().get(0)).isLast());
+    }
+
+    public void testReqFilename() {
+        loader.process("     RewriteCond  %{REQUEST_FILENAME}  -f                        \n" +
+                "            RewriteRule  ^/conf-test1.xml$    /homepage.max.html  [L]   ", conf);
+        assertEquals("request-filename", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getType());
+        assertEquals("isfile", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getOperator());
+    }
+
+    public void testReqFilename2() {
+        loader.process("     RewriteCond  %{REQUEST_FILENAME}  -F                        \n" +
+                "            RewriteRule  ^/conf-test1.xml$    /homepage.max.html  [L]   ", conf);
+        assertEquals("request-filename", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getType());
+        assertEquals("isfile", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getOperator());
+    }
+
+    public void testReqIsDir() {
+        loader.process("     RewriteCond  %{REQUEST_FILENAME}  -d                        \n" +
+                "            RewriteRule  ^/conf-test1.xml$    /homepage.max.html  [L]   ", conf);
+        assertEquals("request-filename", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getType());
+        assertEquals("isdir", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getOperator());
+    }
+
+    public void testReqNotDir() {
+        loader.process("     RewriteCond  %{REQUEST_FILENAME}  !-d                        \n" +
+                "            RewriteRule  ^/conf-test1.xml$    /homepage.max.html  [L]   ", conf);
+        assertEquals("request-filename", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getType());
+        assertEquals("notdir", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getOperator());
+    }
 }

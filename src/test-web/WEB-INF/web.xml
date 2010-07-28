@@ -23,7 +23,7 @@
              can be: TRACE, DEBUG, INFO, WARN, ERROR, FATAL  -->
         <init-param>
             <param-name>logLevel</param-name>
-            <param-value>DEBUG</param-value>
+            <param-value>STDOUT:DEBUG</param-value>
         </init-param>
         <!-- you can disable status page if desired
              can be: true, false (default true)              -->

@@ -96,6 +96,7 @@ public class TypeConverter {
     public static final short TYPE_REQUESTED_SESSION_ID_FROM_COOKIE = 41;
     public static final short TYPE_REQUESTED_SESSION_ID_FROM_URL = 42;
     public static final short TYPE_REQUESTED_SESSION_ID_VALID = 43;
+    public static final short TYPE_REQUEST_FILENAME = 44;
 
     /**
      * Will get the type code ie, method, port, header etc.
@@ -193,6 +194,8 @@ public class TypeConverter {
                 return "user-in-role";
             case TYPE_EXCEPTION:
                 return "exception";
+            case TYPE_REQUEST_FILENAME:
+                return "request-filename";
             default:
                 return "";
         }
@@ -294,6 +297,9 @@ public class TypeConverter {
 
         } else if ("exception".equals(strType)) {
             this.type = TYPE_EXCEPTION;
+
+        } else if ("request-filename".equals(strType)) {
+            this.type = TYPE_REQUEST_FILENAME;
 
         } else {
             setError("Type " + strType + " is not valid");

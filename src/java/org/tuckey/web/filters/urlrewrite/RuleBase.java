@@ -100,6 +100,7 @@ public class RuleBase implements Runnable {
     public static final String DEFAULT_MATCH_TYPE = "regex";
 
     private boolean filter = false;
+    private ServletContext servletContext;
 
     /**
      * Constructor.
@@ -201,7 +202,7 @@ public class RuleBase implements Runnable {
         // make sure the setAttributes are handled
         int setAttributesSize = setAttributes.size();
         if (setAttributesSize > 0) {
-            log.trace("setting sttributes");
+            log.trace("setting attributes");
             for (int i = 0; i < setAttributesSize; i++) {
                 SetAttribute setAttribute = (SetAttribute) setAttributes.get(i);
                 setAttribute.execute(lastConditionMatch, matcher, hsRequest, hsResponse);
@@ -286,6 +287,7 @@ public class RuleBase implements Runnable {
      * @return true on success
      */
     public boolean initialise(ServletContext context) {
+        this.servletContext = context;
         // check all the conditions
         initialised = true;
         boolean ok = true;
@@ -589,4 +591,8 @@ public class RuleBase implements Runnable {
     public boolean isNoSubstitution() {
 		return noSubstitution;
 	}
+
+    public ServletContext getServletContext() {
+        return servletContext;
+    }
 }

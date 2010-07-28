@@ -750,6 +750,55 @@ public class RuleTest extends TestCase {
         assertNotNull("Should be not empty", rewrittenUrl.getTargetContext());
     }
 
+    public void testFilename() throws InvocationTargetException, IOException, ServletException {
+        NormalRule rule = new NormalRule();
+        rule.setTo("/found-the-file");
+        Condition condition = new Condition();
+        condition.setType("request-filename");
+        condition.setOperator("isfile");
+        rule.addCondition(condition);
+        rule.initialise(new MockServletContext());
+        MockRequest request = new MockRequest("/conf-test1.xml");
+        NormalRewrittenUrl rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
+        assertEquals("/found-the-file", rewrittenUrl.getTarget());
+    }
 
+    public void testNotFilename() throws InvocationTargetException, IOException, ServletException {
+        NormalRule rule = new NormalRule();
+        rule.setTo("/not-found-the-file");
+        Condition condition = new Condition();
+        condition.setType("request-filename");
+        condition.setOperator("notfile");
+        rule.addCondition(condition);
+        rule.initialise(new MockServletContext());
+        MockRequest request = new MockRequest("/AAAconf-test1.xml");
+        NormalRewrittenUrl rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
+        assertEquals("/not-found-the-file", rewrittenUrl.getTarget());
+    }
 
+    public void testDirectory() throws InvocationTargetException, IOException, ServletException {
+        NormalRule rule = new NormalRule();
+        rule.setTo("/found-the-dir");
+        Condition condition = new Condition();
+        condition.setType("request-filename");
+        condition.setOperator("isdir");
+        rule.addCondition(condition);
+        rule.initialise(new MockServletContext());
+        MockRequest request = new MockRequest("/utils/");
+        NormalRewrittenUrl rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
+        assertEquals("/found-the-dir", rewrittenUrl.getTarget());
+    }
+
+    public void testNotDirectory() throws InvocationTargetException, IOException, ServletException {
+        NormalRule rule = new NormalRule();
+        rule.setTo("/not-found-the-dir");
+        Condition condition = new Condition();
+        condition.setType("request-filename");
+        condition.setOperator("notdir");
+        rule.addCondition(condition);
+        rule.initialise(new MockServletContext());
+        MockRequest request = new MockRequest("/utAAAils/");
+        NormalRewrittenUrl rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
+        assertEquals("/not-found-the-dir", rewrittenUrl.getTarget());
+    }
 }
