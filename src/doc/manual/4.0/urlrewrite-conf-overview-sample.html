@@ -50,20 +50,22 @@ a:link, a:visited {
 }
 </style>
 <body>
-<h1><a href="http://tuckey.org/urlrewrite/">UrlRewriteFilter</a> 3.2.0 build 1 configuration overview (generated 12/20/09 9:13 PM)</h1>
+<h1><a href="http://tuckey.org/urlrewrite/">UrlRewriteFilter</a> 3.2.0 build 1 configuration overview (generated 29/07/10 11:32)</h1>
 <hr />
 <h2>Summary
  of urlrewrite.xml
 </h2>
-<p>In total there are 12 rules, 3 outbound rules and 11 condtions in the configuration file.</p>
+<p>In total there are 13 rules, 3 outbound rules and 12 condtions in the configuration file.</p>
 <h3>Test Rule1 (rule 0)</h3>
 <dl><dd><p>A test rule to show a simple redirect.</p></dd></dl>
 <p>URL's matching <code>/test/status/</code> will be <code>redirected</code> to <code>/rewrite-status</code>.</p>
-<p>This rule and it's conditions will use the <code>regex</code> matching engine.</p>
+<p>This rule and it's conditions will use the <code>regex</code> matching engine.</p><p>Note, other rules will be processed after this rule.</p>
+
 
 <h3>Bild redirect test (rule 1)</h3>
 <p>URL's matching <code>logo.gif</code> will <code>permanent-redirect</code> to <code>http://127.0.0.1:8080/urlrewrite/artifact_type.gif</code>.</p>
-<p>This rule and it's conditions will use the <code>regex</code> matching engine.</p>
+<p>This rule and it's conditions will use the <code>regex</code> matching engine.</p><p>Note, other rules will be processed after this rule.</p>
+
 
 <h3>Products (rule 2)</h3>
 <dl><dd><p>Allows users to type product id's into urls.<br />            ID's published in magazine.</p></dd></dl>
@@ -76,6 +78,7 @@ An attribute on the <code>request</code> object called <code>categoryId</code> t
 An attribute on the <code>request</code> object called <code>usingFilter</code> to the value <code>yes</code>
 </li>
 </ol>
+<p>Note, other rules will be processed after this rule.</p>
 
 
 <h3>Rule 3</h3>
@@ -85,6 +88,7 @@ An attribute on the <code>request</code> object called <code>usingFilter</code> 
 An attribute on the <code>session</code> object called <code>chairShopper</code> to the value <code>true</code>
 </li>
 </ol>
+<p>Note, other rules will be processed after this rule.</p>
 
 
 <h3>Test Rule disabled (rule 4) **DISABLED**</h3>
@@ -106,6 +110,7 @@ The <code>charset</code> HTTP header matches the value <code>utf</code>
 <code>user-in-role</code> is <code>equal to</code> the value <code>admin</code>
 </li>
 </ol>
+<p>Note, other rules will be processed after this rule.</p>
 
 
 <h3>Test Rule with sets (rule 5)</h3>
@@ -158,6 +163,7 @@ An attribute on the <code>request</code> object called <code>num</code> to the v
 </li>
 </ol>
 <small>Note, if <code>init(ServletConfig)</code> or <code>destroy()</code> is found on the above objects they will be run at when creating or destroying an instance.</small>
+<p>Note, other rules will be processed after this rule.</p>
 
 
 <h3>Rule 7</h3>
@@ -194,11 +200,13 @@ An attribute on the <code>request</code> object called <code>contentItem</code> 
 
 <h3>Rule 9</h3>
 <p>URL's matching <code>/test-redirect-301</code> will <code>permanent-redirect</code> to <code>/is-this-301</code>.</p>
-<p>This rule and it's conditions will use the <code>regex</code> matching engine.</p>
+<p>This rule and it's conditions will use the <code>regex</code> matching engine.</p><p>Note, other rules will be processed after this rule.</p>
+
 
 <h3>Rule 10</h3>
 <p>URL's matching <code>/test-redirect-302</code> will <code>temporary-redirect</code> to <code>is-this-302</code>.</p>
-<p>This rule and it's conditions will use the <code>regex</code> matching engine.</p>
+<p>This rule and it's conditions will use the <code>regex</code> matching engine.</p><p>Note, other rules will be processed after this rule.</p>
+
 
 <h3>Rule 11</h3>
 <p>URL's matching <code>/test-redirect-302</code> will <code>temporary-redirect</code> to <code>is-this-302</code>.</p>
@@ -207,6 +215,22 @@ An attribute on the <code>request</code> object called <code>contentItem</code> 
 <code>user-in-role</code> is <code>equal to</code> the value <code>devil</code>
 </li>
 </ol>
+<p>Note, other rules will be processed after this rule.</p>
+
+
+<h3>filenamecheck (rule 12)</h3>
+<p>URL's matching <code>/check-uw-config-exists.txt</code> will be <code>forwarded</code> to <code>/test-set.jsp</code>.</p>
+<p>This rule and it's conditions will use the <code>regex</code> matching engine.</p><p>Given that the following condtion is met.</p><ol>
+<li>
+<code>request-filename</code> is <code></code> the value <code>null</code>
+</li>
+</ol>
+<p>This rule will set:</p><ol>
+<li>
+An attribute on the <code>request</code> object called <code>test1</code> to the value <code>file exists!!!</code>
+</li>
+</ol>
+<p>Note, other rules will be processed after this rule.</p>
 
 
 <h3>Out test 1 (outbound rule 0)</h3>
@@ -216,6 +240,7 @@ An attribute on the <code>request</code> object called <code>contentItem</code> 
 <code>user-in-role</code> is <code>equal to</code> the value <code>devil</code>
 </li>
 </ol>
+<p>Note, other outbound rules will be processed after this rule.</p>
 
 
 <h3>Outbound Rule 1</h3>
@@ -225,6 +250,7 @@ An attribute on the <code>request</code> object called <code>contentItem</code> 
 The <code>user-agent</code> HTTP header matches the value <code>googlebot.*</code>
 </li>
 </ol>
+<p>Note, other outbound rules will be processed after this rule.</p>
 
 
 <h3>Outbound Rule 2</h3>
@@ -234,6 +260,7 @@ The <code>user-agent</code> HTTP header matches the value <code>googlebot.*</cod
 The <code>user-agent</code> HTTP header matches the value <code>googlebot*</code>
 </li>
 </ol>
+<p>Note, other outbound rules will be processed after this rule.</p>
 
 
 <hr />
