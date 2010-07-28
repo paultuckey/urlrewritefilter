@@ -35,6 +35,7 @@
 package org.tuckey.web.testhelper;
 
 import org.tuckey.web.filters.urlrewrite.UrlRewriteFilterTest;
+import org.tuckey.web.filters.urlrewrite.utils.Log;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
@@ -51,6 +52,8 @@ import java.util.Set;
  * @version $Revision: 1 $ $Date: 2006-08-01 21:40:28 +1200 (Tue, 01 Aug 2006) $
  */
 public class MockServletContext implements ServletContext {
+
+    private static Log log = Log.getLog(MockServletContext.class);
 
     public ServletContext getContext(String s) {
         return new MockServletContext();
@@ -113,9 +116,17 @@ public class MockServletContext implements ServletContext {
     }
 
     public String getRealPath(String s) {
-        String basePath = UrlRewriteFilterTest.class.getResource("").getFile();
-        if (basePath.endsWith("/")) basePath = basePath.substring(0, basePath.length() - 1);
-        return basePath + (s == null ? "" : s);
+        URL url = UrlRewriteFilterTest.class.getResource("conf-test1.xml");
+        if ( url == null ) {
+            log.error("could not get base path for comparison");
+            return null;
+        }   else {
+            String basePath = url.getFile();
+            log.debug("TEST ONLY using base path of " + basePath);
+            if (basePath.endsWith("conf-test1.xml")) basePath = basePath.substring(0, basePath.length() - "conf-test1.xml".length());
+            if (basePath.endsWith("/")) basePath = basePath.substring(0, basePath.length() - 1);
+            return basePath + (s == null ? "" : s);
+        }
     }
 
     public String getServerInfo() {
