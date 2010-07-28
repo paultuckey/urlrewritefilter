@@ -101,6 +101,7 @@
                 <configuration>
                     <testExcludes>
                         <testExclude>**/*ContainerTest.java</testExclude>
+                        <testExclude>**/*PerformanceTest.java</testExclude>
                     </testExcludes>
                 </configuration>
             </plugin>
