@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 3.0//EN"
-        "http://tuckey.org/res/dtds/urlrewrite3.2.dtd">
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 4.0//EN"
+        "http://tuckey.org/res/dtds/urlrewrite4.0.dtd">
 
 <!--
 
@@ -135,6 +135,14 @@
         <condition type="user-in-role" name="devil"/>
         <from>/test-redirect-302</from>
         <to encode="true" type="temporary-redirect">is-this-302</to>
+    </rule>
+
+    <rule>
+        <name>filenamecheck</name>
+        <condition type="request-filename" operator="isfile"/>
+        <from>/check-uw-config-exists.txt</from>
+        <set name="test1">file exists!!!</set>
+        <to>/test-set.jsp</to>
     </rule>
 
     <outbound-rule>

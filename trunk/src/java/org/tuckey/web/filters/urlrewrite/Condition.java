@@ -46,6 +46,7 @@ import org.tuckey.web.filters.urlrewrite.utils.WildcardPattern;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
 import java.util.Calendar;
 
 /**
@@ -109,6 +110,12 @@ public class Condition extends TypeConverter {
     private static final short OPERATOR_GREATER_THAN_OR_EQUAL = 5;
     private static final short OPERATOR_LESS_THAN_OR_EQUAL = 6;
     private static final short OPERATOR_INSTANCEOF = 7;
+    private static final short OPERATOR_IS_DIR = 8;
+    private static final short OPERATOR_IS_FILE = 9;
+    private static final short OPERATOR_IS_FILE_WITH_SIZE = 10;
+    private static final short OPERATOR_NOT_DIR = 11;
+    private static final short OPERATOR_NOT_FILE = 12;
+    private static final short OPERATOR_NOT_FILE_WITH_SIZE = 13;
 
     // if we are doing an instanceof test the class we want to test against
     Class instanceOfClass = null;
@@ -254,6 +261,16 @@ public class Condition extends TypeConverter {
                     return evaluateStringCondition(eName);
                 }
 
+            case TYPE_REQUEST_FILENAME:
+                if ( rule.getServletContext() != null ) {
+                    String fileName = rule.getServletContext().getRealPath(hsRequest.getRequestURI());
+                    if ( log.isDebugEnabled() ) log.debug("fileName found is " + fileName);
+                    return evaluateStringCondition(fileName);
+                }   else {
+                    log.error("unable to get servlet context for filename lookup, skipping");
+                    return null;
+                }
+
             default:
                 return evaluateHeaderCondition(hsRequest);
         }
@@ -320,7 +337,33 @@ public class Condition extends TypeConverter {
         if (pattern == null && value == null) {
             log.debug("value is empty and pattern is also, condition false");
             return evaluateBoolCondition(false);
-        } else if (pattern == null) {
+        }
+        if ( operator == OPERATOR_IS_DIR ) {
+            if ( log.isDebugEnabled() ) log.debug("checking to see if " + value + " is a directory");
+            File fileToCheck = new File(value);
+            return evaluateBoolCondition(fileToCheck.isDirectory());
+        } else if ( operator == OPERATOR_IS_FILE ) {
+            if ( log.isDebugEnabled() ) log.debug("checking to see if " + value + " is a file");
+            File fileToCheck = new File(value);
+            return evaluateBoolCondition(fileToCheck.isFile());
+        } else if ( operator == OPERATOR_IS_FILE_WITH_SIZE ) {
+            if ( log.isDebugEnabled() ) log.debug("checking to see if " + value + " is a file with size");
+            File fileToCheck = new File(value);
+            return evaluateBoolCondition(fileToCheck.isFile() && fileToCheck.length() > 0);
+        } else if ( operator == OPERATOR_NOT_DIR ) {
+            if ( log.isDebugEnabled() ) log.debug("checking to see if " + value + " is not a directory");
+            File fileToCheck = new File(value);
+            return evaluateBoolCondition(!fileToCheck.isDirectory());
+        } else if ( operator == OPERATOR_NOT_FILE ) {
+            if ( log.isDebugEnabled() ) log.debug("checking to see if " + value + " is not a file");
+            File fileToCheck = new File(value);
+            return evaluateBoolCondition(!fileToCheck.isFile());
+        } else if ( operator == OPERATOR_NOT_FILE_WITH_SIZE ) {
+            if ( log.isDebugEnabled() ) log.debug("checking to see if " + value + " is not a file with size");
+            File fileToCheck = new File(value);
+            return evaluateBoolCondition(!(fileToCheck.isFile() && fileToCheck.length() > 0));
+        }
+        if (pattern == null) {
             log.debug("value isn't empty but pattern is, assuming checking for existence, condition true");
             return evaluateBoolCondition(true);
         }
@@ -566,6 +609,18 @@ public class Condition extends TypeConverter {
                 return "instanceof";
             case OPERATOR_EQUAL:
                 return "equal";
+            case OPERATOR_IS_DIR:
+                return "isdir";
+            case OPERATOR_IS_FILE:
+                return "isfile";
+            case OPERATOR_IS_FILE_WITH_SIZE:
+                return "isfilewithsize";
+            case OPERATOR_NOT_DIR:
+                return "notdir";
+            case OPERATOR_NOT_FILE:
+                return "notfile";
+            case OPERATOR_NOT_FILE_WITH_SIZE:
+                return "notfilewithsize";
             default:
                 return "";
         }
@@ -591,6 +646,18 @@ public class Condition extends TypeConverter {
             this.operator = OPERATOR_INSTANCEOF;
         } else if ("equal".equals(operator) || StringUtils.isBlank(operator)) {
             this.operator = OPERATOR_EQUAL;
+        } else if ("isdir".equals(operator)) {
+            this.operator = OPERATOR_IS_DIR;
+        } else if ("isfile".equals(operator)) {
+            this.operator = OPERATOR_IS_FILE;
+        } else if ("isfilewithsize".equals(operator)) {
+            this.operator = OPERATOR_IS_FILE_WITH_SIZE;
+        } else if ("notdir".equals(operator)) {
+            this.operator = OPERATOR_NOT_DIR;
+        } else if ("notfile".equals(operator)) {
+            this.operator = OPERATOR_NOT_FILE;
+        } else if ("notfilewithsize".equals(operator)) {
+            this.operator = OPERATOR_NOT_FILE_WITH_SIZE;
         } else {
             setError("Operator " + operator + " is not valid");
         }
