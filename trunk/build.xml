@@ -241,6 +241,7 @@
             <batchtest fork="yes" todir="www/test-report/xml/" unless="test.class.name">
                 <fileset dir="${build.home}/test">
                     <include name="org/tuckey/web/filters/urlrewrite/**/*Test.class"/>
+                    <exclude name="org/tuckey/web/filters/urlrewrite/**/PerformanceTest.class"/>
                 </fileset>
             </batchtest>
         </junit>
