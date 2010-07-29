@@ -313,10 +313,4 @@ public class ClassRule implements Rule {
         errors.add(s);
     }
 
-    private void addError(String s) {
-        log.error(getDisplayName() + " had error: " + s);
-        errors.add(s);
-    }
-
-
 }
