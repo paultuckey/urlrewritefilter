@@ -40,7 +40,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Implements a regex like interface on top of WildcardMatcher, this is really just a convinience class
+ * Implements a regex like interface on top of WildcardMatcher, this is really just a convenience class
  * so that it's easier for us to program against regex and wildcard patterns.
  */
 public class WildcardMatcher implements StringMatchingMatcher {
@@ -52,7 +52,6 @@ public class WildcardMatcher implements StringMatchingMatcher {
     private int[] compiledPattern;
     private String matchStr;
     private Map resultMap = new HashMap();
-    private boolean findCalled = false;
     private boolean found = false;
 
 
@@ -76,7 +75,7 @@ public class WildcardMatcher implements StringMatchingMatcher {
     private static Pattern escapedVariablePattern = Pattern.compile("\\\\(\\$[0-9])");
 
     public String replaceAll(String subjectOfReplacement) {
-        if (! findCalled) find();
+        find();
 
         int lastCondMatcherGroupCount = this.groupCount();
 
@@ -114,6 +113,10 @@ public class WildcardMatcher implements StringMatchingMatcher {
             String conditionMatch = "";
             if (validVariable) {
                 conditionMatch = this.group(varInt);
+            }
+            if (conditionMatch.contains("$")) {
+                // ensure any remaining $'s in the matched string are escaped before appending the replacement
+                conditionMatch = conditionMatch.replace("$", "\\$");
             }
             variableMatcher.appendReplacement(sb, conditionMatch);
         }

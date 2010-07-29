@@ -86,6 +86,23 @@ public class RuleTest extends TestCase {
         assertTrue("Should be a forward", rewrittenUrl.isForward());
     }
 
+    /**
+     * Test gor Google app engine's use of dollar sign
+     * http://code.google.com/p/urlrewritefilter/issues/detail?id=71
+     */
+    public void testRuleGaeWildcard() throws IOException, ServletException, InvocationTargetException {
+        NormalRule rule = new NormalRule();
+        rule.setFrom("/**");
+        rule.setTo("/app/$1");
+        rule.setMatchType("wildcard");
+        rule.initialise(null);
+        MockRequest request = new MockRequest("/$%7Bfavicon%7D");
+        NormalRewrittenUrl rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
+        assertEquals("forward should be default type", "forward", rule.getToType());
+        assertEquals("/app/$%7Bfavicon%7D", rewrittenUrl.getTarget());
+        assertTrue("Should be a forward", rewrittenUrl.isForward());
+    }
+
     public void testRuleNullTo() throws IOException, ServletException, InvocationTargetException {
         NormalRule rule = new NormalRule();
         rule.setFrom("from");
