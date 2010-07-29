@@ -154,10 +154,8 @@ public class ModRewriteConfLoader {
                     if (partCounter == 1) {
                         rule.setFrom(part);
                     }
-                    if (partCounter == 2) {
-                        if (!"-".equals(part)) {
-                            rule.setTo(part);
-                        }
+                    if (partCounter == 2 && !"-".equals(part)) {
+                        rule.setTo(part);
                     }
                     if (part.startsWith("[") && part.endsWith("]")) {
                         processRuleFlags(rule, part);
