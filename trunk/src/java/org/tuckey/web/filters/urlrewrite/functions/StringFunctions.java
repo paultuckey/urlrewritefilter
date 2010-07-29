@@ -37,16 +37,19 @@ public class StringFunctions {
 
     /**
      * escape string "as as" will return "as+as"
-     * note, encoding can be specified after colon eg, "as:UTF-16"
+     * note, encoding can be specified after colon eg, "UTF-16:as"
      */
     public static String escape(String subject) {
-        String encoding = "UTF-8";
-        if ( FIND_COLON_PATTERN.matcher(subject).find()) {
-            encoding = subject.substring(0, subject.indexOf(':'));
-            subject = subject.substring(subject.indexOf(':')+1);
+        try {
+            if (FIND_COLON_PATTERN.matcher(subject).find()) {
+                String encoding = subject.substring(0, subject.indexOf(':'));
+                return URLEncoder.encode(subject.substring(subject.indexOf(':') + 1), encoding);
+            }
+        } catch (UnsupportedEncodingException e) {
+            log.debug("String to escape contained unknown encoding, falling back to UTF-8");
         }
         try {
-            return URLEncoder.encode(subject, encoding);
+            return URLEncoder.encode(subject, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             log.error(e, e);
         }
@@ -55,16 +58,19 @@ public class StringFunctions {
 
     /**
      * unescape string "as+as" will return "as as"
-     * note, encoding can be specified after colon eg, "as:UTF-16"
+     * note, encoding can be specified after colon eg, "UTF-16:as"
      */
     public static String unescape(String subject) {
-        String encoding = "UTF-8";
-        if ( FIND_COLON_PATTERN.matcher(subject).find()) {
-            subject = subject.substring(0, subject.indexOf(':'));
-            encoding = subject.substring(subject.indexOf(':')+1);
+        try {
+            if (FIND_COLON_PATTERN.matcher(subject).find()) {
+                String encoding = subject.substring(0, subject.indexOf(':'));
+                return URLDecoder.decode(subject.substring(subject.indexOf(':') + 1), encoding);
+            }
+        } catch (UnsupportedEncodingException e) {
+            log.debug("String to unescape contained unknown encoding, falling back to UTF-8");
         }
         try {
-            return URLDecoder.decode(subject, encoding);
+            return URLDecoder.decode(subject, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             log.error(e, e);
         }
@@ -75,11 +81,11 @@ public class StringFunctions {
     public static String replaceAll(String subject) {
         String replace = "";
         String with = "";
-        if ( FIND_COLON_PATTERN.matcher(subject).find()) {
-            replace = subject.substring(subject.indexOf(':')+1);
+        if (FIND_COLON_PATTERN.matcher(subject).find()) {
+            replace = subject.substring(subject.indexOf(':') + 1);
             subject = subject.substring(0, subject.indexOf(':'));
-            if ( FIND_COLON_PATTERN.matcher(replace).find()) {
-                with = replace.substring(replace.indexOf(':')+1);
+            if (FIND_COLON_PATTERN.matcher(replace).find()) {
+                with = replace.substring(replace.indexOf(':') + 1);
                 replace = replace.substring(0, replace.indexOf(':'));
             }
         }
@@ -89,11 +95,11 @@ public class StringFunctions {
     public static String replaceFirst(String subject) {
         String replace = "";
         String with = "";
-        if ( FIND_COLON_PATTERN.matcher(subject).find()) {
-            replace = subject.substring(subject.indexOf(':')+1);
+        if (FIND_COLON_PATTERN.matcher(subject).find()) {
+            replace = subject.substring(subject.indexOf(':') + 1);
             subject = subject.substring(0, subject.indexOf(':'));
-            if ( FIND_COLON_PATTERN.matcher(replace).find()) {
-                with = replace.substring(replace.indexOf(':')+1);
+            if (FIND_COLON_PATTERN.matcher(replace).find()) {
+                with = replace.substring(replace.indexOf(':') + 1);
                 replace = replace.substring(0, replace.indexOf(':'));
             }
         }
