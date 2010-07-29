@@ -982,44 +982,52 @@
 
 <table>
      <tr>
-     <th>name</th>
-     <th>example</th>
-     <th>example returns</th>
+        <th>Name</th>
+        <th>Example</th>
+        <th>Example Returns</th>
+        <th>Explanation</th>
      </tr>
      <tr>
          <td>replace</td>
          <td><code>${replace:my cat is a blue cat:cat:dog}</code></td>
          <td>my dog is a blue dog</td>
+         <td></td>
      </tr>
      <tr>
          <td>replaceFirst</td>
          <td><code>${replaceFirst:my cat is a blue cat:cat:dog}</code></td>
          <td>my cat is a blue dog</td>
+         <td></td>
      </tr>
      <tr>
          <td>escape</td>
-         <td><code>${escape:a b c}</code></td>
+         <td><code>${escape:utf8:a b c}</code></td>
          <td>a+b+c</td>
+         <td>Escapes/Encodes string using URLEncoder.encode using the specified encoding.</td>
      </tr>
      <tr>
          <td>unescape</td>
-         <td><code>${unescape:a+b+c}</code></td>
+         <td><code>${unescape:utf8:a+b+c}</code></td>
          <td>a b c</td>
+         <td>Unescapes/Unencodes string using URLEncoder.decode using the specified encoding.</td>
      </tr>
      <tr>
          <td>lower</td>
          <td><code>${lower:Hello World}</code></td>
          <td>hello world</td>
+         <td></td>
      </tr>
      <tr>
          <td>upper</td>
          <td><code>${upper:hello}</code></td>
          <td>HELLO</td>
+         <td></td>
      </tr>
      <tr>
          <td>trim</td>
          <td><code>${trim: abc def }</code></td>
          <td>abc def</td>
+         <td></td>
      </tr>
  </table>
     

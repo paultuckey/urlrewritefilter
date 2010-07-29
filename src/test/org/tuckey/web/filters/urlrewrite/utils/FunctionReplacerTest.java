@@ -4,13 +4,46 @@ import junit.framework.TestCase;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URLEncoder;
 
 
 public class FunctionReplacerTest  extends TestCase {
 
+    private final static String UNICODE_VALUE = "\u0131"; // Turkish dotless i
+    private final static String UTF16ESCAPED_UNICODE_VALUE = "%FE%FF%01%31";
+
     public void setUp() {
         Log.setLevel("DEBUG");
+    }
+
+    public void testDefaultEscape() throws UnsupportedEncodingException {
+        assertEquals("a+b+c%FE%FF%00%3Aotherstr", FunctionReplacer.replace("${escape:UTF-16:a b c:otherstr}"));
+        assertEquals("a+b+c%3Aotherstr", FunctionReplacer.replace("${escape:utf8:a b c:otherstr}"));
+        assertEquals("a+b+c", FunctionReplacer.replace("${escape:UTF-16:a b c}"));
+        assertEquals("a b c", FunctionReplacer.replace("${unescape:UTF-16:a+b+c}"));
+
+        String testString = "unknown:" + UNICODE_VALUE;
+        assertEquals(URLEncoder.encode(testString, "UTF-8"),
+                FunctionReplacer.replace("${escape:" + testString + "}"));
+    }
+
+    public void testEncodingEscape() {
+        String testString = "UTF-16:" + UNICODE_VALUE;
+        assertEquals(UTF16ESCAPED_UNICODE_VALUE,
+                FunctionReplacer.replace("${escape:" + testString + "}"));
+    }
+
+    public void testDefaultUnescape() throws java.io.UnsupportedEncodingException {
+        String testString = "unknown:" + UNICODE_VALUE;
+        assertEquals(testString, FunctionReplacer.replace(
+                    "${unescape:" + URLEncoder.encode(testString, "UTF-8") + "}"));
+    }
+
+    public void testEncodingUnescape() {
+        assertEquals(UNICODE_VALUE, FunctionReplacer.replace(
+                    "${unescape:UTF-16:" + UTF16ESCAPED_UNICODE_VALUE + "}"));
     }
 
     public void testSimple1() throws InvocationTargetException, IOException, ServletException {
