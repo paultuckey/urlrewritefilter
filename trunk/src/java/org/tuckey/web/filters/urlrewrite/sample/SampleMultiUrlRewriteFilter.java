@@ -10,7 +10,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.FileInputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
