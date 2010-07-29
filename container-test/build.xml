@@ -30,8 +30,11 @@
 
     <taskdef resource="cargo.tasks">
         <classpath>
-            <pathelement location="lib/cargo-ant-0.9.jar"/>
-            <pathelement location="lib/cargo-core-uberjar-0.9.jar"/>
+            <pathelement location="lib/cargo-ant-1.0.2.jar"/>
+            <pathelement location="lib/cargo-core-uberjar-1.0.2.jar"/>
+            <pathelement location="lib/commons-discovery-0.4.jar"/>
+            <pathelement location="lib/commons-logging-1.1.1.jar"/>
+            <pathelement location="lib/dom4j-1.4.jar"/>
         </classpath>
     </taskdef>
 
@@ -57,6 +60,8 @@
             </fileset>
             <classes dir="${build.java.dir}"/>
             <classes dir="${build.test.dir}"/>
+            <lib file="../lib/gzipfilter-repackaged.jar"/>
+            <lib file="../lib/log4j-1.2.8.jar"/>
         </war>
         <war warfile="${target.dir}/webapp-mod-style.war" webxml="webapp-mod-style/WEB-INF/web.xml">
             <fileset dir="webapp-mod-style">
@@ -82,7 +87,7 @@
 
         <containerTest id="tomcat-4.1.31" containerid="tomcat5x" home="N:\java\appservers\jakarta-tomcat-4.1.31" />
         <containerTest id="tomcat-5.5.5" containerid="tomcat5x" home="N:\java\appservers\jakarta-tomcat-5.5.5" />
-        <containerTest id="tomcat-6.0.18" containerid="tomcat5x" home="C:\java\apache-tomcat-6.0.18"/>
+        <containerTest id="tomcat-6.0.16" containerid="tomcat6x" home="C:\java\apache-tomcat-6.0.16"/>
         <containerTest id="orion2.0.5" containerid="orion2x" home="N:\java\appservers\orion-2.0.5"/>
 
         <!-- <containerTest id="tomcat-5.5.23" containerid="tomcat5x"
@@ -116,7 +121,10 @@
         <sequential>
             <echo>Running test for @{id}</echo>
 
-            <cargo id="@{id}" home="@{home}" containerId="@{containerid}" action="start" wait="false" log="${target.dir}/log.log">
+            <mkdir dir="${target.dir}/@{id}"/>
+            <mkdir dir="${report.dir}/@{id}"/>
+
+            <cargo id="@{id}" home="@{home}" containerId="@{containerid}" action="start" wait="false" log="${target.dir}/@{id}.log">
                 <!-- <zipUrlInstaller installUrl="@{installurl}">
                     <proxy host="proxy" port="8080"/>
                 </zipUrlInstaller> -->
@@ -127,8 +135,6 @@
                 </configuration>
             </cargo>
 
-            <mkdir dir="${target.dir}/@{id}"/>
-            <mkdir dir="${report.dir}/@{id}"/>
             <junit printsummary="yes" fork="true">
                 <classpath refid="test.classpath"/>
                 <formatter type="xml"/>
@@ -149,7 +155,15 @@
             <cargo refId="@{id}" action="stop"/>
 
             <echo append="true" file="${report.dir}/index.html"><![CDATA[
-                <li><a href="@{id}/index.html">@{id}</a></li>
+                <li><a href="@{id}/index.html">@{id}</a>
+                <ul>
+                    <li><a href="@{id}-webapp-mod-style-urlrewrite.xml-rewrite-status.html">webapp-mod-style-urlrewrite status</a></li>
+                    <li><a href="@{id}-webapp-urlrewrite-decode-none.xml-rewrite-status.html">webapp-urlrewrite-decode-none status</a></li>
+                    <li><a href="@{id}-webapp-urlrewrite-decode-utf8.xml-rewrite-status.html">webapp-urlrewrite-decode-utf8 status</a></li>
+                    <li><a href="@{id}-webapp-urlrewrite.xml-rewrite-status.html">webapp-urlrewrite status</a></li>
+                    <li><a href="../target/@{id}.log">appserver log</a></li>
+                </ul>
+                </li>
             ]]></echo>
         </sequential>
     </macrodef>
