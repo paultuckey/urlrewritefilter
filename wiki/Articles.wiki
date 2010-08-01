@@ -17,6 +17,8 @@
 
 === [http://www.frightanic.com/2010/05/10/solution-to-error-404-srve0190e-on-websphere-6-1/ Solution to “Error 404: SRVE0190E” on WebSphere 6.1] ===
 
+=== [http://christianyates.com/blog/glassfish/drupal-glassfish-clean-urls-using-url-rewrite-filter Drupal on Glassfish with clean urls using Url Rewrite Filter] ===
+
 == GWT ==
 
 === [http://raibledesigns.com/rd/entry/enhancing_your_gwt_application_with Enhancing your GWT Application with the UrlRewriteFilter] ===
