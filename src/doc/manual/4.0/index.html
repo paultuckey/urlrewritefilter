@@ -932,6 +932,15 @@
             <br/><code>&lt;Context docBase="forum" path="/forum" reloadable="true" crossContext="true"/&gt;</code>
         </td>
     </tr>
+    <tr>
+        <td rowspan="2">qsappend <br/><small>(optional)</small></td>
+        <td>false (default)</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>true</td>
+        <td>Append the query string to the to url when redirecting or forwarding.</td>
+    </tr>
 </table>
 
 <p>Note, "to" can be null ie, <code>&lt;to&gt;null&lt;/to&gt;</code>, this will mean that the request will go no
@@ -1429,7 +1438,6 @@
              <li>env flag [E] not supported</li>
              <li>next flag [N] not supported</li>
              <li>nosubreq flag [NS] not supported</li>
-             <li>qsappend flag [QSA] not supported</li>
              <li>Skip flag [S] not supported</li>
          </ul>
          </td>
