@@ -137,7 +137,7 @@ public class WebappHttpTest extends ContainerTestBase {
         GetMethod method = new GetMethod(getBaseUrl() + "/query-string-escape/jack+%26+jones");
         method.setFollowRedirects(false);
         client.executeMethod(method);
-        assertEquals("http://query-string-escape-result.com/?q=jack+%26+jones&another=jack & jones", method.getResponseHeader("Location").getValue());
+        assertEquals("http://query-string-escape-result.com/?q=jack%2B%26%2Bjones&another=jack+&+jones", method.getResponseHeader("Location").getValue());
     }
 
     public void testGzip() throws IOException {

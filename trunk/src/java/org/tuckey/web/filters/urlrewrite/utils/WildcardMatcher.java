@@ -140,4 +140,27 @@ public class WildcardMatcher implements StringMatchingMatcher {
         return (String) resultMap.get("" + groupId);
     }
 
+	public int end() {
+		if(found)
+			return matchStr.length();
+		return -1;
+	}
+
+	public void reset() {
+	}
+
+	public int start() {
+		if(found)
+			return 0;
+		return -1;
+	}
+	
+	public boolean isMultipleMatchingSupported() {
+		return false;
+	}
+
+	public String getMatchedString() {
+		return matchStr;
+	}
+
 }

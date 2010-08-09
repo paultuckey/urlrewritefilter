@@ -35,13 +35,13 @@
 package org.tuckey.web.filters.urlrewrite;
 
 import junit.framework.TestCase;
+import org.tuckey.web.filters.urlrewrite.test.MockRewriteMatch;
+import org.tuckey.web.filters.urlrewrite.test.TestRunObj;
+import org.tuckey.web.filters.urlrewrite.utils.Log;
+import org.tuckey.web.testhelper.MockFilterChain;
 import org.tuckey.web.testhelper.MockRequest;
 import org.tuckey.web.testhelper.MockResponse;
-import org.tuckey.web.testhelper.MockFilterChain;
 import org.tuckey.web.testhelper.MockServletContext;
-import org.tuckey.web.filters.urlrewrite.test.MockRewriteMatch;
-import org.tuckey.web.filters.urlrewrite.utils.Log;
-import org.tuckey.web.filters.urlrewrite.test.TestRunObj;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -308,7 +308,6 @@ public class UrlRewriterTest extends TestCase {
     }
 
 
-
     public void testRuleDecode() throws IOException, ServletException, InvocationTargetException {
         Conf conf = new Conf();
         NormalRule rule = new NormalRule();
@@ -318,7 +317,7 @@ public class UrlRewriterTest extends TestCase {
         conf.setDecodeUsing("utf-8");
         conf.initialise();
         UrlRewriter urlRewriter = new UrlRewriter(conf);
-        MockRequest request = new MockRequest("/test+decode/?string=black%26white+green");
+        MockRequest request = new MockRequest("/test%20decode/?string=black%26white+green");
         MockResponse response = new MockResponse();
         RewrittenUrl rewrittenUrl = urlRewriter.processRequest(request, response);
         assertEquals("forward should be default type", "forward", rule.getToType());
@@ -355,45 +354,83 @@ public class UrlRewriterTest extends TestCase {
 
         UrlRewriter urlRewriter = new UrlRewriter(conf);
 
-        run.execute(request, response, null, chain );
+        run.execute(request, response, null, chain);
         urlRewriter.processRequest(request, response);
 
         assertEquals("chain chould have been called once", 1, chain.getInvocationCount());
         assertEquals("forward should be default type", "forward", rule.getToType());
         long diff = TestRunObj.getRunWithChainParamAfterDoFilter() - MockRewriteMatch.getCalledTime();
-        assertTrue("run2 should be invoked after chain " + diff, diff > 0 );
+        assertTrue("run2 should be invoked after chain " + diff, diff > 0);
     }
 
 
-	public void testNoSubstitutionLast() throws IOException, ServletException, InvocationTargetException {
-		final NormalRule rule1 = new NormalRule();
-		rule1.setFrom("noSub");
-		rule1.setTo("-");
-		rule1.setToLast("true");
-		rule1.initialise(null);
+    public void testNoSubstitutionLast() throws IOException, ServletException, InvocationTargetException {
+        final NormalRule rule1 = new NormalRule();
+        rule1.setFrom("noSub");
+        rule1.setTo("-");
+        rule1.setToLast("true");
+        rule1.initialise(null);
 
-		final NormalRule rule2 = new NormalRule();
-		rule2.setFrom("noS");
-		rule2.setTo("changed");
-		rule2.initialise(null);
+        final NormalRule rule2 = new NormalRule();
+        rule2.setFrom("noS");
+        rule2.setTo("changed");
+        rule2.initialise(null);
 
-		final Conf conf = new Conf();
-		conf.addRule(rule1);
-		conf.addRule(rule2);
+        final Conf conf = new Conf();
+        conf.addRule(rule1);
+        conf.addRule(rule2);
 
-		conf.initialise();
-		final UrlRewriter urlRewriter = new UrlRewriter(conf);
+        conf.initialise();
+        final UrlRewriter urlRewriter = new UrlRewriter(conf);
 
-		final MockRequest request1 = new MockRequest("/path/noSub");
-		final RewrittenUrl rewrittenUrl1 = urlRewriter.processRequest(request1, response);
-		assertNotNull(rewrittenUrl1);
-		assertEquals("/path/noSub", rewrittenUrl1.getTarget());
+        final MockRequest request1 = new MockRequest("/path/noSub");
+        final RewrittenUrl rewrittenUrl1 = urlRewriter.processRequest(request1, response);
+        assertNotNull(rewrittenUrl1);
+        assertEquals("/path/noSub", rewrittenUrl1.getTarget());
 
-		final MockRequest request2 = new MockRequest("/path/noSu");
-		final RewrittenUrl rewrittenUrl2 = urlRewriter.processRequest(request2, response);
-		assertNotNull(rewrittenUrl2);
-		assertEquals("/path/changedu", rewrittenUrl2.getTarget());
-	}
+        final MockRequest request2 = new MockRequest("/path/noSu");
+        final RewrittenUrl rewrittenUrl2 = urlRewriter.processRequest(request2, response);
+        assertNotNull(rewrittenUrl2);
+        assertEquals("/path/changedu", rewrittenUrl2.getTarget());
+    }
+
+    public void testQueryToPath() throws IOException, ServletException, InvocationTargetException {
+        Conf conf = new Conf();
+        conf.setDecodeUsing("null");
+        NormalRule rule1 = new NormalRule();
+        rule1.setFrom("^/\\?q=(.*)$");
+        rule1.setTo("/search/${escapePath:${unescape:$1}}");
+        conf.addRule(rule1);
+        conf.initialise();
+
+        assertFalse("isDecodeUsingEncodingHeader should be false", conf.isDecodeUsingEncodingHeader());
+        assertFalse("isDecodeUsingCustomCharsetRequired should be false", conf.isDecodeUsingCustomCharsetRequired());
+        UrlRewriter urlRewriter = new UrlRewriter(conf);
+        MockRequest request = new MockRequest("/?q=foo+bar%2bgee");
+        NormalRewrittenUrl rewrittenRequest = (NormalRewrittenUrl) urlRewriter.processRequest(request, response);
+
+        assertTrue("should be forward", rewrittenRequest.isForward());
+        assertEquals("/search/foo%20bar+gee", rewrittenRequest.getTarget());
+    }
+
+    public void testPathToQuery() throws IOException, ServletException, InvocationTargetException {
+        Conf conf = new Conf();
+        conf.setDecodeUsing("null");
+        NormalRule rule1 = new NormalRule();
+        rule1.setFrom("^/(.*)$");
+        rule1.setTo("/?q=${escape:${unescapePath:$1}}");
+        conf.addRule(rule1);
+        conf.initialise();
+
+        assertFalse("isDecodeUsingEncodingHeader should be false", conf.isDecodeUsingEncodingHeader());
+        assertFalse("isDecodeUsingCustomCharsetRequired should be false", conf.isDecodeUsingCustomCharsetRequired());
+        UrlRewriter urlRewriter = new UrlRewriter(conf);
+        MockRequest request = new MockRequest("/foo+bar%20gee");
+        NormalRewrittenUrl rewrittenRequest = (NormalRewrittenUrl) urlRewriter.processRequest(request, response);
+
+        assertTrue("should be forward", rewrittenRequest.isForward());
+        assertEquals("/?q=foo%2Bbar+gee", rewrittenRequest.getTarget());
+    }
 
 }
 

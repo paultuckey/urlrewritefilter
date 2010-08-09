@@ -35,6 +35,9 @@
 package org.tuckey.web.filters.urlrewrite.utils;
 
 import junit.framework.TestCase;
+import org.tuckey.web.filters.urlrewrite.substitution.ChainedSubstitutionFilters;
+import org.tuckey.web.filters.urlrewrite.substitution.SubstitutionContext;
+import org.tuckey.web.filters.urlrewrite.substitution.SubstitutionFilterChain;
 
 /**
  * @author Paul Tuckey
@@ -43,37 +46,43 @@ import junit.framework.TestCase;
 public class StringMatchingMatcherTest extends TestCase {
 
 
+    public static String replaceAll(StringMatchingMatcher matcher, String from, String replacement) {
+        SubstitutionContext substitutionContext = new SubstitutionContext(null, matcher, null, replacement);
+        SubstitutionFilterChain substitutionFilter = ChainedSubstitutionFilters.getDefaultSubstitutionChain(true, false, false, false);
+        return substitutionFilter.substitute(from, substitutionContext);
+    }
+
     public void testPatterns() throws StringMatchingPatternSyntaxException {
         RegexPattern pat1 = new RegexPattern("a(a)", false);
         StringMatchingMatcher mat1 = pat1.matcher("aaf");
-        assertEquals("$1f", mat1.replaceAll("\\$1"));
+        assertEquals("$1f", replaceAll(mat1, "aaf", "\\$1"));
 
         RegexPattern pat2 = new RegexPattern("aa", false);
         StringMatchingMatcher mat2 = pat2.matcher("aaf");
-        assertEquals("$1f", mat2.replaceAll("\\$1"));
+        assertEquals("$1f", replaceAll(mat2, "aaf", "\\$1"));
 
         WildcardPattern pat3 = new WildcardPattern("/*/*/*/");
         StringMatchingMatcher mat3 = pat3.matcher("/aa/bb/cc/");
         assertTrue(mat3.find());
         assertEquals(3, mat3.groupCount());
-        assertEquals("aabbcc$3$2", mat3.replaceAll("$1$2$3\\$3\\$2"));
+        assertEquals("aabbcc$3$2", replaceAll(mat3, "/aa/bb/cc/", "$1$2$3\\$3\\$2"));
 
         // try again with no matches
         WildcardPattern pat4 = new WildcardPattern("aa");
         StringMatchingMatcher mat4 = pat4.matcher("aaf");
-        assertEquals("a$1b", mat4.replaceAll("a\\$1b"));
+        assertEquals("a$1b", replaceAll(mat4, "aaf", "a\\$1b"));
 
         WildcardPattern pat5 = new WildcardPattern("/**");
         StringMatchingMatcher mat5 = pat5.matcher("/aa/bb/cc/?aa&bb#cc");
         assertTrue(mat5.find());
         assertEquals(1, mat5.groupCount());
-        assertEquals("aa/bb/cc/?aa&bb#cc$3$2", mat5.replaceAll("$1$2$3\\$3\\$2"));
+        assertEquals("aa/bb/cc/?aa&bb#cc$3$2", replaceAll(mat5, "/aa/bb/cc/?aa&bb#cc", "$1$2$3\\$3\\$2"));
 
         WildcardPattern pat6 = new WildcardPattern("/aa/**");
         StringMatchingMatcher mat6 = pat6.matcher("/aa/bb/cc/?aa&bb#cc");
         assertTrue(mat6.find());
         assertEquals(1, mat6.groupCount());
-        assertEquals("bb/cc/?aa&bb#cc$3$2", mat6.replaceAll("$1$2$3\\$3\\$2"));
+        assertEquals("bb/cc/?aa&bb#cc$3$2", replaceAll(mat6, "/aa/bb/cc/?aa&bb#cc", "$1$2$3\\$3\\$2"));
 
         WildcardPattern pat7 = new WildcardPattern("/ee/**");
         StringMatchingMatcher mat7 = pat7.matcher("/aa/bb/cc/?aa&bb#cc");
@@ -88,7 +97,7 @@ public class StringMatchingMatcherTest extends TestCase {
         RegexPattern pat = new RegexPattern("^(/.*)$", false);
         StringMatchingMatcher mat = pat.matcher("/tester/one-level-sub/two-leel-sub/");
         mat.find();
-        mat.replaceAll("$1");
+        replaceAll(mat, "/tester/one-level-sub/two-leel-sub/", "$1");
         mat.groupCount();
         mat.groupCount();
         mat.groupCount();

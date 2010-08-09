@@ -1,15 +1,15 @@
 package org.tuckey.web.filters.urlrewrite.utils;
 
 import junit.framework.TestCase;
+import org.tuckey.web.filters.urlrewrite.substitution.FunctionReplacer;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URLEncoder;
 
 
-public class FunctionReplacerTest  extends TestCase {
+public class FunctionReplacerTest extends TestCase {
 
     private final static String UNICODE_VALUE = "\u0131"; // Turkish dotless i
     private final static String UTF16ESCAPED_UNICODE_VALUE = "%FE%FF%01%31";
@@ -19,31 +19,40 @@ public class FunctionReplacerTest  extends TestCase {
     }
 
     public void testDefaultEscape() throws UnsupportedEncodingException {
-        assertEquals("a+b+c%FE%FF%00%3Aotherstr", FunctionReplacer.replace("${escape:UTF-16:a b c:otherstr}"));
-        assertEquals("a+b+c%3Aotherstr", FunctionReplacer.replace("${escape:utf8:a b c:otherstr}"));
-        assertEquals("a+b+c", FunctionReplacer.replace("${escape:UTF-16:a b c}"));
-        assertEquals("a b c", FunctionReplacer.replace("${unescape:UTF-16:a+b+c}"));
-
-        String testString = "unknown:" + UNICODE_VALUE;
-        assertEquals(URLEncoder.encode(testString, "UTF-8"),
-                FunctionReplacer.replace("${escape:" + testString + "}"));
+        assertEquals("a%20b%20c%20:%20other%20%2f%20path",
+                FunctionReplacer.replace("${escapePath:UTF-8:a b c : other / path}"));
+        assertEquals("a+b+c+%3A+other+%2F+path",
+                FunctionReplacer.replace("${escape:UTF-8:a b c : other / path}"));
+        assertEquals("a+b c/",
+                FunctionReplacer.replace("${unescapePath:UTF-8:a+b c%2F}"));
+        assertEquals("a b c/",
+                FunctionReplacer.replace("${unescape:UTF-8:a+b c%2F}"));
+        assertEquals("a+b+c%FE%FF%00%3Aotherstr",
+                FunctionReplacer.replace("${escape:UTF-16:a b c:otherstr}"));
+        assertEquals("a+b+c%3Aotherstr",
+                FunctionReplacer.replace("${escape:utf8:a b c:otherstr}"));
+        assertEquals("a+b+c",
+                FunctionReplacer.replace("${escape:UTF-16:a b c}"));
+        assertEquals("a b c",
+                FunctionReplacer.replace("${unescape:UTF-16:a+b+c}"));
+        assertEquals(java.net.URLEncoder.encode(UNICODE_VALUE, "UTF-8"),
+                FunctionReplacer.replace("${escape:unknown:" + UNICODE_VALUE + "}"));
     }
 
     public void testEncodingEscape() {
-        String testString = "UTF-16:" + UNICODE_VALUE;
         assertEquals(UTF16ESCAPED_UNICODE_VALUE,
-                FunctionReplacer.replace("${escape:" + testString + "}"));
+                FunctionReplacer.replace("${escape:UTF-16:" + UNICODE_VALUE + "}"));
     }
 
     public void testDefaultUnescape() throws java.io.UnsupportedEncodingException {
         String testString = "unknown:" + UNICODE_VALUE;
         assertEquals(testString, FunctionReplacer.replace(
-                    "${unescape:" + URLEncoder.encode(testString, "UTF-8") + "}"));
+                "${unescape:" + java.net.URLEncoder.encode(testString, "UTF-8") + "}"));
     }
 
     public void testEncodingUnescape() {
         assertEquals(UNICODE_VALUE, FunctionReplacer.replace(
-                    "${unescape:UTF-16:" + UTF16ESCAPED_UNICODE_VALUE + "}"));
+                "${unescape:UTF-16:" + UTF16ESCAPED_UNICODE_VALUE + "}"));
     }
 
     public void testSimple1() throws InvocationTargetException, IOException, ServletException {
@@ -81,5 +90,9 @@ public class FunctionReplacerTest  extends TestCase {
         assertEquals("a4 b", FunctionReplacer.replace("a${length:asdf} b"));
     }
 
+    public void testRecursive() throws InvocationTargetException, IOException, ServletException {
+        assertTrue(FunctionReplacer.containsFunction("a${upper:${lower:fOObAR}} b"));
+        assertEquals("aFOOBAR b", FunctionReplacer.replace("a${upper:${lower:fOObAR}} b"));
+    }
 
 }

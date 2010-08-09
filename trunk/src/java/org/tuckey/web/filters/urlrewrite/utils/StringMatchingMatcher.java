@@ -43,9 +43,15 @@ public interface StringMatchingMatcher {
 
     public boolean find();
 
-    public boolean isFound();
+    boolean isMultipleMatchingSupported();
+    
+    int start();
+    
+    int end();
 
-    public String replaceAll(String replacement);
+    void reset();
+
+    public boolean isFound();
 
     int groupCount();
 

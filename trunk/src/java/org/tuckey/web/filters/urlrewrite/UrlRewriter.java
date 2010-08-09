@@ -36,15 +36,15 @@ package org.tuckey.web.filters.urlrewrite;
 
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
+import org.tuckey.web.filters.urlrewrite.utils.URLDecoder;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URLDecoder;
+import java.net.URISyntaxException;
 import java.util.List;
 
 /**
@@ -142,8 +142,8 @@ public class UrlRewriter {
             String enc = request.getCharacterEncoding();
             if (enc != null) {
                 try {
-                    return URLDecoder.decode(source, enc);
-                } catch (UnsupportedEncodingException ex) {
+                    return URLDecoder.decodeURL(source, enc);
+                } catch (URISyntaxException ex) {
                     if (log.isWarnEnabled()) {
                         log.warn("Could not decode: " + source + " (header encoding: '" + enc + "'); exception: " + ex.getMessage());
                     }
@@ -154,8 +154,8 @@ public class UrlRewriter {
             String enc = conf.getDecodeUsing();
             if (enc != null) {
                 try {
-                    return URLDecoder.decode(source, enc);
-                } catch (UnsupportedEncodingException ex) {
+                    return URLDecoder.decodeURL(source, enc);
+                } catch (URISyntaxException ex) {
                     if (log.isWarnEnabled()) {
                         log.warn("Could not decode: " + source + " (encoding: '" + enc + "') using default encoding; exception: " + ex.getMessage());
                     }

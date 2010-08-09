@@ -32,8 +32,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.tuckey.web.filters.urlrewrite;
+package org.tuckey.web.filters.urlrewrite.substitution;
 
+import org.tuckey.web.filters.urlrewrite.TypeConverter;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 
@@ -41,6 +42,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,19 +52,23 @@ import java.util.regex.Pattern;
  * @author Paul Tuckey
  * @version $Revision: 1 $ $Date: 2006-08-01 21:40:28 +1200 (Tue, 01 Aug 2006) $
  */
-public class VariableReplacer {
+public class VariableReplacer implements SubstitutionFilter {
 
     private static Log log = Log.getLog(VariableReplacer.class);
 
-    private static Pattern toVariablePattern = Pattern.compile("(?<!\\\\)%\\{(.*?)\\}");
+    private static Pattern toVariablePattern = Pattern.compile("(?<!\\\\)%\\{([-a-zA-Z:]*)\\}");
 
     public static boolean containsVariable(String to) {
         Matcher variableMatcher = toVariablePattern.matcher(to);
         return variableMatcher.find();
     }
 
-
     public static String replace(String subjectOfReplacement, HttpServletRequest hsRequest) {
+        return new VariableReplacer().substitute(subjectOfReplacement, new SubstitutionContext(hsRequest, null, null, null), new ChainedSubstitutionFilters(Collections.EMPTY_LIST));
+    }
+
+    public String substitute(String subjectOfReplacement, SubstitutionContext ctx,
+                             SubstitutionFilterChain nextFilter) {
         Matcher varMatcher = toVariablePattern.matcher(subjectOfReplacement);
         StringBuffer sb = new StringBuffer();
         boolean anyMatches = false;
@@ -81,21 +87,23 @@ public class VariableReplacer {
             String varStr = varMatcher.group(1);
             String varValue = "";
             if (varStr != null) {
-                varValue = varReplace(varStr, hsRequest);
+                varValue = varReplace(varStr, ctx.getHsRequest());
                 if (log.isDebugEnabled()) log.debug("resolved to: " + varValue);
             } else {
                 if (log.isDebugEnabled()) log.debug("variable reference is null " + varMatcher);
             }
-            sb.append(subjectOfReplacement.substring(lastAppendPosition, varMatcher.start()));
+            String stringBeforeMatch = subjectOfReplacement.substring(lastAppendPosition, varMatcher.start());
+            sb.append(nextFilter.substitute(stringBeforeMatch, ctx));
             sb.append(varValue);
             lastAppendPosition = varMatcher.end();
         }
         if (anyMatches) {
-            sb.append(subjectOfReplacement.substring(lastAppendPosition, subjectOfReplacement.length()));
+            String stringAfterMatch = subjectOfReplacement.substring(lastAppendPosition);
+            sb.append(nextFilter.substitute(stringAfterMatch, ctx));
             log.debug("replaced sb is " + sb);
             return sb.toString();
         }
-        return subjectOfReplacement;
+        return nextFilter.substitute(subjectOfReplacement, ctx);
     }
 
     /**
