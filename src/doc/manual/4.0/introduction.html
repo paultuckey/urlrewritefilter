@@ -86,7 +86,7 @@ URL's in a much more flexible way than the app server usually lets you.</p>
  <p>The filter has been designed for maximum performance. Testing has indicated
      that it should only slow down a request by 0.0005 of a second under normal circumstances
      (depending on hardware and configuration etc.). Take a look at the source in the class
-     <code>UrlRewriterTest.testLoadsOfRules()</code> for more information.</p>
+     <code>org.tuckey.web.filters.urlrewrite.PerformanceTest.testLoadsOfRules()</code> for more information.</p>
 
 
 
@@ -170,11 +170,18 @@ The original URL can also be reconstructed from more basic components available 
  <h2>Changelog</h2>
 
     <ul>
-        <li>4.0.0 UNRELEASED <!-- TODO release -->
+        <li>4.0.0 Beta UNRELEASED <!-- TODO release -->
             <ul>
-                <li>Support for file existence tests via new condition type request-filename and operators isdir, isfile, isfilewithsize, notdir, notfile, notfilewithsize</li>
+                <li>Rewrite of the way Encoding/Decoding is handled
+                    (<a href="http://code.google.com/p/urlrewritefilter/issues/detail?id=27">issue 27</a>)</li>
+                <li>Support for file existence tests via new condition type request-filename and operators isdir, isfile, isfilewithsize, notdir, notfile, notfilewithsize
+                    (<a href="http://code.google.com/p/urlrewritefilter/issues/detail?id=49">issue 49</a>)</li>
                 <li>New condition types requested-session-id-from-cookie, requested-session-id-from-url, requested-session-id-valid</li>
                 <li>Ability to conditionally GZip responses using the gzip element that runs a repackaged copy of <a href="http://docs.atlassian.com/atlassian-gzipfilter/1.9/atlassian-gzipfilter/">com.atlassian.gzipfilter</a></li>
+                <li>Fixed bug: ":" char in url results in java.io.UnsupportedEncodingException
+                    (<a href="http://code.google.com/p/urlrewritefilter/issues/detail?id=30">issue 30</a>)</li>
+                <li>Fixed bug: Wildcard matcher and $ in URL causes exception
+                    (<a href="http://code.google.com/p/urlrewritefilter/issues/detail?id=71">issue 71</a>)</li>
             </ul>
 
         </li>
