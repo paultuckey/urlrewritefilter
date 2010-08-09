@@ -34,16 +34,22 @@
  */
 package org.tuckey.web.filters.urlrewrite;
 
+import org.tuckey.web.filters.urlrewrite.substitution.BackReferenceReplacer;
+import org.tuckey.web.filters.urlrewrite.substitution.ChainedSubstitutionFilters;
+import org.tuckey.web.filters.urlrewrite.substitution.FunctionReplacer;
+import org.tuckey.web.filters.urlrewrite.substitution.SubstitutionContext;
+import org.tuckey.web.filters.urlrewrite.substitution.SubstitutionFilterChain;
+import org.tuckey.web.filters.urlrewrite.substitution.VariableReplacer;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.utils.NumberUtils;
 import org.tuckey.web.filters.urlrewrite.utils.StringMatchingMatcher;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
-import org.tuckey.web.filters.urlrewrite.utils.FunctionReplacer;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -86,7 +92,6 @@ public class SetAttribute {
     private boolean valueContainsVariable = false;
     private boolean valueContainsBackRef = false;
     private boolean valueContainsFunction = false;
-    private static Pattern replacementVarPattern = Pattern.compile("(?<!\\\\)\\$([0-9])");
 
     public String getType() {
         if (type == SET_TYPE_RESPONSE_HEADER) return "response-header";
@@ -175,21 +180,10 @@ public class SetAttribute {
         }
 
         String value = this.value;
-        if (toMatcher != null) {
-            Matcher replacementVarMatcher = replacementVarPattern.matcher(value);
-            if (replacementVarMatcher.find()) {
-                value = toMatcher.replaceAll(value);
-            }
-        }
-        if (valueContainsBackRef) {
-            value = BackReferenceReplacer.replace(lastConditionMatch, value);
-        }
-        if (valueContainsVariable) {
-            value = VariableReplacer.replace(value, hsRequest);
-        }
-        if (valueContainsFunction) {
-            value = FunctionReplacer.replace(value);
-        }
+        
+        SubstitutionContext substitutionContext = new SubstitutionContext(hsRequest, toMatcher, lastConditionMatch, null);
+        SubstitutionFilterChain substitutionFilter = ChainedSubstitutionFilters.getDefaultSubstitutionChain(false, valueContainsFunction, valueContainsVariable, valueContainsBackRef);
+        value = substitutionFilter.substitute(value, substitutionContext);
 
         if (type == SET_TYPE_REQUEST) {
             log.debug("setting request attrib");

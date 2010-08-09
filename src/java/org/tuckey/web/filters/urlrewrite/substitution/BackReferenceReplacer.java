@@ -32,8 +32,9 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.tuckey.web.filters.urlrewrite;
+package org.tuckey.web.filters.urlrewrite.substitution;
 
+import org.tuckey.web.filters.urlrewrite.ConditionMatch;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.utils.StringMatchingMatcher;
 
@@ -42,16 +43,15 @@ import java.util.regex.Pattern;
 
 /**
  * Back references (eg, %1, %2 etc) replacer.
- * 
+ *
  * @author Paul Tuckey
  * @version $Revision: 1 $ $Date: 2006-08-01 21:40:28 +1200 (Tue, 01 Aug 2006) $
  */
-public class BackReferenceReplacer {
+public class BackReferenceReplacer implements SubstitutionFilter {
 
     private static Log log = Log.getLog(BackReferenceReplacer.class);
 
     private static Pattern backRefPattern = Pattern.compile("(?<!\\\\)%([0-9])");
-    private static Pattern escapedBackRefPattern = Pattern.compile("\\\\(%[0-9])");
 
     /**
      * look for back reference a % followed by a number
@@ -62,9 +62,12 @@ public class BackReferenceReplacer {
     }
 
 
-    public static String replace(ConditionMatch lastConditionMatch, String subjectOfReplacement) {
+    public String substitute(String subjectOfReplacement, SubstitutionContext ctx,
+                             SubstitutionFilterChain nextFilter) {
+        ConditionMatch lastConditionMatch = ctx.getLastConditionMatch();
+
         if (lastConditionMatch == null) {
-            return subjectOfReplacement;
+            return nextFilter.substitute(subjectOfReplacement, ctx);
         }
 
         StringMatchingMatcher lastConditionMatchMatcher = lastConditionMatch.getMatcher();
@@ -77,7 +80,7 @@ public class BackReferenceReplacer {
 
                 StringBuffer sb = new StringBuffer();
                 boolean anyMatches = false;
-
+                int lastAppendPosition = 0;
                 while (backRefMatcher.find()) {
                     anyMatches = true;
                     int groupCount = backRefMatcher.groupCount();
@@ -111,19 +114,22 @@ public class BackReferenceReplacer {
                     if (validBackref) {
                         conditionMatch = lastConditionMatchMatcher.group(varInt);
                     }
-                    backRefMatcher.appendReplacement(sb, conditionMatch);
+                    String stringBeforeMatch = subjectOfReplacement.substring(lastAppendPosition, backRefMatcher.start());
+                    sb.append(nextFilter.substitute(stringBeforeMatch, ctx));
+                    sb.append(conditionMatch);
+                    lastAppendPosition = backRefMatcher.end();
                 }
                 if (anyMatches) {
-                    backRefMatcher.appendTail(sb);
+                    String stringAfterMatch = subjectOfReplacement.substring(lastAppendPosition);
+                    sb.append(nextFilter.substitute(stringAfterMatch, ctx));
                     if (log.isDebugEnabled()) log.debug("replaced sb is " + sb);
-                    subjectOfReplacement = sb.toString();
+                    return sb.toString();
                 }
             }
         }
 
-        Matcher escapedVariableMatcher = escapedBackRefPattern.matcher(subjectOfReplacement);
-        subjectOfReplacement = escapedVariableMatcher.replaceAll("$1");
-
-        return subjectOfReplacement;
+        return nextFilter.substitute(subjectOfReplacement, ctx);
     }
+
+
 }

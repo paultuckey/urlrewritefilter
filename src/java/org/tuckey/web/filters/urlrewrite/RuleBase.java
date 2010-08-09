@@ -35,6 +35,12 @@
 package org.tuckey.web.filters.urlrewrite;
 
 import org.tuckey.web.filters.urlrewrite.extend.RewriteMatch;
+import org.tuckey.web.filters.urlrewrite.substitution.BackReferenceReplacer;
+import org.tuckey.web.filters.urlrewrite.substitution.ChainedSubstitutionFilters;
+import org.tuckey.web.filters.urlrewrite.substitution.FunctionReplacer;
+import org.tuckey.web.filters.urlrewrite.substitution.SubstitutionContext;
+import org.tuckey.web.filters.urlrewrite.substitution.SubstitutionFilterChain;
+import org.tuckey.web.filters.urlrewrite.substitution.VariableReplacer;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.utils.RegexPattern;
 import org.tuckey.web.filters.urlrewrite.utils.StringMatchingMatcher;
@@ -42,7 +48,6 @@ import org.tuckey.web.filters.urlrewrite.utils.StringMatchingPattern;
 import org.tuckey.web.filters.urlrewrite.utils.StringMatchingPatternSyntaxException;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 import org.tuckey.web.filters.urlrewrite.utils.WildcardPattern;
-import org.tuckey.web.filters.urlrewrite.utils.FunctionReplacer;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -221,34 +226,10 @@ public class RuleBase implements Runnable {
         }
 
         String replacedTo = null;
-        if (performToReplacement) {
-            // replace back ref eg, %3 items
-            // replace vars eg, %{txt}
-            replacedTo = to;
-            if (replacedTo != null) {
-                // do variable replacement
-                if (toContainsVariable) {
-                    replacedTo = VariableReplacer.replace(replacedTo, hsRequest);
-                }
-                // perform backref replacement
-                if (toContainsBackReference) {
-                    replacedTo = BackReferenceReplacer.replace(lastConditionMatch, replacedTo);
-                }
-            }
-
-            if ( replacedTo != null && toContainsFunction ) {
-                // escape the function start sequence so it doesn't cause problems with $x item replacement
-                replacedTo = replacedTo.replaceAll("\\$\\{", "\\\\\\$\\{");
-            }
-
-            // get existing eg, $1 items
-            replacedTo = matcher.replaceAll(replacedTo);
-
-            if ( replacedTo != null && toContainsFunction ) {
-                // do variable replacement
-                replacedTo = FunctionReplacer.replace(replacedTo);
-            }
-
+        if (performToReplacement && to != null) {
+            SubstitutionContext substitutionContext = new SubstitutionContext(hsRequest, matcher, lastConditionMatch, to);
+            SubstitutionFilterChain substitutionFilter = ChainedSubstitutionFilters.getDefaultSubstitutionChain(true, toContainsFunction, toContainsVariable, toContainsBackReference);
+            replacedTo = substitutionFilter.substitute(url, substitutionContext);
         }
 
         RuleExecutionOutput ruleExecutionOutput = new RuleExecutionOutput(replacedTo, true, lastRunMatch);

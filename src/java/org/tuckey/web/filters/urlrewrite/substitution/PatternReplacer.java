@@ -32,66 +32,41 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.tuckey.web.filters.urlrewrite.utils;
+package org.tuckey.web.filters.urlrewrite.substitution;
 
-import java.util.regex.Matcher;
+import org.tuckey.web.filters.urlrewrite.utils.StringMatchingMatcher;
 
 /**
- * Simple wrapper for java.util.regex.Matcher.
+ * Replaces each match of the condition to the given substituted pattern
  *
- * @see java.util.regex.Matcher
+ * @author Paul Tuckey
+ * @version $Revision: 1 $ $Date: 2006-08-01 21:40:28 +1200 (Tue, 01 Aug 2006) $
  */
-public class RegexMatcher implements StringMatchingMatcher {
+public class PatternReplacer implements SubstitutionFilter {
 
-    private Matcher matcher;
-    private boolean found = false;
+    public String substitute(String from, SubstitutionContext ctx,
+                             SubstitutionFilterChain nextFilter) {
 
-    public RegexMatcher(Matcher matcher) {
-        this.matcher = matcher;
+        StringMatchingMatcher conditionMatcher = ctx.getMatcher();
+        conditionMatcher.reset();
+        StringBuffer sb = new StringBuffer();
+        int lastMatchEnd = 0;
+        while (conditionMatcher.find()) {
+            // we do not substitute on the non-matched string since it is straight from the URL
+            String notMatched = from.substring(lastMatchEnd, conditionMatcher.start());
+            sb.append(notMatched);
+            // we will replace the matched string with the appropriately expanded pattern
+            String substitutedReplacement = nextFilter.substitute(ctx.getReplacePattern(), ctx);
+            sb.append(substitutedReplacement);
+            lastMatchEnd = conditionMatcher.end();
+            // get out of there for wildcard patterns
+            if (!conditionMatcher.isMultipleMatchingSupported())
+                break;
+        }
+        // put the remaining ending non-matched string
+        if (lastMatchEnd < from.length())
+            sb.append(from.substring(lastMatchEnd));
+        return sb.toString();
     }
-
-    /**
-     * @see Matcher#find
-     */
-    public boolean find() {
-        found = matcher.find();
-        return found;
-    }
-
-    public boolean isFound() {
-        return found;
-    }
-
-    public void reset() {
-        matcher.reset();
-        found = false;
-    }
-
-    public String replaceAll(String replacement) {
-        String replaced = matcher.replaceAll(replacement);
-        reset();
-        return replaced;
-    }
-
-    public int groupCount() {
-        return matcher.groupCount();
-    }
-
-    public String group(int groupId) {
-        return matcher.group(groupId);
-    }
-
-	public int end() {
-		return matcher.end();
-	}
-
-	public int start() {
-		return matcher.start();
-	}
-
-	public boolean isMultipleMatchingSupported() {
-		return true;
-	}
-
 
 }

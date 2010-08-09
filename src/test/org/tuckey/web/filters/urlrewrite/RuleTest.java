@@ -43,7 +43,6 @@ import org.tuckey.web.testhelper.MockServletContext;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 
 /**
  * @author Paul Tuckey
@@ -70,6 +69,20 @@ public class RuleTest extends TestCase {
 
         assertEquals("forward should be default type", "forward", rule.getToType());
         assertEquals("asssimple", rewrittenUrl.getTarget());
+        assertTrue("Should be a forward", rewrittenUrl.isForward());
+    }
+
+    public void testRule01a() throws IOException, ServletException, InvocationTargetException {
+        NormalRule rule = new NormalRule();
+        rule.setFrom("simple(ass)");
+        rule.setTo("$1simple");
+        rule.setQueryStringAppend("true");
+        rule.initialise(null);
+        MockRequest request = new MockRequest("simpleass?aaa=bbb");
+        NormalRewrittenUrl rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
+
+        assertEquals("forward should be default type", "forward", rule.getToType());
+        assertEquals("asssimple?aaa=bbb", rewrittenUrl.getTarget());
         assertTrue("Should be a forward", rewrittenUrl.isForward());
     }
 
@@ -244,7 +257,7 @@ public class RuleTest extends TestCase {
         assertTrue(rule.isToContainsVariable());
 
         assertEquals("forward should be default type", "forward", rule.getToType());
-        assertEquals("start ctx: ctxpath, hdr: bender , escaped var: %{ignoreme!}, bad var:   end", rewrittenUrl.getTarget());
+        assertEquals("start ctx: ctxpath, hdr: bender %{, escaped var: %{ignoreme!}, bad var:   end", rewrittenUrl.getTarget());
         assertTrue("Should be a forward", rewrittenUrl.isForward());
     }
 
@@ -668,24 +681,6 @@ public class RuleTest extends TestCase {
         rule.setFrom(from);
         rule.setMatchType(" wildcard    ");
         rule.setTo(to);
-        rule.initialise(null);
-        MockRequest request = new MockRequest(req);
-        RewrittenUrl rewrittenUrl = rule.matches(request.getRequestURI(), request, response);
-        assertEquals(assertEq, rewrittenUrl == null ? req : rewrittenUrl.getTarget());
-    }
-
-    public void wildcardRuleTestHelperCond(String from, String to, List conditions, String req, String assertEq)
-            throws IOException, ServletException, InvocationTargetException {
-        NormalRule rule = new NormalRule();
-        rule.setFrom(from);
-        rule.setMatchType(" wildcard    ");
-        rule.setTo(to);
-        if (conditions != null) {
-            for (int i = 0; i < conditions.size(); i++) {
-                Condition c = (Condition) conditions.get(i);
-                rule.addCondition(c);
-            }
-        }
         rule.initialise(null);
         MockRequest request = new MockRequest(req);
         RewrittenUrl rewrittenUrl = rule.matches(request.getRequestURI(), request, response);

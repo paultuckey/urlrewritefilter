@@ -32,66 +32,20 @@
  * POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.tuckey.web.filters.urlrewrite.utils;
-
-import java.util.regex.Matcher;
+package org.tuckey.web.filters.urlrewrite.substitution;
 
 /**
- * Simple wrapper for java.util.regex.Matcher.
+ * Removes escape sequences from the string (\)
  *
- * @see java.util.regex.Matcher
+ * @author Paul Tuckey
+ * @version $Revision: 1 $ $Date: 2006-08-01 21:40:28 +1200 (Tue, 01 Aug 2006) $
  */
-public class RegexMatcher implements StringMatchingMatcher {
+public class UnescapeReplacer implements SubstitutionFilter {
 
-    private Matcher matcher;
-    private boolean found = false;
-
-    public RegexMatcher(Matcher matcher) {
-        this.matcher = matcher;
+    public String substitute(String from, SubstitutionContext ctx,
+                             SubstitutionFilterChain nextFilter) {
+        String unescaped = from.replaceAll("(?<!\\\\)\\\\", "");
+        return nextFilter.substitute(unescaped, ctx);
     }
-
-    /**
-     * @see Matcher#find
-     */
-    public boolean find() {
-        found = matcher.find();
-        return found;
-    }
-
-    public boolean isFound() {
-        return found;
-    }
-
-    public void reset() {
-        matcher.reset();
-        found = false;
-    }
-
-    public String replaceAll(String replacement) {
-        String replaced = matcher.replaceAll(replacement);
-        reset();
-        return replaced;
-    }
-
-    public int groupCount() {
-        return matcher.groupCount();
-    }
-
-    public String group(int groupId) {
-        return matcher.group(groupId);
-    }
-
-	public int end() {
-		return matcher.end();
-	}
-
-	public int start() {
-		return matcher.start();
-	}
-
-	public boolean isMultipleMatchingSupported() {
-		return true;
-	}
-
 
 }
