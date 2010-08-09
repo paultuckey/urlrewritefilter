@@ -67,6 +67,7 @@ public class NormalRule extends RuleBase implements Rule {
     public static final short TO_TYPE_PROXY = 6;
 
     private boolean encodeToUrl = false;
+    private boolean queryStringAppend = false;
     private String toContextStr = null;
     private ServletContext toServletContext = null;
 
@@ -92,6 +93,10 @@ public class NormalRule extends RuleBase implements Rule {
         if (ruleExecutionOutput == null || !ruleExecutionOutput.isRuleMatched()) {
             // no match, or run/set only match
             return null;
+        }
+        if ( queryStringAppend && hsRequest.getQueryString() != null ) {
+            String target = ruleExecutionOutput.getReplacedUrl();
+            ruleExecutionOutput.setReplacedUrl(target + "&" + hsRequest.getQueryString());
         }
         if ( toServletContext != null ) ruleExecutionOutput.setReplacedUrlContext(toServletContext);
         return RuleExecutionOutput.getRewritenUrl(toType, encodeToUrl, ruleExecutionOutput);
@@ -220,5 +225,9 @@ public class NormalRule extends RuleBase implements Rule {
 
     public ServletContext getToServletContext() {
         return toServletContext;
+    }
+
+    public void setQueryStringAppend(String value) {
+        queryStringAppend = "true".equalsIgnoreCase(value);
     }
 }
