@@ -55,6 +55,8 @@ public class MatcherReplacer implements SubstitutionFilter {
     public String substitute(String replacePattern, SubstitutionContext ctx,
                              SubstitutionFilterChain nextFilter) {
 
+        if ( replacePattern == null ) return null;
+
         StringMatchingMatcher conditionMatcher = ctx.getMatcher();
         int conditionMatcherGroupCount = conditionMatcher.groupCount();
 

@@ -154,6 +154,20 @@ public class SetAttributeTest extends TestCase {
         assertEquals(999, response.getStatus());
     }
 
+    public void testTypeEmptyStr() {
+        SetAttribute set = new SetAttribute();
+        set.setType("parameter");
+        set.setName("version_id");
+        set.setValue(null);
+        MockRequest request = new MockRequest();
+        set.initialise();
+        UrlRewriteWrappedResponse wrappedResponse = new UrlRewriteWrappedResponse(new MockResponse(), request, null);
+        set.execute(null, toMatcher, request, wrappedResponse);
+
+        UrlRewriteWrappedRequest wrappedRequest = new UrlRewriteWrappedRequest(request, wrappedResponse.getOverridenRequestParameters(), null);
+        assertEquals(null, wrappedRequest.getParameter("version_id"));
+    }
+
     public void testTypeCookie() {
         SetAttribute set = new SetAttribute();
         set.setType("cookie");
