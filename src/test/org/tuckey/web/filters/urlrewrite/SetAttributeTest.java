@@ -197,7 +197,11 @@ public class SetAttributeTest extends TestCase {
 
         set.initialise();
         set.execute(null, toMatcher, request, response);
-        assertTrue(response.getOverridenRequestParameters().get("blah").equals("Capture group 1 is /query"));
+
+        UrlRewriteWrappedRequest wrappedRequest = new UrlRewriteWrappedRequest(request, response.getOverridenRequestParameters(), null);
+        assertEquals("Capture group 1 is /query", wrappedRequest.getParameter("blah"));
+        assertEquals("Capture group 1 is /query", wrappedRequest.getParameterValues("blah")[0]);
+
     }
 
     public void testSetMethod() {
