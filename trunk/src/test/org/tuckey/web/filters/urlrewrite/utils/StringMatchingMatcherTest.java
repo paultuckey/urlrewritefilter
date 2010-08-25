@@ -70,7 +70,7 @@ public class StringMatchingMatcherTest extends TestCase {
         // try again with no matches
         WildcardPattern pat4 = new WildcardPattern("aa");
         StringMatchingMatcher mat4 = pat4.matcher("aaf");
-        assertEquals("a$1b", replaceAll(mat4, "aaf", "a\\$1b"));
+        assertEquals("aaf", replaceAll(mat4, "aaf", "a\\$1b"));
 
         WildcardPattern pat5 = new WildcardPattern("/**");
         StringMatchingMatcher mat5 = pat5.matcher("/aa/bb/cc/?aa&bb#cc");
@@ -97,7 +97,6 @@ public class StringMatchingMatcherTest extends TestCase {
         RegexPattern pat = new RegexPattern("^(/.*)$", false);
         StringMatchingMatcher mat = pat.matcher("/tester/one-level-sub/two-leel-sub/");
         mat.find();
-        replaceAll(mat, "/tester/one-level-sub/two-leel-sub/", "$1");
         mat.groupCount();
         mat.groupCount();
         mat.groupCount();
