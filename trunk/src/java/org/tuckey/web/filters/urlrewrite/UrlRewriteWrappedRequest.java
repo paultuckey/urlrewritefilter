@@ -76,22 +76,30 @@ public class UrlRewriteWrappedRequest extends HttpServletRequestWrapper {
     public Map getParameterMap() {
         if (overridenParameters != null) {
             Map superMap = super.getParameterMap();
-            superMap.putAll(overridenParameters);
-            return superMap;
+            //superMap is an unmodifiable map, hence creating a new one.
+            Map overriddenMap = new HashMap(superMap.size() + overridenParameters.size());
+            overriddenMap.putAll(superMap);
+            overriddenMap.putAll(overridenParameters);
+            return overriddenMap;
         }
         return super.getParameterMap();
     }
 
     public String[] getParameterValues(String s) {
         if (overridenParameters != null && overridenParameters.containsKey(s)) {
-            return new String[]{(String) overridenParameters.get(s)};
+            return (String[]) overridenParameters.get(s);
         }
         return super.getParameterValues(s);
     }
 
     public String getParameter(String s) {
         if (overridenParameters != null && overridenParameters.containsKey(s)) {
-            return (String) overridenParameters.get(s);
+            String[] values = (String[]) overridenParameters.get(s);
+            if (values == null || values.length == 0) {
+                return null;
+            } else {
+                return values[0];
+            }
         }
         return super.getParameter(s);
     }
