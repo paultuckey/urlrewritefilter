@@ -1,5 +1,5 @@
  
-==General Tips for debugging UrlRewriteFilter:==
+==General Tips for debugging !UrlRewriteFilter==
  
 Because every java web project is slightly different, debugging can be difficult. Try to:   
   * Turn on debug logging (see filter params in manual).
