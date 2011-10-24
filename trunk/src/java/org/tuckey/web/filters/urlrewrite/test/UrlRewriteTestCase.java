@@ -82,13 +82,7 @@ public class UrlRewriteTestCase extends TestCase {
         urlRewriter = new UrlRewriter(conf);
     }
 
-    /**
-     * Checks to see if the specified rule name matches the url specified.
-     *
-     * @param ruleName   - the name of the rule
-     * @param requestUrl - the url to check
-     */
-    public void assertRuleMatches(String ruleName, String requestUrl) {
+    public Rule getRule(String ruleName) {
         List rules = urlRewriter.getConf().getRules();
         Rule rule = null;
         if (rules != null) {
@@ -101,8 +95,20 @@ public class UrlRewriteTestCase extends TestCase {
         }
         if (rule == null) {
             assertTrue("Rule by the name " + ruleName + " does not exist", false);
-            return;
         }
+        return rule;
+    }
+
+    /**
+     * Checks to see if the specified rule name matches the url specified.
+     *
+     * @param ruleName   - the name of the rule
+     * @param requestUrl - the url to check
+     */
+    public void assertRuleMatches(String ruleName, String requestUrl) {
+
+        Rule rule = getRule(ruleName);
+
         MockResponse response = new MockResponse();
         MockRequest request = new MockRequest(requestUrl);
         NormalRewrittenUrl rewrittenUrl = null;
@@ -121,6 +127,29 @@ public class UrlRewriteTestCase extends TestCase {
         }
         assertNotNull("Rule " + ruleName + " does not match", rewrittenUrl);
     }
+
+    public void assertRuleDoesNotMatches(String ruleName, String requestUrl) {
+        Rule rule = getRule(ruleName);
+
+        MockResponse response = new MockResponse();
+        MockRequest request = new MockRequest(requestUrl);
+        NormalRewrittenUrl rewrittenUrl = null;
+        try {
+            rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
+
+        } catch (IOException e) {
+            assertNull("IOException during rule matching " + e.toString(), e);
+
+        } catch (ServletException e) {
+            assertNull("ServletException during rule matching " + e.toString(), e);
+
+        } catch (InvocationTargetException e) {
+            assertNull("InvocationTargetException during rule matching " + e.toString(), e);
+
+        }
+        assertNull("Rule " + ruleName + " match", rewrittenUrl);
+    }
+
 
     /**
      * An empty method so that Junit doesn't complain when running tests.
@@ -164,6 +193,7 @@ class MockRequest implements HttpServletRequest {
 
     public MockRequest(String requestURI) {
         this.requestURI = contextPath + requestURI;
+        this.requestUrl = requestURI;
         this.servletPath = requestURI;
     }
 
