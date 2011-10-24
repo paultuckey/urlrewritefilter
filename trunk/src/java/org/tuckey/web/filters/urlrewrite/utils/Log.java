@@ -81,14 +81,14 @@ public class Log {
         isUsingCommonsLogging();
     }
 
-    private boolean isUsingLog4j() {
+    public boolean isUsingLog4j() {
         if (usingLog4j && log4jLogger == null) {
             this.log4jLogger = org.apache.log4j.Logger.getLogger(clazz);
         }
         return usingLog4j;
     }
 
-    private boolean isUsingSlf4j() {
+    public boolean isUsingSlf4j() {
         if (usingSlf4j && slf4jLogger == null) {
             this.slf4jLogger = org.slf4j.LoggerFactory.getLogger(clazz);
         }
@@ -100,6 +100,14 @@ public class Log {
             this.commonsLog = org.apache.commons.logging.LogFactory.getLog(clazz);
         }
         return usingCommonsLogging;
+    }
+
+    public boolean isUsingSystemOut() {
+        return usingSystemOut;
+    }
+
+    public boolean isUsingSystemErr() {
+        return usingSystemErr;
     }
 
     public boolean isTraceEnabled() {
@@ -503,7 +511,7 @@ public class Log {
      * @param level the level to log with
      */
     public static void setLevel(String level) {
-
+        level = level == null ? null : level.toUpperCase();
         usingSystemOut = false;
         usingSystemErr = false;
         // check for log type on the front

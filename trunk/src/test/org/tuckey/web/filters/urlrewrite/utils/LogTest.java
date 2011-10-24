@@ -67,4 +67,20 @@ public class LogTest extends TestCase {
         assertTrue(log.isFatalEnabled());
         log.debug("hi");
     }
+
+    public void testLevelCase() {
+        Log log = Log.getLog(null);
+        Log.setLevel("SysOut:DEbug");
+        assertTrue("debug", log.isDebugEnabled());
+        assertTrue("std out", log.isUsingSystemOut());
+        log.debug("hi");
+    }
+
+    public void testLevelCaseErr() {
+        Log log = Log.getLog(null);
+        Log.setLevel("StdErR:DEbug");
+        assertTrue("debug", log.isDebugEnabled());
+        assertTrue("std err", log.isUsingSystemErr());
+        log.debug("hi err");
+    }
 }
