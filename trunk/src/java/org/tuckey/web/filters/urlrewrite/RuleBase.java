@@ -228,7 +228,7 @@ public class RuleBase implements Runnable {
         String replacedTo = null;
         if (performToReplacement && to != null) {
             SubstitutionContext substitutionContext = new SubstitutionContext(hsRequest, matcher, lastConditionMatch, to);
-            SubstitutionFilterChain substitutionFilter = ChainedSubstitutionFilters.getDefaultSubstitutionChain(true, toContainsFunction, toContainsVariable, toContainsBackReference);
+            SubstitutionFilterChain substitutionFilter = ChainedSubstitutionFilters.getDefaultSubstitutionChain(true, toContainsFunction, toContainsVariable, toContainsBackReference, servletContext);
             replacedTo = substitutionFilter.substitute(url, substitutionContext);
         }
 

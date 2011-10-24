@@ -1,12 +1,13 @@
 package org.tuckey.web.filters.urlrewrite.substitution;
 
+import javax.servlet.ServletContext;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
 
 public class ChainedSubstitutionFilters implements SubstitutionFilterChain {
+
 	private List filters;
 	private int nextFilter = 0;
 	
@@ -29,7 +30,13 @@ public class ChainedSubstitutionFilters implements SubstitutionFilterChain {
 		return filterChain.substitute(string, null);
 	}
 	
-	public static SubstitutionFilterChain getDefaultSubstitutionChain(boolean withPattern, boolean withFunction, boolean withVariable, boolean withBackReference){
+	public static SubstitutionFilterChain getDefaultSubstitutionChain(
+			boolean withPattern, boolean withFunction, boolean withVariable,
+			boolean withBackReference) {
+        return getDefaultSubstitutionChain(withPattern, withFunction, withVariable, withBackReference, null);
+	}
+	
+	public static SubstitutionFilterChain getDefaultSubstitutionChain(boolean withPattern, boolean withFunction, boolean withVariable, boolean withBackReference, ServletContext sc){
         List substitutionFilters = new LinkedList();
         
         if(withPattern)
@@ -37,7 +44,7 @@ public class ChainedSubstitutionFilters implements SubstitutionFilterChain {
         if(withFunction)
         	substitutionFilters.add(new FunctionReplacer());
         if(withVariable)
-        	substitutionFilters.add(new VariableReplacer());
+			substitutionFilters.add(sc == null ? new VariableReplacer() : new VariableReplacer(sc));
         if(withBackReference)
         	substitutionFilters.add(new BackReferenceReplacer());
         substitutionFilters.add(new MatcherReplacer());

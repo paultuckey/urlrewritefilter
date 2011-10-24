@@ -38,6 +38,7 @@ import org.tuckey.web.filters.urlrewrite.TypeConverter;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -58,15 +59,32 @@ public class VariableReplacer implements SubstitutionFilter {
 
     private static Pattern toVariablePattern = Pattern.compile("(?<!\\\\)%\\{([-a-zA-Z:]*)\\}");
 
+    private static ServletContext servletContext;
+    
     public static boolean containsVariable(String to) {
         Matcher variableMatcher = toVariablePattern.matcher(to);
         return variableMatcher.find();
     }
 
+	public VariableReplacer() {
+    	
+    }
+    
+    public VariableReplacer(ServletContext sc){
+		if (sc == null) {
+			throw new IllegalArgumentException("Servlet context is null");
+		}
+    	servletContext = sc;
+    }
+    
     public static String replace(String subjectOfReplacement, HttpServletRequest hsRequest) {
         return new VariableReplacer().substitute(subjectOfReplacement, new SubstitutionContext(hsRequest, null, null, null), new ChainedSubstitutionFilters(Collections.EMPTY_LIST));
     }
 
+    public static String replaceWithServletContext(String subjectOfReplacement, HttpServletRequest hsRequest, ServletContext sc) {
+        return new VariableReplacer(sc).substitute(subjectOfReplacement, new SubstitutionContext(hsRequest, null, null, null), new ChainedSubstitutionFilters(Collections.EMPTY_LIST));
+    }
+    
     public String substitute(String subjectOfReplacement, SubstitutionContext ctx,
                              SubstitutionFilterChain nextFilter) {
         Matcher varMatcher = toVariablePattern.matcher(subjectOfReplacement);
@@ -226,6 +244,17 @@ public class VariableReplacer implements SubstitutionFilter {
             case TypeConverter.TYPE_HEADER:
                 return StringUtils.notNull(hsRequest.getHeader(varSubName));
 
+            case TypeConverter.TYPE_SERVLET_CONTEXT:
+            	//ServletContext servletContext = (hsRequest.getSession(true).getServletContext());   
+			Object attr = servletContext.getAttribute(varSubName);
+			if (attr == null) {
+				log.debug("No context attribute " + varSubName
+						+ ", must be an init-param");
+				return servletContext.getInitParameter(varSubName);
+			} else {
+				return StringUtils.notNull(attr.toString());
+			}
+                
             default:
                 log.error("variable %{" + originalVarStr + "} type '" + varType + "' not a valid type");
                 return "";

@@ -97,6 +97,7 @@ public class TypeConverter {
     public static final short TYPE_REQUESTED_SESSION_ID_FROM_URL = 42;
     public static final short TYPE_REQUESTED_SESSION_ID_VALID = 43;
     public static final short TYPE_REQUEST_FILENAME = 44;
+    public static final short TYPE_SERVLET_CONTEXT = 45;
 
     /**
      * Will get the type code ie, method, port, header etc.
@@ -196,6 +197,8 @@ public class TypeConverter {
                 return "exception";
             case TYPE_REQUEST_FILENAME:
                 return "request-filename";
+            case TYPE_SERVLET_CONTEXT:
+            	return "context";
             default:
                 return "";
         }
@@ -301,7 +304,10 @@ public class TypeConverter {
         } else if ("request-filename".equals(strType)) {
             this.type = TYPE_REQUEST_FILENAME;
 
-        } else {
+        } else if ("context".equals(strType)) {
+            this.type = TYPE_SERVLET_CONTEXT;
+
+        }else {
             setError("Type " + strType + " is not valid");
         }
     }
