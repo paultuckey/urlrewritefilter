@@ -71,7 +71,7 @@
     <li><a href="http://tuckey.org/urlrewrite/#download">Download</a> the zip (or tar.gz) and extract it into your
         context's directory ie, so that urlrewrite.xml goes into the WEB-INF directory.</li>
     <li>Add the following to your WEB-INF/web.xml (add it near the top above your
-        servlet mappings (if you have any)): (see <a href="http://tuckey.org/urlrewrite/manual/3.0/#filterparams">filter
+        servlet mappings (if you have any)): (see <a href="#filterparams">filter
         parameters</a> for more options)
         <pre><code>
     &lt;filter&gt;
@@ -234,7 +234,7 @@
 
 <p>Configuration is done via a simple XML file that lives in your <code>WEB-INF</code> folder. It should be named
     urlrewrite.xml.
-    It may be helpful to read the <a href="http://tuckey.org/res/dtds/urlrewrite3.0.dtd">UrlRewriteFilter DTD
+    It may be helpful to read the <a href="http://tuckey.org/res/dtds/urlrewrite4.0.dtd">UrlRewriteFilter DTD
     (Document Type Definition)</a>. Please also make sure you look at the <a href="guide.html">examples</a>. A simple
     configuration file looks like:</p>
 
@@ -242,8 +242,8 @@
     &lt;?xml version="1.0" encoding="utf-8"?&gt;
 
     &lt;!DOCTYPE urlrewrite
-        PUBLIC "-//tuckey.org//DTD UrlRewrite 3.0//EN"
-        "http://tuckey.org/res/dtds/urlrewrite3.0.dtd"&gt;
+        PUBLIC "-//tuckey.org//DTD UrlRewrite 4.0//EN"
+        "http://tuckey.org/res/dtds/urlrewrite4.0.dtd"&gt;
 
     &lt;urlrewrite&gt;
 
@@ -1328,7 +1328,7 @@
     &lt;target name="urlrewrite-doc" depends="compile"
         description="UrlRewriteFilter validation and documenting"&gt;
 
-    &lt;taskdef name="urlrewritedoc" classpath="lib/urlrewrite-<!--@ver-->3.2.0<!--/@ver-->.jar"
+    &lt;taskdef name="urlrewritedoc" classpath="lib/urlrewrite-<!--@ver-->4.0.0<!--/@ver-->.jar"
         classname="org.tuckey.web.filters.urlrewrite.UrlRewriteDocTask" /&gt;
     &lt;urlrewritedoc
         conf="${build.home}/WEB-INF/urlrewrite.xml"
