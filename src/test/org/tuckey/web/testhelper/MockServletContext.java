@@ -45,6 +45,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Set;
 
 /**
@@ -54,11 +55,16 @@ import java.util.Set;
 public class MockServletContext implements ServletContext {
 
     private static Log log = Log.getLog(MockServletContext.class);
+    private final Hashtable attributes = new Hashtable();
 
     public ServletContext getContext(String s) {
         return new MockServletContext();
     }
 
+    public Object getAttribute(String name) {
+    	return this.attributes.get(name);
+    }
+    
     public int getMajorVersion() {
         return 0;
     }
@@ -141,16 +147,17 @@ public class MockServletContext implements ServletContext {
         return null;
     }
 
-    public Object getAttribute(String s) {
-        return null;
-    }
-
     public Enumeration getAttributeNames() {
         return null;
     }
 
-    public void setAttribute(String s, Object o) {
-
+    public void setAttribute(String name, Object value) {
+    	if (value != null) {
+    		this.attributes.put(name, value);
+    	}
+    	else {
+    		 this.attributes.remove(name);
+    	}
     }
 
     public void removeAttribute(String s) {

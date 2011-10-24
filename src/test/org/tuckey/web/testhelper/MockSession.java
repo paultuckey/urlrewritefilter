@@ -46,6 +46,7 @@ import java.util.Hashtable;
  */
 public class MockSession implements HttpSession {
 
+	MockServletContext servletContext = new MockServletContext();
     Hashtable attrs = new Hashtable();
     private boolean sessionNew;
 
@@ -61,8 +62,12 @@ public class MockSession implements HttpSession {
         return 0;
     }
 
-    public ServletContext getServletContext() {
-        return null;
+    public void setServletContext(ServletContext sc) {    
+    	servletContext = (MockServletContext) sc;
+    }
+    
+    public ServletContext getServletContext() {    	
+    	return servletContext;
     }
 
     public void setMaxInactiveInterval(int i) {

@@ -209,6 +209,10 @@ public class MockRequest implements HttpServletRequest {
         return session;
     }
 
+    public MockSession getMockSession() {
+        return session;
+    }
+    
     public boolean isRequestedSessionIdValid() {
         return requestedSessionIdValid;
     }

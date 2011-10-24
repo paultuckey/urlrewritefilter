@@ -4,6 +4,8 @@ import junit.framework.TestCase;
 import org.tuckey.web.filters.urlrewrite.substitution.VariableReplacer;
 import org.tuckey.web.testhelper.MockRequest;
 
+import javax.servlet.ServletContext;
+
 /**
  * @author Tim Morrow
  * @since Dec 4, 2007
@@ -63,4 +65,15 @@ public class VariableReplacerTest extends TestCase {
         assertEquals("ab\\cd", result);
     }
 
+    public final void testReplaceContextVars() {
+    	ServletContext servletContext = request.getSession(true).getServletContext();
+    	servletContext.setAttribute("host", "http://testurl");    	
+    	//request.getMockSession().setServletContext(servletContext);
+    	
+        final String result = VariableReplacer.replaceWithServletContext("%{context:host}", request, servletContext);
+
+        assertEquals("http://testurl", result);
+    }
+
+    
 }
