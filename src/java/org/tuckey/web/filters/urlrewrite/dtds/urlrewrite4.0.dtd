@@ -1,6 +1,6 @@
 <!--
  UrlRewriteFilter DTD
- http://tuckey.org/urlrewrite/
+ http://www.tuckey.org/urlrewrite/
 -->
 
 <!ELEMENT urlrewrite ((rule|class-rule|outbound-rule)*, catch*)>
