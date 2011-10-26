@@ -327,7 +327,7 @@ public class Status {
         }
         println("</style>");
         println("<body>");
-        println("<h1><a href=\"http://tuckey.org/urlrewrite/\">UrlRewriteFilter</a> " +
+        println("<h1><a href=\"http://www.tuckey.org/urlrewrite/\">UrlRewriteFilter</a> " +
                 UrlRewriteFilter.getFullVersionString() + " configuration overview " +
                 "(generated " + s.format(new Date()) + ")</h1>");
         println("<hr />");
