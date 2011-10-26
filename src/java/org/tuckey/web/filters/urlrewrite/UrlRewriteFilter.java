@@ -451,9 +451,16 @@ public class UrlRewriteFilter implements Filter {
      * @return time as a long
      */
     private long getConfFileLastModified() {
-        File confFile = new File(context.getRealPath(confPath));
-        return confFile.lastModified();
+        if ( context != null ) {
+            String realPath = context.getRealPath(confPath);
+            if ( realPath != null ) {
+                File confFile = new File(context.getRealPath(confPath));
+                return confFile.lastModified();
+            }
+        }
+        return INITIALISED_TIME;
     }
+    private static long INITIALISED_TIME = System.currentTimeMillis();
 
 
     /**
