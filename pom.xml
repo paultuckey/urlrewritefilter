@@ -6,7 +6,7 @@
     <packaging>jar</packaging>
     <version>3.2.0</version>
     <name>UrlRewriteFilter</name>
-    <url>http://tuckey.org/urlrewrite/</url>
+    <url>http://www.tuckey.org/urlrewrite/</url>
     <inceptionYear>2001</inceptionYear>
     <description>A Java Web Filter for any J2EE compliant web application server (such as Resin, Orion or Tomcat), which
         allows you to rewrite URLs before they get to your code. It is a very powerful tool just like Apache's

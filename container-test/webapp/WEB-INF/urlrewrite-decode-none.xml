@@ -2,7 +2,7 @@
 
 <!DOCTYPE urlrewrite
         PUBLIC "-//tuckey.org//DTD UrlRewrite 3.2//EN"
-        "http://tuckey.org/res/dtds/urlrewrite3.2.dtd">
+        "http://www.tuckey.org/res/dtds/urlrewrite3.2.dtd">
 
 <urlrewrite decode-using="null">
     <!-- decode-using="null" means we refer to url's in this file in encoded form -->
