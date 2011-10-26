@@ -2,9 +2,9 @@
 
 Upload UrlRewriteFilter @version@
 
-http://tuckey.org/urlrewrite/dist/urlrewritefilter-@version@-maven-bundle.jar
+http://urlrewritefilter.googlecode.com/files/urlrewritefilter-@version@-maven-bundle.jar
 
-http://tuckey.org/urlrewrite/
+http://www.tuckey.org/urlrewrite/
 
 UrlRewriteFilter
 
