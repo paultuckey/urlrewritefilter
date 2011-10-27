@@ -219,8 +219,8 @@ public class Status {
                 (rules.size() == 1 ? "is 1 rule" : "are " + rules.size() + " rules") + ", " +
                 (outboundRules.size() == 1 ? "1 outbound rule" : outboundRules.size() + " outbound rules") +
                 (conditionsCount > 0 ? " and " : "") +
-                (conditionsCount == 1 ? conditionsCount + " condtion" : "") +
-                (conditionsCount > 1 ? conditionsCount + " condtions" : "") +
+                (conditionsCount == 1 ? conditionsCount + " condition" : "") +
+                (conditionsCount > 1 ? conditionsCount + " conditions" : "") +
                 " in the configuration file.</p>");
 
         showRules(rules);
@@ -500,7 +500,7 @@ public class Status {
         List conditions = rule.getConditions();
         if (conditions.size() == 0) return;
 
-        println("<p>Given that the following condtion" +
+        println("<p>Given that the following condition" +
                 (conditions.size() == 1 ? " is" : "s are") + " met.</p>" +
                 "<ol>");
         for (int j = 0; j < conditions.size(); j++) {
@@ -511,7 +511,9 @@ public class Status {
                         ("notequal".equals(condition.getOperator()) ? "does NOT match" : "matches") + " the value " +
                         "<code>" + condition.getValue() + "</code>");
             } else {
-                println("<code>" + condition.getType() + "</code> is <code>" +
+                println("<code>" + condition.getType() + "</code> " +
+                        (condition.getName() == null ? "" : "<code>" + condition.getName() + "</code> ") +
+                        "is <code>" +
                         ("greater".equals(condition.getOperator()) ? "greater than" : "") +
                         ("less".equals(condition.getOperator()) ? "less than" : "") +
                         ("equal".equals(condition.getOperator()) ? "equal to" : "") +
