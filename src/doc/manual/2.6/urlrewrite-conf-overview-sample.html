@@ -6,7 +6,7 @@
 <h1><a href="http://www.tuckey.org/urlrewrite/">UrlRewriteFilter</a> 2.6.0 build 5728 configuration overview (generated 7/12/05 23:37)</h1>
 <hr>
 <h2>Summary of build/WEB-INF/urlrewrite.xml</h2>
-<p>In total there are 12 rules, 2 outbound rules and 10 condtions in the configuration file.</p>
+<p>In total there are 12 rules, 2 outbound rules and 10 conditions in the configuration file.</p>
 <h3>Test Rule1 (rule 0)</h3>
 <dl><dd><p>A test rule to show a simple redirect.</p></dd></dl>
 <p>URL's matching <code>/test/status/</code> will be <code>redirected</code> to <code>/rewrite-status</code>.</p>
@@ -36,7 +36,7 @@ An attribute on the <code>session</code> object called <code>chairShopper</code>
 <p></p>
 <h3>Test Rule disabled (rule 4) **DISABLED**</h3>
 <p>URL's matching <code>/test/disabled/</code> will be <code>redirected</code> to <code>/rewrite-status</code>.</p>
-<p>Given that the following condtions are met.</p><ol>
+<p>Given that the following conditions are met.</p><ol>
 <li>
 The <code>user-agent</code> HTTP header does NOT match the value <code>mac</code>
 <code>and</code>
@@ -56,7 +56,7 @@ The <code>charset</code> HTTP header matches the value <code>utf</code>
 <p></p>
 <h3>Test Rule with sets (rule 5)</h3>
 <p>URL's matching <code>/test/disabled/</code>.</p>
-<p>Given that the following condtion is met.</p><ol>
+<p>Given that the following condition is met.</p><ol>
 <li>
 The <code>user-agent</code> HTTP header does NOT match the value <code>mac</code>
 </li>
@@ -73,7 +73,7 @@ The <code>cache-control</code> HTTP response header to <code>ass</code>
 <p></p>
 <h3>Rule 6</h3>
 <p>URL's matching <code>/test-set/([0-9]+)</code> will be <code>forwarded</code> to <code>/test-set.jsp</code>.</p>
-<p>Given that the following condtion is met.</p><ol>
+<p>Given that the following condition is met.</p><ol>
 <li>
 The <code>user-agent</code> HTTP header does NOT match the value <code>mac</code>
 </li>
@@ -121,7 +121,7 @@ An attribute on the <code>request</code> object called <code>contentItem</code> 
 <p></p>
 <h3>Rule 8</h3>
 <p>URL's matching <code>/pref/([a-zA-Z]+)</code>.</p>
-<p>Given that the following condtion is met.</p><ol>
+<p>Given that the following condition is met.</p><ol>
 <li>
 <code>method</code> is <code>equal to</code> the value <code>POST</code>
 </li>
@@ -142,7 +142,7 @@ An attribute on the <code>request</code> object called <code>contentItem</code> 
 <p></p>
 <h3>Rule 11</h3>
 <p>URL's matching <code>/test-redirect-302</code> will <code>temporary-redirect</code> to <code>is-this-302</code>.</p>
-<p>Given that the following condtion is met.</p><ol>
+<p>Given that the following condition is met.</p><ol>
 <li>
 <code>user-in-role</code> is <code>equal to</code> the value <code>devil</code>
 </li>
@@ -150,7 +150,7 @@ An attribute on the <code>request</code> object called <code>contentItem</code> 
 <p></p>
 <h3>Out test 1 (outbound rule 0)</h3>
 <p>Outbound URL's matching <code>/page-not-for-devils(0-9)?</code> will be rewritten to <code>/devils-page</code>, after <code>response.encodeURL()</code> has been called.</p>
-<p>Given that the following condtion is met.</p><ol>
+<p>Given that the following condition is met.</p><ol>
 <li>
 <code>user-in-role</code> is <code>equal to</code> the value <code>devil</code>
 </li>
@@ -158,7 +158,7 @@ An attribute on the <code>request</code> object called <code>contentItem</code> 
 <p></p>
 <h3>Outbound Rule 1</h3>
 <p>Outbound URL's matching <code>^(.*);jsessionid=.*$</code> will be rewritten to <code>$1</code>.</p>
-<p>Given that the following condtion is met.</p><ol>
+<p>Given that the following condition is met.</p><ol>
 <li>
 The <code>user-agent</code> HTTP header matches the value <code>googlebot.*</code>
 </li>
