@@ -233,6 +233,8 @@ public class RequestProxy {
                 continue;
             } else if ("content-length".equalsIgnoreCase(h.getName())) {
                 continue;
+            } else if ("transfer-encoding".equalsIgnoreCase(h.getName())) {
+                continue;
             } else if (h.getName().toLowerCase().startsWith("cookie")) {
                 //retrieving a cookie which sets the session id will change the calling session: bad! So we skip this header.
                 continue;
