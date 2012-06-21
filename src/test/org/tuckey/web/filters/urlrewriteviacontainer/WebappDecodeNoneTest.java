@@ -2,7 +2,6 @@ package org.tuckey.web.filters.urlrewriteviacontainer;
 
 
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.xml.sax.SAXException;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -31,7 +30,7 @@ public class WebappDecodeNoneTest extends ContainerTestBase {
      */
     public void testTestUtf() throws ServletException, IOException {
         if ( "orion2.0.5".equals(getContainerId())) return; // orion not supported
-        String encodedStr = URLEncoder.encode("Fêtel'haïvolapük", "UTF8");
+        String encodedStr = URLEncoder.encode("m\u0101ori", "UTF8");
         GetMethod method = new GetMethod(getBaseUrl() + "/utf/" + encodedStr + "/");
         method.setRequestHeader("Accept-Encoding", "utf8");
         method.setFollowRedirects(false);
