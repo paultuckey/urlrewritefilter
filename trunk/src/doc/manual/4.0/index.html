@@ -121,7 +121,7 @@
         &lt;/init-param&gt;
 
         &lt;!-- sets up log level (will be logged to context log)
-        can be: TRACE, DEBUG, INFO (default), WARN, ERROR, FATAL, log4j, commons, slf4j,
+        can be: TRACE, DEBUG, INFO (default), WARN, ERROR, FATAL, slf4j,
         sysout:{level} (ie, sysout:DEBUG)
         if you are having trouble using normal levels use sysout:DEBUG
         (default WARN) --&gt;
@@ -197,10 +197,9 @@
     &lt;/filter-mapping&gt;
 </code></pre>
 
-<p>Note, setting <code>logLevel</code> to <code>log4j</code> or <code>commons</code> will cause the built in loging to
-    call either <a href="http://logging.apache.org/log4j/docs/index.html">log4j</a> or
-    <a href="http://jakarta.apache.org/commons/logging/">commons-logging</a> as if they were the logging framework,
-    obviously you will need to have the jar for log4j or commons-logging in your classpath.</p>
+<p>Note, setting <code>logLevel</code> to <code>slf4j</code> will cause the built in logging to
+    call <a href="http://www.slf4j.org/">slf4j</a> as if it was the logging framework,
+    obviously you will need to have the jar for slf4j in your classpath.</p>
 
 
 <a name="configuration"> </a>
@@ -1420,7 +1419,7 @@
      </tr>
      <tr>
          <td>RewriteLog</td>
-         <td>SYSOUT, SYSERR, log4j, commons (if not set context logging will be used)</td>
+         <td>SYSOUT, SYSERR, slf4j (if not set, servlet context logging will be used)</td>
      </tr>
      <tr>
          <td>RewriteRule</td>
