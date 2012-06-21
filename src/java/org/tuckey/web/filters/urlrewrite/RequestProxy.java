@@ -45,8 +45,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -70,7 +69,7 @@ import java.util.Enumeration;
  * Time: 16:02:54
  */
 public class RequestProxy {
-    private static final Logger log = LoggerFactory.getLogger(RequestProxy.class);
+    private static final Log log = Log.getLog(RequestProxy.class);
 
     /**
      * This method performs the proxying of the request to the target address.

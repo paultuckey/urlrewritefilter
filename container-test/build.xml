@@ -60,7 +60,7 @@
             </fileset>
             <classes dir="${build.java.dir}"/>
             <classes dir="${build.test.dir}"/>
-            <lib file="../lib/log4j-1.2.8.jar"/>
+            <lib file="../lib/slf4j-api-1.5.2.jar"/>
         </war>
         <war warfile="${target.dir}/webapp-mod-style.war" webxml="webapp-mod-style/WEB-INF/web.xml">
             <fileset dir="webapp-mod-style">
