@@ -21,8 +21,14 @@
     </licenses>
 
     <scm>
-        <connection>scm:svn:http://urlrewritefilter.googlecode.com/svn/trunk/</connection>
+        <connection>scm:svn:https://urlrewritefilter.googlecode.com/svn/trunk</connection>
+        <developerConnection>scm:svn:https://urlrewritefilter.googlecode.com/svn/trunk</developerConnection>
+        <url>https://urlrewritefilter.googlecode.com/svn/trunk</url>
     </scm>
+
+    <issueManagement>
+        <url>http://code.google.com/p/urlrewritefilter/issues/list</url>
+    </issueManagement>
 
     <build>
         <finalName>${artifactId}-${version}</finalName>
