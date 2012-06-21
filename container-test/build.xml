@@ -60,7 +60,6 @@
             </fileset>
             <classes dir="${build.java.dir}"/>
             <classes dir="${build.test.dir}"/>
-            <lib file="../lib/gzipfilter-repackaged.jar"/>
             <lib file="../lib/log4j-1.2.8.jar"/>
         </war>
         <war warfile="${target.dir}/webapp-mod-style.war" webxml="webapp-mod-style/WEB-INF/web.xml">
