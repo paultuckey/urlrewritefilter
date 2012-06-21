@@ -54,8 +54,6 @@
         <delete dir="www/api/"/>
         <delete dir="www/test-report/"/>
         <delete dir="www/manual/"/>
-
-        <delete dir="dist-annotation/"/>
     </target>
 
 
@@ -68,8 +66,8 @@
                destdir="${build.home}/java"
                debug="${compile.debug}"
                deprecation="${compile.deprecation}"
-               source="1.3"
-               target="1.3"
+               source="1.5"
+               target="1.5"
                optimize="${compile.optimize}">
             <classpath refid="compile.classpath"/>
         </javac>
@@ -81,18 +79,6 @@
 
     </target>
 
-    <target name="compile-annotation">
-        <!-- separated so that we can use language level 1.5 here (not 1.3) -->
-        <javac srcdir="src/annotation/java" destdir="${build.home}/java" source="1.5" target="1.5"
-               debug="${compile.debug}" deprecation="${compile.deprecation}" optimize="${compile.optimize}">
-            <classpath refid="compile.classpath"/>
-            <classpath refid="compiled.classpath"/>
-        </javac>
-        <copy todir="${build.home}/java">
-            <fileset dir="src/annotation/java" excludes="**/*.java"/>
-        </copy>
-    </target>
-
     <target name="compile-test" depends="compile">
 
         <mkdir dir="${build.home}/test"/>
@@ -100,8 +86,8 @@
                destdir="${build.home}/test"
                debug="${compile.debug}"
                deprecation="${compile.deprecation}"
-               source="1.3"
-               target="1.3"
+               source="1.5"
+               target="1.5"
                optimize="${compile.optimize}">
             <classpath refid="compile.classpath"/>
             <classpath path="${build.home}/java"/>
@@ -116,17 +102,12 @@
 
     </target>
 
-    <target name="dist-jar" depends="clean,compile,compile-annotation" description="Create binary distribution">
+    <target name="dist-jar" depends="clean,compile" description="Create binary distribution">
         <!-- create JAR file -->
         <delete dir="dist/urlrewrite-${app.version}/webapp"/>
         <mkdir dir="dist/urlrewrite-${app.version}/webapp/WEB-INF/lib/"/>
 
         <copy file="LICENSE.txt" todir="${build.home}/java/META-INF"/>
-
-        <!-- making service files sometimes seemed to fail using jar task so do it manually -->
-        <mkdir dir="${build.home}/java/META-INF/services"/>
-        <echo file="${build.home}/java/META-INF/services/javax.annotation.processing.Processor">org.tuckey.web.filters.urlrewrite.annotation.UrlRewriteAnnotationProcessor</echo>
-        <echo file="${build.home}/java/META-INF/services/com.sun.mirror.apt.AnnotationProcessorFactory">org.tuckey.web.filters.urlrewrite.annotation.HttpUrlAPTFactory</echo>
 
         <jar jarfile="dist/urlrewrite-${app.version}.jar" basedir="${build.home}/java">
             <manifest>
@@ -276,43 +257,5 @@
                 dest="src/doc/manual/${app.manual-version}/urlrewrite-conf-overview-sample.html"/>
     </target>
 
-
-    <target name="annotation-test-compile-jdk5" depends="dist-jar" description="normal way to process annotations">
-        <mkdir dir="${build.home}/annotation"/>
-        <apt srcdir="src/annotation/test/" compile="false" factory="org.tuckey.web.filters.urlrewrite.annotation.HttpUrlAPTFactory">
-            <classpath path="dist/urlrewrite-${app.version}.jar"/>
-            <option name="saveRulesTo" value="${build.home}/annotation/urlrewrite-generated-test-jdk5.xml"/>
-        </apt>
-    </target>
-
-    <target name="annotation-test-compile-jdk6" depends="dist-jar" description="normal way to process annotations">
-        <mkdir dir="${build.home}/annotation/test-classes"/>
-        <javac srcdir="src/annotation/test/" destdir="${build.home}/annotation/test-classes" target="1.6">
-            <classpath path="dist/urlrewrite-${app.version}.jar"/>
-            <classpath refid="compile.classpath"/>
-            <compilerarg line="-AurlrewriteDest=${build.home}/annotation/urlrewrite-generated.xml"/>
-            <!--
-            manually specify the processor ie, don't rely on jar service loader...
-            <compilerarg value="-processor"/>
-            <compilerarg value="org.tuckey.web.filters.urlrewrite.annotation.UrlRewriteAnnotationProcessor"/>
-
-            options for processor...
-            <compilerarg value="-AurlrewriteShowPositions=true"/>
-            <compilerarg value="-AurlrewriteDebug=true"/>
-
-            javac specific options...
-            <compilerarg value="-proc:only"/>
-            <compilerarg value="-XprintRounds"/>
-            <compilerarg value="-XprintProcessorInfo"/>
-            -->
-        </javac>
-        <available property="urlrewrite.generated" file="${build.home}/annotation/urlrewrite-generated.xml"/>
-        <fail unless="urlrewrite.generated" />
-    </target>
-
-    <target name="check-service-loader" depends="dist-jar">
-        <!-- check that annotation processor has made it into ServiceLoader -->
-        <java classname="org.tuckey.web.filters.urlrewrite.annotation.ProcessorServiceLoaderCheck" classpath="dist/urlrewrite-${app.version}.jar"/>
-    </target>
 
 </project>
