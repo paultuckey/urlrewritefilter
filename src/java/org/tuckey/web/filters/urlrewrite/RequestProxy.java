@@ -40,10 +40,13 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.ProxyHost;
 import org.apache.commons.httpclient.SimpleHttpConnectionManager;
+import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.tuckey.web.filters.urlrewrite.utils.Log;
+import org.apache.commons.httpclient.methods.RequestEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -67,7 +70,7 @@ import java.util.Enumeration;
  * Time: 16:02:54
  */
 public class RequestProxy {
-    private static final Log log = Log.getLog(RequestProxy.class);
+    private static final Logger log = LoggerFactory.getLogger(RequestProxy.class);
 
     /**
      * This method performs the proxying of the request to the target address.
@@ -121,7 +124,17 @@ public class RequestProxy {
             log.info("executeMethod / fetching data ...");
         }
 
-        final int result = client.executeMethod(config, targetRequest);
+        final int result;
+        if (targetRequest instanceof EntityEnclosingMethod) {
+            final RequestProxyCustomRequestEntity requestEntity = new RequestProxyCustomRequestEntity(
+                    hsRequest.getInputStream(), hsRequest.getContentLength(), hsRequest.getContentType());
+            final EntityEnclosingMethod entityEnclosingMethod = (EntityEnclosingMethod) targetRequest;
+            entityEnclosingMethod.setRequestEntity(requestEntity);
+            result = client.executeMethod(config, entityEnclosingMethod);
+
+        } else {
+            result = client.executeMethod(config, targetRequest);
+        }
 
         //copy the target response headers to our response
         setupResponseHeaders(targetRequest, hsResponse);
@@ -251,5 +264,47 @@ public class RequestProxy {
         if (httpMethod.getStatusCode() != 200) {
             hsResponse.setStatus(httpMethod.getStatusCode());
         }
+    }
+}
+
+/**
+ * @author Gunnar Hillert
+ */
+class RequestProxyCustomRequestEntity  implements RequestEntity {
+
+ 	private InputStream is = null;
+	private long contentLength = 0;
+	private String contentType;
+
+    public RequestProxyCustomRequestEntity(InputStream is, long contentLength, String contentType) {
+        super();
+        this.is = is;
+        this.contentLength = contentLength;
+        this.contentType = contentType;
+    }
+
+    public boolean isRepeatable() {
+        return true;
+    }
+
+    public String getContentType() {
+        return this.contentType;
+    }
+
+    public void writeRequest(OutputStream out) throws IOException {
+
+        try {
+            int l;
+            byte[] buffer = new byte[10240];
+            while ((l = is.read(buffer)) != -1) {
+                out.write(buffer, 0, l);
+            }
+        } finally {
+            is.close();
+        }
+    }
+
+    public long getContentLength() {
+        return this.contentLength;
     }
 }
