@@ -424,6 +424,10 @@ public class UrlRewriteAnnotationProcessor extends AbstractProcessor {
     }
 
     private static void checkDirsExistMkdir(File dir) {
+        if ( dir == null ) throw new RuntimeException("checkDirsExistMkdir called with null");
+        if (dir.getParentFile() == null ) {
+            checkDirsExistMkdir(dir);
+        }
         if (!dir.getParentFile().exists()) {
             checkDirsExistMkdir(dir.getParentFile());
         }
