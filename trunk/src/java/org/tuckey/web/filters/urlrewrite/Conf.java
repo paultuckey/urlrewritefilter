@@ -34,10 +34,10 @@
  */
 package org.tuckey.web.filters.urlrewrite;
 
+import org.tuckey.web.filters.urlrewrite.gzip.GzipFilter;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.utils.ModRewriteConfLoader;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
-import org.tuckey.web.filters.urlrewrite.utils.GzipFilterRun;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -361,8 +361,8 @@ public class Conf {
             Node runNode = gzipNodes.item(j);
             if (runNode == null) continue;
             Run run = new Run();
-            run.setClassStr(GzipFilterRun.class.getName());
-            run.setMethodStr("run(HttpServletRequest, HttpServletResponse, FilterChain)");
+            run.setClassStr(GzipFilter.class.getName());
+            run.setMethodStr("doFilter(HttpServletRequest, HttpServletResponse, FilterChain)");
             processInitParams(runNode, run);
             runnable.addRun(run);
         }
