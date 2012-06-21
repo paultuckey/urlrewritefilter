@@ -43,7 +43,7 @@ public class WebappDecodeUtf8Test extends ContainerTestBase {
      *
      */
     public void testTestUtf() throws ServletException, IOException {
-        String utfSampleString = "Fêtel'haïvolapük";
+        String utfSampleString = "m\u0101ori";
         GetMethod method = new GetMethod(getBaseUrl() + "/utf/" + URLEncoder.encode(utfSampleString, "UTF8") + "/");
         method.setRequestHeader("Accept-Encoding", "utf8");
         method.setFollowRedirects(false);
