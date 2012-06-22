@@ -13,7 +13,7 @@
     <dependency>
         <groupId>org.tuckey</groupId>
         <artifactId>urlrewritefilter</artifactId>
-        <version>4.0.0</version>
+        <version>4.0.1</version>
     </dependency>
   </dependencies>
 </project>

@@ -4,7 +4,7 @@
     <groupId>org.tuckey</groupId>
     <artifactId>urlrewritefilter-annotation</artifactId>
     <packaging>jar</packaging>
-    <version>4.0.0</version>
+    <version>4.0.1</version>
     <name>UrlRewriteFilter Annotation</name>
     <url>http://www.tuckey.org/urlrewrite/</url>
     <inceptionYear>2006</inceptionYear>

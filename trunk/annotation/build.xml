@@ -1,6 +1,9 @@
 <project name="UrlRewriteFilter Annotation" basedir=".">
 
-    <property name="app.version" value="4.0.0"/>
+    <!-- Give user a chance to override without editing this file (and without typing -D each time) -->
+    <property file="${user.home}/urlrewrite.build.properties"/>
+    <property file="${user.home}/build.properties"/>
+    <property file="${basedir}/../build.properties" />
 
     <!--
 
