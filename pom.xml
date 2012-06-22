@@ -60,6 +60,12 @@
                 </excludes>
                 <filtering>true</filtering>
             </resource>
+            <resource>
+                <directory>${basedir}</directory>
+                <includes>
+                    <include>LICENSE.txt</include>
+                </includes>
+            </resource>
         </resources>
         <testResources>
             <testResource>
