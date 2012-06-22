@@ -1,0 +1,38 @@
+<project name="UrlRewriteFilter">
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.2.1</version>
+    </skin>
+
+
+    <custom>
+        <fluidoSkin>
+            <topBarEnabled>false</topBarEnabled>
+            <sideBarEnabled>false</sideBarEnabled>
+            <bannerLeft>
+                <name>UrlRewriteFilter</name>
+                <href>http://www.tuckey.org/urlrewrite/</href>
+            </bannerLeft>
+        </fluidoSkin>
+    </custom>
+
+
+
+    <bannerLeft>
+        <name>${project.name}</name>
+        <!-- <src>http://urlrewritefilter.googlecode.com/svn/trunk/src/doc/manual/3.2/urf.gif</src> -->
+        <href>http://www.tuckey.org/urlrewrite/</href>
+    </bannerLeft>
+    <body>
+        <menu name="Overview">
+            <item name="Home" href="http://www.tuckey.org/urlrewrite/"/>
+            <item name="Download" href="http://www.tuckey.org/urlrewrite/#download"/>
+            <item name="Source" href="http://code.google.com/p/urlrewritefilter/source"/>
+            <item name="Manual" href="http://urlrewritefilter.googlecode.com/svn/trunk/src/doc/manual/4.0/index.html"/>
+        </menu>
+
+        <menu name="Generated Documentation" ref="reports"/>
+    </body>
+
+</project>
