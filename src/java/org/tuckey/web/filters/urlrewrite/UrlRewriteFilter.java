@@ -332,6 +332,7 @@ public class UrlRewriteFilter implements Filter {
     public void destroy() {
         log.info("destroy called");
         destroyActual();
+        Log.resetAll();
     }
 
     public void destroyActual() {
