@@ -1,0 +1,37 @@
+<!--
+   UrlRewriteFilter DTD
+   http://www.tuckey.org/urlrewrite/
+-->
+
+<!ELEMENT urlrewrite (rule+)>
+
+<!ELEMENT rule (name?, note?, condition*, from, to?, set*)>
+<!ATTLIST rule
+enabled   (true|false)               "true"
+>
+
+
+<!ELEMENT condition (#PCDATA)>
+<!ATTLIST condition
+type        (header|method|port|time|year|month|dayofmonth|dayofweek|ampm|hourofday|minute|second|millisecond)   "header"
+name        CDATA               #IMPLIED
+next        (and|or)            "and"
+operator    (equal|notequal|greater|less|greaterorequal|lessorequal)   "equal"
+>
+
+<!ELEMENT from (#PCDATA)>
+
+<!ELEMENT to (#PCDATA)>
+<!ATTLIST to
+type        (redirect|temporary-redirect|permanent-redirect|include|forward|passthrough)     "forward"
+last        (true|false)               "true"
+>
+
+<!ELEMENT set (#PCDATA)>
+<!ATTLIST set
+type        (request|session|response-header)    "request"
+name        CDATA               #IMPLIED
+>
+
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT note (#PCDATA)>

@@ -1,0 +1,46 @@
+
+body {
+    background: #ffffff;
+}
+
+h1 {
+    font-family: Arial, Helvetica, sans-serif; color:#000000;
+    font-size: medium;
+}
+
+h2 {
+    border: 1px solid #c0c0c0;
+    background-color: #ccccff;
+    padding: 5px;
+}
+
+h3 {
+    border-top: 1px solid #c0c0c0;
+    margin-top: 1em;
+    padding-top: 0.25em;
+}
+
+code {
+    background-color: #eeeeee;
+}
+
+hr {
+    border: 0;
+    background-color: #c0c0c0;
+}
+
+.err {
+    color: #ff0000;
+}
+
+a:link, a:visited {
+    color: blue;
+}
+
+a:active, a:hover, {
+    color: #f30 !important;
+}
+
+a:link, a:visited {
+    color: #555 !important;
+}

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 4.0//EN"
+        "http://www.tuckey.org/res/dtds/urlrewrite4.0.dtd"
+[
+    <!ENTITY included SYSTEM "conf-test2-incl.xml">
+]>
+
+<urlrewrite default-match-type="wildcard"
+            use-context="true"
+            use-query-string="true"
+            decode-using="utf-16">
+
+    <rule>
+        <name>BasicFrom1</name>
+        <condition next="or" type="header" name="user-agent">basicvalue1</condition>
+        <from>basicfrom1</from>
+        <set name="valuenull"/>
+        <to last="false">basicto1</to>
+    </rule>
+
+    <rule match-type="regex">
+        <name>BasicRule2</name>
+        <from>basicfrom2</from>
+        <to>basicto2</to>
+    </rule>
+
+    <rule match-type="wildcard">
+        <from>basicfrom3</from>
+        <to>basicto3</to>
+    </rule>
+
+    &included;
+
+</urlrewrite>
+

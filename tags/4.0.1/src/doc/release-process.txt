@@ -1,0 +1,12 @@
+
+- update version number in
+  + UrlRewriteFilter.java
+  + build.properties
+- run maven site
+- run ant dist
+- ftp up all dist files
+- submit to maven
+- maven artifact:create-upload-bundle
+- sign with gpg
+- https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
+- mvn deploy
