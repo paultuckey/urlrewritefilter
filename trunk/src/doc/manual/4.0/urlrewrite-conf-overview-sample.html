@@ -50,7 +50,7 @@ a:link, a:visited {
 }
 </style>
 <body>
-<h1><a href="http://www.tuckey.org/urlrewrite/">UrlRewriteFilter</a> 3.2.0 build 1 configuration overview (generated 6/10/10 14:43)</h1>
+<h1><a href="http://www.tuckey.org/urlrewrite/">UrlRewriteFilter</a> 4.0.1 build 335 configuration overview (generated 6/22/12 4:33 PM)</h1>
 <hr />
 <h2>Summary
  of urlrewrite.xml
@@ -107,7 +107,7 @@ The <code>charset</code> HTTP header matches the value <code>utf</code>
 <code>and</code>
 </li>
 <li>
-<code>user-in-role</code> is <code>equal to</code> the value <code>admin</code>
+<code>user-in-role</code> <code>admin</code> is <code>equal to</code> the value <code>admin</code>
 </li>
 </ol>
 <p>Note, other rules will be processed after this rule.</p>
@@ -212,7 +212,7 @@ An attribute on the <code>request</code> object called <code>contentItem</code> 
 <p>URL's matching <code>/test-redirect-302</code> will <code>temporary-redirect</code> to <code>is-this-302</code>.</p>
 <p>This rule and it's conditions will use the <code>regex</code> matching engine.</p><p>Given that the following condition is met.</p><ol>
 <li>
-<code>user-in-role</code> is <code>equal to</code> the value <code>devil</code>
+<code>user-in-role</code> <code>devil</code> is <code>equal to</code> the value <code>devil</code>
 </li>
 </ol>
 <p>Note, other rules will be processed after this rule.</p>
@@ -237,7 +237,7 @@ An attribute on the <code>request</code> object called <code>test1</code> to the
 <p>Outbound URL's matching <code>/page-not-for-devils(0-9)?</code> will be rewritten to <code>/devils-page</code>, after <code>response.encodeURL()</code> has been called.</p>
 <p>Given that the following condition is met.</p><ol>
 <li>
-<code>user-in-role</code> is <code>equal to</code> the value <code>devil</code>
+<code>user-in-role</code> <code>devil</code> is <code>equal to</code> the value <code>devil</code>
 </li>
 </ol>
 <p>Note, other outbound rules will be processed after this rule.</p>
