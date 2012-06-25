@@ -105,7 +105,7 @@ public class RequestProxy {
         if (proxyHost != null) config.setProxyHost(proxyHost);
 
         final int port = url.getPort() != -1 ? url.getPort() : url.getDefaultPort();
-        config.setHost(url.getHost(), port, "http");
+        config.setHost(url.getHost(), port, url.getProtocol());
 
         log.info("config is " + config.toString());
 
