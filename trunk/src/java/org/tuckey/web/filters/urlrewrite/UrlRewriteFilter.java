@@ -533,7 +533,7 @@ public class UrlRewriteFilter implements Filter {
                 props.load(is);
                 String buildNumber = (String) props.get("build.number");
                 if (!StringUtils.isBlank(buildNumber)){
-                    buildNumberStr =  " build " + props.get("build.number");
+                    buildNumberStr =  props.get("project.version") + " build " + props.get("build.number");
                 }
             }
         } catch (IOException e) {
