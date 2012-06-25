@@ -45,6 +45,7 @@
             <li><a href="guide.html#method">Method Invocation</a></li>
             <li><a href="guide.html#urlabs">URL Abstraction</a></li>
             <li><a href="guide.html#mod_re">mod_rewrite vs UrlRewriteFilter</a></li>
+            <li><a href="guide.html#extending">Extending UrlRewriteFilter</a></li>
         </ul>
     </li>
 </ul>
@@ -59,7 +60,6 @@
 
 <p>Read <b><a href="guide.html">examples of usage</a></b> and a
     <a href="urlrewrite-conf-overview-sample.html">sample</a> of the <a href="#anttask">ant task</a> report.
-    If you have feedback, or conf you want to share with the world <a href="mailto:paul@tuckey.org">email me</a>.
     If you have any suggestions/examples for this manual please post them to the
     <a href="http://groups.google.com/group/urlrewrite">group</a>.</p>
 
@@ -94,7 +94,7 @@
     &lt;/filter-mapping&gt;
         </code></pre></li>
      <li>Add <b><a href="http://urlrewritefilter.googlecode.com/svn/trunk/src/doc/manual/4.0/urlrewrite.xml">urlrewrite.xml</a></b>
-         into your WEB-INF directory, this is where your config will go. (src/main/webapp/WEB-INF/ for Maven users)</li>
+         into your WEB-INF directory. (src/main/webapp/WEB-INF/ for Maven users)</li>
      <li>Restart the context.</li>
 </ol>
 
