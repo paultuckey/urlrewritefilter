@@ -85,6 +85,9 @@ public class UrlRewriteFilter implements Filter {
 
     private static Log log = Log.getLog(UrlRewriteFilter.class);
 
+    /**
+     * @deprecated use getFullVersionString.
+     */
     public static final String VERSION = "4.0.1";
 
     public static final String DEFAULT_WEB_CONF_PATH = "/WEB-INF/urlrewrite.xml";
@@ -439,7 +442,11 @@ public class UrlRewriteFilter implements Filter {
             // reload conf
             confLastLoad = System.currentTimeMillis();
             log.info("conf file modified since last load, reloading");
-            loadUrlRewriterLocal();
+            try{
+                loadUrlRewriterLocal();
+            } catch(Exception ex){
+                log.error("Error in reloading the conf file. No rules to be applied for subsequent requests.", ex);
+            }
         } else {
             log.debug("conf is not modified");
         }
