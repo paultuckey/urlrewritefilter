@@ -12,8 +12,8 @@
     <property name="target.dir" location="target"/>
     <property name="report.dir" location="reports"/>
 
-    <property name="build.java.dir" location="../build/java"/>
-    <property name="build.test.dir" location="../build/test"/>
+    <property name="build.java.dir" location="../target/classes"/>
+    <property name="build.test.dir" location="../target/test-classes"/>
 
 
     <!--
@@ -21,7 +21,7 @@
     -->
 
     <path id="test.classpath">
-        <fileset dir="../lib/">
+        <fileset dir="lib/">
             <include name="*.jar"/>
         </fileset>
         <path path="${build.java.dir}"/>
@@ -30,11 +30,9 @@
 
     <taskdef resource="cargo.tasks">
         <classpath>
-            <pathelement location="lib/cargo-ant-1.0.2.jar"/>
-            <pathelement location="lib/cargo-core-uberjar-1.0.2.jar"/>
-            <pathelement location="lib/commons-discovery-0.4.jar"/>
-            <pathelement location="lib/commons-logging-1.1.1.jar"/>
-            <pathelement location="lib/dom4j-1.4.jar"/>
+            <fileset dir="lib/">
+                <include name="*.jar"/>
+            </fileset>
         </classpath>
     </taskdef>
 
@@ -48,11 +46,7 @@
         <delete dir="${report.dir}"/>
     </target>
 
-    <target name="compile" depends="clean">
-        <ant dir="../" target="compile-test"/>
-    </target>
-
-    <target name="war" depends="compile" description="Generate the runtime war">
+    <target name="war" description="Generate the runtime war">
         <mkdir dir="${target.dir}"/>
         <war warfile="${target.dir}/webapp.war" webxml="webapp/WEB-INF/web.xml">
             <fileset dir="webapp">
@@ -60,7 +54,7 @@
             </fileset>
             <classes dir="${build.java.dir}"/>
             <classes dir="${build.test.dir}"/>
-            <lib file="../lib/slf4j-api-1.5.2.jar"/>
+            <lib file="${user.home}/.m2/repository/org/slf4j/slf4j-api/1.5.2/slf4j-api-1.5.2.jar"/>
         </war>
         <war warfile="${target.dir}/webapp-mod-style.war" webxml="webapp-mod-style/WEB-INF/web.xml">
             <fileset dir="webapp-mod-style">
@@ -84,10 +78,10 @@
         <!-- 5.0.29 doesn't compile jsp's unser 1.5 jdk... see here http://mail-archives.apache.org/mod_mbox/tomcat-dev/200410.mbox/%3C416EB794.8000501@ptc.com%3E
         <containerTest id="tomcat-5.0.29" containerid="tomcat5x" home="N:\java\appservers\jakarta-tomcat-5.0.29" /> -->
 
-        <containerTest id="tomcat-4.1.31" containerid="tomcat5x" home="N:\java\appservers\jakarta-tomcat-4.1.31" />
-        <containerTest id="tomcat-5.5.5" containerid="tomcat5x" home="N:\java\appservers\jakarta-tomcat-5.5.5" />
-        <containerTest id="tomcat-6.0.16" containerid="tomcat6x" home="C:\java\apache-tomcat-6.0.16"/>
-        <containerTest id="orion2.0.5" containerid="orion2x" home="N:\java\appservers\orion-2.0.5"/>
+        <!--<containerTest id="tomcat-4.1.31" containerid="tomcat5x" home="N:\java\appservers\jakarta-tomcat-4.1.31" />  -->
+        <!--<containerTest id="tomcat-5.5.5" containerid="tomcat5x" home="N:\java\appservers\jakarta-tomcat-5.5.5" /> -->
+        <containerTest id="tomcat-6.0.32" containerid="tomcat6x" home="C:\java\apache-tomcat-6.0.32"/>
+        <!--<containerTest id="orion2.0.5" containerid="orion2x" home="N:\java\appservers\orion-2.0.5"/>   -->
 
         <!-- <containerTest id="tomcat-5.5.23" containerid="tomcat5x"
                        installurl="http://www.ibiblio.org/pub/mirrors/apache/tomcat/tomcat-5/v5.5.26/bin/apache-tomcat-5.5.26.zip"/> -->
