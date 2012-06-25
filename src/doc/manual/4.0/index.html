@@ -13,7 +13,7 @@
 <div id="masthead">
     <a href="http://www.tuckey.org/urlrewrite/">
         <img id="logo" src="urf.gif" border="0" alt="Tuckey Logo" />
-        Url Rewrite Filter <!--@ver-->4.0.0<!--/@ver--></a>
+        Url Rewrite Filter <!--@ver-->4.0.1<!--/@ver--></a>
 </div>
 
 <div id="menu">
@@ -67,10 +67,18 @@
 <a name="install"> </a>
 <h2>Install</h2>
 
-<ol>
-    <li><a href="http://www.tuckey.org/urlrewrite/#download">Download</a> the zip (or tar.gz) and extract it into your
-        context's directory ie, so that urlrewrite.xml goes into the WEB-INF directory.</li>
-    <li>Add the following to your WEB-INF/web.xml (add it near the top above your
+ <ol>
+    <li>Add Maven dependency below or add
+        <a href="http://urlrewritefilter.googlecode.com/files/urlrewritefilter-4.0.1.jar">urlrewritefilter-<!--@ver-->4.0.1<!--/@ver-->.jar</a>
+        directly into your <b>WEB-INF/lib</b> directory.
+           <pre><code>
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.tuckey&lt;/groupId&gt;
+        &lt;artifactId&gt;urlrewritefilter&lt;/artifactId&gt;
+        &lt;version&gt;<!--@ver-->4.0.1<!--/@ver-->&lt;/version&gt;
+    &lt;/dependency&gt;
+           </code></pre></li>
+     <li>Add the following to your WEB-INF/web.xml (add it near the top above your
         servlet mappings (if you have any)): (see <a href="#filterparams">filter
         parameters</a> for more options)
         <pre><code>
@@ -85,8 +93,9 @@
         &lt;dispatcher&gt;FORWARD&lt;/dispatcher&gt;
     &lt;/filter-mapping&gt;
         </code></pre></li>
-    <li>Add your own configuration to the WEB-INF/urlrewrite.xml that was created.</li>
-    <li>Restart the context.</li>
+     <li>Add <b><a href="http://urlrewritefilter.googlecode.com/svn/trunk/src/doc/manual/4.0/urlrewrite.xml">urlrewrite.xml</a></b>
+         into your WEB-INF directory, this is where your config will go. (src/main/webapp/WEB-INF/ for Maven users)</li>
+     <li>Restart the context.</li>
 </ol>
 
 <p>You can visit <a href="http://127.0.0.1:8080/rewrite-status">http://127.0.0.1:8080/rewrite-status</a>
@@ -121,7 +130,7 @@
         &lt;/init-param&gt;
 
         &lt;!-- sets up log level (will be logged to context log)
-        can be: TRACE, DEBUG, INFO (default), WARN, ERROR, FATAL, slf4j,
+        can be: slf4j, TRACE, DEBUG, INFO (default), WARN, ERROR, FATAL,
         sysout:{level} (ie, sysout:DEBUG)
         if you are having trouble using normal levels use sysout:DEBUG
         (default WARN) --&gt;
@@ -1327,7 +1336,7 @@
     &lt;target name="urlrewrite-doc" depends="compile"
         description="UrlRewriteFilter validation and documenting"&gt;
 
-    &lt;taskdef name="urlrewritedoc" classpath="lib/urlrewrite-<!--@ver-->4.0.0<!--/@ver-->.jar"
+    &lt;taskdef name="urlrewritedoc" classpath="lib/urlrewritefilter-<!--@ver-->4.0.1<!--/@ver-->.jar"
         classname="org.tuckey.web.filters.urlrewrite.UrlRewriteDocTask" /&gt;
     &lt;urlrewritedoc
         conf="${build.home}/WEB-INF/urlrewrite.xml"
@@ -1462,7 +1471,7 @@
 </div>
 
 <div id="footer">
-Copyright Paul Tuckey <!--@year-->2010<!--/@year-->
+Copyright Paul Tuckey <!--@year-->2012<!--/@year-->
     - <a href="http://www.tuckey.org/urlrewrite/">UrlRewirteFilter</a>
 </div>
 

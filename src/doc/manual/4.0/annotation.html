@@ -13,7 +13,7 @@
 <div id="masthead">
     <a href="http://www.tuckey.org/urlrewrite/">
         <img id="logo" src="urf.gif" border="0" alt="Tuckey Logo" />
-        Url Rewrite Filter <!--@ver-->4.0.0<!--/@ver--></a>
+        Url Rewrite Filter <!--@ver-->4.0.1<!--/@ver--></a>
 </div>
 
 <div id="menu">
@@ -95,7 +95,7 @@
 <h2>Conf Generation</h2>
 
     <p>With Java 1.6 the javac tool handles annotation processing.  So this means all you need to do is have a
-        "urlrewriteDest" option specified and have urlrewritefilter jar in your classpath. Example of compilerarg
+        "urlrewriteDest" option specified and have urlrewritefilter annotations jar in your classpath. Example of compilerarg
         elements that would be used with javac ant task:</p>
 
 <pre><code>
@@ -112,7 +112,7 @@
 <span style="color: gray;">&lt;target name="compile-urlrewrite-conf"&gt;
    &lt;javac srcdir=&quot;src/&quot; destdir=&quot;build/WEB-INF/classes&quot;&gt;
         &lt;classpath refid=&quot;compile.classpath&quot;/&gt;</span>
-        &lt;classpath path=&quot;lib/urlrewrite-<!--@ver-->3.2.0<!--/@ver-->.jar&quot;/&gt;
+        &lt;classpath path=&quot;lib/urlrewritefilter-annotation-<!--@ver-->4.0.1<!--/@ver-->.jar&quot;/&gt;
         &lt;compilerarg line=&quot;-AurlrewriteDest=build/WEB-INF/urlrewrite-generated.xml&quot;/&gt;
    <span style="color: gray;">&lt;/javac&gt;</span>
    &lt;!-- check file generated ok (if not you may be using the wrong jdk version)--&gt;
@@ -152,7 +152,7 @@
 </div>
 
 <div id="footer">
-Copyright Paul Tuckey <!--@year-->2010<!--/@year-->
+Copyright Paul Tuckey <!--@year-->2012<!--/@year-->
     - <a href="http://www.tuckey.org/urlrewrite/">UrlRewirteFilter</a>
 </div>
 
