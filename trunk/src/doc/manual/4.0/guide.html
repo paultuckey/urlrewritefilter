@@ -45,6 +45,7 @@
             <li><a href="guide.html#method">Method Invocation</a></li>
             <li><a href="guide.html#urlabs">URL Abstraction</a></li>
             <li><a href="guide.html#mod_re">mod_rewrite vs UrlRewriteFilter</a></li>
+            <li><a href="guide.html#extending">Extending UrlRewriteFilter</a></li>
         </ul>
     </li>
 </ul>
@@ -765,6 +766,30 @@ Cross context forwarding.
 &lt;/rule&gt;
 
 </code></pre>
+
+
+
+<a name="extending"></a>
+
+<h2>Extending UrlRewriteFilter</h2>
+
+
+<p>To extend the basic rule functionality make a subclass of org.tuckey.web.filters.urlrewrite.extend.RewriteRule</p>
+
+<p>For an example of an extended rule see:
+    <br/><a href="http://urlrewritefilter.googlecode.com/svn/trunk/src/java/org/tuckey/web/filters/urlrewrite/sample/SampleRewriteRule.java">src/java/org/tuckey/web/filters/urlrewrite/sample/SampleRewriteRule.java</a>
+</p>
+
+<p>A "class-rule" is configured by adding it into urlrewrite.xml as follows:</p>
+
+<code><pre>
+    &lt;class-rule class="org.tuckey.web.filters.urlrewrite.TestRuleObj"/&gt;
+</pre></code>
+
+<p>Or for a method with a name other than "matches":</p>
+<code><pre>
+    &lt;class-rule class="org.tuckey.web.filters.urlrewrite.TestRuleObj" method="trial"/&gt;
+</pre></code>
 
 
 
