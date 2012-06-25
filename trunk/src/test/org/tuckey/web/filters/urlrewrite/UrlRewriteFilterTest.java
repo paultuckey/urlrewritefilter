@@ -68,7 +68,7 @@ public class UrlRewriteFilterTest extends TestCase {
     public void testVersion() throws ServletException {
         String ver = UrlRewriteFilter.getFullVersionString();
         System.out.println(ver);
-        assertTrue(ver.matches("[0-9]+\\.[0-9]+\\.[0-9]+ build [0-9]+"));
+        assertTrue("Ver bad " + ver, ver.matches("[0-9]+\\.[0-9]+\\.[0-9]+ build [0-9]+"));
     }
 
     public void testInitContext() throws ServletException {
