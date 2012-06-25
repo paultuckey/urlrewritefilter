@@ -539,6 +539,6 @@ public class UrlRewriteFilter implements Filter {
         } catch (IOException e) {
             log.error(e);
         }
-        return VERSION + buildNumberStr;
+        return buildNumberStr;
     }
 }
