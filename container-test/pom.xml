@@ -1,0 +1,170 @@
+<project>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.tuckey</groupId>
+    <artifactId>urlrewritefilter-container-test</artifactId>
+    <packaging>war</packaging>
+    <version>4.0.1</version>
+    <name>UrlRewriteFilter Container Tests</name>
+    <url>http://www.tuckey.org/urlrewrite/</url>
+    <inceptionYear>2001</inceptionYear>
+    <description>Integration tests for UrlRewriteFilter</description>
+    <organization>
+        <name>Paul Tuckey</name>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>BSD</name>
+            <url>http://www.opensource.org/licenses/bsd-license.php</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Paul Tuckey</name>
+        </developer>
+    </developers>
+
+    <build>
+        <finalName>webapp</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.12</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12</version>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven2-plugin</artifactId>
+                <version>1.2.2</version>
+                <executions>
+                    <execution>
+                        <id>start-container</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>stop-container</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.tuckey</groupId>
+            <artifactId>urlrewritefilter</artifactId>
+            <version>4.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.9</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.12</version>
+            </plugin>
+        </plugins>
+    </reporting>
+
+
+    <!--
+    tomcat-5.0.29   tomcat5x    \java\appservers\jakarta-tomcat-5.0.29
+    tomcat-4.1.31   tomcat5x    \java\appservers\jakarta-tomcat-4.1.31
+    tomcat-5.5.5    tomcat5x    \java\appservers\jakarta-tomcat-5.5.5
+    tomcat-6.0.32   tomcat6x    \java\apache-tomcat-6.0.32
+    orion2.0.5      orion2x     \java\appservers\orion-2.0.5
+
+    tomcat-5.5.23   tomcat5x    http://www.ibiblio.org/pub/mirrors/apache/tomcat/tomcat-5/v5.5.26/bin/apache-tomcat-5.5.26.zip
+
+    resin-3.1.6     resin3x     \java\resin-3.1.6
+    jetty-6.1.11    jetty6x     http://dist.codehaus.org/jetty/jetty-6.1.11/jetty-6.1.11.zip
+    jboss-4.2.3.GA  jboss4x     http://voxel.dl.sourceforge.net/sourceforge/jboss/jboss-4.2.3.GA.zip
+    orion2.0.7      orion2x     http://www.orionserver.com/distributions/orion2.0.7.zip
+    -->
+    <profiles>
+        <profile>
+            <id>jetty6x</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.cargo</groupId>
+                        <artifactId>cargo-maven2-plugin</artifactId>
+                        <version>1.2.2</version>
+                        <configuration>
+                            <container>
+                                <containerId>jetty6x</containerId>
+                                <type>embedded</type>
+                            </container>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>tomcat5x</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.cargo</groupId>
+                        <artifactId>cargo-maven2-plugin</artifactId>
+                        <version>1.2.2</version>
+                        <configuration>
+                            <container>
+                                <containerId>tomcat5x</containerId>
+                                <zipUrlInstaller>
+                                    <url>http://www.apache.org/dist/tomcat/tomcat-5/v5.5.35/bin/apache-tomcat-5.5.35.zip</url>
+                                </zipUrlInstaller>
+                            </container>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+
+
+</project>

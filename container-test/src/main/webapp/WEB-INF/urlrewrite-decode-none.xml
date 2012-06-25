@@ -10,7 +10,7 @@
 
     <rule>
         <name>utf test</name>
-        <from>/utf/(F%C3%AAtel%27ha%C3%AFvolap%C3%BCk)/</from><!-- todo: put % encoded in from -->
+        <from>/utf/(māori)/</from><!-- todo: put % encoded in from -->
         <to type="redirect">%{context-path}/utf-redir/done/$1/</to>
     </rule>
 
