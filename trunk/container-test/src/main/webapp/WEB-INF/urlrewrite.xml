@@ -132,7 +132,7 @@
     <rule>
         <name>Simple Run Test</name>
         <from>^/run/test/(.*)$</from>
-        <run class="org.tuckey.web.filters.urlrewrite.test.TestRunObj"/>
+        <run class="org.tuckey.web.filters.urlrewriteviacontainer.TestRunObj"/>
         <to>null</to>
     </rule>
 

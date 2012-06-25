@@ -9,7 +9,7 @@
 
     <rule>
         <name>utf test</name>
-        <from>^/utf/Fêtel'haïvolapük/$</from>
+        <from>^/utf/māori/$</from>
         <to type="redirect">%{context-path}/utf-redir/done/</to>
     </rule>
 
