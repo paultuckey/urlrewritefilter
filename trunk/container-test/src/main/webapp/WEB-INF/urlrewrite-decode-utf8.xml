@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!DOCTYPE urlrewrite
-        PUBLIC "-//tuckey.org//DTD UrlRewrite 3.2//EN"
-        "http://www.tuckey.org/res/dtds/urlrewrite3.2.dtd">
+        PUBLIC "-//tuckey.org//DTD UrlRewrite 4.0//EN"
+        "http://www.tuckey.org/res/dtds/urlrewrite4.0.dtd">
 
 <urlrewrite decode-using="utf8">
     <!-- decode-using="null" means we refer to url's in this file in encoded form -->
