@@ -122,7 +122,7 @@ public class WebappHttpIT extends ContainerTestBase {
         GetMethod method = new GetMethod(getBaseUrl() + "/went%20to%20bahamas/;jsessionid=12243");
         method.setFollowRedirects(false);
         client.executeMethod(method);
-        assertEquals(getBaseUrl() + "/bahamas/;jsess", method.getResponseHeader("Location").getValue());
+        assertEquals(getBaseUrl() + "/jamaica/;jsessionid=12243", method.getResponseHeader("Location").getValue());
     }
 
     public void testSimpleRun() throws ServletException, IOException {
@@ -160,4 +160,11 @@ public class WebappHttpIT extends ContainerTestBase {
         }
         return os.toString();
     }
+
+    public void testSampleAnnotation() throws IOException {
+        GetMethod method = new GetMethod(getBaseUrl() + "/do-something/7");
+        client.executeMethod(method);
+        assertEquals(method.getResponseBodyAsString(), "AnnotatedClassSample id=7");
+    }
+
 }

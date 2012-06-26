@@ -35,6 +35,7 @@ public class WebappDecodeNoneIT extends ContainerTestBase {
         method.setRequestHeader("Accept-Encoding", "utf8");
         method.setFollowRedirects(false);
         client.executeMethod(method);
+        assertNotNull("no location header", method.getResponseHeader("Location"));
         assertEquals(getBaseUrl() + "/utf-redir/done/" + encodedStr + "/", method.getResponseHeader("Location").getValue());
     }
 
