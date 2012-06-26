@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <!DOCTYPE urlrewrite
-        PUBLIC "-//tuckey.org//DTD UrlRewrite 3.3//EN"
-        "http://www.tuckey.org/res/dtds/urlrewrite3.3.dtd">
+        PUBLIC "-//tuckey.org//DTD UrlRewrite 4.0//EN"
+        "http://www.tuckey.org/res/dtds/urlrewrite4.0.dtd"
+        [<!ENTITY included SYSTEM "urlrewrite-generated.xml">]>
 
 <urlrewrite>
+
+    &included;
 
     <rule>
         <note>
@@ -494,7 +497,7 @@
 
     <outbound-rule>
         <from>/bahamas/</from>
-        <to>/bahamas/;jsess</to>
+        <to>/jamaica/</to>
     </outbound-rule>
 
     <rule>
