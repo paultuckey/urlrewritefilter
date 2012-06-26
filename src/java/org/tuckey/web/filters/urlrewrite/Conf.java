@@ -355,14 +355,14 @@ public class Conf {
             runnable.addRun(run);
         }
 
-        // gzip element is just a shortcut to run: org.tuckey.web.filters.urlrewrite.utils.GzipFilterRun
+        // gzip element is just a shortcut to run: org.tuckey.web.filters.urlrewrite.gzip.GzipFilter
         NodeList gzipNodes = ruleElement.getElementsByTagName("gzip");
         for (int j = 0; j < gzipNodes.getLength(); j++) {
             Node runNode = gzipNodes.item(j);
             if (runNode == null) continue;
             Run run = new Run();
             run.setClassStr(GzipFilter.class.getName());
-            run.setMethodStr("doFilter(HttpServletRequest, HttpServletResponse, FilterChain)");
+            run.setMethodStr("doFilter(ServletRequest, ServletResponse, FilterChain)");
             processInitParams(runNode, run);
             runnable.addRun(run);
         }
