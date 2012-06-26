@@ -40,11 +40,7 @@ import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
+import javax.lang.model.element.*;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
 import java.io.File;
@@ -242,7 +238,8 @@ public class UrlRewriteAnnotationProcessor extends AbstractProcessor {
                 return null;
             }
             ExecutableElement methodDeclaration = (ExecutableElement) declaration;
-            className = methodDeclaration.getEnclosingElement().getSimpleName().toString();
+            TypeElement classDeclaration = (TypeElement) methodDeclaration.getEnclosingElement();
+            className = classDeclaration.getQualifiedName().toString();
             methodName = declaration.getSimpleName().toString();
             docComment = elementUtils.getDocComment(declaration);
             return methodDeclaration;
