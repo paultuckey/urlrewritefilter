@@ -272,6 +272,9 @@ public class Run {
                 runMethod = runClass.getMethod(methodStr, runMethodParams);
             } catch (NoSuchMethodException e) {
                 // do nothing
+                if (log.isDebugEnabled()) {
+                    log.debug(methodStr + " not found");
+                }
             }
         } else {
             if (log.isDebugEnabled()) {
