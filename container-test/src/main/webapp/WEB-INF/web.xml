@@ -14,7 +14,7 @@
         <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
         <init-param>
             <param-name>logLevel</param-name>
-            <param-value>STDOUT:debug</param-value>
+            <param-value>debug</param-value>
         </init-param>
         <init-param>
             <param-name>allowConfSwapViaHttp</param-name>
@@ -27,7 +27,7 @@
         <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
         <init-param>
             <param-name>logLevel</param-name>
-            <param-value>STDOUT:debug</param-value>
+            <param-value>debug</param-value>
         </init-param>
         <init-param>
             <param-name>statusPath</param-name>
