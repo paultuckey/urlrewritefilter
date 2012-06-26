@@ -25,7 +25,6 @@
     <properties>
         <app.manual-version>4.0</app.manual-version>
         <app.year>2012</app.year>
-        <gpg.passphrase>pshere</gpg.passphrase>
     </properties>
 
     <mailingLists>
@@ -115,12 +114,10 @@
                 <version>2.12</version>
                 <configuration>
                     <excludes>
-                        <exclude>**/*ContainerTest.java</exclude>
                         <exclude>**/*PerformanceTest.java</exclude>
                         <exclude>**/TestServlet.java</exclude>
                         <exclude>**/TestRuleObj.java</exclude>
                         <exclude>**/TestRewriteMatch.java</exclude>
-                        <exclude>**/urlrewriteviacontainer/*.java</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -156,19 +153,6 @@
                         <id>attach-javadocs</id>
                         <goals>
                             <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.4</version>
-                <executions>
-                    <execution>
-                        <id>sign-artifacts</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>sign</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -231,4 +215,26 @@
         </plugins>
     </reporting>
 
+    <profiles>
+        <profile>
+            <id>deployment</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.4</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
