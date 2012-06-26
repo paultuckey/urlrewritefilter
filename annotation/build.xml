@@ -25,19 +25,22 @@
         <mkdir dir="target/ant-test-classes"/>
         <javac srcdir="src/test/java/" destdir="target/ant-test-classes" source="1.6" target="1.6">
             <classpath path="target/urlrewritefilter-annotation-${app.version}.jar"/>
-            <compilerarg line="-AurlrewriteDest=urlrewrite-generated.xml"/>
-            <!-- manually specify the processor ie, don't rely on jar service loader... -->
+            <compilerarg line="-AurlrewriteDest=target/urlrewrite-generated.xml"/>
+            <compilerarg value="-proc:only"/>
+            <!-- manually specify the processor ie, don't rely on jar service loader...
             <compilerarg value="-processor"/>
             <compilerarg value="org.tuckey.web.filters.urlrewrite.annotation.UrlRewriteAnnotationProcessor"/>
+            -->
 
-            <!-- options for processor... -->
+            <!-- options for processor...
             <compilerarg value="-AurlrewriteShowPositions=true"/>
             <compilerarg value="-AurlrewriteDebug=true"/>
+            -->
 
-            <!-- javac specific options... -->
-            <compilerarg value="-proc:only"/>
+            <!-- javac specific options...
             <compilerarg value="-XprintRounds"/>
             <compilerarg value="-XprintProcessorInfo"/>
+            -->
         </javac>
         <available property="urlrewrite.generated" file="target/urlrewrite-generated.xml"/>
         <fail unless="urlrewrite.generated" />

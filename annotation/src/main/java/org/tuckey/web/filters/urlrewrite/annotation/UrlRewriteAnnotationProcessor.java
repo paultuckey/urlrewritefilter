@@ -155,9 +155,17 @@ public class UrlRewriteAnnotationProcessor extends AbstractProcessor {
             }
             try {
                 File destFile = new File(dest);
-                if (!destFile.exists()) {
-                    checkDirsExistMkdir(destFile.getParentFile());
-                    destFile.createNewFile();
+                if (!destFile.exists()){
+                    if ( destFile.getParentFile() == null ) {
+                        infoMsg("Parent file null for " + destFile);
+                    }
+                    if ( ! destFile.createNewFile() ) {
+                        infoMsg("could not make new file for " + destFile + " trying to mkdirs");
+                        checkDirsExistMkdir(destFile.getParentFile());
+                        if ( ! destFile.createNewFile() ) {
+                            errorMsg("could not make new file for " + destFile);
+                        }
+                    }
                 }
                 if (!destFile.canWrite()) {
                     throw new IOException("cannot write to " + destFile.getName());

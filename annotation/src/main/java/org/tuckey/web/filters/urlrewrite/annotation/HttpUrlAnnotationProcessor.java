@@ -107,8 +107,10 @@ public class HttpUrlAnnotationProcessor implements AnnotationProcessor {
         boolean delFile = false;
         try {
             if (!confFile.exists()) {
-                checkDirsExistMkdir(confFile.getParentFile());
-                confFile.createNewFile();
+                if ( ! confFile.createNewFile() ) {
+                    checkDirsExistMkdir(confFile.getParentFile());
+                    confFile.createNewFile();
+                }
             }
             if (!confFile.canWrite()) throw new IOException("cannot write to " + confFile.getName());
             pw = environment.getFiler().createTextFile(Filer.Location.CLASS_TREE, "", confFile, null);
