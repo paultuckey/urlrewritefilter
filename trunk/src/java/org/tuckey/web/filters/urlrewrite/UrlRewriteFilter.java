@@ -88,7 +88,7 @@ public class UrlRewriteFilter implements Filter {
     /**
      * @deprecated use getFullVersionString.
      */
-    public static final String VERSION = "4.0.1";
+    public static final String VERSION = "4.0.2";
 
     public static final String DEFAULT_WEB_CONF_PATH = "/WEB-INF/urlrewrite.xml";
 
