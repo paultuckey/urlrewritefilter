@@ -119,10 +119,10 @@ public class WebappHttpIT extends ContainerTestBase {
     }
 
     public void testTestEncode() throws ServletException, IOException {
-        GetMethod method = new GetMethod(getBaseUrl() + "/went%20to%20bahamas/;jsessionid=12243");
+        GetMethod method = new GetMethod(getBaseUrl() + "/went%20to%20bahamas/");
         method.setFollowRedirects(false);
         client.executeMethod(method);
-        assertEquals(getBaseUrl() + "/jamaica/;jsessionid=12243", method.getResponseHeader("Location").getValue());
+        assertEquals(getBaseUrl() + "/jamaica/", method.getResponseHeader("Location").getValue());
     }
 
     public void testSimpleRun() throws ServletException, IOException {
