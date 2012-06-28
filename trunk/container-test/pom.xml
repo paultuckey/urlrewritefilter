@@ -4,7 +4,7 @@
     <groupId>org.tuckey</groupId>
     <artifactId>urlrewritefilter-container-test</artifactId>
     <packaging>war</packaging>
-    <version>4.0.1</version>
+    <version>4.0.2</version>
     <name>UrlRewriteFilter Container Tests</name>
     <url>http://www.tuckey.org/urlrewrite/</url>
     <inceptionYear>2001</inceptionYear>
@@ -113,12 +113,12 @@
         <dependency>
             <groupId>org.tuckey</groupId>
             <artifactId>urlrewritefilter</artifactId>
-            <version>4.0.1</version>
+            <version>4.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.tuckey</groupId>
             <artifactId>urlrewritefilter-annotation</artifactId>
-            <version>4.0.1</version>
+            <version>4.0.2</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
