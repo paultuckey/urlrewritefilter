@@ -7,7 +7,6 @@
     configuration file for urlRewriteFilter
 
 -->
-<!-- todo: move into a unit test -->
 <urlrewrite>
 
     <rule>
