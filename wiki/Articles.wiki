@@ -19,6 +19,8 @@
 
 === [http://christianyates.com/blog/glassfish/drupal-glassfish-clean-urls-using-url-rewrite-filter Drupal on Glassfish with clean urls using Url Rewrite Filter] ===
 
+=== [http://www.oschina.net/p/urlrewritefilter Java的URL重写过滤器 UrlRewriteFilter] ===
+
 == GWT ==
 
 === [http://raibledesigns.com/rd/entry/enhancing_your_gwt_application_with Enhancing your GWT Application with the UrlRewriteFilter] ===
