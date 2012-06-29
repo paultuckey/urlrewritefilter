@@ -184,6 +184,7 @@
             <groupId>ant</groupId>
             <artifactId>ant</artifactId>
             <version>1.5</version>
+            <scope>provided</scope>
             <optional>true</optional>
         </dependency>
         <dependency>
