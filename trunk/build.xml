@@ -26,74 +26,14 @@
         <delete dir="www/manual/"/>
     </target>
 
-    <target name="maven-bundle" description="make jar for maven release request">
-        <mkdir dir="dist/maven-bundle/"/>
-        <copy file="LICENSE.txt" todir="dist/maven-bundle/"/>
-        <copy file="pom.xml" todir="dist/maven-bundle/"/>
-        <copy file="src/doc/maven-request.txt" todir="dist"/>
-        <replace file="dist/maven-request.txt">
-            <replacefilter token="@version@" value="${app.version}"/>
-        </replace>
-        <copy file="target/urlrewritefilter-${app.version}.jar"
-              todir="dist/maven-bundle"/>
-        <jar jarfile="dist/urlrewritefilter-${app.version}-maven-bundle.jar"
-             basedir="dist/maven-bundle/"/>
-    </target>
-
-
-    <target name="dist" depends="clean,urlrewrite-doc,docs-version-update,maven-bundle"
-            description="Create binary distribution">
-
-        <mkdir dir="dist/urlrewritefilter-${app.version}/webapp/WEB-INF/lib/"/>
-        <copy file="target/urlrewritefilter-${app.version}.jar" todir="dist/"/>
-        <copy file="target/urlrewritefilter-${app.version}.jar" todir="dist/urlrewritefilter-${app.version}/webapp/WEB-INF/lib"/>
-
-        <!-- copy in webapp dependencies for bin dist -->
-        <copy file="src/doc/manual/${app.manual-version}/urlrewrite.xml"
-              tofile="dist/urlrewritefilter-${app.version}/webapp/WEB-INF/urlrewrite.xml"/>
-
-        <!-- copy in other dependencies for src dist -->
-        <copy todir="dist/urlrewritefilter-${app.version}/manual">
-            <fileset dir="src/doc/manual/${app.manual-version}"/>
-        </copy>
-        <copy todir="dist/urlrewritefilter-${app.version}/">
-            <fileset file="build.properties"/>
-            <fileset file="pom.xml"/>
-            <fileset file="build.xml"/>
-            <fileset file="LICENSE.txt"/>
-        </copy>
-        <copy todir="dist/urlrewritefilter-${app.version}/api/">
-            <fileset dir="target/site/apidocs/"/>
-        </copy>
-        <copy todir="dist/urlrewritefilter-${app.version}/src/">
-            <fileset dir="src/"/>
-        </copy>
-
-        <!-- zip the src package -->
-        <zip destfile="dist/urlrewritefilter-${app.version}-src.zip">
-            <zipfileset prefix="urlrewritefilter-${app.version}-src"
-                        dir="dist/urlrewritefilter-${app.version}/"/>
-        </zip>
-
-        <!-- copy into www -->
-        <copy todir="www/" overwrite="true">
-            <fileset dir="src/doc/"/>
-        </copy>
-        <copy todir="www/dist">
-            <fileset dir="dist/" includes="urlrewritefilter*"/>
-        </copy>
-
-    </target>
-
-
     <target name="docs-version-update" depends="urlrewrite-doc" description="replace version info in docs">
         <replaceregexp match="&lt;!--@ver--&gt;.*&lt;!--/@ver--&gt;"
                 replace="&lt;!--@ver--&gt;${app.version}&lt;!--/@ver--&gt;">
-            <fileset dir="src/doc/manual/${app.manual-version}"/>
+            <fileset dir="src/doc/manual/${app.manual-version}/" includes="*.html"/>
         </replaceregexp>
         <replaceregexp match="&lt;!--@year--&gt;.*&lt;!--/@year--&gt;"
                 replace="&lt;!--@year--&gt;${app.year}&lt;!--/@year--&gt;">
-            <fileset dir="src/doc/manual/${app.manual-version}"/>
+            <fileset dir="src/doc/manual/${app.manual-version}/" includes="*.html"/>
         </replaceregexp>
     </target>
 
