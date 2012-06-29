@@ -33,6 +33,7 @@
 
 === [http://www.dzone.com/links/rss/clean_urls_in_seam_urlrewritefilter.html Clean URLs in Seam URLRewriteFilter] ===
 
+=== [http://www.warski.org/blog/2008/03/clean-urls-in-seam-urlrewritefilter/ Clean URLs in Seam: URLRewriteFilter] ===
 
 == Spring ==
 
