@@ -5,6 +5,8 @@
 
 == General ==
 
+=== [http://ipggi.wordpress.com/2011/11/28/tuckey-urlrewrite-how-to/ Tuckey URLRewrite How-To] ===
+
 === [http://blogs.bytecode.com.au/glen/2007/06/25/1182741843504.html Transparently Feedburning Pebble with UrlRewriteFilter] ===
 
 === [http://sujitpal.blogspot.com/2006/09/search-and-replace-with.html Search and Replace with UrlRewriteFilter] ===
