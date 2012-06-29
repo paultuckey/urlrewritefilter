@@ -42,7 +42,11 @@
 === [http://www.carbonfive.com/community/archives/2007/06/using_urlrewrit.html Using UrlRewriteFilter with the Spring Framework] ===
 
 
+== App Servers ==
+
+=== [http://greatwebguy.com/programming/java/urlrewritefilter-servlet-filter-problem-in-websphere-6105-and-greater/ URLRewriteFilter Servlet Filter problem in WebSphere 6.1.0.5] ===
 
 
+== Other ==
 
-[http://technorati.com/search/urlrewritefilter Technorati search for UrlRewriteFilter]
+=== [http://technorati.com/search/urlrewritefilter Technorati search for UrlRewriteFilter] ===
