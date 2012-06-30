@@ -85,11 +85,6 @@ public class UrlRewriteFilter implements Filter {
 
     private static Log log = Log.getLog(UrlRewriteFilter.class);
 
-    /**
-     * @deprecated use getFullVersionString.
-     */
-    public static final String VERSION = "4.0.2";
-
     public static final String DEFAULT_WEB_CONF_PATH = "/WEB-INF/urlrewrite.xml";
 
     /**
