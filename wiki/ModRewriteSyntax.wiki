@@ -19,7 +19,7 @@ Example
 
             </param-value>
         </init-param>
-    <filter>
+    </filter>
 }}}
 
 
