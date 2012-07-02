@@ -13,7 +13,7 @@
 <div id="masthead">
     <a href="http://www.tuckey.org/urlrewrite/">
         <img id="logo" src="urf.gif" border="0" alt="Tuckey Logo" />
-        Url Rewrite Filter <!--@ver-->4.0.2<!--/@ver--></a>
+        Url Rewrite Filter <!--@ver-->4.0.3<!--/@ver--></a>
 </div>
 
 <div id="menu">
@@ -69,13 +69,13 @@
 
  <ol>
     <li>Add Maven dependency below or add
-        <a href="http://urlrewritefilter.googlecode.com/files/urlrewritefilter-4.0.2.jar">urlrewritefilter-<!--@ver-->4.0.2<!--/@ver-->.jar</a>
+        <a href="http://urlrewritefilter.googlecode.com/files/urlrewritefilter-4.0.3.jar">urlrewritefilter-<!--@ver-->4.0.3<!--/@ver-->.jar</a>
         directly into your <b>WEB-INF/lib</b> directory.
            <pre><code>
     &lt;dependency&gt;
         &lt;groupId&gt;org.tuckey&lt;/groupId&gt;
         &lt;artifactId&gt;urlrewritefilter&lt;/artifactId&gt;
-        &lt;version&gt;<!--@ver-->4.0.2<!--/@ver-->&lt;/version&gt;
+        &lt;version&gt;<!--@ver-->4.0.3<!--/@ver-->&lt;/version&gt;
     &lt;/dependency&gt;
            </code></pre></li>
      <li>Add the following to your WEB-INF/web.xml (add it near the top above your
@@ -1336,7 +1336,7 @@
     &lt;target name="urlrewrite-doc" depends="compile"
         description="UrlRewriteFilter validation and documenting"&gt;
 
-    &lt;taskdef name="urlrewritedoc" classpath="lib/urlrewritefilter-<!--@ver-->4.0.2<!--/@ver-->.jar"
+    &lt;taskdef name="urlrewritedoc" classpath="lib/urlrewritefilter-<!--@ver-->4.0.3<!--/@ver-->.jar"
         classname="org.tuckey.web.filters.urlrewrite.UrlRewriteDocTask" /&gt;
     &lt;urlrewritedoc
         conf="${build.home}/WEB-INF/urlrewrite.xml"
