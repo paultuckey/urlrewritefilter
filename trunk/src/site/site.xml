@@ -9,7 +9,7 @@
     <custom>
         <fluidoSkin>
             <topBarEnabled>false</topBarEnabled>
-            <sideBarEnabled>false</sideBarEnabled>
+            <sideBarEnabled>true</sideBarEnabled>
             <bannerLeft>
                 <name>UrlRewriteFilter</name>
                 <href>http://www.tuckey.org/urlrewrite/</href>
