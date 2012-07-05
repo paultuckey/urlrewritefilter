@@ -63,3 +63,11 @@ hr {
 .err {
     color: #ff0000;
 }
+
+.outdated {
+    border: 2px solid red;
+    background: #eeeeee;
+    padding: 5px;
+    font-weight: bold;
+}
+

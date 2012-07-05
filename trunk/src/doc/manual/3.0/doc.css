@@ -127,3 +127,11 @@ hr {
 #footer a {
     text-decoration: none;
 }
+
+.outdated {
+    border: 2px solid red;
+    background: #eeeeee;
+    padding: 5px;
+    font-weight: bold;
+}
+
