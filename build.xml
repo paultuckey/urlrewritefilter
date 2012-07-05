@@ -13,30 +13,6 @@
         <path path="${tomcat.home}/lib/servlet-api.jar"/>
     </path>
 
-    <target name="copy-from-target-to-www">
-        <copy todir="www/site/">
-            <dirset dir="target/site/"/>
-        </copy>
-    </target>
-
-    <target name="clean">
-        <delete dir="dist/"/>
-        <delete dir="www/api/"/>
-        <delete dir="www/test-report/"/>
-        <delete dir="www/manual/"/>
-    </target>
-
-    <target name="docs-version-update" depends="urlrewrite-doc" description="replace version info in docs">
-        <replaceregexp match="&lt;!--@ver--&gt;.*&lt;!--/@ver--&gt;"
-                replace="&lt;!--@ver--&gt;${app.version}&lt;!--/@ver--&gt;">
-            <fileset dir="src/doc/manual/${app.manual-version}/" includes="*.html"/>
-        </replaceregexp>
-        <replaceregexp match="&lt;!--@year--&gt;.*&lt;!--/@year--&gt;"
-                replace="&lt;!--@year--&gt;${app.year}&lt;!--/@year--&gt;">
-            <fileset dir="src/doc/manual/${app.manual-version}/" includes="*.html"/>
-        </replaceregexp>
-    </target>
-
     <target name="urlrewrite-doc" description="Create UrlRewriteFilter conf documentation">
         <taskdef name="urlrewritedoc" classpathref="run.classpath"
                  classname="org.tuckey.web.filters.urlrewrite.UrlRewriteDocTask" />
