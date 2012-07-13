@@ -23,14 +23,17 @@
 
 <body>
 
-<div id="masthead">
-    <a href="http://www.tuckey.org/urlrewrite/">
-        <img id="logo" src="urf.gif" border="0" alt="Tuckey Logo" />
-        Url Rewrite Filter <!--@ver-->4.0.3<!--/@ver--></a>
+<div class="container">
+<div id="masthead" class="top">
+    <h1><a href="http://www.tuckey.org/urlrewrite/">
+        <img id="logo" src="urf-100.png" border="0" alt="Tuckey Logo" /></a>
+        UrlRewriteFilter <!--@ver-->4.0.3<!--/@ver--></h1>
 </div>
 
-<div id="menu">
-<ul>
+<div class="row">
+<div id="menu" class="span3">
+<div class="well">
+    <ul>
     <li><a href="http://www.tuckey.org/urlrewrite/">Home</a></li>
     <li><a href="http://www.tuckey.org/urlrewrite/#download">Download</a></li>
     <li><a href="http://code.google.com/p/urlrewritefilter/source">svn access</a></li>
@@ -65,8 +68,9 @@
     </li>
 </ul>
 </div>
+</div>
 
-<div id="main">
+<div id="main" class="span9">
 
 
 <h1>Examples</h1>
@@ -468,10 +472,10 @@ Cross context forwarding.
 
 <a name="mod_re"></a>
 
-<h2>mod_rewrite vs urlrewrite filter</h2>
+<h2>mod_rewrite vs UrlRewriteFilter</h2>
 
 
-<p>Examples of mod_rewrite style conf vs urlrewrite filter conf are below, there are all examples copied directly from
+<p>Examples of mod_rewrite style conf vs UrlRewriteFilter conf are below, there are all examples copied directly from
     Apache 2.0's official <a href="http://httpd.apache.org/docs-2.0/misc/rewriteguide.html">rewrite guide</a>.</p>
 
 <pre><code>
@@ -566,7 +570,7 @@ Cross context forwarding.
         homedirs on a webserver to another webserver. They usually need such things when establishing a newer
         webserver which will replace the old one over time.
 
-        The solution is trivial with mod_rewrite (and urlrewrite filter). On the old webserver we just redirect all
+        The solution is trivial with mod_rewrite (and UrlRewriteFilter). On the old webserver we just redirect all
         /~user/anypath URLs to http://newserver/~user/anypath.
 
         RewriteRule ^/~(.+) http://newserver/~$1 [R,L]
@@ -797,21 +801,18 @@ Cross context forwarding.
 
 <p>A "class-rule" is configured by adding it into urlrewrite.xml as follows:</p>
 
-<code><pre>
-    &lt;class-rule class="org.tuckey.web.filters.urlrewrite.TestRuleObj"/&gt;
-</pre></code>
+<pre><code>&lt;class-rule class="org.tuckey.web.filters.urlrewrite.TestRuleObj"/&gt;</code></pre>
 
 <p>Or for a method with a name other than "matches":</p>
-<code><pre>
-    &lt;class-rule class="org.tuckey.web.filters.urlrewrite.TestRuleObj" method="trial"/&gt;
-</pre></code>
+<pre><code>&lt;class-rule class="org.tuckey.web.filters.urlrewrite.TestRuleObj" method="trial"/&gt;</code></pre>
 
 
 
 </div>
+</div>
 
 <div id="footer">
-Copyright Paul Tuckey <!--@year-->2012<!--/@year-->
+    Copyright Paul Tuckey <!--@year-->2012<!--/@year-->
     - <a href="http://www.tuckey.org/urlrewrite/">UrlRewirteFilter</a>
 </div>
 
