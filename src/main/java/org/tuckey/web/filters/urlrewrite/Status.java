@@ -309,7 +309,8 @@ public class Status {
 
     private void showHeader() {
         SimpleDateFormat s = new SimpleDateFormat();
-        println("<html>");
+        println("<!DOCTYPE html>");
+        println("<html lang=\"en\">");
         println("<head>");
         println("<title>UrlRewriteFilter configuration overview for " + conf.getFileName() + "</title>");
         println("<style type=\"text/css\">");
