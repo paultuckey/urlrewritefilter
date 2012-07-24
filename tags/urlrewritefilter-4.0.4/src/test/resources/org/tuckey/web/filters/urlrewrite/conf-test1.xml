@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 3.2//EN"
+        "http://www.tuckey.org/res/dtds/urlrewrite3.2.dtd">
+
+<urlrewrite decode-using="utf-8">
+
+    <rule>
+        <condition next="or" type="header" name="user-agent">basicvalue1</condition>
+        <from>basicfrom1</from>
+        <set name="valuenull"/>
+        <to last="false" context="othercontext">basicto1</to>
+    </rule>
+    <rule enabled="false">
+        <name>Mega Rule</name>
+        <note>
+
+            This rule is designed to take sdfsdfsdf sdcmdklcmjlkcj lsdc
+            sdcsdckljsklcj lksjck jkls
+
+
+        </note>
+        <condition casesensitive="true" operator="greater" next="or" type="port" name="basicname2">9004</condition>
+        <from casesensitive="true">basicfrom2</from>
+        <to last="true" type="redirect">basicto2</to>
+    </rule>
+    <rule>
+        <from>/some/olddir/(.*)</from>
+        <set name="blah">$1</set>
+        <set type="session" name="nam">val</set>
+        <set type="cookie" name="mycook">val:tuckey.org:96:/asdsad</set>
+        <set type="status">201</set>
+        <set type="locale">en-NZ-bro</set>
+        <set type="charset">UTF-8</set>
+        <set type="content-type">application/spagcodebrowserplugin</set>
+    </rule>
+
+    <rule>
+        <condition type="port">80</condition>
+        <from>(.*)</from>
+        <to type="redirect">https:///very/newdir/$1</to>
+    </rule>
+
+    <class-rule class="org.tuckey.web.filters.urlrewrite.TestRuleObj"/>
+
+    <class-rule class="org.tuckey.web.filters.urlrewrite.TestRuleObj" method="trial"/>
+
+    <rule>
+        <from>/run-me</from>
+        <run class="org.tuckey.web.filters.urlrewrite.test.TestRunObj">
+            <init-param>
+                <param-name>testName</param-name>
+                <param-value>testValue</param-value>
+            </init-param>
+        </run>
+        <run class="org.tuckey.web.filters.urlrewrite.test.TestRunObj" method="nonDefaultRun"/>
+
+    </rule>
+
+    <rule>
+        <from>^/runWithParam/([0-9])+/$</from>
+        <run class="org.tuckey.web.filters.urlrewrite.test.TestRunObj" method="runWithParam(int)"/>
+    </rule>
+
+    <rule>
+        <from>^/lowerMe/([A-Z])+/$</from>
+        <to>/lowerMe/${lower:$1}</to>
+    </rule>
+
+    <outbound-rule>
+        <name>default encode on to test</name>
+        <from>a</from>
+        <to>b</to>
+    </outbound-rule>
+
+    <outbound-rule encodefirst="true">
+        <from>a</from>
+        <to encode="false">b</to>
+    </outbound-rule>
+
+
+    <catch class="java.lang.ClassNotFoundException">
+        <run class="org.tuckey.web.filters.urlrewrite.test.TestRunObj" method="trialException"/>
+    </catch>
+
+</urlrewrite>
+

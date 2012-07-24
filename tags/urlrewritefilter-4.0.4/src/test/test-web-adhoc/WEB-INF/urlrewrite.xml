@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE urlrewrite
+        PUBLIC "-//tuckey.org//DTD UrlRewrite 3.0//EN"
+        "http://www.tuckey.org/res/dtds/urlrewrite3.2.dtd">
+<urlrewrite use-query-string="true">
+
+    <rule>
+        <from>^/index.jsp\?t=1$</from>
+        <set type="request" name="test1">hello 111</set>
+        <to>/index.jsp</to>
+    </rule>
+
+    <rule>
+        <from>^/to/(.*)$</from>
+        <set name="use-proxy">proxy3:8080</set>
+        <to type="proxy">http://www.tuckey.org/$1</to>
+    </rule>
+
+</urlrewrite>
+

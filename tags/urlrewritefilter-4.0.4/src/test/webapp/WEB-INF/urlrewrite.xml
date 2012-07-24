@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 4.0//EN"
+        "http://www.tuckey.org/res/dtds/urlrewrite4.0.dtd">
+
+<!--
+
+    configuration file for urlRewriteFilter
+
+-->
+<urlrewrite>
+
+    <rule>
+        <name>Test Rule1</name>
+        <note>A test rule to show a simple redirect.</note>
+        <from>/test/status/</from>
+        <to type="redirect">/rewrite-status</to>
+    </rule>
+
+    <rule>
+        <name>Bild redirect test</name>
+        <from>logo.gif</from>
+        <to type="permanent-redirect">http://127.0.0.1:8080/urlrewrite/artifact_type.gif</to>
+    </rule>
+
+
+
+    <rule>
+        <name>Products</name>
+        <note>Allows users to type product id's into urls.
+            ID's published in magazine.</note>
+
+        <from>/products/*/*/</from>
+        <set name="categoryId"/>
+        <set name="usingFilter">yes</set>
+        <to>/products.jsp</to>
+    </rule>
+
+    <rule>
+        <from>/chairs/*/</from>
+        <set type="session" name="chairShopper">true</set>
+        <to>/products/chairs.jsp</to>
+    </rule>
+
+    <rule enabled="false">
+        <name>Test Rule disabled</name>
+        <condition operator="notequal" type="header" name="user-agent">mac</condition>
+        <condition type="dayofmonth">14</condition>
+        <condition type="header" name="charset">utf</condition>
+        <condition type="user-in-role">admin</condition>
+        <from>/test/disabled/</from>
+        <to type="redirect">/rewrite-status</to>
+    </rule>
+
+    <rule>
+        <name>Test Rule with sets</name>
+        <condition operator="notequal" type="header" name="user-agent">mac</condition>
+        <from>/test/disabled/</from>
+        <set name="blah">ass</set>
+        <set type="response-header" name="cache-control">ass</set>
+    </rule>
+
+    <rule>
+        <condition operator="notequal" type="header" name="user-agent">mac</condition>
+        <from>/test-set/([0-9]+)</from>
+
+        <set name="num">num</set>
+
+        <!--
+        will run static method specidied (do(req, res) if no method) on class specified
+        on startup will invoke init(config)
+        on shutdown will invoke destroy()
+
+        can have as many as you want
+        -->
+        <run class="org.tuckey.web.filters.urlrewrite.test.TestRunObj"/>
+
+        <run class="org.tuckey.web.filters.urlrewrite.test.TestRunObj" method="run"/>
+
+        <run class="org.tuckey.web.filters.urlrewrite.test.TestRunObj" method="nonDefaultRun">
+            <init-param>
+                <param-name>aParam</param-name>
+                <param-value>10</param-value>
+            </init-param>
+        </run>
+
+        <!--
+        will create new object then run method specified (just constructor if no method) on class specified
+        const can be blank or Constructor(req,resp)
+
+        can have as many as you want
+        -->
+        <run class="org.tuckey.web.filters.urlrewrite.test.TestRunObj" method="nonDefaultRun" neweachtime="true"/>
+
+        <run class="org.tuckey.web.filters.urlrewrite.test.TestRunObj" method="nonDefaultRun" neweachtime="true">
+            <init-param>
+                <param-name>someParam</param-name>
+                <param-value>10</param-value>
+            </init-param>
+            <init-param>
+                <param-name>someOtherParam</param-name>
+                <param-value>20</param-value>
+            </init-param>
+        </run>
+
+        <to>/test-set.jsp</to>
+    </rule>
+
+
+    <rule>
+        <from>/content/([a-zA-Z]+)</from>
+        <set name="contentItem">$1</set>
+        <run class="org.tuckey.web.filters.urlrewrite.TestServlet" method="doGet"/>
+    </rule>
+
+    <rule>
+        <condition type="method">POST</condition>
+        <from>/pref/([a-zA-Z]+)</from>
+        <run class="org.tuckey.web.filters.urlrewrite.TestServlet" method="doPost"/>
+    </rule>
+
+
+    <rule>
+        <from>/test-redirect-301</from>
+        <to type="permanent-redirect">/is-this-301</to>
+    </rule>
+
+    <rule>
+        <from>/test-redirect-302</from>
+        <to type="temporary-redirect">is-this-302</to>
+    </rule>
+
+    <rule>
+        <!--  note, regexps cannot be entered against this due to limitations in servlet spec -->
+        <condition type="user-in-role" name="devil"/>
+        <from>/test-redirect-302</from>
+        <to encode="true" type="temporary-redirect">is-this-302</to>
+    </rule>
+
+    <rule>
+        <name>filenamecheck</name>
+        <condition type="request-filename" operator="isfile"/>
+        <from>/check-uw-config-exists.txt</from>
+        <set name="test1">file exists!!!</set>
+        <to>/test-set.jsp</to>
+    </rule>
+
+    <outbound-rule>
+        <name>Out test 1</name>
+        <condition type="user-in-role" name="devil"/>
+        <from>/page-not-for-devils(0-9)?</from>
+        <to>/devils-page</to>
+    </outbound-rule>
+
+    <outbound-rule encodefirst="true">
+        <condition name="user-agent">googlebot.*</condition>
+        <from>^(.*);jsessionid=.*$</from>
+        <to>$1</to>
+    </outbound-rule>
+
+    <outbound-rule match-type="wildcard">
+        <condition name="user-agent">googlebot*</condition>
+        <from>*;jsessionid=*</from>
+        <to>$1</to>
+    </outbound-rule>
+
+    <!--
+
+     EXAMPLES
+
+     Redirect one url
+        <rule>
+            <from>/some/old/page.html</from>
+            <to type="redirect">/very/new/page.html</to>
+        </rule>
+
+    Redirect a directory
+        <rule>
+            <from>/some/olddir/(.*)</from>
+            <to type="redirect">/very/newdir/$1</to>
+        </rule>
+
+    Clean a url
+        <rule>
+            <from>/products/([0-9]+)</from>
+            <to>/products/index.jsp?product_id=$1</to>
+        </rule>
+    eg, /products/1234 will be passed on to /products/index.jsp?product_id=1234 without the user noticing.
+
+    Browser detection
+        <rule>
+            <condition name="user-agent">Mozilla/[1-4]</condition>
+            <from>/some/page.html</from>
+            <to>/some/page-for-old-browsers.html</to>
+        </rule>
+    eg, will pass the request for /some/page.html on to /some/page-for-old-browsers.html only for older
+    browsers whose user agent srtings match Mozilla/1, Mozilla/2, Mozilla/3 or Mozilla/4.
+
+    -->
+
+
+</urlrewrite>
+

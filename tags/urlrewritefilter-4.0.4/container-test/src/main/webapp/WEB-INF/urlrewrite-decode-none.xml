@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE urlrewrite
+        PUBLIC "-//tuckey.org//DTD UrlRewrite 4.0//EN"
+        "http://www.tuckey.org/res/dtds/urlrewrite4.0.dtd">
+
+<urlrewrite decode-using="null">
+    <!-- decode-using="null" means we refer to url's in this file in encoded form -->
+
+
+    <rule>
+        <name>utf test</name>
+        <from>/utf/(m%C4%81ori)/</from>
+        <to type="redirect">%{context-path}/utf-redir/done/$1/</to>
+    </rule>
+
+    <rule>
+        <name>Proxy</name>
+        <from>^/no-decode-test/(.*)$</from>
+        <to type="forward">/no-decode-test-$1.jsp</to>
+    </rule>
+
+    <rule>
+        <from>^/query-string-no-decode/(.*)$</from>
+        <to type="redirect">http://query-string-no-decode-result.com/?q=$1&amp;another=${unescape:$1}</to>
+    </rule>
+
+</urlrewrite>

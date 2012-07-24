@@ -1,0 +1,240 @@
+<html>
+<head>
+<title>UrlRewriteFilter configuration overview for urlrewrite.xml</title>
+<style>
+
+body {
+    background: #ffffff;
+}
+
+h1 {
+    font-family: Arial, Helvetica, sans-serif; color:#000000;
+    font-size: medium;
+}
+
+h2 {
+    border: 1px solid #c0c0c0;
+    background-color: #ccccff;
+    padding: 5px;
+}
+
+h3 {
+    border-top: 1px solid #c0c0c0;
+    margin-top: 1em;
+    padding-top: 0.25em;
+}
+
+code {
+    background-color: #eeeeee;
+}
+
+hr {
+    border: 0;
+    background-color: #c0c0c0;
+}
+
+.err {
+    color: #ff0000;
+}
+
+a:link, a:visited {
+    color: blue;
+}
+
+a:active, a:hover, {
+    color: #f30 !important;
+}
+
+a:link, a:visited {
+    color: #555 !important;
+}
+</style>
+<body>
+<h1><a href="http://www.tuckey.org/urlrewrite/">UrlRewriteFilter</a> 3.0.4 build 6024 configuration overview (generated 25/04/07 13:10)</h1>
+<hr />
+<h2>Summary of urlrewrite.xml</h2>
+<p>In total there are 12 rules, 3 outbound rules and 11 conditions in the configuration file.</p>
+<h3>Test Rule1 (rule 0)</h3>
+<dl><dd><p>A test rule to show a simple redirect.</p></dd></dl>
+<p>URL's matching <code>/test/status/</code> will be <code>redirected</code> to <code>/rewrite-status</code>.</p>
+<p>This rule and it's conditions will use the <code>regex</code> matching engine.</p>
+
+<h3>Bild redirect test (rule 1)</h3>
+<p>URL's matching <code>logo.gif</code> will <code>permanent-redirect</code> to <code>http://127.0.0.1:8080/urlrewrite/artifact_type.gif</code>.</p>
+<p>This rule and it's conditions will use the <code>regex</code> matching engine.</p>
+
+<h3>Products (rule 2)</h3>
+<dl><dd><p>Allows users to type product id's into urls.<br />            ID's published in magazine.</p></dd></dl>
+<p>URL's matching <code>/products/*/*/</code> will be <code>forwarded</code> to <code>/products.jsp</code>.</p>
+<p>This rule and it's conditions will use the <code>regex</code> matching engine.</p><p>This rule will set:</p><ol>
+<li>
+An attribute on the <code>request</code> object called <code>categoryId</code> to the value <code>null</code>
+</li>
+<li>
+An attribute on the <code>request</code> object called <code>usingFilter</code> to the value <code>yes</code>
+</li>
+</ol>
+
+
+<h3>Rule 3</h3>
+<p>URL's matching <code>/chairs/*/</code> will be <code>forwarded</code> to <code>/products/chairs.jsp</code>.</p>
+<p>This rule and it's conditions will use the <code>regex</code> matching engine.</p><p>This rule will set:</p><ol>
+<li>
+An attribute on the <code>session</code> object called <code>chairShopper</code> to the value <code>true</code>
+</li>
+</ol>
+
+
+<h3>Test Rule disabled (rule 4) **DISABLED**</h3>
+<p>URL's matching <code>/test/disabled/</code> will be <code>redirected</code> to <code>/rewrite-status</code>.</p>
+<p>This rule and it's conditions will use the <code>regex</code> matching engine.</p><p>Given that the following conditions are met.</p><ol>
+<li>
+The <code>user-agent</code> HTTP header does NOT match the value <code>mac</code>
+<code>and</code>
+</li>
+<li>
+<code>dayofmonth</code> is <code>equal to</code> the value <code>14</code>
+<code>and</code>
+</li>
+<li>
+The <code>charset</code> HTTP header matches the value <code>utf</code>
+<code>and</code>
+</li>
+<li>
+<code>user-in-role</code> is <code>equal to</code> the value <code>admin</code>
+</li>
+</ol>
+
+
+<h3>Test Rule with sets (rule 5)</h3>
+<p>URL's matching <code>/test/disabled/</code>.</p>
+<p>This rule and it's conditions will use the <code>regex</code> matching engine.</p><p>Given that the following condition is met.</p><ol>
+<li>
+The <code>user-agent</code> HTTP header does NOT match the value <code>mac</code>
+</li>
+</ol>
+<p>This rule will set:</p><ol>
+<li>
+An attribute on the <code>request</code> object called <code>blah</code> to the value <code>ass</code>
+</li>
+<li>
+The <code>cache-control</code> HTTP response header to <code>ass</code>
+</li>
+</ol>
+<p>Note, other rules will be proessed after this rule.</p>
+
+
+<h3>Rule 6</h3>
+<p>URL's matching <code>/test-set/([0-9]+)</code> will be <code>forwarded</code> to <code>/test-set.jsp</code>.</p>
+<p>This rule and it's conditions will use the <code>regex</code> matching engine.</p><p>Given that the following condition is met.</p><ol>
+<li>
+The <code>user-agent</code> HTTP header does NOT match the value <code>mac</code>
+</li>
+</ol>
+<p>This rule will set:</p><ol>
+<li>
+An attribute on the <code>request</code> object called <code>num</code> to the value <code>num</code>
+</li>
+</ol>
+<p>This rule will run:</p><ol>
+<li>
+ <code>run</code> on an instance of <code>org.tuckey.web.filters.urlrewrite.TestRunObj</code>
+</li>
+<li>
+ <code>run</code> on an instance of <code>org.tuckey.web.filters.urlrewrite.TestRunObj</code>
+</li>
+<li>
+ <code>nonDefaultRun</code> on an instance of <code>org.tuckey.web.filters.urlrewrite.TestRunObj</code>
+</li>
+<li>
+ <code>nonDefaultRun</code> on an instance of <code>org.tuckey.web.filters.urlrewrite.TestRunObj</code>
+ (a new instance will be created for each rule match)
+</li>
+<li>
+ <code>nonDefaultRun</code> on an instance of <code>org.tuckey.web.filters.urlrewrite.TestRunObj</code>
+ (a new instance will be created for each rule match)
+</li>
+</ol>
+<small>Note, if <code>init(ServletConfig)</code> or <code>destroy()</code> is found on the above objects they will be run at when creating or destroying an instance.</small>
+
+
+<h3>Rule 7</h3>
+<p>URL's matching <code>/content/([a-zA-Z]+)</code>.</p>
+<p>This rule and it's conditions will use the <code>regex</code> matching engine.</p><p>This rule will set:</p><ol>
+<li>
+An attribute on the <code>request</code> object called <code>contentItem</code> to the value <code>$1</code>
+</li>
+</ol>
+<p>This rule will run:</p><ol>
+<li>
+ <code>doGet</code> on an instance of <code>org.tuckey.web.filters.urlrewrite.TestServlet</code>
+</li>
+</ol>
+<small>Note, if <code>init(ServletConfig)</code> or <code>destroy()</code> is found on the above object they will be run at when creating or destroying an instance.</small>
+<p>Note, other rules will be proessed after this rule.</p>
+
+
+<h3>Rule 8</h3>
+<p>URL's matching <code>/pref/([a-zA-Z]+)</code>.</p>
+<p>This rule and it's conditions will use the <code>regex</code> matching engine.</p><p>Given that the following condition is met.</p><ol>
+<li>
+<code>method</code> is <code>equal to</code> the value <code>POST</code>
+</li>
+</ol>
+<p>This rule will run:</p><ol>
+<li>
+ <code>doPost</code> on an instance of <code>org.tuckey.web.filters.urlrewrite.TestServlet</code>
+</li>
+</ol>
+<small>Note, if <code>init(ServletConfig)</code> or <code>destroy()</code> is found on the above object they will be run at when creating or destroying an instance.</small>
+<p>Note, other rules will be proessed after this rule.</p>
+
+
+<h3>Rule 9</h3>
+<p>URL's matching <code>/test-redirect-301</code> will <code>permanent-redirect</code> to <code>/is-this-301</code>.</p>
+<p>This rule and it's conditions will use the <code>regex</code> matching engine.</p>
+
+<h3>Rule 10</h3>
+<p>URL's matching <code>/test-redirect-302</code> will <code>temporary-redirect</code> to <code>is-this-302</code>.</p>
+<p>This rule and it's conditions will use the <code>regex</code> matching engine.</p>
+
+<h3>Rule 11</h3>
+<p>URL's matching <code>/test-redirect-302</code> will <code>temporary-redirect</code> to <code>is-this-302</code>.</p>
+<p>This rule and it's conditions will use the <code>regex</code> matching engine.</p><p>Given that the following condition is met.</p><ol>
+<li>
+<code>user-in-role</code> is <code>equal to</code> the value <code>devil</code>
+</li>
+</ol>
+
+
+<h3>Out test 1 (outbound rule 0)</h3>
+<p>Outbound URL's matching <code>/page-not-for-devils(0-9)?</code> will be rewritten to <code>/devils-page</code>, after <code>response.encodeURL()</code> has been called.</p>
+<p>Given that the following condition is met.</p><ol>
+<li>
+<code>user-in-role</code> is <code>equal to</code> the value <code>devil</code>
+</li>
+</ol>
+
+
+<h3>Outbound Rule 1</h3>
+<p>Outbound URL's matching <code>^(.*);jsessionid=.*$</code> will be rewritten to <code>$1</code>.</p>
+<p>Given that the following condition is met.</p><ol>
+<li>
+The <code>user-agent</code> HTTP header matches the value <code>googlebot.*</code>
+</li>
+</ol>
+
+
+<h3>Outbound Rule 2</h3>
+<p>Outbound URL's matching <code>*;jsessionid=*</code> will be rewritten to <code>$1</code>, after <code>response.encodeURL()</code> has been called.</p>
+<p>Given that the following condition is met.</p><ol>
+<li>
+The <code>user-agent</code> HTTP header matches the value <code>googlebot*</code>
+</li>
+</ol>
+
+
+<hr />
+<br /><br /><br />
+</body>
+</html>

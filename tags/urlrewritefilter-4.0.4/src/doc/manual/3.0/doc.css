@@ -1,0 +1,137 @@
+body {
+    background: #c0c0c0;
+    font: 13px arial, helvetica, sans-serif;
+}
+
+h1 {
+    color: #000000;
+    font-size: 2.5em;
+    padding: 0px 0px 0px 5px;
+    margin: 0px;
+    font-family: georgia, times, serif;
+}
+
+#masthead {
+    font-family: georgia, times, serif;
+    font-size: 3.5em;
+    background-color: #efefef;
+    -moz-border-radius-topright: 20px;
+    margin-top: 5px;
+    padding: 5px;
+    padding-left: 15px;
+    width: 650px;
+}
+
+#masthead a {
+    text-decoration: none;
+    color: black;
+}
+#masthead img {
+    vertical-align: 15%;
+}
+
+h2 {
+    font-family: georgia, times, serif;
+    border-bottom: 1px solid #808080;
+    padding: 5px;
+}
+
+h3 {
+    font-family: georgia, times, serif;
+    border-bottom: 1px solid #c0c0c0;
+    margin-top: 2em;
+    padding: 0.25em 0.25em 0em 0.5em;
+}
+
+p {
+    padding: 0.25em 0.25em 0em 1.0em;
+}
+
+code, pre {
+    font-family: 'Courier New', courier, monospace;
+    font-size: 11px;
+}
+
+pre {
+    background: #eeeeff;
+    margin: 0.5em 3em 0.1em 3em;
+    padding: 0.25em 0.5em 0.5em 0.5em;
+}
+
+table {
+    border: 1px solid #c0c0c0;
+    margin-left: 2em;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+th, td {
+    border: 1px solid #eeeeee;
+    vertical-align: top;
+    padding: 3px;
+}
+
+th {
+    background: #eeeeee;
+}
+
+hr {
+    border: 0px;
+    background-color: #c0c0c0;
+}
+
+.err {
+    color: #ff0000;
+}
+
+#menu {
+    float:left;
+	width:160px;
+	background: #efefef;
+    Zmargin-top: 2px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    -moz-border-radius-bottomleft: 20px;
+}
+
+#menu ul {
+    list-style-type: none;
+    margin-left: .5em;
+    padding-left: .5em;
+    margin-top: 7px;
+}
+#menu li {
+    margin-bottom: 7px;
+}
+
+#main {
+	background: white;
+    border-left: 1px solid #c0c0c0;
+    border-top: 1px solid #c0c0c0;
+    border-right: 1px solid #808080;
+    border-bottom: 1px solid #808080;
+    margin-left: 170px;
+    padding: 15px;
+    -moz-border-radius-bottomleft: 20px;
+    min-height: 400px;
+}
+
+#footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: small;
+    color: black;
+    text-transform: lowercase;
+}
+
+#footer a {
+    text-decoration: none;
+}
+
+.outdated {
+    border: 2px solid red;
+    background: #eeeeee;
+    padding: 5px;
+    font-weight: bold;
+}
+

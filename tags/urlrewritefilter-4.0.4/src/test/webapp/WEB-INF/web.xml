@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+
+    <display-name>url rewrite filter build</display-name>
+    <description>build context</description>
+
+    <filter>
+        <filter-name>UrlRewriteFilter</filter-name>
+        <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+        <!-- sets up amount conf file will be checked for reload
+             can be a valid integer (0 denotes check every time,
+             empty/not set denotes no reload check)          -->
+        <init-param>
+            <param-name>confReloadCheckInterval</param-name>
+            <param-value>30</param-value>
+        </init-param>
+        <!-- sets up log level (will be logged to context log)
+             can be: TRACE, DEBUG, INFO, WARN, ERROR, FATAL  -->
+        <init-param>
+            <param-name>logLevel</param-name>
+            <param-value>STDOUT:DEBUG</param-value>
+        </init-param>
+        <!-- you can disable status page if desired
+             can be: true, false (default true)              -->
+        <init-param>
+            <param-name>statusEnabled</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <!-- you can change status path so that it does not
+             conflict with your installed apps (note, defaults
+             to /rewrite-status) note, must start with /     -->
+        <init-param>
+            <param-name>statusPath</param-name>
+            <param-value>/status</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>UrlRewriteFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+
+</web-app>

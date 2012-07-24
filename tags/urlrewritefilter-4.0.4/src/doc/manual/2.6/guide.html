@@ -1,0 +1,666 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+    <title>UrlRewriteFilter - Guide</title>
+    <style type="text/css">
+        @import url( "doc.css" );
+    </style>
+</head>
+
+<body>
+
+<div class="outdated"><a href=../index.html>Latest Documentation</a></div>
+
+<h1><a href="http://www.tuckey.org/urlrewrite/">UrlRewriteFilter 2.6</a> - Examples</h1>
+
+<p>
+    Examples - <a href="index.html">Manual</a>
+    <br/><small>
+        <a href="#general">General Examples</a>
+        - <a href="#method">Method Invocation</a>
+        - <a href="#urlabs">URL Abstraction</a>
+        - <a href="#mod_re">mod_rewrite vs urlrewrite filter</a>
+</small>
+</p>
+
+<a name="general"></a>
+
+<h2>General Examples</h2>
+
+<p>Redirect one url</p>
+
+<pre><code>
+    &lt;rule&gt;
+    &lt;from&gt;^/some/old/page\.html$&lt;/from&gt;
+    &lt;to type="redirect"&gt;/very/new/page.html&lt;/to&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+<p>Tiny/Freindly url</p>
+
+<pre><code>
+    &lt;rule&gt;
+    &lt;from&gt;^/zebra$&lt;/from&gt;
+    &lt;to type="redirect"&gt;/big/ugly/url/1,23,56,23132.html&lt;/to&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+<p>Default page as another (requests to / will be redirected)</p>
+
+<pre><code>
+    &lt;rule&gt;
+    &lt;from&gt;^/$&lt;/from&gt;
+    &lt;to type="redirect"&gt;/opencms/opencms/index.html&lt;/to&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+<p>Perform security checks in a centralised place</p>
+
+<pre><code>
+    &lt;rule&gt;
+    &lt;condition type="user-in-role" operator="notequal"&gt;admin&lt;/condition&gt;
+    &lt;condition type="user-in-role" operator="notequal"&gt;bigboss&lt;/condition&gt;
+    &lt;from&gt;^/admin/(.*)$&lt;/from&gt;
+    &lt;to&gt;/go-away-please.html&lt;/to&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+
+<p>Check that users are using the correct domain name to get to your site. ie, users gong to http://example.com/blah
+    will be redirected to http://www.example.com/blah</p>
+
+<pre><code>
+    &lt;rule&gt;
+    &lt;name&gt;Domain Name Check&lt;/name&gt;
+    &lt;condition name="host" operator="notequal"&gt;www.example.com&lt;/condition&gt;
+    &lt;from&gt;(.*)&lt;/from&gt;
+    &lt;to type="redirect"&gt;http://www.example.com/context$1&lt;/to&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+
+<p>Disable access to a directory.</p>
+
+<pre><code>
+    &lt;rule&gt;
+    &lt;name&gt;Disable Directory&lt;/name&gt;
+    &lt;from&gt;^/notliveyet/.*$&lt;/from&gt;
+    &lt;to&gt;null&lt;/to&gt;
+    &lt;set type="status"&gt;403&lt;/set&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+<p>Redirect a directory (for moved content)</p>
+
+<pre><code>
+    &lt;rule&gt;
+    &lt;from&gt;^/some/olddir/(.*)$&lt;/from&gt;
+    &lt;to type="redirect"&gt;/very/newdir/$1&lt;/to&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+<p>Clean a URL</p>
+
+<pre><code>
+    &lt;rule&gt;
+    &lt;from&gt;^/products/([0-9]+)$&lt;/from&gt;
+    &lt;to&gt;/products/index.jsp?product_id=$1&lt;/to&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+<p>e.g. <code>/products/1234</code> will be passed on to <code>/products/index.jsp?product_id=1234</code>
+    without the user noticing.</p>
+
+<pre><code>
+    &lt;rule&gt;
+    &lt;from&gt;^/world/([a-z]+)/([a-z]+)$&lt;/from&gt;
+    &lt;to&gt;/world.jsp?country=$1&amp;amp;city=$2&lt;/to&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+<p>e.g. <code>/world/unitedstates/newyork</code> will be passed on to <code>/world.jsp?country=unitedstates&amp;city=newyork</code>
+</p>
+
+<p>Browser detection</p>
+
+<pre><code>
+    &lt;rule&gt;
+    &lt;condition name="user-agent"&gt;Mozilla/[1-4]&lt;/condition&gt;
+    &lt;from&gt;^/some/page\.html$&lt;/from&gt;
+    &lt;to&gt;/some/page-for-old-browsers.html&lt;/to&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+<p>e.g. will pass the request for <code>/some/page.html</code> on to <code>/some/page-for-old-browsers.html</code>
+    only for older browsers whose user agent strings match <code>Mozilla/1</code>, <code>Mozilla/2</code>,
+    <code>Mozilla/3</code> or <code>Mozilla/4</code>.</p>
+
+
+<p>Security. Preclude certain types of method from you web application.</p>
+
+<pre><code>
+    &lt;rule&gt;
+    &lt;condition type="method" next="or"&gt;PROPFIND&lt;/condition&gt;
+    &lt;condition type="method"&gt;PUT&lt;/condition&gt;
+    &lt;from&gt;.*&lt;/from&gt;
+    &lt;to type="redirect"&gt;/bad-method.html&lt;/to&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+
+<p>Sunday Specials</p>
+
+<pre><code>
+    &lt;rule&gt;
+    &lt;condition type="dayofweek"&gt;1&lt;/condition&gt;
+    &lt;from&gt;^/products/$&lt;/from&gt;
+    &lt;to&gt;/products/sunday-specials.html&lt;/to&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+
+<p>Set the "Cache-Control" HTTP response header for all requests</p>
+
+<pre><code>
+    &lt;rule&gt;
+    &lt;from&gt;.*&lt;/from&gt;
+    &lt;set type="response-header" name="Cache-Control"&gt;max-age=3600, must-revalidate&lt;/set&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+<p>Forward a request to a servlet</p>
+
+<pre><code>
+    &lt;rule&gt;
+    &lt;from&gt;^/products/purchase$&lt;/from&gt;
+    &lt;to&gt;/servlets/ProductsServlet&lt;/to&gt;
+    &lt;set name="action"&gt;purchase&lt;/set&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+<p>e.g. the request <code>/products/purchase</code> will be forwarded to <code>/servlets/ProductsServlet</code> and
+    inside
+    the servlet <code>request.getAttribute("action")</code> will return <code>purchase</code>.</p>
+
+<p>Hide jsessionid for requests from googlebot.</p>
+
+<pre><code>
+    &lt;outbound-rule encodefirst="true"&gt;
+    &lt;condition name="user-agent"&gt;googlebot.*&lt;/condition&gt;
+    &lt;from&gt;^(.*);jsessionid=.*(\?.*)$&lt;/from&gt;
+    &lt;to&gt;$1$2&lt;/to&gt;
+    &lt;/outbound-rule&gt;
+</code></pre>
+
+<a name="method"></a>
+<h2>Method Invocation</h2>
+
+<p>The standard servlet mapping that is done via web.xml is rather limiting. Only *.xxx or /xxxx/*, no abilty to have
+    any sort of smart matching. Using UrlRewriteFilter any rule when matched can be set to run method(s) on a class.</p>
+
+<p>Invoke a servlet directly</p>
+
+<pre><code>
+    &lt;rule&gt;
+    &lt;from&gt;^/products/purchase$&lt;/from&gt;
+    &lt;run class="com.blah.web.MyServlet" method="doGet" /&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+<p>This will invoke <code>doGet(HttpServletRequest request, HttpServletResponse response)</code> when the "from" is
+    matched on a request. (remeber this method needs to be public!)</p>
+
+<p>Use it to delagate cleanly to your methods</p>
+
+<pre><code>
+    &lt;rule&gt;
+    &lt;from&gt;^/pref-editor/addresses$&lt;/from&gt;
+    &lt;run class="com.blah.web.PrefsServlet" method="runAddresses" /&gt;
+    &lt;/rule&gt;
+    &lt;rule&gt;
+    &lt;from&gt;^/pref-editor/phone-nums$&lt;/from&gt;
+    &lt;run class="com.blah.web.PrefsServlet" method="runPhoneNums" /&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+<p>Browser based delagation to your methods</p>
+
+<pre><code>
+    &lt;rule&gt;
+    &lt;condition name="user-agent"&gt;Mozilla/[1-4]&lt;/condition&gt;
+    &lt;from&gt;^/content/.*$&lt;/from&gt;
+    &lt;run class="com.blah.web.ContentServlet" method="runForOldBrowsers" /&gt;
+    &lt;/rule&gt;
+    &lt;rule&gt;
+    &lt;condition name="user-agent" operator="notequal"&gt;Mozilla/[1-4]&lt;/condition&gt;
+    &lt;from&gt;^/content/.*$&lt;/from&gt;
+    &lt;run class="com.blah.web.GeneralServlet" method="runRobotMonitor" /&gt;
+    &lt;run class="com.blah.web.ContentServlet" method="runForNewBrowsers" /&gt;
+    &lt;/rule&gt;
+</code></pre>
+
+<p>When the method specified in the "run" is invoked it has full control over the request and response as if it were a
+    servlet.</p>
+
+<!--
+Note, if you want to output something to the response from the run you can and have a "to" the to needs to be of type include
+
+there is a difference between <to>null</to> and not specifying <to>, not specifying meand that the request will
+continue down the filter chain ie if the request was for x.jsp x.jsp will be run but if <to>null</to> was specified
+then the request will be ended 
+
+
+
+missing link in web development for a long time has been the ability to filter the http request chain
+-->
+
+<!--
+
+Our extranet has recently converted from single role to multiple role,
+this potentially means hundreds of lines of code have to change.  Is
+there an easier way?
+
+Pass around a new role id to all pages in a section without going to
+each page and for and adding a request parameter.  Tabbed browsing so it
+can't be session based.
+
+We can add it to the URL then and write it in and out before and after
+the original code is run.  This means no changes for the presentation
+layer only business logic needs to change.
+
+   < strip any role-id from a URL and save it as a request
+attribute  >
+   <rule>
+       <from>^/for-people/(\d+)/.*$</from>
+       <set name="role_id">$1</set>
+   </rule>
+
+   < restore the role-id to the URL  >
+   <outbound-rule>
+       <condition type="attribute" name="role_id"/>
+       <from>^/for-people/(.*)</from>
+       <to encode="true">/for-people/%{attribute:role_id}/$1</to>
+   </outbound-rule>
+
+
+eg, an imconing request for...
+/for-people/1223/home/
+
+urlrewritefilter will match the rule and run...
+request.setAttribute("role_id", 1223);
+
+the request will be forwarded to:
+/for-people/home/
+
+when JSP is being processed and response.encodeURL is called on each of
+the links the role id will be added back in
+
+ie, /for-people/home/ will be transalted back to
+/for-people/1223/home/
+
+///////////////////////////
+
+FAQ
+Cross context forwarding.
+    Servlet containers don't support it.
+
+
+-->
+
+<a name="urlabs"></a>
+<h2>URL Abstraction</h2>
+
+<p>Both incoming request and embedded links in JSP's can be rewritten allowing full URL abstraction.</p>
+
+<pre><code>
+    &lt;rule&gt;
+    &lt;from&gt;^/tidy/page$&lt;/from&gt;
+    &lt;to&gt;/old/url/scheme/page.jsp&lt;/to&gt;
+    &lt;/rule&gt;
+    &lt;outbound-rule&gt;
+    &lt;from&gt;^/old/url/scheme/page.jsp$&lt;/from&gt;
+    &lt;to&gt;/tidy/page&lt;/to&gt;
+    &lt;/outbound-rule&gt;
+</code></pre>
+
+<p>Any incoming requests for <code>/tidy/page</code> will be transparently forwarded to
+    <code>/old/url/scheme/page.jsp</code>.</p>
+
+<p>If you use JSTL your JSP page would have something like:</p>
+<pre><code>&lt;a href="&lt;c:url value="/old/url/scheme/page.jsp"/&gt;"&gt;some link&lt;/a&gt;</code></pre>
+
+<p>This will be rewritten upon output to:</p>
+<pre><code>&lt;a href="/tidy/page"&gt;some link&lt;/a&gt;</code></pre>
+
+<p>Or if you use standard JSP:</p>
+<pre><code>&lt;a href="&lt;%= response.encodeURL("/old/url/scheme/page.jsp") %>">some link&lt;/a></code></pre>
+
+<p>Will generate output like:</p>
+<pre><code>&lt;a href="/tidy/page">some link&lt;/a></code></pre>
+
+
+<a name="mod_re"></a>
+
+<h2>mod_rewrite vs urlrewrite filter</h2>
+
+
+<p>Examples of mod_rewrite style conf vs urlrewrite filter conf are below, there are all examples copied directly from
+    Apache 2.0's official <a href="http://httpd.apache.org/docs-2.0/misc/rewriteguide.html">rewrite guide</a>.</p>
+
+<pre><code>
+
+&lt;rule&gt;
+&lt;name&gt;Canonical URLs&lt;/name&gt;
+&lt;note&gt;
+On some webservers there are more than one URL for a resource. Usually there are canonical URLs (which
+should be actually used and distributed) and those which are just shortcuts, internal ones, etc. Independent
+of which URL the user supplied with the request he should finally see the canonical one only.
+
+We do an external HTTP redirect for all non-canonical URLs to fix them in the location view of the Browser
+and for all subsequent requests. In the example ruleset below we replace /~user by the canonical /u/user and
+fix a missing trailing slash for /u/user.
+
+RewriteRule ^/~([^/]+)/?(.*) /u/$1/$2 [R]
+RewriteRule ^/([uge])/([^/]+)$ /$1/$2/ [R]
+&lt;/note&gt;
+&lt;from&gt;^/~([^/]+)/?(.*)&lt;/from&gt;
+&lt;to type="redirect"&gt;/u/$1/$2&lt;/to&gt;
+&lt;/rule&gt;
+&lt;rule&gt;
+&lt;from&gt;^/([uge])/([^/]+)$&lt;/from&gt;
+&lt;to type="redirect"&gt;/$1/$2/&lt;/to&gt;
+&lt;/rule&gt;
+
+
+&lt;rule&gt;
+&lt;name&gt;Canonical Hostnames&lt;/name&gt;
+&lt;note&gt;
+The goal of this rule is to force the use of a particular hostname, in preference to other hostnames which
+may be used to reach the same site. For example, if you wish to force the use of www.example.com instead of
+example.com, you might use a variant of the following recipe.
+
+RewriteCond %{HTTP_HOST} !^fully\.qualified\.domain\.name [NC]
+RewriteCond %{HTTP_HOST} !^$
+RewriteRule ^/(.*) http://fully.qualified.domain.name/$1 [L,R]
+&lt;/note&gt;
+&lt;condition name="host" operator="notequal"&gt;^fully\.qualified\.domain\.name&lt;/condition&gt;
+&lt;condition name="host" operator="notequal"&gt;^$&lt;/condition&gt;
+&lt;from&gt;^/(.*)&lt;/from&gt;
+&lt;to type="redirect" last="true"&gt;http://fully.qualified.domain.name/$1&lt;/to&gt;
+&lt;/rule&gt;
+
+
+&lt;rule&gt;
+&lt;name&gt;Moved DocumentRoot&lt;/name&gt;
+&lt;note&gt;
+Usually the DocumentRoot of the webserver directly relates to the URL "/". But often this data is not
+really of top-level priority, it is perhaps just one entity of a lot of data pools. For instance at our
+Intranet sites there are /e/www/ (the homepage for WWW), /e/sww/ (the homepage for the Intranet) etc. Now
+because the data of the DocumentRoot stays at /e/www/ we had to make sure that all inlined images and other
+stuff inside this data pool work for subsequent requests.
+
+We just redirect the URL / to /e/www/. While is seems trivial it is actually trivial with mod_rewrite, only.
+Because the typical old mechanisms of URL Aliases (as provides by mod_alias and friends) only used prefix
+matching. With this you cannot do such a redirection because the DocumentRoot is a prefix of all URLs.
+With mod_rewrite it is really trivial:
+
+RewriteRule ^/$ /e/www/ [R]
+&lt;/note&gt;
+&lt;from&gt;^/$&lt;/from&gt;
+&lt;to type="redirect"&gt;/e/www/&lt;/to&gt;
+&lt;/rule&gt;
+
+
+&lt;rule&gt;
+&lt;name&gt;Trailing Slash Problem&lt;/name&gt;
+&lt;note&gt;
+Every webmaster can sing a song about the problem of the trailing slash on URLs referencing directories.
+If they are missing, the server dumps an error, because if you say /~quux/foo instead of /~quux/foo/ then
+the server searches for a file named foo. And because this file is a directory it complains. Actually it
+tries to fix it itself in most of the cases, but sometimes this mechanism need to be emulated by you. For
+instance after you have done a lot of complicated URL rewritings to CGI scripts etc.
+
+The solution to this subtle problem is to let the server add the trailing slash automatically. To do this
+correctly we have to use an external redirect, so the browser correctly requests subsequent images etc. If
+we only did a internal rewrite, this would only work for the directory page, but would go wrong when any
+images are included into this page with relative URLs, because the browser would request an in-lined object.
+For instance, a request for image.gif in /~quux/foo/index.html would become /~quux/image.gif without the
+external redirect!
+&lt;/note&gt;
+&lt;from&gt;^/~quux/foo$&lt;/from&gt;
+&lt;to type="redirect"&gt;/~quux/foo/&lt;/to&gt;
+&lt;/rule&gt;
+
+
+&lt;rule&gt;
+&lt;name&gt;Move Homedirs to Different Webserver&lt;/name&gt;
+&lt;note&gt;
+Many webmasters have asked for a solution to the following situation: They wanted to redirect just all
+homedirs on a webserver to another webserver. They usually need such things when establishing a newer
+webserver which will replace the old one over time.
+
+The solution is trivial with mod_rewrite (and urlrewrite filter). On the old webserver we just redirect all
+/~user/anypath URLs to http://newserver/~user/anypath.
+
+RewriteRule ^/~(.+) http://newserver/~$1 [R,L]
+&lt;/note&gt;
+&lt;from&gt;^/~(.+)&lt;/from&gt;
+&lt;to type="redirect" last="true"&gt;http://newserver/~$1&lt;/to&gt;
+&lt;/rule&gt;
+
+
+&lt;rule&gt;
+&lt;name&gt;Structured Homedirs&lt;/name&gt;
+&lt;note&gt;
+Some sites with thousands of users usually use a structured homedir layout, i.e. each homedir is in a
+subdirectory which begins for instance with the first character of the username. So, /~foo/anypath is
+/home/f/foo/.www/anypath while /~bar/anypath is /home/b/bar/.www/anypath.
+
+We use the following ruleset to expand the tilde URLs into exactly the above layout.
+
+RewriteRule ^/~(([a-z])[a-z0-9]+)(.*) /home/$2/$1/.www$3
+&lt;/note&gt;
+&lt;from&gt;^/~(([a-z])[a-z0-9]+)(.*)&lt;/from&gt;
+&lt;to&gt;/home/$2/$1/.www$3&lt;/to&gt;
+&lt;/rule&gt;
+
+
+&lt;rule&gt;
+&lt;name&gt;Redirect Homedirs For Foreigners&lt;/name&gt;
+&lt;note&gt;
+We want to redirect homedir URLs to another webserver www.somewhere.com when the requesting user does not
+stay in the local domain ourdomain.com. This is sometimes used in virtual host contexts.
+
+Just a rewrite condition:
+
+RewriteCond %{REMOTE_HOST} !^.+\.ourdomain\.com$
+RewriteRule ^(/~.+) http://www.somewhere.com/$1 [R,L]
+&lt;/note&gt;
+&lt;condition name="host"&gt;!^.+\.ourdomain\.com$&lt;/condition&gt;
+&lt;from&gt;^(/~.+)&lt;/from&gt;
+&lt;to type="redirect" last="true"&gt;http://www.somewhere.com/$1&lt;/to&gt;
+&lt;/rule&gt;
+
+
+&lt;rule&gt;
+&lt;name&gt;Time-Dependent Rewriting&lt;/name&gt;
+&lt;note&gt;
+When tricks like time-dependent content should happen a lot of webmasters still use CGI scripts which do for
+instance redirects to specialized pages. How can it be done via mod_rewrite?
+
+There are a lot of types in conjunction with operators we can do time-dependent redirects:
+
+RewriteCond %{TIME_HOUR}%{TIME_MIN} &gt;0700
+RewriteCond %{TIME_HOUR}%{TIME_MIN} &lt;1900
+RewriteRule ^foo\.html$ foo.day.html
+RewriteRule ^foo\.html$ foo.night.html
+&lt;/note&gt;
+&lt;condition type="hourofday" operator="greater"&gt;7&lt;/condition&gt;
+&lt;condition type="hourofday" operator="less"&gt;19&lt;/condition&gt;
+&lt;from&gt;^foo\.html$&lt;/from&gt;
+&lt;to&gt;foo.day.html&lt;/to&gt;
+&lt;/rule&gt;
+&lt;rule&gt;
+&lt;from&gt;^foo\.html$&lt;/from&gt;
+&lt;to&gt;foo.night.html&lt;/to&gt;
+&lt;/rule&gt;
+
+
+&lt;rule&gt;
+&lt;name&gt;&lt;/name&gt;
+&lt;note&gt;
+Assume we have recently renamed the page foo.html to bar.html and now want to provide the old URL for
+backward compatibility. Actually we want that users of the old URL even not recognize that the pages was
+renamed.
+
+We rewrite the old URL to the new one internally via the following rule:
+
+RewriteBase /~quux/
+RewriteRule ^foo\.html$ bar.html
+&lt;/note&gt;
+&lt;from&gt;^/~quux/foo\.html$&lt;/from&gt;
+&lt;to&gt;/~quux/bar.html&lt;/to&gt;
+&lt;/rule&gt;
+
+
+&lt;rule&gt;
+&lt;name&gt;From Old to New (extern)&lt;/name&gt;
+&lt;note&gt;
+Assume again that we have recently renamed the page foo.html to bar.html and now want to provide the old URL
+for backward compatibility. But this time we want that the users of the old URL get hinted to the new one,
+i.e. their browsers Location field should change, too.
+
+We force a HTTP redirect to the new URL which leads to a change of the browsers and thus the users view:
+
+RewriteBase /~quux/
+RewriteRule ^foo\.html$ bar.html [R]
+&lt;/note&gt;
+&lt;from&gt;^/~quux/foo\.html$&lt;/from&gt;
+&lt;to type="redirect"&gt;/~quux/bar.html&lt;/to&gt;
+&lt;/rule&gt;
+
+
+&lt;rule&gt;
+&lt;name&gt;Browser Dependent Content&lt;/name&gt;
+&lt;note&gt;
+At least for important top-level pages it is sometimes necessary to provide the optimum of browser dependent
+content, i.e. one has to provide a maximum version for the latest Netscape variants, a minimum version for
+the Lynx browsers and a average feature version for all others.
+
+We cannot use content negotiation because the browsers do not provide their type in that form. Instead we
+have to act on the HTTP header "User-Agent". The following condig does the following: If the HTTP header
+"User-Agent" begins with "Mozilla/3", the page foo.html is rewritten to foo.NS.html and and the rewriting
+stops. If the browser is "Lynx" or "Mozilla" of version 1 or 2 the URL becomes foo.20.html. All other
+browsers receive page foo.32.html. This is done by the following ruleset:
+
+RewriteCond %{HTTP_USER_AGENT} ^Mozilla/3.*
+RewriteRule ^foo\.html$ foo.NS.html [L]
+
+RewriteCond %{HTTP_USER_AGENT} ^Lynx/.* [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Mozilla/[12].*
+RewriteRule ^foo\.html$ foo.20.html [L]
+
+RewriteRule ^foo\.html$ foo.32.html [L]
+&lt;/note&gt;
+&lt;condition name="user-agent"&gt;^Mozilla/3.*&lt;/condition&gt;
+&lt;from&gt;^foo\.html$&lt;/from&gt;
+&lt;to last="true"&gt;foo.NS.html&lt;/to&gt;
+&lt;/rule&gt;
+&lt;rule&gt;
+&lt;condition name="user-agent" next="or"&gt;^Lynx/.*&lt;/condition&gt;
+&lt;condition name="user-agent"&gt;^Mozilla/[12].*&lt;/condition&gt;
+&lt;from&gt;^foo\.html$&lt;/from&gt;
+&lt;to last="true"&gt;foo.20.html&lt;/to&gt;
+&lt;/rule&gt;
+&lt;rule&gt;
+&lt;from&gt;^foo\.html$&lt;/from&gt;
+&lt;to last="true"&gt;foo.32.html&lt;/to&gt;
+&lt;/rule&gt;
+
+
+&lt;rule&gt;
+&lt;name&gt;From Static to Dynamic&lt;/name&gt;
+&lt;note&gt;
+How can we transform a static page foo.html into a dynamic variant foo.cgi in a seamless way, i.e. without
+notice by the browser/user.
+
+We just rewrite the URL to the jsp/servlet and force the correct MIME-type so it gets really run as
+a CGI-script. This way a request to /~quux/foo.html internally leads to the invocation of /~quux/foo.jsp.
+
+RewriteBase /~quux/
+RewriteRule ^foo\.html$ foo.cgi [T=application/x-httpd-cgi]
+&lt;/note&gt;
+&lt;from&gt;^/~quux/foo\.html$&lt;/from&gt;
+&lt;to&gt;/~quux/foo.jsp&lt;/to&gt;
+&lt;/rule&gt;
+
+&lt;rule&gt;
+&lt;name&gt;Blocking of Robots&lt;/name&gt;
+&lt;note&gt;
+    How can we block a really annoying robot from retrieving pages of a specific webarea? A /robots.txt file
+    containing entries of the "Robot Exclusion Protocol" is typically not enough to get rid of such a robot.
+
+    We use a ruleset which forbids the URLs of the webarea /~quux/foo/arc/ (perhaps a very deep directory
+    indexed area where the robot traversal would create big server load). We have to make sure that we forbid
+    access only to the particular robot, i.e. just forbidding the host where the robot runs is not enough.
+    This would block users from this host, too. We accomplish this by also matching the User-Agent HTTP header
+    information.
+
+    RewriteCond %{HTTP_USER_AGENT} ^NameOfBadRobot.*
+    RewriteCond %{REMOTE_ADDR} ^123\.45\.67\.[8-9]$
+    RewriteRule ^/~quux/foo/arc/.+ - [F]
+&lt;/note&gt;
+&lt;condition name="user-agent"&gt;^NameOfBadRobot.*&lt;/condition&gt;
+&lt;condition type="remote-addr"&gt;^123\.45\.67\.[8-9]$&lt;/condition&gt;
+&lt;from&gt;^/~quux/foo/arc/.+&lt;/from&gt;
+&lt;to&gt;null&lt;/to&gt;
+&lt;set type="status"&gt;403&lt;/set&gt;
+&lt;/rule&gt;
+
+
+&lt;rule&gt;
+&lt;name&gt;Blocked Inline-Images&lt;/name&gt;
+&lt;note&gt;
+Assume we have under http://www.quux-corp.de/~quux/ some pages with inlined GIF graphics. These graphics are
+nice, so others directly incorporate them via hyperlinks to their pages. We don't like this practice because
+it adds useless traffic to our server.
+
+While we cannot 100% protect the images from inclusion, we can at least restrict the cases where the browser
+sends a HTTP Referer header.
+
+RewriteCond %{HTTP_REFERER} !^$
+RewriteCond %{HTTP_REFERER} !^http://www.quux-corp.de/~quux/.*$ [NC]
+RewriteRule .*\.gif$ - [F]
+&lt;/note&gt;
+&lt;condition name="referer" operator="notequal"&gt;^$&lt;/condition&gt;
+&lt;condition name="referer" operator="notequal"&gt;^http://www.quux-corp.de/~quux/.*$&lt;/condition&gt;
+&lt;from&gt;.*\.gif$&lt;/from&gt;
+&lt;to&gt;null&lt;/to&gt;
+&lt;set type="status"&gt;403&lt;/set&gt;
+&lt;/rule&gt;
+&lt;rule&gt;
+&lt;name&gt;Blocked Inline-Images example 2&lt;/name&gt;
+&lt;note&gt;
+RewriteCond %{HTTP_REFERER} !^$
+RewriteCond %{HTTP_REFERER} !.*/foo-with-gif\.html$
+RewriteRule ^inlined-in-foo\.gif$ - [F]
+&lt;/note&gt;
+&lt;condition name="referer" operator="notequal"&gt;^$&lt;/condition&gt;
+&lt;condition name="referer" operator="notequal"&gt;.*/foo-with-gif\.html$&lt;/condition&gt;
+&lt;from&gt;^inlined-in-foo\.gif$&lt;/from&gt;
+&lt;to&gt;null&lt;/to&gt;
+&lt;set type="status"&gt;403&lt;/set&gt;
+&lt;/rule&gt;
+
+</code></pre>
+
+
+<br/>
+<br/>
+<br/>
+
+<p><small>Copyright <!--@year-->2007<!--/@year--> Paul Tuckey</small></p>
+
+</body>
+</html>

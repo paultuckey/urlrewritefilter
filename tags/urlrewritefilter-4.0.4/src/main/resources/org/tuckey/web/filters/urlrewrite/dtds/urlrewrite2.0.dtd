@@ -1,0 +1,42 @@
+<!--
+   UrlRewriteFilter DTD
+   http://www.tuckey.org/urlrewrite/
+-->
+
+<!ELEMENT urlrewrite (rule+)>
+
+<!ELEMENT rule (name?, note?, condition*, from, to?, set*)>
+<!ATTLIST rule
+enabled   (true|false)               "true"
+>
+
+
+<!ELEMENT condition (#PCDATA)>
+<!ATTLIST condition
+type        (time|year|month|dayofmonth|dayofweek|ampm|hourofday|minute|second|millisecond|attribute|auth-type|character-encoding|content-length|content-type|context-path|cookie|header|method|parameter|path-info|path-translated|protocol|query-string|remote-addr|remote-host|remote-user|requested-session-id|request-uri|request-url|session-attribute|session-isnew|port|server-name|scheme|user-in-role)   "header"
+name        CDATA               #IMPLIED
+next        (and|or)            "and"
+casesensitive (true|false)      "false"
+operator    (equal|notequal|greater|less|greaterorequal|lessorequal)   "equal"
+>
+
+<!ELEMENT from (#PCDATA)>
+<!ATTLIST from
+casesensitive (true|false)      "false"
+>
+
+<!ELEMENT to (#PCDATA)>
+<!ATTLIST to
+type        (redirect|temporary-redirect|permanent-redirect|pre-include|post-include|forward|passthrough)     "forward"
+last        (true|false)               "true"
+encode      (true|false)               "false"
+>
+
+<!ELEMENT set (#PCDATA)>
+<!ATTLIST set
+type        (request|session|response-header|cookie|content-type|charset|locale|status)    "request"
+name        CDATA               #IMPLIED
+>
+
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT note (#PCDATA)>
