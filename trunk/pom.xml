@@ -4,7 +4,7 @@
     <groupId>org.tuckey</groupId>
     <artifactId>urlrewritefilter</artifactId>
     <packaging>jar</packaging>
-    <version>4.0.3</version>
+    <version>4.0.4-SNAPSHOT</version>
     <name>UrlRewriteFilter</name>
     <url>http://www.tuckey.org/urlrewrite/</url>
     <inceptionYear>2001</inceptionYear>
@@ -92,15 +92,27 @@
                     <execution>
                         <phase>validate</phase>
                         <goals>
-                            <goal>create-timestamp</goal>
+                            <goal>create</goal>
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <doCheck>false</doCheck>
+                    <doUpdate>true</doUpdate>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <tagBase>https://urlrewritefilter.googlecode.com/svn/tags</tagBase>
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.12</version>
                 <configuration>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <excludes>
                         <exclude>**/*PerformanceTest.java</exclude>
                         <exclude>**/TestServlet.java</exclude>
@@ -119,7 +131,7 @@
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                         <manifestEntries>
-                            <Implementation-Build>${timestamp}</Implementation-Build>
+                            <Implementation-Build>${buildNumber}</Implementation-Build>
                         </manifestEntries>
                     </archive>
                 </configuration>
@@ -127,14 +139,6 @@
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>2.1.2</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -142,17 +146,8 @@
                 <configuration>
                     <quiet>true</quiet>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <version>3.1</version>
             </plugin>
@@ -207,6 +202,9 @@
             <plugin>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.8.1</version>
+                <configuration>
+                    <quiet>true</quiet>
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
