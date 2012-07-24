@@ -3,13 +3,14 @@
     <!-- Give user a chance to override without editing this file (and without typing -D each time) -->
     <property file="${user.home}/urlrewrite.build.properties"/>
     <property file="${user.home}/build.properties"/>
-    <property file="${basedir}/build.properties" />
+    <property file="${basedir}/target/classes/org/tuckey/web/filters/urlrewrite/build.number.properties" />
 
     <property name="build.home" value="target/ant-build"/>
     <property name="tomcat.home" value="/usr/java/apache-tomcat-7.0.27"/>
+    <property name="app.manual-version" value="4.0"/>
 
     <path id="run.classpath">
-        <path path="target/urlrewritefilter-${app.version}.jar"/>
+        <path path="target/urlrewritefilter-${project.version}.jar"/>
         <path path="${tomcat.home}/lib/servlet-api.jar"/>
     </path>
 
