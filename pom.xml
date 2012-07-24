@@ -4,7 +4,7 @@
     <groupId>org.tuckey</groupId>
     <artifactId>urlrewritefilter</artifactId>
     <packaging>jar</packaging>
-    <version>4.0.4</version>
+    <version>4.0.5-SNAPSHOT</version>
     <name>UrlRewriteFilter</name>
     <url>http://www.tuckey.org/urlrewrite/</url>
     <inceptionYear>2001</inceptionYear>
@@ -47,9 +47,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:svn:https://urlrewritefilter.googlecode.com/svn/tags/urlrewritefilter-4.0.4</connection>
-        <developerConnection>scm:svn:https://urlrewritefilter.googlecode.com/svn/tags/urlrewritefilter-4.0.4</developerConnection>
-        <url>https://urlrewritefilter.googlecode.com/svn/tags/urlrewritefilter-4.0.4</url>
+        <connection>scm:svn:https://urlrewritefilter.googlecode.com/svn/trunk</connection>
+        <developerConnection>scm:svn:https://urlrewritefilter.googlecode.com/svn/trunk</developerConnection>
+        <url>https://urlrewritefilter.googlecode.com/svn/trunk</url>
     </scm>
 
     <developers>
