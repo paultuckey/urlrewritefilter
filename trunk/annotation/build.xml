@@ -3,7 +3,7 @@
     <!-- Give user a chance to override without editing this file (and without typing -D each time) -->
     <property file="${user.home}/urlrewrite.build.properties"/>
     <property file="${user.home}/build.properties"/>
-    <property file="${basedir}/../build.properties" />
+    <property file="${basedir}/../target/classes/org/tuckey/web/filters/urlrewrite/build.number.properties" />
 
     <!--
 
@@ -16,7 +16,7 @@
 
     <target name="annotation-test-compile-jdk5" description="normal way to process annotations">
         <apt srcdir="src/test/java/" compile="false" factory="org.tuckey.web.filters.urlrewrite.annotation.HttpUrlAPTFactory">
-            <classpath path="target/urlrewritefilter-annotation-${app.version}.jar"/>
+            <classpath path="target/urlrewritefilter-annotation-${project.version}.jar"/>
             <option name="saveRulesTo" value="urlrewrite-generated-test-jdk5.xml"/>
         </apt>
     </target>
@@ -24,7 +24,7 @@
     <target name="annotation-test-compile-jdk6" description="normal way to process annotations">
         <mkdir dir="target/ant-test-classes"/>
         <javac srcdir="src/test/java/" destdir="target/ant-test-classes" source="1.6" target="1.6">
-            <classpath path="target/urlrewritefilter-annotation-${app.version}.jar"/>
+            <classpath path="target/urlrewritefilter-annotation-${project.version}.jar"/>
             <compilerarg line="-AurlrewriteDest=target/urlrewrite-generated.xml"/>
             <compilerarg value="-proc:only"/>
             <!-- manually specify the processor ie, don't rely on jar service loader...
@@ -48,7 +48,7 @@
 
     <target name="check-service-loader">
         <!-- check that annotation processor has made it into ServiceLoader -->
-        <java classname="org.tuckey.web.filters.urlrewrite.annotation.ProcessorServiceLoaderCheck" classpath="target/urlrewritefilter-annotation-${app.version}.jar"/>
+        <java classname="org.tuckey.web.filters.urlrewrite.annotation.ProcessorServiceLoaderCheck" classpath="target/urlrewritefilter-annotation-${project.version}.jar"/>
     </target>
 
 </project>
