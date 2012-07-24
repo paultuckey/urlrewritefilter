@@ -533,10 +533,14 @@ public class UrlRewriteFilter implements Filter {
         try {
             InputStream is = UrlRewriteFilter.class.getResourceAsStream("build.number.properties");
             if ( is != null ) {
-                props.load(is);
-                String buildNumber = (String) props.get("build.number");
-                if (!StringUtils.isBlank(buildNumber)){
-                    buildNumberStr =  props.get("project.version") + " build " + props.get("build.number");
+                try {
+                    props.load(is);
+                    String buildNumber = (String) props.get("build.number");
+                    if (!StringUtils.isBlank(buildNumber)){
+                        buildNumberStr =  props.get("project.version") + " build " + props.get("build.number");
+                    }
+                }   finally {
+                    is.close();
                 }
             }
         } catch (IOException e) {
