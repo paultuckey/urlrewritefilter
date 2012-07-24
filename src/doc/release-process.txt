@@ -1,7 +1,6 @@
 
 - update version number in
 pom.xml
-build.properties
 annotation/pom.xml
 container-test/pom.xml
 
@@ -56,11 +55,10 @@ mvn integration-test -Dcargo.maven.containerId=jboss71x -Dcargo.maven.containerU
 </settings>
 
 
------- put in maven central
+----- tag
 
-cd ..
-#maven artifact:create-upload-bundle
-mvn deploy -P deployment -Dgpg.passphrase=XXXXX
+mvn install release:prepare
+mvn deploy -P sonatype-oss-release -Dgpg.passphrase=XXXXX
 
 # this submit to sonatype nexus
 
@@ -69,4 +67,4 @@ https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage
 https://oss.sonatype.org/
 
 
-- ftp up all dist files
+-- update project home page
