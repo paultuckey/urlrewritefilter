@@ -32,7 +32,7 @@ mvn integration-test -Dcargo.maven.containerId=jboss71x -Dcargo.maven.containerU
 }}}
 
 
-== Update version number ==
+== Update documentation and version number ==
 
 {{{
 pom.xml
@@ -43,6 +43,7 @@ mvn package                 # builds the jar
 ant docs-version-update     # updates the version in the docs
 }}}
 
+Update changelog: src/doc/manual/4.0/introduction.html
 
 == Check ~/.m2/settings xml has in it ==
 
