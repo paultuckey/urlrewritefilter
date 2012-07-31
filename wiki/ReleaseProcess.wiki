@@ -1,6 +1,9 @@
 #summary Procedures for release
 
-= Test in container =
+= Release Procedures =
+
+
+== Test in container ==
 
 {{{
 cd container-test
@@ -29,7 +32,7 @@ mvn integration-test -Dcargo.maven.containerId=jboss71x -Dcargo.maven.containerU
 }}}
 
 
-= Update version number =
+== Update version number ==
 
 {{{
 pom.xml
@@ -41,7 +44,7 @@ ant docs-version-update     # updates the version in the docs
 }}}
 
 
-= Check ~/.m2/settings xml has in it =
+== Check ~/.m2/settings xml has in it ==
 
 {{{
 <servers>
@@ -60,7 +63,7 @@ ant docs-version-update     # updates the version in the docs
 }}}
 
 
-= Do the release =
+== Do the release ==
 
 {{{
 mvn install release:prepare
@@ -71,9 +74,11 @@ Go to: https://oss.sonatype.org/
 
 Close and release the release
 
-= Update Sites =
+== Update Sites ==
 
-Project home page http://code.google.com/p/urlrewritefilter/
+Update project web site: http://tuckey.org/urlrewrite/
+
+Update project home page: http://code.google.com/p/urlrewritefilter/
 
 Upload to http://code.google.com/p/urlrewritefilter/downloads/list
    * jar
