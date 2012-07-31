@@ -94,9 +94,13 @@ public class NormalRule extends RuleBase implements Rule {
             // no match, or run/set only match
             return null;
         }
-        if ( queryStringAppend && hsRequest.getQueryString() != null ) {
+        if ( queryStringAppend && hsRequest.getQueryString() != null && hsRequest.getQueryString().length() > 0) {
             String target = ruleExecutionOutput.getReplacedUrl();
-            ruleExecutionOutput.setReplacedUrl(target + "&" + hsRequest.getQueryString());
+            if (target.contains("?")) {
+                ruleExecutionOutput.setReplacedUrl(target + "&" + hsRequest.getQueryString());
+            } else {
+                ruleExecutionOutput.setReplacedUrl(target + "?" + hsRequest.getQueryString());
+            }
         }
         if ( toServletContext != null ) ruleExecutionOutput.setReplacedUrlContext(toServletContext);
         return RuleExecutionOutput.getRewritenUrl(toType, encodeToUrl, ruleExecutionOutput);

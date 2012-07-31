@@ -78,11 +78,27 @@ public class RuleTest extends TestCase {
         rule.setTo("$1simple");
         rule.setQueryStringAppend("true");
         rule.initialise(null);
-        MockRequest request = new MockRequest("simpleass?aaa=bbb");
+        MockRequest request = new MockRequest("simpleass");
+        request.setQueryString("aaa=bbb");
         NormalRewrittenUrl rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
 
         assertEquals("forward should be default type", "forward", rule.getToType());
         assertEquals("asssimple?aaa=bbb", rewrittenUrl.getTarget());
+        assertTrue("Should be a forward", rewrittenUrl.isForward());
+    }
+
+    public void testRule01b() throws IOException, ServletException, InvocationTargetException {
+        NormalRule rule = new NormalRule();
+        rule.setFrom("simple(ass)");
+        rule.setTo("$1simple?d=f");
+        rule.setQueryStringAppend("true");
+        rule.initialise(null);
+        MockRequest request = new MockRequest("simpleass");
+        request.setQueryString("aaa=bbb");
+        NormalRewrittenUrl rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
+
+        assertEquals("forward should be default type", "forward", rule.getToType());
+        assertEquals("asssimple?d=f&aaa=bbb", rewrittenUrl.getTarget());
         assertTrue("Should be a forward", rewrittenUrl.isForward());
     }
 
@@ -812,5 +828,19 @@ public class RuleTest extends TestCase {
         MockRequest request = new MockRequest("/utAAAils/");
         NormalRewrittenUrl rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
         assertEquals("/not-found-the-dir", rewrittenUrl.getTarget());
+    }
+
+    public void testIssue116() throws InvocationTargetException, IOException, ServletException {
+        NormalRule rule = new NormalRule();
+        rule.setFrom("^/robots\\.txt$");
+        rule.setTo("/en/robots.txt");
+        rule.setToType("permanent-redirect");
+        rule.setToLast("true");
+        rule.setQueryStringAppend("true");
+        rule.initialise(new MockServletContext());
+        MockRequest request = new MockRequest("/robots.txt");
+        request.setQueryString("param1=value1&param2=value2");
+        NormalRewrittenUrl rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
+        assertEquals("/en/robots.txt?param1=value1&param2=value2", rewrittenUrl.getTarget());
     }
 }
