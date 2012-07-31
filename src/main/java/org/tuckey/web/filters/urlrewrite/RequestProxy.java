@@ -80,8 +80,10 @@ public class RequestProxy {
      * @throws java.io.IOException Passed on from the connection logic.
      */
     public static void execute(final String target, final HttpServletRequest hsRequest, final HttpServletResponse hsResponse) throws IOException {
-        log.info("execute, target is " + target);
-        log.info("response commit state: " + hsResponse.isCommitted());
+        if ( log.isInfoEnabled() ) {
+            log.info("execute, target is " + target);
+            log.info("response commit state: " + hsResponse.isCommitted());
+        }
 
         if (StringUtils.isBlank(target)) {
             log.error("The target address is not given. Please provide a target address.");
@@ -107,7 +109,7 @@ public class RequestProxy {
         final int port = url.getPort() != -1 ? url.getPort() : url.getDefaultPort();
         config.setHost(url.getHost(), port, url.getProtocol());
 
-        log.info("config is " + config.toString());
+        if ( log.isInfoEnabled() ) log.info("config is " + config.toString());
 
         final HttpMethod targetRequest = setupProxyRequest(hsRequest, url);
         if (targetRequest == null) {
@@ -226,7 +228,7 @@ public class RequestProxy {
             }
         }
 
-        log.info("proxy query string " + method.getQueryString());
+        if ( log.isInfoEnabled() ) log.info("proxy query string " + method.getQueryString());
         return method;
     }
 
@@ -256,7 +258,7 @@ public class RequestProxy {
             }
 
             hsResponse.addHeader(h.getName(), h.getValue());
-            log.info("setting response parameter:" + h.getName() + ", value: " + h.getValue());
+            if ( log.isInfoEnabled() ) log.info("setting response parameter:" + h.getName() + ", value: " + h.getValue());
         }
         //fixme what about the response footers? (httpMethod.getResponseFooters())
 
