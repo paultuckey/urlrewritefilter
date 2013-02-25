@@ -1,6 +1,11 @@
 #summary Links to pages/articles/blog entries about UrlRewriteFilter
 #labels Featured
 
+=Translations=
+
+=== 3.2 documentation translated to <a href="http://science.webhostinggeeks.com/url-rewrite-filter">Serbo-Croatian</a> language by Vera Djuraskovic from Webhostinggeeks.com ===
+
+
 =Articles=
 
 == General ==
