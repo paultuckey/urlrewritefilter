@@ -49,9 +49,6 @@ See the [manual](http://urlrewritefilter.googlecode.com/svn/trunk/src/doc/manual
 
 You can visit http://127.0.0.1:8080/rewrite-status (or whatever the address of your local webapp and context) to see output (note: this page is only viewable from localhost).
 
-
 <a href="http://www.jetbrains.com/idea/"><img src="http://www.jetbrains.com/img/logo_bw.gif" alt="The best Java IDE" border="0"/></a> IDE Sponsored by [JetBrains](http://www.jetbrains.com/)
 
-
-
-Automatically exported from code.google.com/p/urlrewritefilter
+Old repositoy http://code.google.com/p/urlrewritefilter.
