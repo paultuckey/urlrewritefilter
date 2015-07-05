@@ -31,7 +31,7 @@ See the [manual](http://urlrewritefilter.googlecode.com/svn/trunk/src/doc/manual
         <version>4.0.3</version>
     </dependency>
 ```
-  * Add the following to your WEB-INF/web.xml (add it near the top above your servlet mappings (if you have any)): (see <a href="#filterparams">filter parameters</a> for more options)
+  * Add the following to your WEB-INF/web.xml (add it near the top above your servlet mappings (if you have any)): (see <a href="http://urlrewritefilter.googlecode.com/svn/trunk/src/doc/manual/4.0/index.html#filterparams">filter parameters</a> for more options)
 ```xml
     <filter>
         <filter-name>UrlRewriteFilter</filter-name>
