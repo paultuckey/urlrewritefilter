@@ -6,7 +6,7 @@
 
 *Based on the popular and very useful [mod_rewrite](http://httpd.apache.org/docs-2.0/mod/mod_rewrite.html) for apache, UrlRewriteFilter is a Java Web Filter for any J2EE compliant web application server (such as [Resin](http://caucho.com), [Orion](http://www.orionserver.com/) or [Tomcat](http://tomcat.apache.org/)), which allows you to rewrite URLs before they get to your code. It is a very powerful tool just like Apache's mod_rewrite.*
 
-URL rewriting is very common with Apache Web Server (see ( mod_rewrite's rewriting guide)[http://httpd.apache.org/docs-2.0/misc/rewriteguide.html]) but has not been possible in most java web application servers. The main things it is used for are:
+URL rewriting is very common with Apache Web Server (see [mod_rewrite's rewriting guide](http://httpd.apache.org/docs-2.0/misc/rewriteguide.html)) but has not been possible in most java web application servers. The main things it is used for are:
 
   * URL Tidyness / [URL Abstraction](http://urlrewritefilter.googlecode.com/svn/trunk/src/doc/manual/4.0/guide.html#urlabs) - keep URLs tidy irrespective of the underlying technology or framework (JSP, Servlet, Struts etc).
   * Browser Detection - Allows you to rewrite URLs based on request HTTP headers (such as user-agent or charset).
@@ -50,7 +50,7 @@ See the [manual](http://urlrewritefilter.googlecode.com/svn/trunk/src/doc/manual
 You can visit http://127.0.0.1:8080/rewrite-status (or whatever the address of your local webapp and context) to see output (note: this page is only viewable from localhost).
 
 
-<a href="http://www.jetbrains.com/idea/"><img src="http://www.jetbrains.com/img/logo_bw.gif" alt="The best Java IDE" border="0"/></a> IDE Sponsored by [http://www.jetbrains.com/ JetBrains]
+<a href="http://www.jetbrains.com/idea/"><img src="http://www.jetbrains.com/img/logo_bw.gif" alt="The best Java IDE" border="0"/></a> IDE Sponsored by [JetBrains](http://www.jetbrains.com/)
 
 
 
