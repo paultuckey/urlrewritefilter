@@ -24,15 +24,15 @@ See the [manual](http://urlrewritefilter.googlecode.com/svn/trunk/src/doc/manual
 ## Quick Start
 
   * Add Maven dependency below or add <a href="http://urlrewritefilter.googlecode.com/files/urlrewritefilter-4.0.3.jar">urlrewritefilter-4.0.3.jar</a> directly into your <b>WEB-INF/lib</b> directory.
-{{{
+```xml
     <dependency>
         <groupId>org.tuckey</groupId>
         <artifactId>urlrewritefilter</artifactId>
         <version>4.0.3</version>
     </dependency>
-}}}
+```
   * Add the following to your WEB-INF/web.xml (add it near the top above your servlet mappings (if you have any)): (see <a href="#filterparams">filter parameters</a> for more options)
-{{{
+```xml
     <filter>
         <filter-name>UrlRewriteFilter</filter-name>
         <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
@@ -43,7 +43,7 @@ See the [manual](http://urlrewritefilter.googlecode.com/svn/trunk/src/doc/manual
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
-}}}
+```
   * Add <b><a href="http://urlrewritefilter.googlecode.com/svn/trunk/src/doc/manual/4.0/urlrewrite.xml">urlrewrite.xml</a></b> into your WEB-INF directory. (src/main/webapp/WEB-INF/ for Maven users)
   * Restart the context.
 
