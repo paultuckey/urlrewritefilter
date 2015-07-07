@@ -28,8 +28,8 @@
         <menu name="Overview">
             <item name="Home" href="http://www.tuckey.org/urlrewrite/"/>
             <item name="Download" href="http://www.tuckey.org/urlrewrite/#download"/>
-            <item name="Source" href="http://code.google.com/p/urlrewritefilter/source"/>
-            <item name="Manual" href="http://urlrewritefilter.googlecode.com/svn/trunk/src/doc/manual/4.0/index.html"/>
+            <item name="Source" href="https://github.com/paultuckey/urlrewritefilter"/>
+            <item name="Manual" href="http://cdn.rawgit.com/paultuckey/urlrewritefilter/master/src/doc/manual/4.0/index.html"/>
         </menu>
 
         <menu name="Generated Documentation" ref="reports"/>

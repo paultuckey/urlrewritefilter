@@ -47,9 +47,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:svn:https://urlrewritefilter.googlecode.com/svn/trunk</connection>
-        <developerConnection>scm:svn:https://urlrewritefilter.googlecode.com/svn/trunk</developerConnection>
-        <url>https://urlrewritefilter.googlecode.com/svn/trunk</url>
+        <url>https://github.com/paultuckey/urlrewritefilter</url>
+        <connection>scm:git:git://github.com/paultuckey/urlrewritefilter.git</connection>
+        <developerConnection>scm:git:git@github.com:paultuckey/urlrewritefilter.git</developerConnection>
     </scm>
 
     <developers>
@@ -59,7 +59,7 @@
     </developers>
 
     <issueManagement>
-        <url>http://code.google.com/p/urlrewritefilter/issues/list</url>
+        <url>https://github.com/paultuckey/urlrewritefilter/issues</url>
     </issueManagement>
 
     <build>
@@ -105,7 +105,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.1</version>
                 <configuration>
-                    <tagBase>https://urlrewritefilter.googlecode.com/svn/tags</tagBase>
+                    <tagBase>https://github.com/paultuckey/urlrewritefilter/tags</tagBase>
                 </configuration>
             </plugin>
             <plugin>

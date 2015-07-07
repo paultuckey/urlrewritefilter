@@ -31,13 +31,13 @@
     </licenses>
 
     <scm>
-        <connection>scm:svn:https://urlrewritefilter.googlecode.com/svn/trunk</connection>
-        <developerConnection>scm:svn:https://urlrewritefilter.googlecode.com/svn/trunk</developerConnection>
-        <url>https://urlrewritefilter.googlecode.com/svn/trunk</url>
+        <connection>scm:git:git://github.com/paultuckey/urlrewritefilter.git</connection>
+        <developerConnection>scm:git:git@github.com:paultuckey/urlrewritefilter.git</developerConnection>
+        <url>https://github.com/paultuckey/urlrewritefilter</url>
     </scm>
 
     <issueManagement>
-        <url>http://code.google.com/p/urlrewritefilter/issues/list</url>
+        <url>https://github.com/paultuckey/urlrewritefilter/issues</url>
     </issueManagement>
 
     <build>
