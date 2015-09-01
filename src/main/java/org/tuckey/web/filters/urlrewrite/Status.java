@@ -312,7 +312,11 @@ public class Status {
         println("<!DOCTYPE html>");
         println("<html lang=\"en\">");
         println("<head>");
-        println("<title>UrlRewriteFilter configuration overview for " + conf.getFileName() + "</title>");
+        if ( conf == null ) {
+            println("<title>UrlRewriteFilter configuration overview</title>");
+        } else {
+            println("<title>UrlRewriteFilter configuration overview for " + conf.getFileName() + "</title>");
+        }
         println("<style type=\"text/css\">");
         InputStream is = Status.class.getResourceAsStream("doc/doc.css");
         if (is == null) {
@@ -338,13 +342,13 @@ public class Status {
         println("<h2>Running Status</h2>");
         if (conf == null) {
             println("<h3 class=\"err\">ERROR: UrlRewriteFilter failed to load config, check server log</h3>");
-        }
-        if (!conf.isOk()) {
+        }   else if (!conf.isOk()) {
             println("<h3 class=\"err\">ERROR: UrlRewriteFilter NOT ACTIVE</h3>");
         }
         println("<p>Conf");
-        if (conf.isLoadedFromFile()) println("file <code>" + conf.getFileName() + "</code>");
-        println("loaded <em>" + conf.getLoadedDate() + "</em>.</p>");
+        if (conf == null ) println(" <em>empty</em>.</p>");
+        if (conf != null && conf.isLoadedFromFile()) println("file <code>" + conf.getFileName() + "</code>");
+        if (conf != null ) println("loaded <em>" + conf.getLoadedDate() + "</em>.</p>");
         if (urlRewriteFilter != null) {
             if (urlRewriteFilter.isConfReloadCheckEnabled()) {
                 Date nextReloadCheckDate = new Date(urlRewriteFilter.getConfReloadLastCheck().getTime() +
