@@ -475,6 +475,35 @@ public class RuleTest extends TestCase {
         assertEquals("http://short.com/context/blahurl", rewrittenUrl2.getTarget());
     }
 
+    public void testRuleHostBug() throws ServletException, IOException, InvocationTargetException {
+        NormalRule rule = new NormalRule();
+        rule.setToLast("true");
+        rule.setToType("permanent-redirect");
+        rule.setQueryStringAppend("true");
+        rule.setFrom("(.*)");
+        rule.setTo("https://righthost.com%{request-uri}");
+
+        Condition condition = new Condition();
+        condition.setName("host");
+        condition.setOperator("notequal");
+        condition.setValue("^righthost\\.com$");
+
+        rule.addCondition(condition);
+        rule.initialise(null);
+
+        MockRequest request = new MockRequest("/test?param=val");
+        request.addHeader("host", "wronghost.com");
+
+        RewrittenUrl rewrittenUrl = rule.matches(request.getRequestURI(), request, response);
+
+        assertEquals("https://righthost.com/test?param=val", rewrittenUrl.getTarget());
+
+        rule.setTo("https://righthost.com$1");
+        rule.initialise(null);
+
+        rewrittenUrl = rule.matches(request.getRequestURI(), request, response);
+        assertEquals("https://righthost.com/test?param=val", rewrittenUrl.getTarget());
+    }
 
     public void testRule08() throws IOException, ServletException, InvocationTargetException {
         NormalRule rule = new NormalRule();

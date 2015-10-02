@@ -60,7 +60,7 @@ public class PatternReplacer implements SubstitutionFilter {
             sb.append(substitutedReplacement);
             lastMatchEnd = conditionMatcher.end();
             // get out of there for wildcard patterns
-            if (!conditionMatcher.isMultipleMatchingSupported())
+            if (!conditionMatcher.isMultipleMatchingSupported() || notMatched.isEmpty())
                 break;
             if (conditionMatcher.hitEnd()){
 				break;
