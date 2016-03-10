@@ -92,6 +92,10 @@ public class RegexMatcher implements StringMatchingMatcher {
 	public boolean isMultipleMatchingSupported() {
 		return true;
 	}
+	
+	public boolean hitEnd(){
+		return matcher.hitEnd();
+	}
 
 
 }

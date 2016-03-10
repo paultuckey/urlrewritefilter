@@ -62,6 +62,9 @@ public class PatternReplacer implements SubstitutionFilter {
             // get out of there for wildcard patterns
             if (!conditionMatcher.isMultipleMatchingSupported())
                 break;
+            if (conditionMatcher.hitEnd()){
+				break;
+			}
         }
         // put the remaining ending non-matched string
         if (lastMatchEnd < from.length())

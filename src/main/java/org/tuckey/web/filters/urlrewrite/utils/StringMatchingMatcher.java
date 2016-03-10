@@ -56,4 +56,6 @@ public interface StringMatchingMatcher {
     int groupCount();
 
     String group(int groupId);
+    
+    public boolean hitEnd();
 }
