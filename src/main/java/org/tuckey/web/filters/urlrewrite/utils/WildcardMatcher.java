@@ -163,4 +163,9 @@ public class WildcardMatcher implements StringMatchingMatcher {
 		return matchStr;
 	}
 
+	@Override
+	public boolean hitEnd() {
+		return false;
+	}
+
 }
