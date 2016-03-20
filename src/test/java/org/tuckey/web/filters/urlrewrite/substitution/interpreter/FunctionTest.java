@@ -55,8 +55,8 @@ public class FunctionTest {
     @Test
     public void testEscapepath() throws UnsupportedEncodingException {
         /*
-         * I could't know this test is enough to keep the quality. Is there any specification or
-         * document for this method??? TODO check true spec of this method and do test properly
+         * I am not sure that this test is enough to keep the quality. 
+         * Is there any specification or document for this method?
          */
         assertThat(Function.ESCAPEPATH.execute("utf8:\u65E5\u672C\u8A9E", null, new ChainedSubstitutionFilters(Collections.EMPTY_LIST)),
                 is("%e6%97%a5%e6%9c%ac%e8%aa%9e"));
