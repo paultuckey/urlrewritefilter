@@ -34,8 +34,8 @@
  */
 
 /**
- * This package processes function in &quot;to&quot; value with 
- * <a href="http://en.wikipedia.org/wiki/Interpreter_pattern" >Interpreter pattern</a> .
+ * This package processes &quot;to&quot; value in function with 
+ * <a href="http://en.wikipedia.org/wiki/Interpreter_pattern" >Interpreter pattern</a>.
  * BNF for Interpreter pattern is below.
  * <ul>
  * <li>&lt;tovalue&gt; ::= &lt;element&gt; *</li>
