@@ -843,4 +843,37 @@ public class RuleTest extends TestCase {
         NormalRewrittenUrl rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
         assertEquals("/en/robots.txt?param1=value1&param2=value2", rewrittenUrl.getTarget());
     }
+
+    public void testLowerFunction() throws InvocationTargetException, IOException, ServletException {
+        NormalRule rule = new NormalRule();
+        rule.setFrom("^/lowerMe/([A-Z])+/$");
+        rule.setTo("/lowerMe/${lower:$1}");
+        rule.initialise(new MockServletContext());
+        MockRequest request = new MockRequest("/lowerMe/A/");
+        NormalRewrittenUrl rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
+        assertEquals("/lowerMe/a", rewrittenUrl.getTarget());
+    }
+
+    public void testIssue120() throws InvocationTargetException, IOException, ServletException {
+        NormalRule rule = new NormalRule();
+        rule.setFrom("^/test/(.+)\\.html$");
+        rule.setTo("/test/${upper:$1}/${upper:$1}.html");
+        rule.initialise(new MockServletContext());
+        MockRequest request = new MockRequest("/test/test.html");
+        NormalRewrittenUrl rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
+        assertEquals("/test/TEST/TEST.html", rewrittenUrl.getTarget());
+    }
+
+    public void testIssue120More() throws InvocationTargetException, IOException, ServletException {
+        NormalRule rule = new NormalRule();
+        rule.setFrom("^/download/(abc+[0-9]{1}z[0-9]{1,9}i)/(.*)/(.*)$");
+        rule.setTo("/file/download?workId=$1&amp;type=${escape:$2}&amp;name=${escape:$3}&amp;originalUrl=%{request-url}");
+        rule.initialise(new MockServletContext());
+        MockRequest request = new MockRequest("/download/abc1z2i/wawawa/readme.txt");
+        request.setRequestURL("dummytesturl");
+        NormalRewrittenUrl rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
+        assertEquals("/file/download?workId=abc1z2i&amp;type=wawawa&amp;name=readme.txt&amp;originalUrl=dummytesturl",
+                rewrittenUrl.getTarget());
+    }
+
 }
