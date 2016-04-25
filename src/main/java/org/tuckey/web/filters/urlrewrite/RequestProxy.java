@@ -40,11 +40,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.ProxyHost;
 import org.apache.commons.httpclient.SimpleHttpConnectionManager;
-import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.httpclient.methods.*;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 
@@ -190,6 +186,13 @@ public class RequestProxy {
             method = postMethod;
         } else if ("GET".equalsIgnoreCase(methodName)) {
             method = new GetMethod();
+        } else if ("PUT".equalsIgnoreCase(methodName)) {
+            PutMethod putMethod = new PutMethod();
+            InputStreamRequestEntity inputStreamRequestEntity = new InputStreamRequestEntity(hsRequest.getInputStream());
+            putMethod.setRequestEntity(inputStreamRequestEntity);
+            method = putMethod;
+        } else if ("DELETE".equalsIgnoreCase(methodName)) {
+            method = new DeleteMethod();
         } else {
             log.warn("Unsupported HTTP method requested: " + hsRequest.getMethod());
             return null;
