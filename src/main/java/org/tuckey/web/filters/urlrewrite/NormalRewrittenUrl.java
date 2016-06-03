@@ -67,6 +67,7 @@ public class NormalRewrittenUrl implements RewrittenUrl {
     private boolean encode;
     private boolean stopFilterChain = false;
     private boolean noSubstitution = false;
+    private boolean dropCookies = true;
     private RewriteMatch rewriteMatch;
     private ServletContext targetContext = null;
 
@@ -81,6 +82,7 @@ public class NormalRewrittenUrl implements RewrittenUrl {
         this.stopFilterChain = ruleExecutionOutput.isStopFilterMatch();
         this.rewriteMatch = ruleExecutionOutput.getRewriteMatch();
         this.noSubstitution = ruleExecutionOutput.isNoSubstitution();
+        this.dropCookies = ruleExecutionOutput.shouldDropCookies();
     }
 
     /**
@@ -274,7 +276,7 @@ public class NormalRewrittenUrl implements RewrittenUrl {
             if (hsResponse.isCommitted()) {
                 log.error("response is committed. cannot proxy " + target + ". Check that you havn't written to the response before.");
             } else {
-                RequestProxy.execute(target, hsRequest, hsResponse);
+                RequestProxy.execute(target, hsRequest, hsResponse, dropCookies);
                 if (log.isTraceEnabled()) {
                     log.trace("Proxied request to " + target);
                 }
