@@ -69,6 +69,8 @@ public class RequestProxy {
 
     /**
      * This method performs the proxying of the request to the target address.
+     * <p/>
+     * Cookies will not be forwarded to client.
      *
      * @param target     The target address. Has to be a fully qualified address. The request is send as-is to this address.
      * @param hsRequest  The request data which should be send to the
@@ -76,7 +78,20 @@ public class RequestProxy {
      * @throws java.io.IOException Passed on from the connection logic.
      */
     public static void execute(final String target, final HttpServletRequest hsRequest, final HttpServletResponse hsResponse) throws IOException {
-        if ( log.isInfoEnabled() ) {
+        execute(target, hsRequest, hsResponse, true);
+    }
+
+    /**
+     * This method performs the proxying of the request to the target address.
+     *
+     * @param target     The target address. Has to be a fully qualified address. The request is send as-is to this address.
+     * @param hsRequest  The request data which should be send to the
+     * @param hsResponse The response data which will contain the data returned by the proxied request to target.
+     * @throws java.io.IOException Passed on from the connection logic.
+     * @Param dropCookies Determinate whether cookies should be dropped (when {@code true}) or forwarded to client.
+     */
+    public static void execute(final String target, final HttpServletRequest hsRequest, final HttpServletResponse hsResponse, boolean dropCookies) throws IOException {
+        if (log.isInfoEnabled()) {
             log.info("execute, target is " + target);
             log.info("response commit state: " + hsResponse.isCommitted());
         }
@@ -107,7 +122,7 @@ public class RequestProxy {
 
         if ( log.isInfoEnabled() ) log.info("config is " + config.toString());
 
-        final HttpMethod targetRequest = setupProxyRequest(hsRequest, url);
+        final HttpMethod targetRequest = setupProxyRequest(hsRequest, url, dropCookies);
         if (targetRequest == null) {
             log.error("Unsupported request method found: " + hsRequest.getMethod());
             return;
@@ -134,7 +149,7 @@ public class RequestProxy {
         }
 
         //copy the target response headers to our response
-        setupResponseHeaders(targetRequest, hsResponse);
+        setupResponseHeaders(targetRequest, hsResponse, dropCookies);
 
         InputStream originalResponseStream = targetRequest.getResponseBodyAsStream();
         //the body might be null, i.e. for responses with cache-headers which leave out the body
@@ -176,7 +191,7 @@ public class RequestProxy {
         return proxyHost;
     }
 
-    private static HttpMethod setupProxyRequest(final HttpServletRequest hsRequest, final URL targetUrl) throws IOException {
+    private static HttpMethod setupProxyRequest(final HttpServletRequest hsRequest, final URL targetUrl, boolean dropCookies) throws IOException {
         final String methodName = hsRequest.getMethod();
         final HttpMethod method;
         if ("POST".equalsIgnoreCase(methodName)) {
@@ -217,7 +232,7 @@ public class RequestProxy {
                     //The response stream should (afaik) be deflated. If our http client does not support
                     //gzip then the response can not be unzipped and is delivered wrong.
                     continue;
-                } else if (headerName.toLowerCase().startsWith("cookie")) {
+                } else if (dropCookies && headerName.toLowerCase().startsWith("cookie")) {
                     //fixme : don't set any cookies in the proxied request, this needs a cleaner solution
                     continue;
                 }
@@ -235,8 +250,8 @@ public class RequestProxy {
         return method;
     }
 
-    private static void setupResponseHeaders(HttpMethod httpMethod, HttpServletResponse hsResponse) {
-        if ( log.isInfoEnabled() ) {
+    private static void setupResponseHeaders(HttpMethod httpMethod, HttpServletResponse hsResponse, boolean dropCookies) {
+        if (log.isInfoEnabled()) {
             log.info("setupResponseHeaders");
             log.info("status text: " + httpMethod.getStatusText());
             log.info("status line: " + httpMethod.getStatusLine());
@@ -252,12 +267,14 @@ public class RequestProxy {
                 continue;
             } else if ("transfer-encoding".equalsIgnoreCase(h.getName())) {
                 continue;
-            } else if (h.getName().toLowerCase().startsWith("cookie")) {
-                //retrieving a cookie which sets the session id will change the calling session: bad! So we skip this header.
-                continue;
-            } else if (h.getName().toLowerCase().startsWith("set-cookie")) {
-                //retrieving a cookie which sets the session id will change the calling session: bad! So we skip this header.
-                continue;
+            } else if (dropCookies) {
+                if (h.getName().toLowerCase().startsWith("cookie")) {
+                    //retrieving a cookie which sets the session id will change the calling session: bad! So we skip this header.
+                    continue;
+                } else if (h.getName().toLowerCase().startsWith("set-cookie")) {
+                    //retrieving a cookie which sets the session id will change the calling session: bad! So we skip this header.
+                    continue;
+                }
             }
 
             hsResponse.addHeader(h.getName(), h.getValue());
