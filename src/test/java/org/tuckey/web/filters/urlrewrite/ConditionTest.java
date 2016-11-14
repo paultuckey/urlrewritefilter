@@ -123,7 +123,7 @@ public class ConditionTest extends TestCase {
         // perform a weak test to check for null pointers etc
         MockRequest request = new MockRequest();
         condition.initialise();
-        condition.getConditionMatch(request);
+        condition.getConditionMatch(request, null);
     }
 
     public void testCompileFailure() {
@@ -155,7 +155,7 @@ public class ConditionTest extends TestCase {
 
     public void testUnItied() {
         Condition condition = new Condition();
-        assertNull(condition.getConditionMatch(new MockRequest()));
+        assertNull(condition.getConditionMatch(new MockRequest(), null));
     }
 
     public void testCaseSensitive() {
@@ -167,9 +167,9 @@ public class ConditionTest extends TestCase {
         condition.initialise();
         MockRequest request = new MockRequest();
         request.setHeader("a", "aAa");
-        assertNull(condition.getConditionMatch(request));
+        assertNull(condition.getConditionMatch(request, null));
         request.setHeader("a", "aaa");
-        assertNotNull(condition.getConditionMatch(request));
+        assertNotNull(condition.getConditionMatch(request, null));
         assertTrue(condition.isCaseSensitive());
     }
 
@@ -177,7 +177,7 @@ public class ConditionTest extends TestCase {
         Condition condition = new Condition();
         condition.setType("bogus");
         condition.initialise();
-        assertNull(condition.getConditionMatch(new MockRequest()));
+        assertNull(condition.getConditionMatch(new MockRequest(), null));
     }
 
     public void testInstanceOf() {
@@ -189,9 +189,9 @@ public class ConditionTest extends TestCase {
         condition.initialise();
         MockRequest req = new MockRequest();
         req.setAttribute("obj", this);
-        assertNotNull(condition.getConditionMatch(req));
+        assertNotNull(condition.getConditionMatch(req, null));
         req.setAttribute("obj", new ConditionTestExtended());
-        assertNotNull("subclasses should match", condition.getConditionMatch(req));
+        assertNotNull("subclasses should match", condition.getConditionMatch(req, null));
     }
 
     class ConditionTestExtended extends ConditionTest {
@@ -213,42 +213,42 @@ public class ConditionTest extends TestCase {
         condition.setValue("9");
         condition.setOperator("greater");
         condition.initialise();
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
 
         Condition condition2 = new Condition();
         condition2.setType("port");
         condition2.setValue("11");
         condition2.setOperator("less");
         condition2.initialise();
-        assertNotNull("condition must match", condition2.getConditionMatch(request));
+        assertNotNull("condition must match", condition2.getConditionMatch(request, null));
 
         Condition condition3 = new Condition();
         condition3.setType("port");
         condition3.setValue("10");
         condition3.setOperator("greaterorequal");
         condition3.initialise();
-        assertNotNull("condition must match", condition3.getConditionMatch(request));
+        assertNotNull("condition must match", condition3.getConditionMatch(request, null));
 
         Condition condition4 = new Condition();
         condition4.setType("port");
         condition4.setValue("10");
         condition4.setOperator("lessorequal");
         condition4.initialise();
-        assertNotNull("condition must match", condition4.getConditionMatch(request));
+        assertNotNull("condition must match", condition4.getConditionMatch(request, null));
 
         Condition condition5 = new Condition();
         condition5.setType("port");
         condition5.setValue("99");
         condition5.setOperator("notequal");
         condition5.initialise();
-        assertNotNull("condition must match", condition5.getConditionMatch(request));
+        assertNotNull("condition must match", condition5.getConditionMatch(request, null));
 
         Condition condition6 = new Condition();
         condition6.setType("method");
         condition6.setValue("POST");
         condition6.setOperator("notequal");
         condition6.initialise();
-        assertNotNull("condition must match", condition6.getConditionMatch(request));
+        assertNotNull("condition must match", condition6.getConditionMatch(request, null));
 
         Condition condition7 = new Condition();
         condition7.setType("method");
@@ -268,7 +268,7 @@ public class ConditionTest extends TestCase {
         condition.setValue("" + field);
         condition.setOperator("greaterorequal");
         condition.initialise();
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testConditionYear() {
@@ -279,7 +279,7 @@ public class ConditionTest extends TestCase {
         condition.setType("year");
         condition.setValue("" + field);
         condition.initialise();
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testConditionMonth() {
@@ -290,7 +290,7 @@ public class ConditionTest extends TestCase {
         condition.setType("month");
         condition.setValue("" + field);
         condition.initialise();
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testConditionDayOfMonth() {
@@ -301,7 +301,7 @@ public class ConditionTest extends TestCase {
         condition.setType("dayofmonth");
         condition.setValue("" + field);
         condition.initialise();
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testConditionDayOfWeek() {
@@ -312,7 +312,7 @@ public class ConditionTest extends TestCase {
         condition.setType("dayofweek");
         condition.setValue("" + field);
         condition.initialise();
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
 
@@ -324,7 +324,7 @@ public class ConditionTest extends TestCase {
         condition.setType("ampm");
         condition.setValue("" + field);
         condition.initialise();
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testConditionHourOfDay() {
@@ -335,7 +335,7 @@ public class ConditionTest extends TestCase {
         condition.setType("hourofday");
         condition.setValue("" + field);
         condition.initialise();
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testConditionMinute() {
@@ -346,7 +346,7 @@ public class ConditionTest extends TestCase {
         condition.setType("minute");
         condition.setValue("" + field);
         condition.initialise();
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testConditionSecond() {
@@ -357,7 +357,7 @@ public class ConditionTest extends TestCase {
         condition.setType("second");
         condition.setValue("" + field);
         condition.initialise();
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testConditionMillisecond() {
@@ -369,7 +369,7 @@ public class ConditionTest extends TestCase {
         condition.setValue("" + field);
         condition.setOperator("greaterorequal");
         condition.initialise();
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testConditionAttribute() {
@@ -379,23 +379,23 @@ public class ConditionTest extends TestCase {
         condition.setName("ray");
         condition.setValue("andchristian");
         condition.initialise();
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.setAttribute("ray", "andchristian");
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
 
         Condition condition2 = new Condition();
         condition2.setType("attribute");
         condition2.setName("ray");
         condition2.setValue("andbob");
         condition2.initialise();
-        assertNull("condition must not match", condition2.getConditionMatch(request));
+        assertNull("condition must not match", condition2.getConditionMatch(request, null));
 
         Condition condition3 = new Condition();
         condition3.setType("attribute");
         condition3.setValue("andbob");
         condition3.initialise();
-        assertNull("condition must not initialise", condition3.getConditionMatch(request));
+        assertNull("condition must not initialise", condition3.getConditionMatch(request, null));
     }
 
     public void testConditionAuthType() {
@@ -405,13 +405,13 @@ public class ConditionTest extends TestCase {
         condition.setType("auth-type");
         condition.setValue("pwd[a-z0-9]+");
         condition.initialise();
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
 
         Condition condition2 = new Condition();
         condition2.setType("auth-type");
         condition2.setValue("someotherpwdtype");
         condition2.initialise();
-        assertNull("condition must not match", condition2.getConditionMatch(request));
+        assertNull("condition must not match", condition2.getConditionMatch(request, null));
     }
 
     public void testConditionCharacterEncoding() throws UnsupportedEncodingException {
@@ -420,10 +420,10 @@ public class ConditionTest extends TestCase {
         condition.setType("character-encoding");
         condition.setValue("utfcrazybig[0-9]+");
         condition.initialise();
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.setCharacterEncoding("utfcrazybig13");
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testConditionContentLength() throws UnsupportedEncodingException {
@@ -434,10 +434,10 @@ public class ConditionTest extends TestCase {
         condition.setValue("100");
         condition.setOperator("greater");
         condition.initialise();
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
 
         request.setContentLength(10);
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
     }
 
     public void testContentType() throws UnsupportedEncodingException {
@@ -447,10 +447,10 @@ public class ConditionTest extends TestCase {
         condition.setType("content-type");
         condition.setValue("bott[a-z]+");
         condition.initialise();
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
 
         request.setContentType(null);
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
     }
 
     public void testContextPath() throws UnsupportedEncodingException {
@@ -460,10 +460,10 @@ public class ConditionTest extends TestCase {
         condition.setType("context-path");
         condition.setValue("[a-b]lah");
         condition.initialise();
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
 
         request.setContextPath("qlah");
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
     }
 
     public void testCookie() throws UnsupportedEncodingException {
@@ -473,13 +473,13 @@ public class ConditionTest extends TestCase {
         condition.setName("tracker");
         condition.setValue(".*bass.*");
         condition.initialise();
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.addCookie(new Cookie("otherokie", "allyourbassisbelongtous"));
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.addCookie(new Cookie("tracker", "allyourbassisbelongtous"));
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testLocalPort() throws UnsupportedEncodingException {
@@ -489,10 +489,10 @@ public class ConditionTest extends TestCase {
         condition.setType("local-port");
         condition.setValue("1004");
         condition.initialise();
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.setLocalPort(1004);
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testParameter() throws UnsupportedEncodingException {
@@ -502,10 +502,10 @@ public class ConditionTest extends TestCase {
         condition.setName("reqparam");
         condition.setValue("[0-9]+");
         condition.initialise();
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.addParameter("reqparam", "1000245");
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     // Condition: Equal, Pattern: Null, Value: Null, Result should be: Match.
@@ -517,7 +517,7 @@ public class ConditionTest extends TestCase {
         condition.setValue("");
         condition.setOperator("equal");
         condition.initialise();
-        assertNull("condition must match", condition.getConditionMatch(request));
+        assertNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     // Condition: Equal, Pattern: Null, Value: Not Null, Result should be: No match.
@@ -530,7 +530,7 @@ public class ConditionTest extends TestCase {
         condition.setOperator("equal");
         condition.initialise();
         request.addParameter("reqparam", "1000245");
-        assertNotNull("condition must not match", condition.getConditionMatch(request));
+        assertNotNull("condition must not match", condition.getConditionMatch(request, null));
     }
 
     // Condition: Not Equal, Pattern: Null, Value: Null, Result should be: No match.
@@ -542,10 +542,10 @@ public class ConditionTest extends TestCase {
         condition.setValue("");
         condition.setOperator("notequal");
         condition.initialise();
-        assertNotNull("condition must not match", condition.getConditionMatch(request));
+        assertNotNull("condition must not match", condition.getConditionMatch(request, null));
         request.addParameter("reqparam", "1000245");
     // Condition: Not Equal, Pattern: Null, Value: Not Null, Result should be: match.
-        assertNull("condition must match", condition.getConditionMatch(request));
+        assertNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     // Condition: Not Equal, Pattern: Null, Value: Not Null, Result should be: match.
@@ -558,7 +558,7 @@ public class ConditionTest extends TestCase {
         condition.setOperator("notequal");
         condition.initialise();
         request.addParameter("reqparam", "1000245");
-        assertNull("condition must match", condition.getConditionMatch(request));
+        assertNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testPathInfo() throws UnsupportedEncodingException {
@@ -567,10 +567,10 @@ public class ConditionTest extends TestCase {
         condition.setType("path-info");
         condition.setValue("afr[aeiou]ca");
         condition.initialise();
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.setPathInfo("africa");
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testPathTranslated() throws UnsupportedEncodingException {
@@ -579,10 +579,10 @@ public class ConditionTest extends TestCase {
         condition.setType("path-translated");
         condition.setValue("/!@&");
         condition.initialise();
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.setPathTranslated("/!@&");
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testProtocol() throws UnsupportedEncodingException {
@@ -592,10 +592,10 @@ public class ConditionTest extends TestCase {
         condition.setValue("HTTP/1\\.[1-2]");
         condition.initialise();
         request.setProtocol("HTTP/2.0");
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.setProtocol("HTTP/1.2");
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testQueryString() throws UnsupportedEncodingException {
@@ -604,10 +604,10 @@ public class ConditionTest extends TestCase {
         condition.setType("query-string");
         condition.setValue(".*&param=[0-9]+.*");
         condition.initialise();
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.setQueryString("?aaa=dsdsd&param=2333&asdsa=sdds");
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testRemoteAddr() throws UnsupportedEncodingException {
@@ -616,10 +616,10 @@ public class ConditionTest extends TestCase {
         condition.setType("remote-addr");
         condition.setValue("192.168.[0-9]+.[0-9]+");
         condition.initialise();
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.setRemoteAddr("192.168.184.23");
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testRemoteHost() throws UnsupportedEncodingException {
@@ -628,10 +628,10 @@ public class ConditionTest extends TestCase {
         condition.setType("remote-host");
         condition.setValue("\\w+\\.tuckey.org");
         condition.initialise();
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.setRemoteHost("toaster.tuckey.org");
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testRemoteUser() throws UnsupportedEncodingException {
@@ -640,10 +640,10 @@ public class ConditionTest extends TestCase {
         condition.setType("remote-user");
         condition.setValue("p.\\w+");
         condition.initialise();
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.setRemoteUser("p.smith");
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testRequestedSessionId() throws UnsupportedEncodingException {
@@ -652,10 +652,10 @@ public class ConditionTest extends TestCase {
         condition.setType("requested-session-id");
         condition.setValue("\\w+\\.sec[0-6]+");
         condition.initialise();
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.setRequestedSessionId("sdfjsdfhkjhk897fd.sec03");
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testRequestedSessionIdFromCookie() throws UnsupportedEncodingException {
@@ -664,10 +664,10 @@ public class ConditionTest extends TestCase {
         condition.setType("requested-session-id-from-cookie");
         condition.setValue("true");
         condition.initialise();
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.setRequestedSessionIdFromCookie(true);
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testRequestedSessionIdFromURL() throws UnsupportedEncodingException {
@@ -676,10 +676,10 @@ public class ConditionTest extends TestCase {
         condition.setType("requested-session-id-from-url");
         condition.setValue("true");
         condition.initialise();
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.setRequestedSessionIdFromURL(true);
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testRequestedSessionIdValid() throws UnsupportedEncodingException {
@@ -688,10 +688,10 @@ public class ConditionTest extends TestCase {
         condition.setType("requested-session-id-valid");
         condition.setValue("true");
         condition.initialise();
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.setRequestedSessionIdValid(true);
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testRequestUri() throws UnsupportedEncodingException {
@@ -700,10 +700,10 @@ public class ConditionTest extends TestCase {
         condition.setType("request-uri");
         condition.setValue("\\d");
         condition.initialise();
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.setRequestURI("2");
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testRequestUrl() throws UnsupportedEncodingException {
@@ -712,10 +712,10 @@ public class ConditionTest extends TestCase {
         condition.setType("request-url");
         condition.setValue("\\d");
         condition.initialise();
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.setRequestURL("2");
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testSessionAttribute() throws UnsupportedEncodingException {
@@ -724,14 +724,14 @@ public class ConditionTest extends TestCase {
         condition.setType("session-attribute");
         condition.setValue("someval");
         condition.initialise();
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         Condition condition2 = new Condition();
         condition2.setType("session-attribute");
         condition2.setName("someatt");
         condition2.setValue("someval");
         condition2.initialise();
-        assertNull("condition must not match", condition2.getConditionMatch(request));
+        assertNull("condition must not match", condition2.getConditionMatch(request, null));
 
         request.getSession(true).setAttribute("someatt", "someval");
 
@@ -740,7 +740,7 @@ public class ConditionTest extends TestCase {
         condition3.setName("someatt");
         condition3.setValue("someval");
         condition3.initialise();
-        assertNotNull("condition must match", condition3.getConditionMatch(request));
+        assertNotNull("condition must match", condition3.getConditionMatch(request, null));
     }
 
     public void testSessionIsNew() throws UnsupportedEncodingException {
@@ -750,10 +750,10 @@ public class ConditionTest extends TestCase {
         condition.setValue("yes");
         condition.setOperator("notequal");
         condition.initialise();
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
 
         request.setSessionNew(true);
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
     }
 
     public void testServerName() throws UnsupportedEncodingException {
@@ -762,10 +762,10 @@ public class ConditionTest extends TestCase {
         condition.setType("server-name");
         condition.setValue("dev.*");
         condition.initialise();
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.setServerName("dev.googil.com");
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
     public void testScheme() throws UnsupportedEncodingException {
@@ -774,10 +774,10 @@ public class ConditionTest extends TestCase {
         condition.setType("scheme");
         condition.setValue("http");
         condition.initialise();
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.setScheme("http");
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
 
@@ -787,32 +787,32 @@ public class ConditionTest extends TestCase {
         condition.setName("some header");
         condition.setValue("tester");
         condition.initialise();
-        assertNull("condition must not match", condition.getConditionMatch(request));
+        assertNull("condition must not match", condition.getConditionMatch(request, null));
 
         request.setHeader("some header", "tester");
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
 
         Condition condition2 = new Condition();
         condition2.setName("  ");
         condition2.setValue("tester");
         assertFalse("condition must not initialise", condition2.initialise());
-        assertNull("condition must not match", condition2.getConditionMatch(request));
+        assertNull("condition must not match", condition2.getConditionMatch(request, null));
 
         Condition condition3 = new Condition();
         condition3.setName("bonus");
         assertTrue("condition must initialise and check for exists", condition3.initialise());
-        assertNull("condition must not match", condition3.getConditionMatch(request));
+        assertNull("condition must not match", condition3.getConditionMatch(request, null));
         request.setHeader("bonus", "tester");
-        assertNotNull("condition must match", condition3.getConditionMatch(request));
+        assertNotNull("condition must match", condition3.getConditionMatch(request, null));
 
         Condition condition4 = new Condition();
         condition4.setName("portashed");
         condition4.setOperator("notequal");
 
         assertTrue("condition must initialise and check for exists", condition4.initialise());
-        assertNotNull("condition must match", condition4.getConditionMatch(request));
+        assertNotNull("condition must match", condition4.getConditionMatch(request, null));
         request.setHeader("portashed", "tester");
-        assertNull("condition must not match", condition4.getConditionMatch(request));
+        assertNull("condition must not match", condition4.getConditionMatch(request, null));
 
     }
 
@@ -823,7 +823,7 @@ public class ConditionTest extends TestCase {
         condition.setType("method");
         condition.setValue("H[A-Z]AD");
         condition.initialise();
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
     }
 
 
@@ -834,26 +834,26 @@ public class ConditionTest extends TestCase {
         condition.setType("user-in-role");
         condition.setName("devil");
         condition.initialise();
-        assertNotNull("user should be in this role", condition.getConditionMatch(request));
+        assertNotNull("user should be in this role", condition.getConditionMatch(request, null));
 
         Condition condition2 = new Condition();
         condition2.setType("user-in-role");
         condition2.setName("angel");
         condition2.initialise();
-        assertNull("bad user in role must not match", condition2.getConditionMatch(request));
+        assertNull("bad user in role must not match", condition2.getConditionMatch(request, null));
 
         Condition condition3 = new Condition();
         condition3.setType("user-in-role");
         condition3.setValue("devil");
         condition3.initialise();
-        assertNotNull("value instead of name should match", condition3.getConditionMatch(request));
+        assertNotNull("value instead of name should match", condition3.getConditionMatch(request, null));
 
         Condition condition4 = new Condition();
         condition4.setType("user-in-role");
         condition4.setValue("admin");
         condition4.setOperator("notequal");
         condition4.initialise();
-        assertNotNull("value instead of name should match", condition4.getConditionMatch(request));
+        assertNotNull("value instead of name should match", condition4.getConditionMatch(request, null));
     }
 
     public void testConditionPort() {
@@ -863,22 +863,22 @@ public class ConditionTest extends TestCase {
         condition.setType("port");
         condition.setValue("9001");
         condition.initialise();
-        assertNotNull("condition must match", condition.getConditionMatch(request));
+        assertNotNull("condition must match", condition.getConditionMatch(request, null));
 
         Condition condition2 = new Condition();
         condition2.setType("port");
         condition2.setValue(" 9001");
         condition2.initialise();
-        assertNotNull("condition must match", condition2.getConditionMatch(request));
+        assertNotNull("condition must match", condition2.getConditionMatch(request, null));
         // check re-init
         condition2.initialise();
-        assertNotNull("condition must match", condition2.getConditionMatch(request));
+        assertNotNull("condition must match", condition2.getConditionMatch(request, null));
 
         Condition condition3 = new Condition();
         condition3.setType("port");
         condition3.setValue("aaa");
         condition3.initialise();
-        assertNull("condition must not match", condition3.getConditionMatch(request));
+        assertNull("condition must not match", condition3.getConditionMatch(request, null));
     }
 
 

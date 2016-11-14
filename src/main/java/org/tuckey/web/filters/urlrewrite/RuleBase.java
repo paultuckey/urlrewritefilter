@@ -180,7 +180,7 @@ public class RuleBase implements Runnable {
             boolean currentResult = true;
             for (int i = 0; i < conditionsSize; i++) {
                 final Condition condition = (Condition) conditions.get(i);
-                ConditionMatch conditionMatch = condition.getConditionMatch(hsRequest);
+                ConditionMatch conditionMatch = condition.getConditionMatch(hsRequest, url);
                 if (conditionMatch != null) {
                     lastConditionMatch = conditionMatch;
                 }

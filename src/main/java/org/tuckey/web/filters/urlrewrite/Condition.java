@@ -132,16 +132,17 @@ public class Condition extends TypeConverter {
      * @deprecated use getConditionMatch(HttpServletRequest hsRequest)
      */
     public boolean matches(final HttpServletRequest hsRequest) {
-        return getConditionMatch(hsRequest) != null;
+        return getConditionMatch(hsRequest, null) != null;
     }
 
     /**
      * Will check and see if the condition matches the request.
      *
      * @param hsRequest
+     * @param pathWithinApplication TODO
      * @return true on match
      */
-    public ConditionMatch getConditionMatch(final HttpServletRequest hsRequest) {
+    public ConditionMatch getConditionMatch(final HttpServletRequest hsRequest, String pathWithinApplication) {
         if (!initialised) {
             log.debug("condition not initialised skipping");
             // error initialising do not process
@@ -217,7 +218,7 @@ public class Condition extends TypeConverter {
             case TYPE_REQUESTED_SESSION_ID_VALID:
               return evaluateBoolCondition(hsRequest.isRequestedSessionIdValid());
             case TYPE_REQUEST_URI:
-                return evaluateStringCondition(hsRequest.getRequestURI());
+                return evaluateStringCondition(pathWithinApplication);
             case TYPE_REQUEST_URL:
                 StringBuffer requestUrlBuff = hsRequest.getRequestURL();
                 String requestUrlStr = null;
@@ -263,7 +264,7 @@ public class Condition extends TypeConverter {
 
             case TYPE_REQUEST_FILENAME:
                 if ( rule.getServletContext() != null ) {
-                    String fileName = rule.getServletContext().getRealPath(hsRequest.getRequestURI());
+                    String fileName = rule.getServletContext().getRealPath(pathWithinApplication);
                     if ( log.isDebugEnabled() ) log.debug("fileName found is " + fileName);
                     return evaluateStringCondition(fileName);
                 }   else {
