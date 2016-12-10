@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class PerformanceTest extends TestCase {
 
+
     MockResponse response;
     MockRequest request;
     MockServletContext servletContext;
@@ -44,8 +45,6 @@ public class PerformanceTest extends TestCase {
         float timePerRule = bench * (float) 0.0003; // ms per rule... 0.03% of the benchmark
         System.out.println("using " + timePerRule + "ms per rule as the standard");
 
-        float testAmount = 10000; // number of times to run test
-
         // test with 1000 rules, more than anybody would normally have
         Conf conf = new Conf();
         for (int i = 0; i < 1000; i++) {
@@ -62,6 +61,7 @@ public class PerformanceTest extends TestCase {
         urlRewriter.processRequest(request, response);
 
         long timeStart = System.currentTimeMillis();
+        float testAmount = 10000; // number of times to run test
         for (float i = 0; i < testAmount; i++) {
             urlRewriter.processRequest(request, response);
             if (i % 500 == 0 && i > 0) {
@@ -69,8 +69,9 @@ public class PerformanceTest extends TestCase {
             }
         }
         long took = System.currentTimeMillis() - timeStart;
-        System.out.println("took " + took + "ms " + (took / testAmount) + "ms  per rule");
-        assertTrue("should take less than " + timePerRule + "ms per rule", (took / testAmount) < timePerRule);
+        float resultPerItem = took / testAmount;
+        System.out.println("took " + took + "ms " + resultPerItem + "ms  per rule, expected it to be less than: "+ timePerRule);
+        assertTrue("should take less than " + timePerRule + "ms per rule", resultPerItem < timePerRule);
     }
 
 
@@ -81,9 +82,6 @@ public class PerformanceTest extends TestCase {
     public void testLoadsOfOutboundRules() {
         // turn off logging
         Log.setLevel("ERROR");
-
-        float testAmount = 10000; // number of times to run test
-        float timePerRule = 3;  // ms per rule
 
         // test with 1000 rules
         Conf conf = new Conf();
@@ -102,6 +100,7 @@ public class PerformanceTest extends TestCase {
         urlRewriteWrappedResponse.encodeURL("/aaa");
 
         long timeStart = System.currentTimeMillis();
+        float testAmount = 10000; // number of times to run test
         for (float i = 0; i < testAmount; i++) {
             urlRewriteWrappedResponse.encodeURL("/sdasd/asdasd/asdasd");
             if (i % 500 == 0 && i > 0) {
@@ -109,8 +108,10 @@ public class PerformanceTest extends TestCase {
             }
         }
         long took = System.currentTimeMillis() - timeStart;
-        System.out.println("took " + took + "ms " + (took / testAmount) + "ms per rule");
-        assertTrue("should take less than " + timePerRule + "ms per rule", (took / testAmount) < timePerRule);
+        float perItem = took / testAmount;
+        System.out.println("took " + took + "ms " + perItem + "ms per rule");
+        float timePerRule = 3;  // ms per rule
+        assertTrue("should take less than " + timePerRule + "ms per rule", perItem < timePerRule);
     }
 
 

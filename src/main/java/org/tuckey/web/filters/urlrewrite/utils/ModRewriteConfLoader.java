@@ -30,17 +30,17 @@ public class ModRewriteConfLoader {
     public void process(InputStream is, Conf conf) throws IOException {
         String line;
         BufferedReader in = new BufferedReader(new InputStreamReader(is));
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         while ((line = in.readLine()) != null) {
             buffer.append(line);
-            buffer.append("\n");
+            buffer.append('\n');
         }
         process(buffer.toString(), conf);
     }
 
     public void process(String modRewriteStyleConf, Conf conf) {
         String[] lines = modRewriteStyleConf.split("\n");
-        List conditionsBuffer = new ArrayList();
+        List<Condition> conditionsBuffer = new ArrayList<Condition>();
         StringBuffer notesBuffer = new StringBuffer();
         String logLevelStr = null;
         String logTypeStr = null;
@@ -52,7 +52,7 @@ public class ModRewriteConfLoader {
 
             if (line.startsWith("#")) {
                 log.debug("adding note line (line starting with #)");
-                if (notesBuffer.length() > 0) notesBuffer.append("\n");
+                if (notesBuffer.length() > 0) notesBuffer.append('\n');
                 String noteLine = StringUtils.trim(line.substring(1));
                 notesBuffer.append(noteLine);
 

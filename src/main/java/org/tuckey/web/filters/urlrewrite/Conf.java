@@ -69,10 +69,10 @@ public class Conf {
 
     private static Log log = Log.getLog(Conf.class);
 
-    private final List errors = new ArrayList();
-    private final List rules = new ArrayList(50);
-    private final List catchElems = new ArrayList(10);
-    private List outboundRules = new ArrayList(50);
+    private final List<String> errors = new ArrayList<String>();
+    private final List<Rule> rules = new ArrayList<Rule>(50);
+    private final List<CatchElem> catchElems = new ArrayList<CatchElem>(10);
+    private List<OutboundRule> outboundRules = new ArrayList<OutboundRule>(50);
     private boolean ok = false;
     private Date loadedDate = null;
     private int ruleIdCounter = 0;
@@ -139,12 +139,12 @@ public class Conf {
             loader.process(inputStream, this);
             docProcessed = true; // fixed
         } catch (IOException e) {
-            addError("Exception loading conf " + " " + e.getMessage(), e);
+            addError("Exception loading conf " + ' ' + e.getMessage(), e);
         }
     }
 
     /**
-     * Constructor when run elements don't need to be initialised correctly, for docuementation etc.
+     * Constructor when run elements don't need to be initialised correctly, for documentation etc.
      */
     public Conf(URL confUrl) {
         // make sure context is setup before calling initialise()
@@ -154,7 +154,7 @@ public class Conf {
         try {
             loadDom(confUrl.openStream());
         } catch (IOException e) {
-            addError("Exception loading conf " + " " + e.getMessage(), e);
+            addError("Exception loading conf " + ' ' + e.getMessage(), e);
         }
         if (docProcessed) initialise();
         loadedDate = new Date();
@@ -179,9 +179,8 @@ public class Conf {
             log.error("inputstream is null");
             return;
         }
-        DocumentBuilder parser;
 
-        /**
+        /*
          * the thing that resolves dtd's and other xml entities.
          */
         ConfHandler handler = new ConfHandler(confSystemId);
@@ -192,6 +191,7 @@ public class Conf {
         factory.setNamespaceAware(true);
         factory.setIgnoringComments(true);
         factory.setIgnoringElementContentWhitespace(true);
+        DocumentBuilder parser;
         try {
             parser = factory.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
@@ -209,10 +209,10 @@ public class Conf {
             processConfDoc(doc);
 
         } catch (SAXParseException e) {
-            addError("Parse error on line " + e.getLineNumber() + " " + e.getMessage(), e);
+            addError("Parse error on line " + e.getLineNumber() + ' ' + e.getMessage(), e);
 
         } catch (Exception e) {
-            addError("Exception loading conf " + " " + e.getMessage(), e);
+            addError("Exception loading conf " + ' ' + e.getMessage(), e);
         }
     }
 
@@ -435,22 +435,19 @@ public class Conf {
         initDecodeUsing(decodeUsing);
 
         boolean rulesOk = true;
-        for (int i = 0; i < rules.size(); i++) {
-            final Rule rule = (Rule) rules.get(i);
+        for (final Rule rule : rules) {
             if (!rule.initialise(context)) {
                 // if we failed to initialise anything set the status to bad
                 rulesOk = false;
             }
         }
-        for (int i = 0; i < outboundRules.size(); i++) {
-            final OutboundRule outboundRule = (OutboundRule) outboundRules.get(i);
+        for (final OutboundRule outboundRule : outboundRules) {
             if (!outboundRule.initialise(context)) {
                 // if we failed to initialise anything set the status to bad
                 rulesOk = false;
             }
         }
-        for (int i = 0; i < catchElems.size(); i++) {
-            final CatchElem catchElem = (CatchElem) catchElems.get(i);
+        for (final CatchElem catchElem : catchElems) {
             if (!catchElem.initialise(context)) {
                 // if we failed to initialise anything set the status to bad
                 rulesOk = false;
@@ -472,9 +469,9 @@ public class Conf {
             decodeUsingEncodingHeader = true;
             decodeUsingSetting = null;
 
-        }   else if ( decodeUsingSetting.startsWith(HEADER_DECODE_USING + ",")) { // is 'header,xxx'
+        }   else if ( decodeUsingSetting.startsWith(HEADER_DECODE_USING + ',')) { // is 'header,xxx'
             decodeUsingEncodingHeader = true;
-            decodeUsingSetting = decodeUsingSetting.substring((HEADER_DECODE_USING + ",").length());
+            decodeUsingSetting = decodeUsingSetting.substring((HEADER_DECODE_USING + ',').length());
 
         }
         if (NONE_DECODE_USING.equalsIgnoreCase(decodeUsingSetting)) {
@@ -493,11 +490,10 @@ public class Conf {
     }
 
     /**
-     * Destory the conf gracefully.
+     * Destroy the conf gracefully.
      */
     public void destroy() {
-        for (int i = 0; i < rules.size(); i++) {
-            final Rule rule = (Rule) rules.get(i);
+        for (final Rule rule : rules) {
             rule.destroy();
         }
     }
@@ -527,7 +523,7 @@ public class Conf {
      *
      * @return the List of errors
      */
-    public List getErrors() {
+    public List<String> getErrors() {
         return errors;
     }
 
@@ -536,7 +532,7 @@ public class Conf {
      *
      * @return the List of rules
      */
-    public List getRules() {
+    public List<Rule> getRules() {
         return rules;
     }
 
@@ -545,7 +541,7 @@ public class Conf {
      *
      * @return the List of outbound rules
      */
-    public List getOutboundRules() {
+    public List<OutboundRule> getOutboundRules() {
         return outboundRules;
     }
 

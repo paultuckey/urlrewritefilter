@@ -47,7 +47,7 @@ import javax.servlet.ServletContext;
  * @author Paul Tuckey
  * @version $Revision: 42 $ $Date: 2006-10-29 09:43:56 +1300 (Sun, 29 Oct 2006) $
  */
-public class Log {
+public final class Log {
 
     private static Log localLog = Log.getLog(Log.class);
 
