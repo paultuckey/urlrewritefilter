@@ -36,7 +36,7 @@ package org.tuckey.web.testhelper;
 
 
 /**
- * Used to extablish a system benchmark that other performance things can be compared to.
+ * Used to establish a system benchmark that other performance things can be compared to.
  * <p/>
  * Adapted from...
  * http://mathsrv.ku-eichstaett.de/MGF/homes/grothmann/java/bench/BTest.java
@@ -44,6 +44,7 @@ package org.tuckey.web.testhelper;
  */
 public final class BenchmarkRunner {
     private static final int ITER = 1000;
+    public static final int WARM_UP_NUMBER = 1;
     private final int n = 60;
     private final int N = 1125;
     private final double XTotal = 395113;
@@ -118,7 +119,7 @@ public final class BenchmarkRunner {
      * Will give an amount of millisecs that is taken to run a specific complex chunk of code.
      */
     public float establishBenchmark() {
-        return establishBenchmark(2);
+        return establishBenchmark(WARM_UP_NUMBER);
     }
 
     private float establishBenchmark(int numIters) {

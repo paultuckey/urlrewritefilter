@@ -69,8 +69,7 @@ public class UrlRewriter {
     /**
      * Helpful for testing but otherwise, don't use.
      */
-    public RewrittenUrl processRequest(final HttpServletRequest hsRequest,
-                                       final HttpServletResponse hsResponse)
+    public RewrittenUrl processRequest(final HttpServletRequest hsRequest, final HttpServletResponse hsResponse)
             throws IOException, ServletException, InvocationTargetException {
         RuleChain chain = getNewChain(hsRequest, null);
         if (chain == null) return null;
@@ -174,21 +173,21 @@ public class UrlRewriter {
             // for some reason the engine is not giving us the url
             // this isn't good
             log.debug("unable to fetch request uri from request.  This shouldn't happen, it may indicate that " +
-                    "the web application server has a bug or that the request was not pased correctly.");
+                    "the web application server has a bug or that the request was not passed correctly.");
             return null;
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("processing request for " + originalUrl);
+            log.debug("processing request for ", originalUrl);
         }
 
         // add the query string on uri (note, some web app containers do this)
-        if (originalUrl != null && originalUrl.indexOf("?") == -1 && conf.isUseQueryString()) {
+        if (!originalUrl.contains("?") && conf.isUseQueryString()) {
             String query = hsRequest.getQueryString();
             if (query != null) {
                 query = query.trim();
                 if (query.length() > 0) {
-                    originalUrl = originalUrl + "?" + query;
+                    originalUrl = originalUrl + '?' + query;
                     log.debug("query string added");
                 }
             }
@@ -225,17 +224,17 @@ public class UrlRewriter {
             log.debug("attampting to find catch for exception " + originalThrowable.getClass().getName());
         }
 
-        List catchElems = conf.getCatchElems();
-        for (int i = 0; i < catchElems.size(); i++) {
-            CatchElem catchElem = (CatchElem) catchElems.get(i);
-            if (!catchElem.matches(originalThrowable)) continue;
+        List<CatchElem> catchElems = conf.getCatchElems();
+        for (final CatchElem catchElem : catchElems) {
+            if (!catchElem.matches(originalThrowable)) {
+                continue;
+            }
             try {
                 return catchElem.execute(hsRequest, hsResponse, originalThrowable);
 
             } catch (InvocationTargetException invocationExceptionInner) {
                 originalThrowable = getOriginalException(invocationExceptionInner);
-                log.warn("had exception processing catch, trying the rest of the catches with " +
-                        originalThrowable.getClass().getName());
+                log.warn("had exception processing catch, trying the rest of the catches with " + originalThrowable.getClass().getName());
             }
         }
 
@@ -311,10 +310,9 @@ public class UrlRewriter {
         // attempt to match the rules
         boolean finalEncodeOutboundUrl = true;
         String finalToUrl = outboundUrl;
-        final List outboundRules = conf.getOutboundRules();
+        final List<OutboundRule> outboundRules = conf.getOutboundRules();
         try {
-            for (int i = 0; i < outboundRules.size(); i++) {
-                final OutboundRule outboundRule = (OutboundRule) outboundRules.get(i);
+            for (final OutboundRule outboundRule : outboundRules) {
                 if (!encodeUrlHasBeenRun && outboundRule.isEncodeFirst()) {
                     continue;
                 }
@@ -325,7 +323,7 @@ public class UrlRewriter {
                 if (rewrittenUrl != null) {
                     // means this rule has matched
                     if (log.isDebugEnabled()) {
-                        log.debug("\"" + outboundRule.getDisplayName() + "\" matched");
+                        log.debug('"' + outboundRule.getDisplayName() + "\" matched");
                     }
                     finalToUrl = rewrittenUrl.getTarget();
                     finalEncodeOutboundUrl = rewrittenUrl.isEncode();
@@ -339,9 +337,7 @@ public class UrlRewriter {
         } catch (InvocationTargetException e) {
             try {
                 handleInvocationTargetException(hsRequest, hsResponse, e);
-            } catch (ServletException e1) {
-                log.error(e1);
-            } catch (IOException e1) {
+            } catch (ServletException | IOException e1) {
                 log.error(e1);
             }
         }
@@ -350,7 +346,7 @@ public class UrlRewriter {
     }
 
     /**
-     * Destory the rewriter gracefully.
+     * Destroy the rewriter gracefully.
      */
     public void destroy() {
         conf.destroy();

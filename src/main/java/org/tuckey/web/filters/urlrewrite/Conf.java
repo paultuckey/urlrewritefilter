@@ -69,10 +69,10 @@ public class Conf {
 
     private static Log log = Log.getLog(Conf.class);
 
-    private final List<String> errors = new ArrayList<String>();
-    private final List<Rule> rules = new ArrayList<Rule>(50);
-    private final List<CatchElem> catchElems = new ArrayList<CatchElem>(10);
-    private List<OutboundRule> outboundRules = new ArrayList<OutboundRule>(50);
+    private final List<String> errors = new ArrayList<>();
+    private final List<Rule> rules = new ArrayList<>(50);
+    private final List<CatchElem> catchElems = new ArrayList<>(10);
+    private List<OutboundRule> outboundRules = new ArrayList<>(50);
     private boolean ok = false;
     private Date loadedDate = null;
     private int ruleIdCounter = 0;
@@ -608,7 +608,7 @@ public class Conf {
         return defaultMatchType;
     }
 
-    public List getCatchElems() {
+    public List<CatchElem> getCatchElems() {
         return catchElems;
     }
 

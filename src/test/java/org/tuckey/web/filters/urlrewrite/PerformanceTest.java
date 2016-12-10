@@ -20,7 +20,8 @@ public class PerformanceTest extends TestCase {
     MockServletContext servletContext;
     MockFilterChain chain;
 
-    public void setUp() {
+    public void setUp() throws Exception {
+        super.setUp();
         Log.setLevel("DEBUG");
         response = new MockResponse();
         request = new MockRequest("/");

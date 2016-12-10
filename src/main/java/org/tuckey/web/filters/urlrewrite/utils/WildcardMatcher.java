@@ -3,21 +3,21 @@
  * All rights reserved.
  * ====================================================================
  * Licensed under the BSD License. Text as follows.
- *
+ * <p>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *
- *   - Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *   - Redistributions in binary form must reproduce the above
- *     copyright notice, this list of conditions and the following
- *     disclaimer in the documentation and/or other materials provided
- *     with the distribution.
- *   - Neither the name tuckey.org nor the names of its contributors
- *     may be used to endorse or promote products derived from this
- *     software without specific prior written permission.
- *
+ * <p>
+ * - Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided
+ * with the distribution.
+ * - Neither the name tuckey.org nor the names of its contributors
+ * may be used to endorse or promote products derived from this
+ * software without specific prior written permission.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -51,7 +51,7 @@ public class WildcardMatcher implements StringMatchingMatcher {
     private WildcardHelper wh;
     private int[] compiledPattern;
     private String matchStr;
-    private Map resultMap = new HashMap();
+    private Map<String, String> resultMap = new HashMap<>();
     private boolean found = false;
 
 
@@ -93,16 +93,15 @@ public class WildcardMatcher implements StringMatchingMatcher {
                 continue;
             }
             String varStr = variableMatcher.group(1);
-
+            log.debug("found ", varStr);
             boolean validVariable = false;
             int varInt = 0;
-            log.debug("found " + varStr);
             try {
                 varInt = Integer.parseInt(varStr);
                 if (varInt > lastCondMatcherGroupCount) {
                     log.error("variable $" + varInt + " not found");
                     if (log.isDebugEnabled()) {
-                        log.debug("wildcard matcher: " + this.toString());
+                        log.debug("wildcard matcher: ", this.toString());
                     }
                 } else {
                     validVariable = true;
@@ -121,7 +120,9 @@ public class WildcardMatcher implements StringMatchingMatcher {
             variableMatcher.appendReplacement(sb, conditionMatch);
         }
         variableMatcher.appendTail(sb);
-        if (log.isDebugEnabled()) log.debug("replaced sb is " + sb);
+        if (log.isDebugEnabled()) {
+            log.debug("replaced sb is ", sb);
+        }
         String result = sb.toString();
 
         Matcher escapedVariableMatcher = escapedVariablePattern.matcher(result);
@@ -131,36 +132,42 @@ public class WildcardMatcher implements StringMatchingMatcher {
     }
 
     public int groupCount() {
-        if (resultMap == null) return 0;
+        if (resultMap == null) {
+            return 0;
+        }
         return resultMap.size() == 0 ? 0 : resultMap.size() - 1;
     }
 
     public String group(int groupId) {
-        if (resultMap == null) return null;
-        return (String) resultMap.get("" + groupId);
+        if (resultMap == null) {
+            return null;
+        }
+        return resultMap.get(String.valueOf(groupId));
     }
 
-	public int end() {
-		if(found)
-			return matchStr.length();
-		return -1;
-	}
+    public int end() {
+        if (found) {
+            return matchStr.length();
+        }
+        return -1;
+    }
 
-	public void reset() {
-	}
+    public void reset() {
+    }
 
-	public int start() {
-		if(found)
-			return 0;
-		return -1;
-	}
-	
-	public boolean isMultipleMatchingSupported() {
-		return false;
-	}
+    public int start() {
+        if (found) {
+            return 0;
+        }
+        return -1;
+    }
 
-	public String getMatchedString() {
-		return matchStr;
-	}
+    public boolean isMultipleMatchingSupported() {
+        return false;
+    }
+
+    public String getMatchedString() {
+        return matchStr;
+    }
 
 }

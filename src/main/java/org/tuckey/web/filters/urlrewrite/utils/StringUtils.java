@@ -34,13 +34,22 @@
  */
 package org.tuckey.web.filters.urlrewrite.utils;
 
+import com.google.common.base.Strings;
+
+import java.util.regex.Pattern;
+
 /**
  * In the style of commons-lang StringUtils, but a bit smaller!.
  *
  * @author Paul Tuckey
  * @version $Revision: 1 $ $Date: 2006-08-01 21:40:28 +1200 (Tue, 01 Aug 2006) $
  */
-public class StringUtils {
+public final class StringUtils {
+
+    private static final Pattern NEW_LINE_PATTERN = Pattern.compile("\n");
+
+    private StringUtils() {
+    }
 
     public static String trim(final String str) {
         if (str == null) {
@@ -54,14 +63,14 @@ public class StringUtils {
             return null;
         }
         str = str.trim();
-        if ("".equals(str)) {
+        if (Strings.isNullOrEmpty(str)) {
             return null;
         }
         return str;
     }
 
     public static boolean isBlank(final String str) {
-        return str == null || "".equals(str) || "".equals(str.trim());
+        return str == null || str.isEmpty() || str.trim().isEmpty();
     }
 
     public static String notNull(final String str) {
@@ -73,7 +82,7 @@ public class StringUtils {
 
     public static String nl2br(String note) {
         if (note == null) return null;
-        return note.replaceAll("\n", "<br />");
+        return NEW_LINE_PATTERN.matcher(note).replaceAll("<br />");
     }
 
     /**
@@ -82,7 +91,7 @@ public class StringUtils {
      *
      * @param str    the String to check
      * @param prefix the prefix to look for
-     * @see java.lang.String#startsWith
+     * @see String#startsWith
      */
     public static boolean startsWithIgnoreCase(String str, String prefix) {
         if (str == null || prefix == null) {

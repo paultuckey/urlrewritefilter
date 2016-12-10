@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
  */
 public class ModRewriteConfLoader {
 
+    private static final Pattern PATTERN_QUOTE = Pattern.compile("\"");
     private static Log log = Log.getLog(ModRewriteConfLoader.class);
 
     private final Pattern LOG_LEVEL_PATTERN = Pattern.compile("RewriteLogLevel\\s+([0-9]+)\\s*$");
@@ -40,7 +41,7 @@ public class ModRewriteConfLoader {
 
     public void process(String modRewriteStyleConf, Conf conf) {
         String[] lines = modRewriteStyleConf.split("\n");
-        List<Condition> conditionsBuffer = new ArrayList<Condition>();
+        List<Condition> conditionsBuffer = new ArrayList<>();
         StringBuffer notesBuffer = new StringBuffer();
         String logLevelStr = null;
         String logTypeStr = null;
@@ -84,12 +85,12 @@ public class ModRewriteConfLoader {
             } else if (line.startsWith("RewriteRule")) {
                 parseRule(conf, conditionsBuffer, notesBuffer, line);
                 notesBuffer = new StringBuffer();
-                conditionsBuffer = new ArrayList();
+                conditionsBuffer = new ArrayList<>();
             }
         }
         if (logTypeStr != null || logLevelStr != null) {
-            String logStr = (logTypeStr == null ? "" : logTypeStr) + (logLevelStr == null ? "" : ":" + logLevelStr);
-            log.debug("setting log to: " + logStr);
+            String logStr = (logTypeStr == null ? "" : logTypeStr) + (logLevelStr == null ? "" : ':' + logLevelStr);
+            log.debug("setting log to: ", logStr);
             Log.setLevel(logStr);
         }
         if (conditionsBuffer.size() > 0) {
@@ -97,10 +98,9 @@ public class ModRewriteConfLoader {
         }
     }
 
-    private void parseRule(Conf conf, List conditionsBuffer, StringBuffer notesBuffer, String line) {
-        NormalRule rule = processRule(line);
-        for (int j = 0; j < conditionsBuffer.size(); j++) {
-            Condition condition = (Condition) conditionsBuffer.get(j);
+    private void parseRule(Conf conf, List<Condition> conditionsBuffer, StringBuffer notesBuffer, String line) {
+        final NormalRule rule = processRule(line);
+        for (Condition condition : conditionsBuffer) {
             rule.addCondition(condition);
         }
         if (notesBuffer.length() > 0) rule.setNote(notesBuffer.toString());
@@ -112,7 +112,7 @@ public class ModRewriteConfLoader {
         if (logTypeMatcher.matches()) {
             logTypeStr = StringUtils.trimToNull(logTypeMatcher.group(1));
             if (logTypeStr != null) {
-                logTypeStr = logTypeStr.replaceAll("\"", "");
+                logTypeStr = PATTERN_QUOTE.matcher(logTypeStr).replaceAll("");
                 log.debug("RewriteLog parsed as " + logTypeStr);
             }
         }
@@ -195,8 +195,8 @@ public class ModRewriteConfLoader {
                 String flag = flags[k];
                 String flagValue = null;
                 if (flag.indexOf("=") != -1) {
-                    flagValue = flag.substring(flag.indexOf("=") + 1);
-                    flag = flag.substring(0, flag.indexOf("="));
+                    flagValue = flag.substring(flag.indexOf('=') + 1);
+                    flag = flag.substring(0, flag.indexOf('='));
                 }
                 flag = flag.toLowerCase();
                 /*

@@ -154,6 +154,28 @@ public final class Log {
         write("TRACE", throwable, throwable);
     }
 
+    public void debug(String message, Object o) {
+        if (!isDebugEnabled()) {
+            return;
+        }
+        if (isUsingSlf4j()) {
+            slf4jLogger.debug(String.valueOf(o));
+            return;
+        }
+        write("DEBUG", message + o);
+    }
+
+    public void debug(String message) {
+        if (!isDebugEnabled()) {
+            return;
+        }
+        if (isUsingSlf4j()) {
+            slf4jLogger.debug(message);
+            return;
+        }
+        write("DEBUG", message);
+    }
+
     public void debug(Object o) {
         if (!isDebugEnabled()) {
             return;
@@ -165,7 +187,7 @@ public final class Log {
         write("DEBUG", o);
     }
 
-    public void debug(Object o, Throwable throwable) {
+    public void debug(String o, Throwable throwable) {
         if (!isDebugEnabled()) {
             return;
         }
