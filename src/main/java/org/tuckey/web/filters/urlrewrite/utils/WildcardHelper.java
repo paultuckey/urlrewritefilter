@@ -96,12 +96,12 @@ public class WildcardHelper {
 
         // Prepare variables for the translation loop
         int y = 0;
-        boolean slash = false;
 
         // Must start from beginning
         expr[y++] = MATCH_BEGIN;
 
         if (buff.length > 0) {
+            boolean slash = false;
             if (buff[0] == '\\') {
                 slash = true;
             } else if (buff[0] == '*') {
