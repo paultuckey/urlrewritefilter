@@ -52,6 +52,7 @@ public class PerformanceTest extends TestCase {
             NormalRule rule = new NormalRule();
             rule.setFrom("^/([a-z]+)/([0-9]+)/" + i + "/$");
             rule.setTo("/blah/a/$2/");
+            rule.setToType("permanent-redirect");
             conf.addRule(rule);
         }
         conf.initialise();
@@ -62,7 +63,7 @@ public class PerformanceTest extends TestCase {
         urlRewriter.processRequest(request, response);
 
         long timeStart = System.currentTimeMillis();
-        float testAmount = 10000; // number of times to run test
+        float testAmount = 10_000; // number of times to run test
         for (float i = 0; i < testAmount; i++) {
             urlRewriter.processRequest(request, response);
             if (i % 500 == 0 && i > 0) {

@@ -64,13 +64,13 @@ public class MatcherReplacer implements SubstitutionFilter {
         Matcher backRefMatcher = backRefPattern.matcher(replacePattern);
 
         boolean anyMatches = false;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         int lastAppendPosition = 0;
         while (backRefMatcher.find()) {
             anyMatches = true;
             int groupCount = backRefMatcher.groupCount();
             if (groupCount < 1) {
-                log.error("group count on backref finder regex is not as expected");
+                log.error("group count on back reference finder regex is not as expected");
                 if (log.isDebugEnabled()) {
                     log.error("backRefMatcher: " + backRefMatcher.toString());
                 }
@@ -78,10 +78,10 @@ public class MatcherReplacer implements SubstitutionFilter {
             }
             String varStr = backRefMatcher.group(1);
 
-            boolean validBackref = false;
-            int varInt = 0;
             log.debug("found " + varStr);
             // now grab this match from conditionMatcher
+            int varInt = 0;
+            boolean validBackref = false;
             try {
                 varInt = Integer.parseInt(varStr);
                 if (varInt > conditionMatcherGroupCount) {

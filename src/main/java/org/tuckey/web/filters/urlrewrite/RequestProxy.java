@@ -52,6 +52,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.regex.Pattern;
 
 /**
  * This class is responsible for a proxy http request.
@@ -66,6 +67,7 @@ import java.util.Enumeration;
  */
 public class RequestProxy {
     private static final Log log = Log.getLog(RequestProxy.class);
+    private static final Pattern NUMBER_PATTERN = Pattern.compile("[0-9]+");
 
     /**
      * This method performs the proxying of the request to the target address.
@@ -73,7 +75,7 @@ public class RequestProxy {
      * @param target     The target address. Has to be a fully qualified address. The request is send as-is to this address.
      * @param hsRequest  The request data which should be send to the
      * @param hsResponse The response data which will contain the data returned by the proxied request to target.
-     * @throws java.io.IOException Passed on from the connection logic.
+     * @throws IOException Passed on from the connection logic.
      */
     public static void execute(final String target, final HttpServletRequest hsRequest, final HttpServletResponse hsResponse) throws IOException {
         if ( log.isInfoEnabled() ) {
@@ -163,7 +165,7 @@ public class RequestProxy {
             if (colonIdx != -1) {
                 proxyHostStr = proxyHostStr.substring(0, colonIdx);
                 String proxyPortStr = useProxyServer.substring(colonIdx + 1);
-                if (proxyPortStr != null && proxyPortStr.length() > 0 && proxyPortStr.matches("[0-9]+")) {
+                if (proxyPortStr.length() > 0 && NUMBER_PATTERN.matcher(proxyPortStr).matches()) {
                     int proxyPort = Integer.parseInt(proxyPortStr);
                     proxyHost = new ProxyHost(proxyHostStr, proxyPort);
                 } else {

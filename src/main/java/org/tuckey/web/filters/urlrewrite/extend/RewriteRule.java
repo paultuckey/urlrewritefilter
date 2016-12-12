@@ -63,9 +63,6 @@ public class RewriteRule {
     /**
      * Can we match the current request?  null means no.  Return a valid RuleMatch object or
      * new SimpleRewriteMatch() (or an object that extends RewriteMatch) if this rule matches.
-     *
-     * @param request
-     * @param response
      */
     public RewriteMatch matches(HttpServletRequest request, HttpServletResponse response) {
         return null;

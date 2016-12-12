@@ -48,17 +48,14 @@ public interface Rule {
     /**
      * Will run the rule against the uri and perform action required will return false is not matched
      * otherwise true.
-     *
-     * @param url
-     * @param hsRequest
-     * @return String of the rewritten url or the same as the url passed in if no match was made
+     ** @return String of the rewritten url or the same as the url passed in if no match was made
      */
-    public RewrittenUrl matches(final String url, final HttpServletRequest hsRequest,
-                                final HttpServletResponse hsResponse, final RuleChain chain)
+    RewrittenUrl matches(final String url, final HttpServletRequest hsRequest,
+                         final HttpServletResponse hsResponse, final RuleChain chain)
             throws IOException, ServletException, InvocationTargetException;
 
-    public RewrittenUrl matches(final String url, final HttpServletRequest hsRequest,
-                                final HttpServletResponse hsResponse)
+    RewrittenUrl matches(final String url, final HttpServletRequest hsRequest,
+                         final HttpServletResponse hsResponse)
             throws IOException, ServletException, InvocationTargetException;
 
     /**
@@ -66,27 +63,27 @@ public interface Rule {
      *
      * @return true on success
      */
-    public boolean initialise(ServletContext context);
+     boolean initialise(ServletContext context);
 
-    public void destroy();
+    void destroy();
 
-    public String getName();
+    String getName();
 
-    public String getDisplayName();
+    String getDisplayName();
 
-    public boolean isLast();
+    boolean isLast();
 
-    public void setId(int i);
+    void setId(int i);
 
-    public int getId();
+    int getId();
 
-    public boolean isValid();
+    boolean isValid();
 
-    public boolean isFilter();
+    boolean isFilter();
 
     /**
      * List of strings for all errors.
      */
-    public List<String> getErrors();
+    List<String> getErrors();
 
 }

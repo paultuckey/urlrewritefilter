@@ -46,14 +46,18 @@ public class ModRewriteConfLoader {
         String logLevelStr = null;
         String logTypeStr = null;
 
-        for (int i = 0; i < lines.length; i++) {
-            String line = StringUtils.trimToNull(lines[i]);
-            if (line == null) continue;
+        for (final String line1 : lines) {
+            String line = StringUtils.trimToNull(line1);
+            if (line == null) {
+                continue;
+            }
             log.debug("processing line: " + line);
 
             if (line.startsWith("#")) {
                 log.debug("adding note line (line starting with #)");
-                if (notesBuffer.length() > 0) notesBuffer.append('\n');
+                if (notesBuffer.length() > 0) {
+                    notesBuffer.append('\n');
+                }
                 String noteLine = StringUtils.trim(line.substring(1));
                 notesBuffer.append(noteLine);
 
@@ -62,7 +66,9 @@ public class ModRewriteConfLoader {
 
             } else if (line.startsWith("RewriteCond")) {
                 Condition condition = processRewriteCond(line);
-                if (condition != null) conditionsBuffer.add(condition);
+                if (condition != null) {
+                    conditionsBuffer.add(condition);
+                }
 
             } else if (line.startsWith("RewriteEngine")) {
                 processRewriteEngine(conf, line);

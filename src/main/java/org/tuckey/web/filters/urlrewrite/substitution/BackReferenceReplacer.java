@@ -78,14 +78,14 @@ public class BackReferenceReplacer implements SubstitutionFilter {
 
                 Matcher backRefMatcher = backRefPattern.matcher(subjectOfReplacement);
 
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 boolean anyMatches = false;
                 int lastAppendPosition = 0;
                 while (backRefMatcher.find()) {
                     anyMatches = true;
                     int groupCount = backRefMatcher.groupCount();
                     if (groupCount < 1) {
-                        log.error("group count on backref finder regex is not as expected");
+                        log.error("group count on back reference finder regex is not as expected");
                         if (log.isDebugEnabled()) {
                             log.error("backRefMatcher: " + backRefMatcher.toString());
                         }

@@ -62,7 +62,7 @@ public class RuleChain implements FilterChain {
     private int ruleIdxToRun = 0;
     private RewrittenUrl finalRewrittenRequest = null;
     private String finalToUrl;
-    private List rules;
+    private List<Rule> rules;
     private boolean requestRewritten;
     private boolean rewriteHandled = false;
     private boolean responseHandled;
@@ -80,7 +80,7 @@ public class RuleChain implements FilterChain {
             throws IOException, ServletException, InvocationTargetException {
         // return to next level up and contniue to process rules
         int currentIdx = ruleIdxToRun++;
-        final Rule rule = (Rule) rules.get(currentIdx);
+        final Rule rule = rules.get(currentIdx);
         final RewrittenUrl rewrittenUrl = rule.matches(finalToUrl, hsRequest, hsResponse, this);
 
         // if this is a filter don't process any more rules, only process them via doFilter

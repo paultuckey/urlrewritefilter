@@ -200,7 +200,7 @@ public class UrlRewriter {
             return null;
         }
 
-        final List rules = conf.getRules();
+        final List<Rule> rules = conf.getRules();
         if (rules.size() == 0) {
             // no rules defined
             log.debug("there are no rules setup.  not rewriting request.");

@@ -74,9 +74,6 @@ public class NormalRule extends RuleBase implements Rule {
     /**
      * Will run the rule against the uri and perform action required will return false is not matched
      * otherwise true.
-     *
-     * @param url
-     * @param hsRequest
      * @return String of the rewritten url or the same as the url passed in if no match was made
      */
     public RewrittenUrl matches(final String url, final HttpServletRequest hsRequest,
