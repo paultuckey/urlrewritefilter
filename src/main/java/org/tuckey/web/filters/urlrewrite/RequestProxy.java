@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2008, Paul Tuckey
  * All rights reserved.
  * ====================================================================
@@ -87,8 +87,8 @@ public final class RequestProxy {
      * @param target     The target address. Has to be a fully qualified address. The request is send as-is to this address.
      * @param hsRequest  The request data which should be send to the
      * @param hsResponse The response data which will contain the data returned by the proxied request to target.
+     * @param dropCookies Determinate whether cookies should be dropped (when {@code true}) or forwarded to client.
      * @throws java.io.IOException Passed on from the connection logic.
-     * @Param dropCookies Determinate whether cookies should be dropped (when {@code true}) or forwarded to client.
      */
     public static void execute(final String target, final HttpServletRequest hsRequest, final HttpServletResponse hsResponse, boolean dropCookies) throws IOException {
         if (log.isInfoEnabled()) {
@@ -305,7 +305,6 @@ class RequestProxyCustomRequestEntity implements RequestEntity {
     private String contentType;
 
     public RequestProxyCustomRequestEntity(InputStream is, long contentLength, String contentType) {
-        super();
         this.is = is;
         this.contentLength = contentLength;
         this.contentType = contentType;
