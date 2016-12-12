@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2005-2007, Paul Tuckey
  * All rights reserved.
  * ====================================================================
@@ -34,20 +34,10 @@
  */
 package org.tuckey.web.filters.urlrewrite;
 
+import com.google.common.base.Strings;
 import org.tuckey.web.filters.urlrewrite.extend.RewriteMatch;
-import org.tuckey.web.filters.urlrewrite.substitution.BackReferenceReplacer;
-import org.tuckey.web.filters.urlrewrite.substitution.ChainedSubstitutionFilters;
-import org.tuckey.web.filters.urlrewrite.substitution.FunctionReplacer;
-import org.tuckey.web.filters.urlrewrite.substitution.SubstitutionContext;
-import org.tuckey.web.filters.urlrewrite.substitution.SubstitutionFilterChain;
-import org.tuckey.web.filters.urlrewrite.substitution.VariableReplacer;
-import org.tuckey.web.filters.urlrewrite.utils.Log;
-import org.tuckey.web.filters.urlrewrite.utils.RegexPattern;
-import org.tuckey.web.filters.urlrewrite.utils.StringMatchingMatcher;
-import org.tuckey.web.filters.urlrewrite.utils.StringMatchingPattern;
-import org.tuckey.web.filters.urlrewrite.utils.StringMatchingPatternSyntaxException;
-import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
-import org.tuckey.web.filters.urlrewrite.utils.WildcardPattern;
+import org.tuckey.web.filters.urlrewrite.substitution.*;
+import org.tuckey.web.filters.urlrewrite.utils.*;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -68,7 +58,7 @@ public class RuleBase implements Runnable {
 
     private static Log log = Log.getLog(RuleBase.class);
 
-    private static String DEFAULT_RULE_FROM = "^(.*)$";
+    private static final String DEFAULT_RULE_FROM = "^(.*)$";
 
     protected int id;
 
@@ -90,10 +80,10 @@ public class RuleBase implements Runnable {
     private int runIdCounter;
 
     private StringMatchingPattern pattern;
-    protected final List errors = new ArrayList(5);
-    private final List conditions = new ArrayList(5);
-    private final List runs = new ArrayList(2);
-    protected final List setAttributes = new ArrayList(2);
+    protected final List<String> errors = new ArrayList<>(5);
+    private final List<Condition> conditions = new ArrayList<>(5);
+    private final List<Run> runs = new ArrayList<>(2);
+    protected final List<SetAttribute> setAttributes = new ArrayList<>(2);
     private boolean stopFilterChainOnMatch = false;
     private boolean noSubstitution = false;
 
@@ -108,19 +98,9 @@ public class RuleBase implements Runnable {
     private ServletContext servletContext;
 
     /**
-     * Constructor.
-     */
-    public RuleBase() {
-        super();
-        // empty
-    }
-
-    /**
      * Will run the rule against the uri and perform action required will return false is not matched
      * otherwise true.
      *
-     * @param url
-     * @param hsRequest
      * @return String of the rewritten url or the same as the url passed in if no match was made
      */
     protected RuleExecutionOutput matchesBase(String url, final HttpServletRequest hsRequest,
@@ -178,8 +158,8 @@ public class RuleBase implements Runnable {
         if (conditionsSize > 0) {
             boolean processNextOr = false;
             boolean currentResult = true;
-            for (int i = 0; i < conditionsSize; i++) {
-                final Condition condition = (Condition) conditions.get(i);
+            for (Object condition1 : conditions) {
+                final Condition condition = (Condition) condition1;
                 ConditionMatch conditionMatch = condition.getConditionMatch(hsRequest);
                 if (conditionMatch != null) {
                     lastConditionMatch = conditionMatch;
@@ -208,8 +188,8 @@ public class RuleBase implements Runnable {
         int setAttributesSize = setAttributes.size();
         if (setAttributesSize > 0) {
             log.trace("setting attributes");
-            for (int i = 0; i < setAttributesSize; i++) {
-                SetAttribute setAttribute = (SetAttribute) setAttributes.get(i);
+            for (Object setAttribute1 : setAttributes) {
+                SetAttribute setAttribute = (SetAttribute) setAttribute1;
                 setAttribute.execute(lastConditionMatch, matcher, hsRequest, hsResponse);
             }
         }
@@ -219,8 +199,7 @@ public class RuleBase implements Runnable {
         RewriteMatch lastRunMatch = null;
         if (runsSize > 0) {
             log.trace("performing runs");
-            for (int i = 0; i < runsSize; i++) {
-                Run run = (Run) runs.get(i);
+            for (Run run : runs) {
                 lastRunMatch = run.execute(hsRequest, hsResponse, matcher, lastConditionMatch, chain);
             }
         }
@@ -242,9 +221,9 @@ public class RuleBase implements Runnable {
 
         // Check for "no substitution" (-)
         if (noSubstitution) {
-        	log.debug("'to' is '-', no substitution, passing through URL");
-        	ruleExecutionOutput.setNoSubstitution(true);
-        	ruleExecutionOutput.setReplacedUrl(url);
+            log.debug("'to' is '-', no substitution, passing through URL");
+            ruleExecutionOutput.setNoSubstitution(true);
+            ruleExecutionOutput.setReplacedUrl(url);
         }
 
         // when match found but need to stop filter chain
@@ -272,15 +251,13 @@ public class RuleBase implements Runnable {
         // check all the conditions
         initialised = true;
         boolean ok = true;
-        for (int i = 0; i < conditions.size(); i++) {
-            final Condition condition = (Condition) conditions.get(i);
+        for (final Condition condition : conditions) {
             condition.setRule(this);
             if (!condition.initialise()) {
                 ok = false;
             }
         }
-        for (int i = 0; i < runs.size(); i++) {
-            final Run run = (Run) runs.get(i);
+        for (final Run run : runs) {
             if (!run.initialise(context)) {
                 ok = false;
             }
@@ -289,8 +266,7 @@ public class RuleBase implements Runnable {
                 filter = true;
             }
         }
-        for (int i = 0; i < setAttributes.size(); i++) {
-            final SetAttribute setAttribute = (SetAttribute) setAttributes.get(i);
+        for (final SetAttribute setAttribute : setAttributes) {
             if (!setAttribute.initialise()) {
                 ok = false;
             }
@@ -302,7 +278,7 @@ public class RuleBase implements Runnable {
 
         // compile the from regexp
         if (StringUtils.isBlank(from)) {
-            log.debug("rule's from is blank, setting to " + DEFAULT_RULE_FROM);
+            log.debug("rule's from is blank, setting to ", DEFAULT_RULE_FROM);
             from = DEFAULT_RULE_FROM;
         }
 
@@ -326,7 +302,7 @@ public class RuleBase implements Runnable {
         } else if ("null".equalsIgnoreCase(to)) {
             stopFilterChainOnMatch = true;
         } else if ("-".equals(to)) {
-			noSubstitution = true;
+            noSubstitution = true;
         } else if (StringUtils.isBlank(to)) {
             toEmpty = true;
         } else if (!StringUtils.isBlank(to)) {
@@ -345,7 +321,7 @@ public class RuleBase implements Runnable {
         }
 
         if (ok) {
-            log.debug("loaded rule " + getFullDisplayName());
+            log.debug("loaded rule ", getFullDisplayName());
         } else {
             log.debug("failed to load rule");
         }
@@ -385,8 +361,7 @@ public class RuleBase implements Runnable {
      * Destroy the rule gracefully.
      */
     public void destroy() {
-        for (int i = 0; i < runs.size(); i++) {
-            final Run run = (Run) runs.get(i);
+        for (final Run run : runs) {
             run.destroy();
         }
     }
@@ -406,7 +381,9 @@ public class RuleBase implements Runnable {
      * @param from the url to match from
      */
     public void setFrom(final String from) {
-        this.from = from;
+        if (!Strings.isNullOrEmpty(from)) {
+            this.from = RewriteUtils.uriEncodeParts(from);
+        }
     }
 
     /**
@@ -570,10 +547,19 @@ public class RuleBase implements Runnable {
     }
 
     public boolean isNoSubstitution() {
-		return noSubstitution;
-	}
+        return noSubstitution;
+    }
 
     public ServletContext getServletContext() {
         return servletContext;
+    }
+
+    @Override
+    public String toString() {
+        return "RuleBase{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", from='" + from + '\'' +
+                '}';
     }
 }

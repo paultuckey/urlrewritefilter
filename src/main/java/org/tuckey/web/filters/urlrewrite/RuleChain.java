@@ -46,6 +46,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Chain of rules.  Implemented as a chain so that java rules can filter the request, resposne.
@@ -160,7 +161,7 @@ public class RuleChain implements FilterChain {
         rewriteHandled = true;
         // wrap the request if necessary to allow overriding of request parameters and method
         if ( response instanceof UrlRewriteWrappedResponse && request instanceof HttpServletRequest) {
-            HashMap overiddenRequestParameters = ((UrlRewriteWrappedResponse) response).getOverridenRequestParameters();
+            Map<String, String[]> overiddenRequestParameters = ((UrlRewriteWrappedResponse) response).getOverridenRequestParameters();
             String overiddenMethod = ((UrlRewriteWrappedResponse) response).getOverridenMethod();
             if ( overiddenRequestParameters != null || overiddenMethod != null) {
                 request = new UrlRewriteWrappedRequest((HttpServletRequest) request, overiddenRequestParameters, overiddenMethod);
@@ -168,8 +169,7 @@ public class RuleChain implements FilterChain {
         }
         if (finalRewrittenRequest != null) {
             responseHandled = true;
-            requestRewritten = finalRewrittenRequest.doRewrite((HttpServletRequest) request,
-                    (HttpServletResponse) response, parentChain);
+            requestRewritten = finalRewrittenRequest.doRewrite((HttpServletRequest) request, (HttpServletResponse) response, parentChain);
         }
         if (! requestRewritten) {
             responseHandled = true;

@@ -72,13 +72,6 @@ public class NormalRule extends RuleBase implements Rule {
     private ServletContext toServletContext = null;
 
     /**
-     * Constructor.
-     */
-    public NormalRule() {
-        // empty
-    }
-
-    /**
      * Will run the rule against the uri and perform action required will return false is not matched
      * otherwise true.
      *
@@ -97,9 +90,9 @@ public class NormalRule extends RuleBase implements Rule {
         if ( queryStringAppend && hsRequest.getQueryString() != null && hsRequest.getQueryString().length() > 0) {
             String target = ruleExecutionOutput.getReplacedUrl();
             if (target.contains("?")) {
-                ruleExecutionOutput.setReplacedUrl(target + "&" + hsRequest.getQueryString());
+                ruleExecutionOutput.setReplacedUrl(target + '&' + hsRequest.getQueryString());
             } else {
-                ruleExecutionOutput.setReplacedUrl(target + "?" + hsRequest.getQueryString());
+                ruleExecutionOutput.setReplacedUrl(target + '?' + hsRequest.getQueryString());
             }
         }
         if ( toServletContext != null ) ruleExecutionOutput.setReplacedUrlContext(toServletContext);
@@ -133,7 +126,7 @@ public class NormalRule extends RuleBase implements Rule {
             if ( context == null) {
                 addError("unable to look for context as current context null");
             }   else {
-                toServletContext = context.getContext("/" + toContextStr);
+                toServletContext = context.getContext('/' + toContextStr);
                 if ( toServletContext == null ) {
                     addError("could not get servlet context " + toContextStr);
                 }   else {
@@ -198,7 +191,7 @@ public class NormalRule extends RuleBase implements Rule {
 
     public String getDisplayName() {
         if (name != null) {
-            return name + " (rule " + id + ")";
+            return name + " (rule " + id + ')';
         }
         return "Rule " + id;
     }
@@ -208,7 +201,7 @@ public class NormalRule extends RuleBase implements Rule {
     }
 
     public String getFullDisplayName() {
-        return getDisplayName() + " (" + from + ", " + to + " " + toType + ")";
+        return getDisplayName() + " (" + from + ", " + to + ' ' + toType + ')';
     }
 
     public boolean isEncodeToUrl() {

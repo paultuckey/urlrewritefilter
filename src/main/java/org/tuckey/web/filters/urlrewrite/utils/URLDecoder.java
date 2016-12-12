@@ -3,7 +3,10 @@ package org.tuckey.web.filters.urlrewrite.utils;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 
-public class URLDecoder {
+public final class URLDecoder {
+
+	private URLDecoder() {
+	}
 
 	public static String decodeURL(String url, String charset) throws URISyntaxException{
 		int queryPart = url.indexOf('?');

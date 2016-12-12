@@ -9,7 +9,7 @@ import java.util.BitSet;
  *
  * @author stephane
  */
-public class URLEncoder {
+public final class URLEncoder {
 
     /**
      * mark = "-" | "_" | "." | "!" | "~" | "*" | "'" | "(" | ")"
@@ -165,6 +165,9 @@ public class URLEncoder {
         PCHAR.set(',');
     }
 
+    private URLEncoder() {
+    }
+
     /**
      * Encodes a string to be a valid path parameter URL, which means it can contain PCHAR* only (do not put the leading
      * ";" or it will be escaped.
@@ -186,25 +189,24 @@ public class URLEncoder {
             return null;
         }
         // start at *3 for the worst case when everything is %encoded on one byte
-        final StringBuffer encoded = new StringBuffer(pathSegment.length() * 3);
+        final StringBuilder encoded = new StringBuilder(pathSegment.length() * 3);
         final char[] toEncode = pathSegment.toCharArray();
-        for (int i = 0; i < toEncode.length; i++) {
-            char c = toEncode[i];
+        for (char c : toEncode) {
             if (PCHAR.get(c)) {
                 encoded.append(c);
             } else {
                 final byte[] bytes = String.valueOf(c).getBytes(charset);
-                for (int j = 0; j < bytes.length; j++) {
-                    byte b = bytes[j];
+                for (byte b : bytes) {
                     // make it unsigned
+                    encoded.append('%');
                     final int u8 = b & 0xFF;
-                    encoded.append("%");
-                    if (u8 < 16)
-                        encoded.append("0");
+                    if (u8 < 16) {
+                        encoded.append('0');
+                    }
                     encoded.append(Integer.toHexString(u8));
                 }
-			}
-		}
+            }
+        }
 		return encoded.toString();
 	}
 }

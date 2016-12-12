@@ -44,7 +44,7 @@ package org.tuckey.web.testhelper;
  */
 public final class BenchmarkRunner {
     private static final int ITER = 1000;
-    public static final int WARM_UP_NUMBER = 1;
+    public static final int WARM_UP_NUMBER = 3;
     private final int n = 60;
     private final int N = 1125;
     private final double XTotal = 395113;

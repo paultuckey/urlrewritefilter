@@ -56,8 +56,8 @@ public class GenericResponseWrapper extends HttpServletResponseWrapper implement
     private static final Log LOG = Log.getLog(GenericResponseWrapper.class);
     private int statusCode = SC_OK;
     private String contentType;
-    private final Map<String, List<Serializable>> headersMap = new TreeMap<String, List<Serializable>>(String.CASE_INSENSITIVE_ORDER);
-    private final List cookies = new ArrayList();
+    private final Map<String, List<Serializable>> headersMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+    private final List<Cookie> cookies = new ArrayList<>();
     private final ServletOutputStream outstr;
     private PrintWriter writer;
     private boolean disableFlushBuffer = true;
@@ -171,13 +171,8 @@ public class GenericResponseWrapper extends HttpServletResponseWrapper implement
      */
     @Override
     public void addHeader(String name, String value) {
-        List<Serializable> values = this.headersMap.get(name);
-        if (values == null) {
-            values = new LinkedList<Serializable>();
-            this.headersMap.put(name, values);
-        }
+        List<Serializable> values = this.headersMap.computeIfAbsent(name, k -> new LinkedList<>());
         values.add(value);
-
         super.addHeader(name, value);
     }
 
@@ -186,7 +181,7 @@ public class GenericResponseWrapper extends HttpServletResponseWrapper implement
      */
     @Override
     public void setHeader(String name, String value) {
-        final LinkedList<Serializable> values = new LinkedList<Serializable>();
+        final LinkedList<Serializable> values = new LinkedList<>();
         values.add(value);
         this.headersMap.put(name, values);
 
@@ -198,11 +193,7 @@ public class GenericResponseWrapper extends HttpServletResponseWrapper implement
      */
     @Override
     public void addDateHeader(String name, long date) {
-        List<Serializable> values = this.headersMap.get(name);
-        if (values == null) {
-            values = new LinkedList<Serializable>();
-            this.headersMap.put(name, values);
-        }
+        List<Serializable> values = this.headersMap.computeIfAbsent(name, k -> new LinkedList<>());
         values.add(date);
 
         super.addDateHeader(name, date);
@@ -213,7 +204,7 @@ public class GenericResponseWrapper extends HttpServletResponseWrapper implement
      */
     @Override
     public void setDateHeader(String name, long date) {
-        final LinkedList<Serializable> values = new LinkedList<Serializable>();
+        final LinkedList<Serializable> values = new LinkedList<>();
         values.add(date);
         this.headersMap.put(name, values);
 
@@ -225,11 +216,7 @@ public class GenericResponseWrapper extends HttpServletResponseWrapper implement
      */
     @Override
     public void addIntHeader(String name, int value) {
-        List<Serializable> values = this.headersMap.get(name);
-        if (values == null) {
-            values = new LinkedList<Serializable>();
-            this.headersMap.put(name, values);
-        }
+        List<Serializable> values = this.headersMap.computeIfAbsent(name, k -> new LinkedList<>());
         values.add(value);
 
         super.addIntHeader(name, value);
@@ -240,7 +227,7 @@ public class GenericResponseWrapper extends HttpServletResponseWrapper implement
      */
     @Override
     public void setIntHeader(String name, int value) {
-        final LinkedList<Serializable> values = new LinkedList<Serializable>();
+        final LinkedList<Serializable> values = new LinkedList<>();
         values.add(value);
         this.headersMap.put(name, values);
 
@@ -282,6 +269,7 @@ public class GenericResponseWrapper extends HttpServletResponseWrapper implement
         statusCode = SC_OK;
         contentType = null;
     }
+
 
     /**
      * Flushes all the streams for this response.

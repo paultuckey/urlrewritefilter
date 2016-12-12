@@ -34,6 +34,8 @@
  */
 package org.tuckey.web.testhelper;
 
+import org.tuckey.web.filters.urlrewrite.utils.RewriteUtils;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
@@ -183,7 +185,10 @@ public class MockRequest implements HttpServletRequest {
     }
 
     public String getRequestURI() {
-        return requestURI;
+        if (requestURI == null) {
+            return null;
+        }
+        return RewriteUtils.uriEncodeParts(requestURI);
     }
 
     public StringBuffer getRequestURL() {
