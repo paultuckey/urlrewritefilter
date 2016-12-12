@@ -283,8 +283,7 @@ public class VariableReplacer implements SubstitutionFilter {
         if (name == null) {
             return "";
         }
-        for (int i = 0; i < cookies.length; i++) {
-            Cookie cookie = cookies[i];
+        for (Cookie cookie : cookies) {
             if (cookie == null) {
                 continue;
             }

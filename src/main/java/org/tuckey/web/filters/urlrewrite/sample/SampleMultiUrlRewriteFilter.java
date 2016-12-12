@@ -4,11 +4,7 @@ import org.tuckey.web.filters.urlrewrite.Conf;
 import org.tuckey.web.filters.urlrewrite.UrlRewriteFilter;
 import org.tuckey.web.filters.urlrewrite.UrlRewriter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +14,8 @@ import java.util.List;
  */
 public class SampleMultiUrlRewriteFilter extends UrlRewriteFilter {
 
-    private List urlrewriters = new ArrayList();
-     
+    private List<UrlRewriter> urlrewriters = new ArrayList<>();
+
     public void loadUrlRewriter(FilterConfig filterConfig) throws ServletException {
         // add configurations
         try {
@@ -36,12 +32,11 @@ public class SampleMultiUrlRewriteFilter extends UrlRewriteFilter {
 
     public UrlRewriter getUrlRewriter(ServletRequest request, ServletResponse response, FilterChain chain) {
         // do some logic to decide what urlrewriter to use (possibly do a reload check on the conf file)
-        return (UrlRewriter) urlrewriters.get(0);
+        return urlrewriters.get(0);
     }
 
     public void destroyUrlRewriter() {
-        for (int i = 0; i < urlrewriters.size(); i++) {
-            UrlRewriter urlRewriter = (UrlRewriter) urlrewriters.get(i);
+        for (UrlRewriter urlRewriter : urlrewriters) {
             urlRewriter.destroy();
         }
     }

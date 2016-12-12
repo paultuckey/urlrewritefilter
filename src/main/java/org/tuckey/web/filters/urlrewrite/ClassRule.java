@@ -203,10 +203,7 @@ public class ClassRule implements Rule {
         Object instance;
         try {
             instance = constructor.newInstance((Object[]) null);
-        } catch (InstantiationException | IllegalAccessException e) {
-            logInvokeException("constructor", e);
-            return false;
-        } catch (InvocationTargetException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             logInvokeException("constructor", e);
             return false;
         }

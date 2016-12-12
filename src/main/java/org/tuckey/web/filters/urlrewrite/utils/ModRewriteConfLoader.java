@@ -146,9 +146,11 @@ public class ModRewriteConfLoader {
                 log.debug("got rule " + rulePartStr);
                 String[] ruleParts = rulePartStr.split(" ");
                 int partCounter = 0;
-                for (int j = 0; j < ruleParts.length; j++) {
-                    String part = StringUtils.trimToNull(ruleParts[j]);
-                    if (part == null) continue;
+                for (final String rulePart : ruleParts) {
+                    String part = StringUtils.trimToNull(rulePart);
+                    if (part == null) {
+                        continue;
+                    }
                     partCounter++;
                     log.debug("parsed rule part " + part);
                     if (partCounter == 1) {
@@ -175,12 +177,12 @@ public class ModRewriteConfLoader {
         Matcher engineMatcher = ENGINE_PATTERN.matcher(line);
         if (engineMatcher.matches()) {
             String enabledStr = StringUtils.trim(engineMatcher.group(1));
-            log.debug("RewriteEngine value parsed as '" + enabledStr + "'");
+            log.debug("RewriteEngine value parsed as '" + enabledStr + '\'');
             if ("0".equalsIgnoreCase(enabledStr) ||
                     "false".equalsIgnoreCase(enabledStr) ||
                     "no".equalsIgnoreCase(enabledStr) ||
                     "off".equalsIgnoreCase(enabledStr)) enabled = false;
-            log.debug("RewriteEngine as boolean '" + enabled + "'");
+            log.debug("RewriteEngine as boolean '" + enabled + '\'');
         } else {
             log.error("cannot parse " + line);
         }
@@ -191,8 +193,8 @@ public class ModRewriteConfLoader {
         String rawFlags = StringUtils.trimToNull(part.substring(1, part.length() - 1));
         if (rawFlags != null) {
             String[] flags = rawFlags.split(",");
-            for (int k = 0; k < flags.length; k++) {
-                String flag = flags[k];
+            for (final String flag1 : flags) {
+                String flag = flag1;
                 String flagValue = null;
                 if (flag.indexOf("=") != -1) {
                     flagValue = flag.substring(flag.indexOf('=') + 1);
@@ -371,9 +373,11 @@ public class ModRewriteConfLoader {
             String conditionParts = StringUtils.trimToNull(condMatcher.group(1));
             if (conditionParts != null) {
                 String[] condParts = conditionParts.split(" ");
-                for (int i = 0; i < condParts.length; i++) {
-                    String part = StringUtils.trimToNull(condParts[i]);
-                    if (part == null) continue;
+                for (final String condPart : condParts) {
+                    String part = StringUtils.trimToNull(condPart);
+                    if (part == null) {
+                        continue;
+                    }
                     if (part.equalsIgnoreCase("%{HTTP_USER_AGENT}")) {
                         condition.setType("header");
                         condition.setName("user-agent");

@@ -62,7 +62,7 @@ public class SampleRewriteRule extends RewriteRule {
         }
 
         // match required with clean parameters
-        return new SampleRewriteMatch(id.intValue());
+        return new SampleRewriteMatch(id);
     }
 
 }

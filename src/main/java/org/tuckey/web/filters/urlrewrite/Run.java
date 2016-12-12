@@ -275,8 +275,8 @@ public class Run {
             if (log.isDebugEnabled()) {
                 log.debug("looking for " + methodStr + "(ServletRequest, ServletResponse)");
             }
-            for (int i = 0; i < runMethodPossibleSignatures.length; i++) {
-                Class[] runMethodPossibleSignature = runMethodPossibleSignatures[i];
+            for (final Class[] runMethodPossibleSignature1 : runMethodPossibleSignatures) {
+                Class[] runMethodPossibleSignature = runMethodPossibleSignature1;
                 if (extraParam != null) {
                     if (runMethodPossibleSignature.length == 2) {
                         runMethodPossibleSignature = new Class[]{runMethodPossibleSignature[0],
@@ -287,12 +287,14 @@ public class Run {
                     }
                 }
                 if (log.isDebugEnabled()) {
-                    StringBuffer possible = new StringBuffer();
+                    StringBuilder possible = new StringBuilder();
                     for (int j = 0; j < runMethodPossibleSignature.length; j++) {
-                        if (j > 0) possible.append(",");
+                        if (j > 0) {
+                            possible.append(',');
+                        }
                         possible.append(runMethodPossibleSignature[j].getName());
                     }
-                    log.debug("looking for " + methodStr + "(" + possible + ")");
+                    log.debug("looking for " + methodStr + '(' + possible + ')');
                 }
                 try {
                     runMethod = runClass.getMethod(methodStr, runMethodPossibleSignature);
@@ -311,8 +313,7 @@ public class Run {
         }
 
         Method[] methods = runClass.getMethods();
-        for (int i = 0; i < methods.length; i++) {
-            Method method = methods[i];
+        for (Method method : methods) {
             if ("destroy".equals(method.getName()) && method.getParameterTypes().length == 0) {
                 log.debug("found destroy methodStr");
                 destroyMethod = method;
@@ -327,7 +328,9 @@ public class Run {
                 log.debug("found filter init methodStr");
                 filterInitMethod = method;
             }
-            if (initMethod != null && destroyMethod != null) break;
+            if (initMethod != null && destroyMethod != null) {
+                break;
+            }
         }
         if (!newEachTime) {
             runClassInstance = fetchNewInstance();
@@ -343,9 +346,7 @@ public class Run {
             }
             try {
                 destroyMethod.invoke(runClassInstanceToDestroy, (Object[]) null);
-            } catch (IllegalAccessException e) {
-                logInvokeException("destroy()", e);
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 logInvokeException("destroy()", e);
             }
         }

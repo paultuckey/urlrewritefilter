@@ -22,7 +22,7 @@ import java.util.Stack;
 public class JsonWriter {
 
     private StringBuffer buf = new StringBuffer();
-    private Stack calls = new Stack();
+    private Stack<Object> calls = new Stack<>();
     boolean emitClassName = true;
 
     public JsonWriter(boolean emitClassName) {
@@ -61,7 +61,7 @@ public class JsonWriter {
         } else {
             calls.push(object);
             if (object instanceof Class) string(object);
-            else if (object instanceof Boolean) bool(((Boolean) object).booleanValue());
+            else if (object instanceof Boolean) bool((Boolean) object);
             else if (object instanceof Number) add(object);
             else if (object instanceof String) string(object);
             else if (object instanceof Character) string(object);
@@ -75,21 +75,20 @@ public class JsonWriter {
     }
 
     private boolean cyclic(Object object) {
-        Iterator it = calls.iterator();
-        while (it.hasNext()) {
-            Object called = it.next();
-            if (object == called) return true;
+        for (final Object called : calls) {
+            if (object == called) {
+                return true;
+            }
         }
         return false;
     }
 
     private void bean(Object object) {
         add("{");
-        BeanInfo info;
-        boolean addedSomething = false;
         try {
-            info = Introspector.getBeanInfo(object.getClass());
+            BeanInfo info = Introspector.getBeanInfo(object.getClass());
             PropertyDescriptor[] props = info.getPropertyDescriptors();
+            boolean addedSomething = false;
             for (PropertyDescriptor prop : props) {
                 String name = prop.getName();
                 // ignore stacktraces

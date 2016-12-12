@@ -71,10 +71,11 @@ public class ServerNameMatcher {
             return false;
         }
         serverName = StringUtils.trim(serverName).toLowerCase();
-        for (int i = 0; i < patterns.size(); i++) {
-            int[] compiledPattern = (int[]) patterns.get(i);
+        for (int[] pattern : patterns) {
             Map<String, String> map = new HashMap<>();
-            if (wh.match(map, serverName, compiledPattern)) return true;
+            if (wh.match(map, serverName, pattern)) {
+                return true;
+            }
         }
         return false;
     }
