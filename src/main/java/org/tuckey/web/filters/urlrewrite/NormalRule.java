@@ -66,6 +66,7 @@ public class NormalRule extends RuleBase implements Rule {
     public static final short TO_TYPE_POST_INCLUDE = 5;
     public static final short TO_TYPE_PROXY = 6;
 
+    private boolean dropCookies = true;
     private boolean encodeToUrl = false;
     private boolean queryStringAppend = false;
     private String toContextStr = null;
@@ -84,6 +85,7 @@ public class NormalRule extends RuleBase implements Rule {
             // no match, or run/set only match
             return null;
         }
+        ruleExecutionOutput.setDropCookies(dropCookies);
         if ( queryStringAppend && hsRequest.getQueryString() != null && hsRequest.getQueryString().length() > 0) {
             String target = ruleExecutionOutput.getReplacedUrl();
             if (target.contains("?")) {
@@ -223,5 +225,9 @@ public class NormalRule extends RuleBase implements Rule {
 
     public void setQueryStringAppend(String value) {
         queryStringAppend = "true".equalsIgnoreCase(value);
+    }
+
+    public void setDropCookies(final boolean dropCookies) {
+        this.dropCookies = dropCookies;
     }
 }

@@ -3,21 +3,21 @@
  * All rights reserved.
  * ====================================================================
  * Licensed under the BSD License. Text as follows.
- *
+ * <p>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *
- *   - Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *   - Redistributions in binary form must reproduce the above
- *     copyright notice, this list of conditions and the following
- *     disclaimer in the documentation and/or other materials provided
- *     with the distribution.
- *   - Neither the name tuckey.org nor the names of its contributors
- *     may be used to endorse or promote products derived from this
- *     software without specific prior written permission.
- *
+ * <p>
+ * - Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided
+ * with the distribution.
+ * - Neither the name tuckey.org nor the names of its contributors
+ * may be used to endorse or promote products derived from this
+ * software without specific prior written permission.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -34,12 +34,7 @@
  */
 package org.tuckey.web.filters.urlrewrite;
 
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HostConfiguration;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.ProxyHost;
-import org.apache.commons.httpclient.SimpleHttpConnectionManager;
+import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.*;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
@@ -65,9 +60,26 @@ import java.util.regex.Pattern;
  * Date: 19.06.2008
  * Time: 16:02:54
  */
-public class RequestProxy {
+public final class RequestProxy {
     private static final Log log = Log.getLog(RequestProxy.class);
     private static final Pattern NUMBER_PATTERN = Pattern.compile("[0-9]+");
+
+    private RequestProxy() {
+    }
+
+    /**
+     * This method performs the proxying of the request to the target address.
+     * <p/>
+     * Cookies will not be forwarded to client.
+     *
+     * @param target     The target address. Has to be a fully qualified address. The request is send as-is to this address.
+     * @param hsRequest  The request data which should be send to the
+     * @param hsResponse The response data which will contain the data returned by the proxied request to target.
+     * @throws java.io.IOException Passed on from the connection logic.
+     */
+    public static void execute(final String target, final HttpServletRequest hsRequest, final HttpServletResponse hsResponse) throws IOException {
+        execute(target, hsRequest, hsResponse, true);
+    }
 
     /**
      * This method performs the proxying of the request to the target address.
@@ -75,10 +87,11 @@ public class RequestProxy {
      * @param target     The target address. Has to be a fully qualified address. The request is send as-is to this address.
      * @param hsRequest  The request data which should be send to the
      * @param hsResponse The response data which will contain the data returned by the proxied request to target.
-     * @throws IOException Passed on from the connection logic.
+     * @throws java.io.IOException Passed on from the connection logic.
+     * @Param dropCookies Determinate whether cookies should be dropped (when {@code true}) or forwarded to client.
      */
-    public static void execute(final String target, final HttpServletRequest hsRequest, final HttpServletResponse hsResponse) throws IOException {
-        if ( log.isInfoEnabled() ) {
+    public static void execute(final String target, final HttpServletRequest hsRequest, final HttpServletResponse hsResponse, boolean dropCookies) throws IOException {
+        if (log.isInfoEnabled()) {
             log.info("execute, target is " + target);
             log.info("response commit state: " + hsResponse.isCommitted());
         }
@@ -102,14 +115,18 @@ public class RequestProxy {
         final HostConfiguration config = new HostConfiguration();
 
         ProxyHost proxyHost = getUseProxyServer((String) hsRequest.getAttribute("use-proxy"));
-        if (proxyHost != null) config.setProxyHost(proxyHost);
+        if (proxyHost != null) {
+            config.setProxyHost(proxyHost);
+        }
 
         final int port = url.getPort() != -1 ? url.getPort() : url.getDefaultPort();
         config.setHost(url.getHost(), port, url.getProtocol());
 
-        if ( log.isInfoEnabled() ) log.info("config is " + config.toString());
+        if (log.isInfoEnabled()) {
+            log.info("config is " + config.toString());
+        }
 
-        final HttpMethod targetRequest = setupProxyRequest(hsRequest, url);
+        final HttpMethod targetRequest = setupProxyRequest(hsRequest, url, dropCookies);
         if (targetRequest == null) {
             log.error("Unsupported request method found: " + hsRequest.getMethod());
             return;
@@ -125,8 +142,7 @@ public class RequestProxy {
 
         final int result;
         if (targetRequest instanceof EntityEnclosingMethod) {
-            final RequestProxyCustomRequestEntity requestEntity = new RequestProxyCustomRequestEntity(
-                    hsRequest.getInputStream(), hsRequest.getContentLength(), hsRequest.getContentType());
+            final RequestProxyCustomRequestEntity requestEntity = new RequestProxyCustomRequestEntity(hsRequest.getInputStream(), hsRequest.getContentLength(), hsRequest.getContentType());
             final EntityEnclosingMethod entityEnclosingMethod = (EntityEnclosingMethod) targetRequest;
             entityEnclosingMethod.setRequestEntity(requestEntity);
             result = client.executeMethod(config, entityEnclosingMethod);
@@ -136,7 +152,7 @@ public class RequestProxy {
         }
 
         //copy the target response headers to our response
-        setupResponseHeaders(targetRequest, hsResponse);
+        setupResponseHeaders(targetRequest, hsResponse, dropCookies);
 
         InputStream originalResponseStream = targetRequest.getResponseBodyAsStream();
         //the body might be null, i.e. for responses with cache-headers which leave out the body
@@ -178,7 +194,7 @@ public class RequestProxy {
         return proxyHost;
     }
 
-    private static HttpMethod setupProxyRequest(final HttpServletRequest hsRequest, final URL targetUrl) throws IOException {
+    private static HttpMethod setupProxyRequest(final HttpServletRequest hsRequest, final URL targetUrl, boolean dropCookies) throws IOException {
         final String methodName = hsRequest.getMethod();
         final HttpMethod method;
         if ("POST".equalsIgnoreCase(methodName)) {
@@ -219,7 +235,7 @@ public class RequestProxy {
                     //The response stream should (afaik) be deflated. If our http client does not support
                     //gzip then the response can not be unzipped and is delivered wrong.
                     continue;
-                } else if (headerName.toLowerCase().startsWith("cookie")) {
+                } else if (dropCookies && headerName.toLowerCase().startsWith("cookie")) {
                     //fixme : don't set any cookies in the proxied request, this needs a cleaner solution
                     continue;
                 }
@@ -233,12 +249,14 @@ public class RequestProxy {
             }
         }
 
-        if ( log.isInfoEnabled() ) log.info("proxy query string " + method.getQueryString());
+        if (log.isInfoEnabled()) {
+            log.info("proxy query string " + method.getQueryString());
+        }
         return method;
     }
 
-    private static void setupResponseHeaders(HttpMethod httpMethod, HttpServletResponse hsResponse) {
-        if ( log.isInfoEnabled() ) {
+    private static void setupResponseHeaders(HttpMethod httpMethod, HttpServletResponse hsResponse, boolean dropCookies) {
+        if (log.isInfoEnabled()) {
             log.info("setupResponseHeaders");
             log.info("status text: " + httpMethod.getStatusText());
             log.info("status line: " + httpMethod.getStatusLine());
@@ -254,16 +272,20 @@ public class RequestProxy {
                 continue;
             } else if ("transfer-encoding".equalsIgnoreCase(h.getName())) {
                 continue;
-            } else if (h.getName().toLowerCase().startsWith("cookie")) {
-                //retrieving a cookie which sets the session id will change the calling session: bad! So we skip this header.
-                continue;
-            } else if (h.getName().toLowerCase().startsWith("set-cookie")) {
-                //retrieving a cookie which sets the session id will change the calling session: bad! So we skip this header.
-                continue;
+            } else if (dropCookies) {
+                if (h.getName().toLowerCase().startsWith("cookie")) {
+                    //retrieving a cookie which sets the session id will change the calling session: bad! So we skip this header.
+                    continue;
+                } else if (h.getName().toLowerCase().startsWith("set-cookie")) {
+                    //retrieving a cookie which sets the session id will change the calling session: bad! So we skip this header.
+                    continue;
+                }
             }
 
             hsResponse.addHeader(h.getName(), h.getValue());
-            if ( log.isInfoEnabled() ) log.info("setting response parameter:" + h.getName() + ", value: " + h.getValue());
+            if (log.isInfoEnabled()) {
+                log.info("setting response parameter:" + h.getName() + ", value: " + h.getValue());
+            }
         }
         //fixme what about the response footers? (httpMethod.getResponseFooters())
 
@@ -276,11 +298,11 @@ public class RequestProxy {
 /**
  * @author Gunnar Hillert
  */
-class RequestProxyCustomRequestEntity  implements RequestEntity {
+class RequestProxyCustomRequestEntity implements RequestEntity {
 
- 	private InputStream is = null;
-	private long contentLength = 0;
-	private String contentType;
+    private InputStream is = null;
+    private long contentLength = 0;
+    private String contentType;
 
     public RequestProxyCustomRequestEntity(InputStream is, long contentLength, String contentType) {
         super();
