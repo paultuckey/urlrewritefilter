@@ -263,7 +263,7 @@ public class Condition extends TypeConverter {
 
             case TYPE_REQUEST_FILENAME:
                 if ( rule.getServletContext() != null ) {
-                    String fileName = rule.getServletContext().getRealPath(hsRequest.getRequestURI());
+                    String fileName = rule.getServletContext().getRealPath(hsRequest.getServletPath());
                     if ( log.isDebugEnabled() ) log.debug("fileName found is " + fileName);
                     return evaluateStringCondition(fileName);
                 }   else {
