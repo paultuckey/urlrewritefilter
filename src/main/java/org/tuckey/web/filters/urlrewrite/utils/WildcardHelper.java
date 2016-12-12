@@ -166,89 +166,88 @@ public class WildcardHelper {
 
         char buff[] = data.toCharArray();
         // Allocate the result buffer
-        char rslt[] = new char[expr.length + buff.length];
+        char resultBuffer[] = new char[expr.length + buff.length];
 
         // The previous and current position of the expression character
         // (MATCH_*)
-        int charpos = 0;
 
-        // The position in the expression, input, translation and result arrays
-        int exprpos = 0;
-        int buffpos = 0;
-        int rsltpos = 0;
-        int offset;
 
         // The matching count
-        int mcount = 0;
+        int matchingCount = 0;
 
         // We want the complete data be in {0}
-        map.put(Integer.toString(mcount), data);
+        map.put(Integer.toString(matchingCount), data);
 
         // First check for MATCH_BEGIN
         boolean matchBegin = false;
-        if (expr[charpos] == MATCH_BEGIN) {
+        // The position in the expression, input, translation and result arrays
+        int expressionPosition = 0;
+        int characterPosition = 0;
+        if (expr[characterPosition] == MATCH_BEGIN) {
             matchBegin = true;
-            exprpos = ++charpos;
+            expressionPosition = ++characterPosition;
         }
 
         // Search the fist expression character (except MATCH_BEGIN - already
         // skipped)
-        while (expr[charpos] >= 0) {
-            charpos++;
+        while (expr[characterPosition] >= 0) {
+            characterPosition++;
         }
 
-        // The expression charater (MATCH_*)
-        int exprchr = expr[charpos];
+        // The expression charatcer (MATCH_*)
+        int expressionCharacter = expr[characterPosition];
 
+        int resultPosition = 0;
+        int bufferPosition = 0;
         while (true) {
             // Check if the data in the expression array before the current
             // expression character matches the data in the input buffer
+            int offset;
             if (matchBegin) {
-                if (!matchArray(expr, exprpos, charpos, buff, buffpos)) {
+                if (!matchArray(expr, expressionPosition, characterPosition, buff, bufferPosition)) {
                     return (false);
                 }
                 matchBegin = false;
             } else {
-                offset = indexOfArray(expr, exprpos, charpos, buff,
-                        buffpos);
+                offset = indexOfArray(expr, expressionPosition, characterPosition, buff, bufferPosition);
                 if (offset < 0) {
                     return (false);
                 }
             }
 
             // Advance buffpos
-            buffpos += (charpos - exprpos);
+            bufferPosition += (characterPosition - expressionPosition);
 
             // Check for END's
-            if (exprchr == MATCH_END) {
-                if (rsltpos > 0) {
-                    map.put(Integer.toString(++mcount),
-                            new String(rslt, 0, rsltpos));
+            if (expressionCharacter == MATCH_END) {
+                if (resultPosition > 0) {
+                    map.put(Integer.toString(++matchingCount),
+                            new String(resultBuffer, 0, resultPosition));
                 }
                 // Don't care about rest of input buffer
                 return (true);
-            } else if (exprchr == MATCH_THEEND) {
-                if (rsltpos > 0) {
-                    map.put(Integer.toString(++mcount),
-                            new String(rslt, 0, rsltpos));
+            } else if (expressionCharacter == MATCH_THEEND) {
+                if (resultPosition > 0) {
+                    map.put(Integer.toString(++matchingCount),
+                            new String(resultBuffer, 0, resultPosition));
                 }
                 // Check that we reach buffer's end
-                return (buffpos == buff.length);
+                return (bufferPosition == buff.length);
             }
 
             // Search the next expression character
-            exprpos = ++charpos;
-            while (expr[charpos] >= 0) {
-                charpos++;
+            expressionPosition = ++characterPosition;
+            while (expr[characterPosition] >= 0) {
+                characterPosition++;
             }
-            int prevchr = exprchr;
-            exprchr = expr[charpos];
+            int prevchr = expressionCharacter;
+            expressionCharacter = expr[characterPosition];
 
             // We have here prevchr == * or **.
             offset = (prevchr == MATCH_FILE)
-                    ? indexOfArray(expr, exprpos, charpos, buff, buffpos)
-                    : lastIndexOfArray(expr, exprpos, charpos, buff,
-                    buffpos);
+                    ? indexOfArray(expr, expressionPosition, characterPosition, buff, bufferPosition)
+                    : lastIndexOfArray(expr, expressionPosition, characterPosition, buff,
+                    bufferPosition);
 
             if (offset < 0) {
                 return (false);
@@ -257,21 +256,21 @@ public class WildcardHelper {
             // Copy the data from the source buffer into the result buffer
             // to substitute the expression character
             if (prevchr == MATCH_PATH) {
-                while (buffpos < offset) {
-                    rslt[rsltpos++] = buff[buffpos++];
+                while (bufferPosition < offset) {
+                    resultBuffer[resultPosition++] = buff[bufferPosition++];
                 }
             } else {
                 // Matching file, don't copy '/'
-                while (buffpos < offset) {
-                    if (buff[buffpos] == '/') {
+                while (bufferPosition < offset) {
+                    if (buff[bufferPosition] == '/') {
                         return (false);
                     }
-                    rslt[rsltpos++] = buff[buffpos++];
+                    resultBuffer[resultPosition++] = buff[bufferPosition++];
                 }
             }
 
-            map.put(Integer.toString(++mcount), new String(rslt, 0, rsltpos));
-            rsltpos = 0;
+            map.put(Integer.toString(++matchingCount), new String(resultBuffer, 0, resultPosition));
+            resultPosition = 0;
         }
     }
 

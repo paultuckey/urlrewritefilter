@@ -24,7 +24,7 @@ public class ChainedSubstitutionFilters implements SubstitutionFilterChain {
 	}
 	
 	public static String substitute(String string, SubstitutionFilter singleFilter){
-		ArrayList list = new ArrayList(1);
+		List<SubstitutionFilter> list = new ArrayList<>(1);
 		list.add(singleFilter);
 		SubstitutionFilterChain filterChain = new ChainedSubstitutionFilters(list);
 		return filterChain.substitute(string, null);
