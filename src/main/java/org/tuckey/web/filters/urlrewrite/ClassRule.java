@@ -64,7 +64,7 @@ public class ClassRule implements Rule {
     private boolean enabled = true;
     private boolean valid = false;
     private boolean last = true;
-    private List errors = new ArrayList();
+    private List<String> errors = new ArrayList<>();
 
     private static final String DEAULT_METHOD_STR = "matches";
     private String methodStr = DEAULT_METHOD_STR;
@@ -110,11 +110,11 @@ public class ClassRule implements Rule {
         args[0] = hsRequest;
         args[1] = hsResponse;
 
-        Object returnedObj;
         if (log.isDebugEnabled()) {
             log.debug("running " + classStr + "." + methodStr + "(HttpServletRequest, HttpServletResponse)");
         }
         if (matchesMethod == null) return null;
+        Object returnedObj;
         try {
             returnedObj = matchesMethod.invoke(localRule, (Object[]) args);
 
@@ -153,13 +153,10 @@ public class ClassRule implements Rule {
         // check all the conditions
         initialised = true;
 
-        Class ruleClass;
+        Class<?> ruleClass;
         try {
             ruleClass = Class.forName(classStr);
-        } catch (ClassNotFoundException e) {
-            addError("could not find " + classStr + " got a " + e.toString(), e);
-            return false;
-        } catch (NoClassDefFoundError e) {
+        } catch (ClassNotFoundException | NoClassDefFoundError e) {
             addError("could not find " + classStr + " got a " + e.toString(), e);
             return false;
         }
@@ -187,8 +184,7 @@ public class ClassRule implements Rule {
         }
 
         Method[] methods = ruleClass.getMethods();
-        for (int i = 0; i < methods.length; i++) {
-            Method method = methods[i];
+        for (Method method : methods) {
             if ("destroy".equals(method.getName()) && method.getParameterTypes().length == 0) {
                 log.debug("found destroy methodStr");
                 destroyMethod = method;
@@ -198,17 +194,16 @@ public class ClassRule implements Rule {
                 log.debug("found init methodStr");
                 initMethod = method;
             }
-            if (initMethod != null && destroyMethod != null) break;
+            if (initMethod != null && destroyMethod != null) {
+                break;
+            }
         }
 
-        Object instance;
         log.debug("getting new instance of " + classStr);
+        Object instance;
         try {
             instance = constructor.newInstance((Object[]) null);
-        } catch (InstantiationException e) {
-            logInvokeException("constructor", e);
-            return false;
-        } catch (IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException e) {
             logInvokeException("constructor", e);
             return false;
         } catch (InvocationTargetException e) {
@@ -221,10 +216,7 @@ public class ClassRule implements Rule {
             args[0] = context;
             try {
                 initMethod.invoke(instance, args);
-            } catch (IllegalAccessException e) {
-                logInvokeException("init(ServletContext)", e);
-                return false;
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 logInvokeException("init(ServletContext)", e);
                 return false;
             }
@@ -304,7 +296,7 @@ public class ClassRule implements Rule {
         return false;
     }
 
-    public List getErrors() {
+    public List<String> getErrors() {
         return errors;
     }
 

@@ -39,6 +39,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.FilterConfig;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Map;
 
 
 /**
@@ -50,11 +51,11 @@ import java.util.Hashtable;
 public class RunConfig implements ServletConfig, FilterConfig {
 
     private ServletContext servletContext;
-    private Hashtable initParameters;
+    private Hashtable<String, String> initParameters;
 
-    public RunConfig(ServletContext servletContext, Hashtable initParameters) {
+    public RunConfig(ServletContext servletContext, Map<String, String> initParameters) {
         this.servletContext = servletContext;
-        this.initParameters = new Hashtable(initParameters);
+        this.initParameters = new Hashtable<>(initParameters);
     }
 
     public String getServletName() {
@@ -70,7 +71,7 @@ public class RunConfig implements ServletConfig, FilterConfig {
     }
 
     public String getInitParameter(String s) {
-        return (String) initParameters.get(s);
+        return initParameters.get(s);
     }
 
     public Enumeration getInitParameterNames() {

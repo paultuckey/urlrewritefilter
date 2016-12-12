@@ -439,7 +439,7 @@ public class RuleBase implements Runnable {
      *
      * @return the list of errors
      */
-    public List getErrors() {
+    public List<String> getErrors() {
         return errors;
     }
 
@@ -472,7 +472,7 @@ public class RuleBase implements Runnable {
         setAttributes.add(setAttribute);
     }
 
-    public List getSetAttributes() {
+    public List<SetAttribute> getSetAttributes() {
         return setAttributes;
     }
 
@@ -481,7 +481,7 @@ public class RuleBase implements Runnable {
      *
      * @return the List of Condition objects
      */
-    public List getConditions() {
+    public List<Condition> getConditions() {
         return conditions;
     }
 
@@ -521,7 +521,7 @@ public class RuleBase implements Runnable {
         this.fromCaseSensitive = fromCaseSensitive;
     }
 
-    public List getRuns() {
+    public List<Run> getRuns() {
         return runs;
     }
 

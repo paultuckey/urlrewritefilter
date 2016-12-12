@@ -320,8 +320,7 @@ public class Condition extends TypeConverter {
         if (name == null) {
             return evaluateBoolCondition(false);
         }
-        for (int i = 0; i < cookies.length; i++) {
-            Cookie cookie = cookies[i];
+        for (Cookie cookie : cookies) {
             if (cookie == null) {
                 continue;
             }
@@ -547,9 +546,7 @@ public class Condition extends TypeConverter {
             strValue = StringUtils.trim(strValue);
             try {
                 instanceOfClass = Class.forName(strValue);
-            } catch (ClassNotFoundException e) {
-                setError("could not find " + strValue + " got a " + e.toString());
-            } catch (NoClassDefFoundError e) {
+            } catch (ClassNotFoundException | NoClassDefFoundError e) {
                 setError("could not find " + strValue + " got a " + e.toString());
             }
 

@@ -46,7 +46,7 @@ h1 {
     public static void parse(InputStream cssFile, Map variables, OutputStream os) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(cssFile));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
-        Map defaultVariables = new HashMap();
+        Map<String, String> defaultVariables = new HashMap<>();
 
         if (variables == null) variables = new HashMap();
         String line;

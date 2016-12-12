@@ -474,7 +474,7 @@ public final class Log {
         } else {
             msg.append(clazz.getName());
         }
-        msg.append(" ");
+        msg.append(' ');
         msg.append(level);
         msg.append(": ");
         msg.append(o.toString());

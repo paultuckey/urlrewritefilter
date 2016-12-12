@@ -58,7 +58,7 @@ public class CatchElem implements Runnable {
     private boolean valid = false;
     private boolean initialised = false;
     private Class exceptionClass;
-    private ArrayList runs = new ArrayList();
+    private List<Run> runs = new ArrayList<>();
 
     /**
      * For testing and documentation we don't want to load the classes.
@@ -159,7 +159,7 @@ public class CatchElem implements Runnable {
         runs.add(run);
     }
 
-    public List getRuns() {
+    public List<Run> getRuns() {
         return runs;
     }
 }

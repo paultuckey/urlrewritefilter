@@ -87,6 +87,6 @@ public interface Rule {
     /**
      * List of strings for all errors.
      */
-    public List getErrors();
+    public List<String> getErrors();
 
 }

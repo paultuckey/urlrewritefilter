@@ -34,6 +34,8 @@
  */
 package org.tuckey.web.filters.urlrewrite.substitution;
 
+import java.util.regex.Pattern;
+
 /**
  * Removes escape sequences from the string (\)
  *
@@ -42,9 +44,11 @@ package org.tuckey.web.filters.urlrewrite.substitution;
  */
 public class UnescapeReplacer implements SubstitutionFilter {
 
+    private static final Pattern UNESCAPE_PATTERN = Pattern.compile("(?<!\\\\)\\\\");
+
     public String substitute(String from, SubstitutionContext ctx,
                              SubstitutionFilterChain nextFilter) {
-        String unescaped = from.replaceAll("(?<!\\\\)\\\\", "");
+        String unescaped = UNESCAPE_PATTERN.matcher(from).replaceAll("");
         return nextFilter.substitute(unescaped, ctx);
     }
 

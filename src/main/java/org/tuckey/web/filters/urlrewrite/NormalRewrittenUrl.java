@@ -176,18 +176,9 @@ public class NormalRewrittenUrl implements RewrittenUrl {
 
     /**
      * The method that actually handles the outcome and rewrites.
-     *
-     * @param hsRequest
-     * @param hsResponse
-     * @param chain
-     * @return True if the request was rewritten otherwise false.
-     * @throws javax.servlet.ServletException
-     * @throws java.io.IOException
      */
-    public boolean doRewrite(final HttpServletRequest hsRequest,
-                             final HttpServletResponse hsResponse, final FilterChain chain)
+    public boolean doRewrite(final HttpServletRequest hsRequest, final HttpServletResponse hsResponse, final FilterChain chain)
             throws IOException, ServletException {
-        boolean requestRewritten = false;
         String target = getTarget();
         if (log.isTraceEnabled()) {
             log.trace("doRewrite called");
@@ -196,6 +187,7 @@ public class NormalRewrittenUrl implements RewrittenUrl {
             // todo: exception handling?
             rewriteMatch.execute(hsRequest, hsResponse);
         }
+        boolean requestRewritten = false;
         if (stopFilterChain) {
             // if we need to stop the filter chain don't do anything
             log.trace("stopping filter chain");

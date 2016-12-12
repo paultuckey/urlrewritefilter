@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2005-2007, Paul Tuckey
  * All rights reserved.
  * ====================================================================
@@ -187,12 +187,11 @@ public class Status {
         println("</h2>");
 
         if (!conf.isOk()) {
-            final List errors = conf.getErrors();
+            final List<String> errors = conf.getErrors();
             println("<h4 class=\"err\">Errors During Load of " + conf.getFileName() + "</h4>");
             println("<ul>");
             if (errors.size() > 0) {
-                for (int i = 0; i < errors.size(); i++) {
-                    final String error = (String) errors.get(i);
+                for (String error : errors) {
                     println("<li class=\"err\">" + error + "</li>");
                 }
             }
@@ -203,16 +202,14 @@ public class Status {
         }
 
         int conditionsCount = 0;
-        final List rules = conf.getRules();
-        for (int i = 0; i < rules.size(); i++) {
-            final Rule rule = (Rule) rules.get(i);
+        final List<Rule> rules = conf.getRules();
+        for (final Rule rule : rules) {
             if (rule instanceof NormalRule) {
                 conditionsCount += ((NormalRule) rule).getConditions().size();
             }
         }
-        final List outboundRules = conf.getOutboundRules();
-        for (int i = 0; i < outboundRules.size(); i++) {
-            final OutboundRule rule = (OutboundRule) outboundRules.get(i);
+        final List<OutboundRule> outboundRules = conf.getOutboundRules();
+        for (final OutboundRule rule : outboundRules) {
             conditionsCount += rule.getConditions().size();
         }
         println("<p>In total there " +
@@ -228,9 +225,8 @@ public class Status {
         println("<hr />");
     }
 
-    private void showRules(List rules) {
-        for (int i = 0; i < rules.size(); i++) {
-            final Rule rule = (Rule) rules.get(i);
+    private void showRules(List<Rule> rules) {
+        for (final Rule rule : rules) {
             if (rule instanceof NormalRule) {
                 NormalRule normalRule = (NormalRule) rule;
                 println("<h3>" + normalRule.getDisplayName() +
@@ -245,14 +241,15 @@ public class Status {
                 }
                 if (!StringUtils.isBlank(normalRule.getTo())) {
                     print(" will ");
-                    if ("forward".equals(normalRule.getToType()))
+                    if ("forward".equals(normalRule.getToType())) {
                         print("be <code>forwarded</code> to");
-                    else if ("include".equals(normalRule.getToType()))
+                    } else if ("include".equals(normalRule.getToType())) {
                         print("<code>include</code>");
-                    else if ("redirect".equals(normalRule.getToType()))
+                    } else if ("redirect".equals(normalRule.getToType())) {
                         print("be <code>redirected</code> to");
-                    else
+                    } else {
                         print("<code>" + normalRule.getToType() + "</code> to");
+                    }
                     print(" <code>" + normalRule.getTo() + "</code>");
                 }
                 println(".</p>");
@@ -275,9 +272,8 @@ public class Status {
         }
     }
 
-    private void showOutboundRules(List outboundRules) {
-        for (int i = 0; i < outboundRules.size(); i++) {
-            final OutboundRule rule = (OutboundRule) outboundRules.get(i);
+    private void showOutboundRules(List<OutboundRule> outboundRules) {
+        for (final OutboundRule rule : outboundRules) {
             println("<h3>" + rule.getDisplayName() +
                     (rule.isEnabled() ? "" : " **DISABLED**") + "</h3>");
             if (!StringUtils.isBlank(rule.getNote())) {
@@ -366,73 +362,82 @@ public class Status {
     }
 
     private void displayRuleErrors(final List rules) {
-        for (int i = 0; i < rules.size(); i++) {
-            Object ruleObj = rules.get(i);
+        for (Object ruleObj : rules) {
             if (ruleObj instanceof Rule) {
-                final Rule rule = (Rule) rules.get(i);
-                if (rule.isValid()) continue;
+                final Rule rule = (Rule) ruleObj;
+                if (rule.isValid()) {
+                    continue;
+                }
                 println("<li class=\"err\">Error in " + rule.getDisplayName());
                 println("<ul>");
-                List ruleErrors = rule.getErrors();
-                for (int j = 0; j < ruleErrors.size(); j++) {
-                    println("<li class=\"err\">" + ruleErrors.get(j) + "</li>");
+                List<String> ruleErrors = rule.getErrors();
+                for (String ruleError : ruleErrors) {
+                    println("<li class=\"err\">" + ruleError + "</li>");
                 }
                 if (rule instanceof NormalRule) {
                     NormalRule normalRule = (NormalRule) rule;
-                    List conditions = normalRule.getConditions();
-                    List sets = normalRule.getSetAttributes();
-                    List runs = normalRule.getRuns();
+                    List<Condition> conditions = normalRule.getConditions();
+                    List<SetAttribute> sets = normalRule.getSetAttributes();
+                    List<Run> runs = normalRule.getRuns();
                     displayRuleCondSetRun(conditions, sets, runs);
                 }
                 println("</ul></li>");
             }
             if (ruleObj instanceof OutboundRule) {
-                final OutboundRule outboundRule = (OutboundRule) rules.get(i);
-                if (outboundRule.isValid()) continue;
+                final OutboundRule outboundRule = (OutboundRule) ruleObj;
+                if (outboundRule.isValid()) {
+                    continue;
+                }
                 println("<li class=\"err\">Error in " + outboundRule.getDisplayName());
                 println("<ul>");
                 List ruleErrors = outboundRule.getErrors();
-                for (int j = 0; j < ruleErrors.size(); j++) {
-                    println("<li class=\"err\">" + ruleErrors.get(j) + "</li>");
+                for (Object ruleError : ruleErrors) {
+                    println("<li class=\"err\">" + ruleError + "</li>");
                 }
-                List conditions = outboundRule.getConditions();
-                List sets = outboundRule.getSetAttributes();
-                List runs = outboundRule.getRuns();
+                List<Condition> conditions = outboundRule.getConditions();
+                List<SetAttribute> sets = outboundRule.getSetAttributes();
+                List<Run> runs = outboundRule.getRuns();
                 displayRuleCondSetRun(conditions, sets, runs);
                 println("</ul></li>");
             }
         }
     }
 
-    private void displayRuleCondSetRun(List conditions, List sets, List runs) {
-        for (int j = 0; j < conditions.size(); j++) {
-            Condition condition = (Condition) conditions.get(j);
-            if (condition.getError() == null) continue;
-            println("<li class=\"err\">" + condition.getDisplayName() + " " + condition.getError() + "</li>");
+    private void displayRuleCondSetRun(List<Condition> conditions, List<SetAttribute> sets, List<Run> runs) {
+        for (Object condition1 : conditions) {
+            Condition condition = (Condition) condition1;
+            if (condition.getError() == null) {
+                continue;
+            }
+            println("<li class=\"err\">" + condition.getDisplayName() + ' ' + condition.getError() + "</li>");
         }
-        for (int j = 0; j < sets.size(); j++) {
-            SetAttribute setAttribute = (SetAttribute) sets.get(j);
-            if (setAttribute.getError() == null) continue;
-            println("<li class=\"err\">" + setAttribute.getDisplayName() + " " + setAttribute.getError() + "</li>");
+        for (SetAttribute setAttribute : sets) {
+            if (setAttribute.getError() == null) {
+                continue;
+            }
+            println("<li class=\"err\">" + setAttribute.getDisplayName() + ' ' + setAttribute.getError() + "</li>");
         }
-        for (int j = 0; j < runs.size(); j++) {
-            Run run = (Run) runs.get(j);
-            if (run.getError() == null) continue;
-            println("<li class=\"err\">" + run.getDisplayName() + " " + run.getError() + "</li>");
+        for (Run run : runs) {
+            if (run.getError() == null) {
+                continue;
+            }
+            println("<li class=\"err\">" + run.getDisplayName() + ' ' + run.getError() + "</li>");
         }
     }
 
-    private void displayCatchErrors(final List catchElems) {
-        for (int i = 0; i < catchElems.size(); i++) {
-            final CatchElem catchElem = (CatchElem) catchElems.get(i);
-            if (catchElem.isValid()) continue;
+    private void displayCatchErrors(final List<CatchElem> catchElems) {
+        for (final CatchElem catchElem : catchElems) {
+            if (catchElem.isValid()) {
+                continue;
+            }
             println("<li class=\"err\">Error in catch for " + catchElem.getClass() + "</li>");
             println("<ul>");
-            List runs = catchElem.getRuns();
-            for (int j = 0; j < runs.size(); j++) {
-                Run run = (Run) runs.get(j);
-                if (run.getError() == null) continue;
-                println("<li class=\"err\">" + run.getDisplayName() + " " + run.getError() + "</li>");
+            List<Run> runs = catchElem.getRuns();
+            for (Run run : runs) {
+                if (run.getError() == null) {
+                    continue;
+                }
+                println("<li class=\"err\">" + run.getDisplayName() + ' ' + run.getError() + "</li>");
             }
             println("</ul></li>");
         }
@@ -440,11 +445,10 @@ public class Status {
 
     private void showSets(final RuleBase rule) {
         if (rule.getSetAttributes().size() == 0) return;
-        List setAttributes = rule.getSetAttributes();
+        final List<SetAttribute> setAttributes = rule.getSetAttributes();
         println("<p>This rule will set:</p>" +
                 "<ol>");
-        for (int j = 0; j < setAttributes.size(); j++) {
-            SetAttribute setAttribute = (SetAttribute) setAttributes.get(j);
+        for (SetAttribute setAttribute : setAttributes) {
             println("<li>");
             if ("response-header".equals(setAttribute.getType())) {
                 println("The <code>" + setAttribute.getName() + "</code> HTTP response header " +
@@ -481,13 +485,12 @@ public class Status {
     }
 
     private void showRuns(RuleBase rule) {
-        List runs = rule.getRuns();
+        List<Run> runs = rule.getRuns();
         if (runs.size() == 0) return;
 
         println("<p>This rule will run:</p>" +
                 "<ol>");
-        for (int j = 0; j < runs.size(); j++) {
-            Run run = (Run) runs.get(j);
+        for (Run run : runs) {
             println("<li>");
             println(" <code>" + run.getMethodSignature() + "</code> on an instance " +
                     "of " + "<code>" + run.getClassStr() + "</code>");
@@ -544,7 +547,7 @@ public class Status {
     }
 
     private void println() {
-        buffer.append("\n");
+        buffer.append('\n');
     }
 
     private void print(String s) {

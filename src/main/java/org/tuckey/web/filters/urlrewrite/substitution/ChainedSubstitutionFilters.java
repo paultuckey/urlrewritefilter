@@ -37,7 +37,7 @@ public class ChainedSubstitutionFilters implements SubstitutionFilterChain {
 	}
 	
 	public static SubstitutionFilterChain getDefaultSubstitutionChain(boolean withPattern, boolean withFunction, boolean withVariable, boolean withBackReference, ServletContext sc){
-        List substitutionFilters = new LinkedList();
+        List<SubstitutionFilter> substitutionFilters = new LinkedList<>();
         
         if(withPattern)
         	substitutionFilters.add(new PatternReplacer());

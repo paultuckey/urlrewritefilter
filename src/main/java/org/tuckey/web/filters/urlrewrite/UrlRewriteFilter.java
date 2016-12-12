@@ -212,13 +212,13 @@ public class UrlRewriteFilter implements Filter {
         log.debug("confPath set to " + confPath);
 
         // status enabled (default true)
-        if (statusEnabledConf != null && !"".equals(statusEnabledConf)) {
+        if (statusEnabledConf != null && !statusEnabledConf.isEmpty()) {
             log.debug("statusEnabledConf set to " + statusEnabledConf);
             statusEnabled = "true".equals(statusEnabledConf.toLowerCase());
         }
         if (statusEnabled) {
             // status path (default /rewrite-status)
-            if (statusPathConf != null && !"".equals(statusPathConf)) {
+            if (statusPathConf != null && !statusPathConf.isEmpty()) {
                 statusPath = statusPathConf.trim();
                 log.info("status display enabled, path set to " + statusPath);
             }
