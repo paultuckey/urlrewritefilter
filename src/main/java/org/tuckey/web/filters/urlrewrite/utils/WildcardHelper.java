@@ -220,17 +220,9 @@ public class WildcardHelper {
 
             // Check for END's
             if (expressionCharacter == MATCH_END) {
-                if (resultPosition > 0) {
-                    map.put(Integer.toString(++matchingCount),
-                            new String(resultBuffer, 0, resultPosition));
-                }
                 // Don't care about rest of input buffer
                 return (true);
             } else if (expressionCharacter == MATCH_THEEND) {
-                if (resultPosition > 0) {
-                    map.put(Integer.toString(++matchingCount),
-                            new String(resultBuffer, 0, resultPosition));
-                }
                 // Check that we reach buffer's end
                 return (bufferPosition == buff.length);
             }
