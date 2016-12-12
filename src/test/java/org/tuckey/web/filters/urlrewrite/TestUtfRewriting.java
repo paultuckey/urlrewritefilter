@@ -2,21 +2,17 @@ package org.tuckey.web.filters.urlrewrite;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.tuckey.web.filters.urlrewrite.utils.Log;
-import org.tuckey.web.filters.urlrewrite.utils.URLDecoder;
-import org.tuckey.web.filters.urlrewrite.utils.URLEncoder;
+import org.tuckey.web.filters.urlrewrite.utils.RewriteUtils;
 import org.tuckey.web.testhelper.MockFilterChain;
 import org.tuckey.web.testhelper.MockRequest;
 import org.tuckey.web.testhelper.MockResponse;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URISyntaxException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-public class TestRewriting {
+public class TestUtfRewriting {
     MockResponse response;
     MockRequest request;
 
@@ -24,8 +20,9 @@ public class TestRewriting {
     private String from = "/красота-от-природы";
 
     MockFilterChain chain;
+
     @Before
-    public void setUp()  {
+    public void setUp() {
 
         response = new MockResponse();
         request = new MockRequest();
@@ -47,6 +44,7 @@ public class TestRewriting {
         assertEquals(to, rewrittenUrl.getTarget());
 
     }
+
     @Test
     public void testSimple2() throws Exception {
 
@@ -62,12 +60,24 @@ public class TestRewriting {
         assertEquals(to, rewrittenUrl.getTarget());
     }
 
+
     @Test
-    public void testRedirect() throws Exception {
+    public void testRedirect1() throws Exception {
         NormalRewrittenUrl rewrittenUrl = new NormalRewrittenUrl(to);
         rewrittenUrl.setTemporaryRedirect(true);
         rewrittenUrl.doRewrite(request, response, chain);
-        assertEquals(URI.create(to).toASCIIString(), response.getHeader("Location"));
+        assertEquals(RewriteUtils.uriEncodeParts(to), response.getHeader("Location"));
+        assertEquals(HttpServletResponse.SC_MOVED_TEMPORARILY, response.getStatus());
+
+    }
+
+    @Test
+    public void testRedirect2() throws Exception {
+        final String target = "/Pomegranate+natural+beauty";
+        NormalRewrittenUrl rewrittenUrl = new NormalRewrittenUrl(target);
+        rewrittenUrl.setTemporaryRedirect(true);
+        rewrittenUrl.doRewrite(request, response, chain);
+        assertEquals(RewriteUtils.uriEncodeParts(target), response.getHeader("Location"));
         assertEquals(HttpServletResponse.SC_MOVED_TEMPORARILY, response.getStatus());
 
     }
