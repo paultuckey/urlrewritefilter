@@ -16,6 +16,11 @@
         <name>Paul Tuckey</name>
     </organization>
 
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
 
     <properties>
         <app.manual-version>4.0</app.manual-version>
@@ -32,6 +37,11 @@
         </license>
     </licenses>
 
+    <scm>
+        <url>https://github.com/machak/urlrewritefilter</url>
+        <connection>scm:git:git://github.com/machak/urlrewritefilter.git</connection>
+        <developerConnection>scm:git:git@github.com:machak/urlrewritefilter.git</developerConnection>
+    </scm>
 
     <developers>
         <developer>
@@ -62,7 +72,6 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-<!--
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
@@ -80,7 +89,6 @@
                     <doUpdate>true</doUpdate>
                 </configuration>
             </plugin>
--->
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.5.3</version>
