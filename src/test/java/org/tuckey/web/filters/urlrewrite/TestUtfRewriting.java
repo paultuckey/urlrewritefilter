@@ -73,7 +73,7 @@ public class TestUtfRewriting {
 
     @Test
     public void testRedirect2() throws Exception {
-        final String target = "/Pomegranate+natural+beauty";
+        final String target = "^/Pomegranate+natural+beauty";
         NormalRewrittenUrl rewrittenUrl = new NormalRewrittenUrl(target);
         rewrittenUrl.setTemporaryRedirect(true);
         rewrittenUrl.doRewrite(request, response, chain);
