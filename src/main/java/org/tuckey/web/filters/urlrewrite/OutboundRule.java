@@ -76,9 +76,7 @@ public class OutboundRule extends RuleBase {
         // so we have to throw a runtimeException
         try {
             ruleRuleExecutionOutput = super.matchesBase(url, hsRequest, hsResponse, null);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ServletException e) {
+        } catch (IOException | ServletException e) {
             throw new RuntimeException(e);
         }
 

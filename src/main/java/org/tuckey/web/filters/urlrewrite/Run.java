@@ -55,6 +55,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
+import java.util.Map;
 
 
 /**
@@ -112,7 +113,7 @@ public class Run {
      */
     private RunConfig runServletConfig;
 
-    private Hashtable initParams = new Hashtable();
+    private Map<String, String> initParams = new Hashtable<>();
 
     private static boolean loadClass = true;
 
@@ -169,7 +170,7 @@ public class Run {
                     String param = StringUtils.trimToNull(params[i]);
                     if (param == null) continue;
                     if (param.contains(" ")) {
-                        String paramName = StringUtils.trimToNull(param.substring(param.indexOf(" ")));
+                        String paramName = StringUtils.trimToNull(param.substring(param.indexOf(' ')));
                         if (paramName != null) {
                             log.debug("param name: " + paramName);
                             paramNames[i] = paramName;
@@ -221,10 +222,7 @@ public class Run {
             if (paramClass == null) {
                 try {
                     paramClass = Class.forName(param);
-                } catch (ClassNotFoundException e) {
-                    setError("could not find " + param + " got a " + e.toString(), e);
-                    return null;
-                } catch (NoClassDefFoundError e) {
+                } catch (ClassNotFoundException | NoClassDefFoundError e) {
                     setError("could not find " + param + " got a " + e.toString(), e);
                     return null;
                 }
@@ -247,13 +245,10 @@ public class Run {
         if (log.isDebugEnabled()) {
             log.debug("looking for class " + classStr);
         }
-        Class runClass;
+        Class<?> runClass;
         try {
             runClass = Class.forName(classStr);
-        } catch (ClassNotFoundException e) {
-            setError("could not find " + classStr + " got a " + e.toString(), e);
-            return;
-        } catch (NoClassDefFoundError e) {
+        } catch (ClassNotFoundException | NoClassDefFoundError e) {
             setError("could not find " + classStr + " got a " + e.toString(), e);
             return;
         }
@@ -280,8 +275,8 @@ public class Run {
             if (log.isDebugEnabled()) {
                 log.debug("looking for " + methodStr + "(ServletRequest, ServletResponse)");
             }
-            for (int i = 0; i < runMethodPossibleSignatures.length; i++) {
-                Class[] runMethodPossibleSignature = runMethodPossibleSignatures[i];
+            for (final Class[] runMethodPossibleSignature1 : runMethodPossibleSignatures) {
+                Class[] runMethodPossibleSignature = runMethodPossibleSignature1;
                 if (extraParam != null) {
                     if (runMethodPossibleSignature.length == 2) {
                         runMethodPossibleSignature = new Class[]{runMethodPossibleSignature[0],
@@ -292,12 +287,14 @@ public class Run {
                     }
                 }
                 if (log.isDebugEnabled()) {
-                    StringBuffer possible = new StringBuffer();
+                    StringBuilder possible = new StringBuilder();
                     for (int j = 0; j < runMethodPossibleSignature.length; j++) {
-                        if (j > 0) possible.append(",");
+                        if (j > 0) {
+                            possible.append(',');
+                        }
                         possible.append(runMethodPossibleSignature[j].getName());
                     }
-                    log.debug("looking for " + methodStr + "(" + possible + ")");
+                    log.debug("looking for " + methodStr + '(' + possible + ')');
                 }
                 try {
                     runMethod = runClass.getMethod(methodStr, runMethodPossibleSignature);
@@ -316,8 +313,7 @@ public class Run {
         }
 
         Method[] methods = runClass.getMethods();
-        for (int i = 0; i < methods.length; i++) {
-            Method method = methods[i];
+        for (Method method : methods) {
             if ("destroy".equals(method.getName()) && method.getParameterTypes().length == 0) {
                 log.debug("found destroy methodStr");
                 destroyMethod = method;
@@ -332,7 +328,9 @@ public class Run {
                 log.debug("found filter init methodStr");
                 filterInitMethod = method;
             }
-            if (initMethod != null && destroyMethod != null) break;
+            if (initMethod != null && destroyMethod != null) {
+                break;
+            }
         }
         if (!newEachTime) {
             runClassInstance = fetchNewInstance();
@@ -348,9 +346,7 @@ public class Run {
             }
             try {
                 destroyMethod.invoke(runClassInstanceToDestroy, (Object[]) null);
-            } catch (IllegalAccessException e) {
-                logInvokeException("destroy()", e);
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 logInvokeException("destroy()", e);
             }
         }
@@ -368,17 +364,16 @@ public class Run {
                                          HttpServletResponse httpServletResponse, FilterChain chain, Object[] matchObjs)
             throws ServletException, InvocationTargetException {
         if (log.isDebugEnabled()) {
-            log.debug("running " + classStr + "." + getMethodSignature() + " ");
+            log.debug("running " + classStr + '.' + getMethodSignature() + ' ');
         }
         if (classInstanceToRun == null || runMethod == null) return null;
-        RewriteMatch returned = null;
         Object[] params = null;
 
         if (runMethodParams != null && runMethodParams.length > 0) {
             params = new Object[runMethodParams.length];
             int paramMatchCounter = 0;
             for (int i = 0; i < runMethodParams.length; i++) {
-                Class runMethodParam = runMethodParams[i];
+                Class<?> runMethodParam = runMethodParams[i];
                 String runMethodParamName = null;
                 if (runMethodParamNames != null && runMethodParamNames.length > i) {
                     runMethodParamName = runMethodParamNames[i];
@@ -415,6 +410,7 @@ public class Run {
             }
         }
 
+        RewriteMatch returned = null;
         try {
             Object objReturned = runMethod.invoke(classInstanceToRun, (Object[]) params);
             if ( jsonHandler ) {
@@ -560,17 +556,11 @@ public class Run {
      * @return the new instance
      */
     private Object fetchNewInstance() {
-        Object obj;
         log.debug("getting new instance of " + classStr);
+        Object obj;
         try {
             obj = runConstructor.newInstance((Object[]) null);
-        } catch (InstantiationException e) {
-            logInvokeException("constructor", e);
-            return null;
-        } catch (IllegalAccessException e) {
-            logInvokeException("constructor", e);
-            return null;
-        } catch (InvocationTargetException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             logInvokeException("constructor", e);
             return null;
         }
@@ -580,10 +570,7 @@ public class Run {
             args[0] = runServletConfig;
             try {
                 initMethod.invoke(obj, args);
-            } catch (IllegalAccessException e) {
-                logInvokeException("init(ServletConfig)", e);
-                return null;
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 logInvokeException("init(ServletConfig)", e);
                 return null;
             }
@@ -594,10 +581,7 @@ public class Run {
             args[0] = runServletConfig;
             try {
                 filterInitMethod.invoke(obj, args);
-            } catch (IllegalAccessException e) {
-                logInvokeException("init(FilterConfig)", e);
-                return null;
-            } catch (InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 logInvokeException("init(FilterConfig)", e);
                 return null;
             }

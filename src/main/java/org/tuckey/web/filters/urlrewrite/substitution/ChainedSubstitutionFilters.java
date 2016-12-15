@@ -24,7 +24,7 @@ public class ChainedSubstitutionFilters implements SubstitutionFilterChain {
 	}
 	
 	public static String substitute(String string, SubstitutionFilter singleFilter){
-		ArrayList list = new ArrayList(1);
+		List<SubstitutionFilter> list = new ArrayList<>(1);
 		list.add(singleFilter);
 		SubstitutionFilterChain filterChain = new ChainedSubstitutionFilters(list);
 		return filterChain.substitute(string, null);
@@ -37,7 +37,7 @@ public class ChainedSubstitutionFilters implements SubstitutionFilterChain {
 	}
 	
 	public static SubstitutionFilterChain getDefaultSubstitutionChain(boolean withPattern, boolean withFunction, boolean withVariable, boolean withBackReference, ServletContext sc){
-        List substitutionFilters = new LinkedList();
+        List<SubstitutionFilter> substitutionFilters = new LinkedList<>();
         
         if(withPattern)
         	substitutionFilters.add(new PatternReplacer());

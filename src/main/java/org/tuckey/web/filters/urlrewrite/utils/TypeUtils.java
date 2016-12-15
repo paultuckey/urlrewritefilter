@@ -6,8 +6,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 
-public class TypeUtils {
+public final class TypeUtils {
 
+
+    private TypeUtils() {
+    }
 
     public static Class findClass(String param) {
         Class paramClass = null;
@@ -45,26 +48,26 @@ public class TypeUtils {
 
 
 
-    public static Object getConvertedParam(Class runMethodParam, Object matchObj) {
+    public static Object getConvertedParam(Class<?> runMethodParam, Object matchObj) {
         // see http://jakarta.apache.org/commons/beanutils/api/org/apache/commons/beanutils/MethodUtils.html
         // for how to handle methods better
         Object param = null;
         if (matchObj == null) {
             if (runMethodParam.isPrimitive()) {
                 if (runMethodParam.equals(boolean.class)) param = Boolean.FALSE;
-                else if (runMethodParam.equals(char.class)) param = new Character('\u0000');
-                else if (runMethodParam.equals(byte.class)) param = new Byte((byte) 0);
-                else if (runMethodParam.equals(short.class)) param = new Short((short) 0);
-                else if (runMethodParam.equals(int.class)) param = new Integer(0);
-                else if (runMethodParam.equals(long.class)) param = new Long(0L);
-                else if (runMethodParam.equals(float.class)) param = new Float(0f);
-                else if (runMethodParam.equals(double.class)) param = new Double(0d);
+                else if (runMethodParam.equals(char.class)) param = '\u0000';
+                else if (runMethodParam.equals(byte.class)) param = (byte) 0;
+                else if (runMethodParam.equals(short.class)) param = (short) 0;
+                else if (runMethodParam.equals(int.class)) param = 0;
+                else if (runMethodParam.equals(long.class)) param = 0L;
+                else if (runMethodParam.equals(float.class)) param = 0f;
+                else if (runMethodParam.equals(double.class)) param = 0d;
             }
         } else {
             if (runMethodParam.equals(Boolean.class) || runMethodParam.equals(boolean.class))
                 param = Boolean.valueOf((String) matchObj);
             else if (runMethodParam.equals(Character.class) || runMethodParam.equals(char.class))
-                param = new Character(((String) matchObj).charAt(0));
+                param = ((String) matchObj).charAt(0);
             else if (runMethodParam.equals(Byte.class) || runMethodParam.equals(byte.class))
                 param = Byte.valueOf((String) matchObj);
             else if (runMethodParam.equals(Short.class) || runMethodParam.equals(short.class))
@@ -94,15 +97,15 @@ public class TypeUtils {
 
     public static String getMethodSignature(String methodStr, Class[] methodParams) {
         if (methodStr == null) return null;
-        StringBuffer sb = new StringBuffer(methodStr);
+        StringBuilder sb = new StringBuilder(methodStr);
         if (methodParams != null) {
             for (int i = 0; i < methodParams.length; i++) {
                 Class runMethodParam = methodParams[i];
                 if (runMethodParam == null) continue;
-                if (i == 0) sb.append("(");
+                if (i == 0) sb.append('(');
                 if (i > 0) sb.append(", ");
                 sb.append(runMethodParam.getName());
-                if (i + 1 == methodParams.length) sb.append(")");
+                if (i + 1 == methodParams.length) sb.append(')');
             }
         }
         return sb.toString();

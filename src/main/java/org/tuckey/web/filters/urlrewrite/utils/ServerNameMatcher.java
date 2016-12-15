@@ -50,15 +50,16 @@ public class ServerNameMatcher {
 
     private static Log log = Log.getLog(ServerNameMatcher.class);
 
-    private List patterns = new ArrayList();
+    private List<int[]> patterns = new ArrayList<>();
     WildcardHelper wh = new WildcardHelper();
 
     public ServerNameMatcher(String options) {
         String[] enableOnHostsArr = options.split(",");
-        for (int i = 0; i < enableOnHostsArr.length; i++) {
-            String s = enableOnHostsArr[i];
-            if (StringUtils.isBlank(s)) continue;
-            String rawPattern = StringUtils.trim(enableOnHostsArr[i]).toLowerCase();
+        for (String s : enableOnHostsArr) {
+            if (StringUtils.isBlank(s)) {
+                continue;
+            }
+            String rawPattern = StringUtils.trim(s).toLowerCase();
             int[] compiledPattern = wh.compilePattern(rawPattern);
             patterns.add(compiledPattern);
         }
@@ -70,10 +71,11 @@ public class ServerNameMatcher {
             return false;
         }
         serverName = StringUtils.trim(serverName).toLowerCase();
-        for (int i = 0; i < patterns.size(); i++) {
-            int[] compiledPattern = (int[]) patterns.get(i);
-            Map map = new HashMap();
-            if (wh.match(map, serverName, compiledPattern)) return true;
+        for (int[] pattern : patterns) {
+            Map<String, String> map = new HashMap<>();
+            if (wh.match(map, serverName, pattern)) {
+                return true;
+            }
         }
         return false;
     }

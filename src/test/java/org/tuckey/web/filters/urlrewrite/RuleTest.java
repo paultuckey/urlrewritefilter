@@ -36,6 +36,7 @@ package org.tuckey.web.filters.urlrewrite;
 
 import junit.framework.TestCase;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
+import org.tuckey.web.filters.urlrewrite.utils.RewriteUtils;
 import org.tuckey.web.testhelper.MockRequest;
 import org.tuckey.web.testhelper.MockResponse;
 import org.tuckey.web.testhelper.MockServletContext;
@@ -53,7 +54,8 @@ public class RuleTest extends TestCase {
     MockResponse response;
     MockRequest request;
 
-    public void setUp() {
+    public void setUp() throws Exception {
+        super.setUp();
         Log.setLevel("TRACE");
         response = new MockResponse();
         request = new MockRequest();
@@ -596,7 +598,8 @@ public class RuleTest extends TestCase {
         String highStr = new String("\u00F6\u236a\u2E88".getBytes(), "UTF8");
         MockRequest request = new MockRequest("/aa?a=" + highStr);
         RewrittenUrl rewrittenUrl = rule.matches(request.getRequestURI(), request, response);
-        assertEquals(highStr, rewrittenUrl.getTarget());
+        // TODO mm check this:
+        assertEquals(RewriteUtils.uriEncodeParts(highStr), rewrittenUrl.getTarget());
     }
 
     /**
@@ -843,4 +846,35 @@ public class RuleTest extends TestCase {
         NormalRewrittenUrl rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
         assertEquals("/en/robots.txt?param1=value1&param2=value2", rewrittenUrl.getTarget());
     }
+
+    public void testRuleHostBug() throws ServletException, IOException, InvocationTargetException {
+        NormalRule rule = new NormalRule();
+        rule.setToLast("true");
+        rule.setToType("permanent-redirect");
+        rule.setQueryStringAppend("true");
+        rule.setFrom("(.*)");
+        rule.setTo("https://righthost.com%{request-uri}");
+
+        Condition condition = new Condition();
+        condition.setName("host");
+        condition.setOperator("notequal");
+        condition.setValue("^righthost\\.com$");
+
+        rule.addCondition(condition);
+        rule.initialise(null);
+
+        MockRequest request = new MockRequest("/test?param=val");
+        request.addHeader("host", "wronghost.com");
+
+        RewrittenUrl rewrittenUrl = rule.matches(request.getRequestURI(), request, response);
+
+        assertEquals("https://righthost.com/test?param=val", rewrittenUrl.getTarget());
+
+        rule.setTo("https://righthost.com$1");
+        rule.initialise(null);
+
+        rewrittenUrl = rule.matches(request.getRequestURI(), request, response);
+        assertEquals("https://righthost.com/test?param=val", rewrittenUrl.getTarget());
+    }
+
 }

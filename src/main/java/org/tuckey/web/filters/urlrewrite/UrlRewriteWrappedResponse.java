@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Handles wrapping the response so we can encode the url's on the way "out" (ie, in JSP or servlet generation).
@@ -52,7 +53,7 @@ public class UrlRewriteWrappedResponse extends HttpServletResponseWrapper {
     private HttpServletRequest httpServletRequest;
 
     //is a <string, string[]> map
-    HashMap overridenRequestParameters;
+    Map<String, String[]> overridenRequestParameters;
     String overridenMethod;
 
     public UrlRewriteWrappedResponse(HttpServletResponse httpServletResponse, HttpServletRequest httpServletRequest,
@@ -132,7 +133,7 @@ public class UrlRewriteWrappedResponse extends HttpServletResponseWrapper {
     }
 
     public void addOverridenRequestParameter(String k, String v) {
-        if (overridenRequestParameters == null) overridenRequestParameters = new HashMap();
+        if (overridenRequestParameters == null) overridenRequestParameters = new HashMap<>();
         if (overridenRequestParameters.get(k) == null) {
             overridenRequestParameters.put(k, new String[]{v});
         } else {
@@ -144,7 +145,7 @@ public class UrlRewriteWrappedResponse extends HttpServletResponseWrapper {
         }
     }
 
-    public HashMap getOverridenRequestParameters() {
+    public Map<String, String[]> getOverridenRequestParameters() {
         return overridenRequestParameters;
     }
 

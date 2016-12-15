@@ -66,24 +66,15 @@ public class NormalRule extends RuleBase implements Rule {
     public static final short TO_TYPE_POST_INCLUDE = 5;
     public static final short TO_TYPE_PROXY = 6;
 
+    private boolean dropCookies = true;
     private boolean encodeToUrl = false;
     private boolean queryStringAppend = false;
     private String toContextStr = null;
     private ServletContext toServletContext = null;
 
     /**
-     * Constructor.
-     */
-    public NormalRule() {
-        // empty
-    }
-
-    /**
      * Will run the rule against the uri and perform action required will return false is not matched
      * otherwise true.
-     *
-     * @param url
-     * @param hsRequest
      * @return String of the rewritten url or the same as the url passed in if no match was made
      */
     public RewrittenUrl matches(final String url, final HttpServletRequest hsRequest,
@@ -94,12 +85,13 @@ public class NormalRule extends RuleBase implements Rule {
             // no match, or run/set only match
             return null;
         }
+        ruleExecutionOutput.setDropCookies(dropCookies);
         if ( queryStringAppend && hsRequest.getQueryString() != null && hsRequest.getQueryString().length() > 0) {
             String target = ruleExecutionOutput.getReplacedUrl();
             if (target.contains("?")) {
-                ruleExecutionOutput.setReplacedUrl(target + "&" + hsRequest.getQueryString());
+                ruleExecutionOutput.setReplacedUrl(target + '&' + hsRequest.getQueryString());
             } else {
-                ruleExecutionOutput.setReplacedUrl(target + "?" + hsRequest.getQueryString());
+                ruleExecutionOutput.setReplacedUrl(target + '?' + hsRequest.getQueryString());
             }
         }
         if ( toServletContext != null ) ruleExecutionOutput.setReplacedUrlContext(toServletContext);
@@ -133,7 +125,7 @@ public class NormalRule extends RuleBase implements Rule {
             if ( context == null) {
                 addError("unable to look for context as current context null");
             }   else {
-                toServletContext = context.getContext("/" + toContextStr);
+                toServletContext = context.getContext('/' + toContextStr);
                 if ( toServletContext == null ) {
                     addError("could not get servlet context " + toContextStr);
                 }   else {
@@ -198,7 +190,7 @@ public class NormalRule extends RuleBase implements Rule {
 
     public String getDisplayName() {
         if (name != null) {
-            return name + " (rule " + id + ")";
+            return name + " (rule " + id + ')';
         }
         return "Rule " + id;
     }
@@ -208,7 +200,7 @@ public class NormalRule extends RuleBase implements Rule {
     }
 
     public String getFullDisplayName() {
-        return getDisplayName() + " (" + from + ", " + to + " " + toType + ")";
+        return getDisplayName() + " (" + from + ", " + to + ' ' + toType + ')';
     }
 
     public boolean isEncodeToUrl() {
@@ -233,5 +225,9 @@ public class NormalRule extends RuleBase implements Rule {
 
     public void setQueryStringAppend(String value) {
         queryStringAppend = "true".equalsIgnoreCase(value);
+    }
+
+    public void setDropCookies(final boolean dropCookies) {
+        this.dropCookies = dropCookies;
     }
 }

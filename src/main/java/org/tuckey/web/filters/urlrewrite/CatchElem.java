@@ -58,7 +58,7 @@ public class CatchElem implements Runnable {
     private boolean valid = false;
     private boolean initialised = false;
     private Class exceptionClass;
-    private ArrayList runs = new ArrayList();
+    private List<Run> runs = new ArrayList<>();
 
     /**
      * For testing and documentation we don't want to load the classes.
@@ -89,17 +89,13 @@ public class CatchElem implements Runnable {
         if ( loadClass ) {
             try {
                 exceptionClass = Class.forName(classStr);
-            } catch (ClassNotFoundException e) {
-                setError("could not find " + classStr + " got a " + e.toString(), e);
-                return false;
-            } catch (NoClassDefFoundError e) {
+            } catch (ClassNotFoundException | NoClassDefFoundError e) {
                 setError("could not find " + classStr + " got a " + e.toString(), e);
                 return false;
             }
         }
         // now initialise runs
-        for (int i = 0; i < runs.size(); i++) {
-            final Run run = (Run) runs.get(i);
+        for (final Run run : runs) {
             if (!run.initialise(servletContext, exceptionClass)) {
                 ok = false;
             }
@@ -123,8 +119,7 @@ public class CatchElem implements Runnable {
         RewriteMatch lastRunMatch = null;
         if (runsSize > 0) {
             log.trace("performing runs");
-            for (int i = 0; i < runsSize; i++) {
-                Run run = (Run) runs.get(i);
+            for (Run run : runs) {
                 lastRunMatch = run.execute(hsRequest, hsResponse, originalThrowable);
             }
         }
@@ -159,7 +154,7 @@ public class CatchElem implements Runnable {
         runs.add(run);
     }
 
-    public List getRuns() {
+    public List<Run> getRuns() {
         return runs;
     }
 }

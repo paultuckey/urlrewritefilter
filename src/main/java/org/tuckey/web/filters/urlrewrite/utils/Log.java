@@ -47,7 +47,7 @@ import javax.servlet.ServletContext;
  * @author Paul Tuckey
  * @version $Revision: 42 $ $Date: 2006-10-29 09:43:56 +1300 (Sun, 29 Oct 2006) $
  */
-public class Log {
+public final class Log {
 
     private static Log localLog = Log.getLog(Log.class);
 
@@ -154,6 +154,28 @@ public class Log {
         write("TRACE", throwable, throwable);
     }
 
+    public void debug(String message, Object o) {
+        if (!isDebugEnabled()) {
+            return;
+        }
+        if (isUsingSlf4j()) {
+            slf4jLogger.debug(String.valueOf(o));
+            return;
+        }
+        write("DEBUG", message + o);
+    }
+
+    public void debug(String message) {
+        if (!isDebugEnabled()) {
+            return;
+        }
+        if (isUsingSlf4j()) {
+            slf4jLogger.debug(message);
+            return;
+        }
+        write("DEBUG", message);
+    }
+
     public void debug(Object o) {
         if (!isDebugEnabled()) {
             return;
@@ -165,7 +187,7 @@ public class Log {
         write("DEBUG", o);
     }
 
-    public void debug(Object o, Throwable throwable) {
+    public void debug(String o, Throwable throwable) {
         if (!isDebugEnabled()) {
             return;
         }
@@ -452,7 +474,7 @@ public class Log {
         } else {
             msg.append(clazz.getName());
         }
-        msg.append(" ");
+        msg.append(' ');
         msg.append(level);
         msg.append(": ");
         msg.append(o.toString());

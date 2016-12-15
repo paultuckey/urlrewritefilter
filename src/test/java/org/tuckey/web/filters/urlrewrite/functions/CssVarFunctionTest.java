@@ -1,9 +1,11 @@
 package org.tuckey.web.filters.urlrewrite.functions;
 
 import junit.framework.TestCase;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
+
 
 
 public class CssVarFunctionTest extends TestCase {
@@ -35,17 +37,17 @@ public class CssVarFunctionTest extends TestCase {
         assertEquals(nl +
                 "h1 {" + nl +
                 "    border-color:  #c0c0c0;" + nl +
-                "}",
+                        '}',
                 CssVarFunction.parse(css, null));
     }
 
     public void testSimpleMap() {
-        Map in = new HashMap();
+        Map<String, String> in = new HashMap<>();
         in.put("gadgetBodyLinkColor", "blue");
         assertEquals(nl +
                 "h1 {" + nl +
                 "    border-color: blue;" + nl +
-                "}",
+                        '}',
                 CssVarFunction.parse(css, in));
     }
 
@@ -54,7 +56,7 @@ public class CssVarFunctionTest extends TestCase {
                 "h1 {" + nl +
                 "    color:  #f0c0c0;" + nl +
                 "    border-color:  #c0c0c0;" + nl +
-                "}",
+                        '}',
                 CssVarFunction.parse(css2, null));
     }
 

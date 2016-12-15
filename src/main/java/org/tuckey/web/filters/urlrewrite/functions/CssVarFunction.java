@@ -22,7 +22,8 @@ import java.util.regex.Pattern;
  * http://disruptive-innovations.com/zoo/cssvariables/
  * http://trac.webkit.org/browser/trunk/LayoutTests/fast/css/variables
  */
-public class CssVarFunction {
+public final class CssVarFunction {
+    private static final Pattern CLOSING_BRACKET = Pattern.compile("}");
 
     /*
 
@@ -43,10 +44,13 @@ h1 {
     static Pattern VARIABLE_REF_PATTERN = Pattern.compile("var\\(([a-zA-Z0-9-]+)\\)");
     static Pattern VARIABLES_BLOCK_START_PATTERN = Pattern.compile("@variables");
 
+    private CssVarFunction() {
+    }
+
     public static void parse(InputStream cssFile, Map variables, OutputStream os) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(cssFile));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
-        Map defaultVariables = new HashMap();
+        Map<String, String> defaultVariables = new HashMap<>();
 
         if (variables == null) variables = new HashMap();
         String line;
@@ -80,7 +84,7 @@ h1 {
 
                 bw.write(line);
             }
-            if (readingVars && line.matches("}")) {
+            if (readingVars && CLOSING_BRACKET.matcher(line).matches()) {
                 readingVars = false;
                 emitNewLine = false;
             }

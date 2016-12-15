@@ -22,7 +22,7 @@ import java.util.Stack;
 public class JsonWriter {
 
     private StringBuffer buf = new StringBuffer();
-    private Stack calls = new Stack();
+    private Stack<Object> calls = new Stack<>();
     boolean emitClassName = true;
 
     public JsonWriter(boolean emitClassName) {
@@ -61,7 +61,7 @@ public class JsonWriter {
         } else {
             calls.push(object);
             if (object instanceof Class) string(object);
-            else if (object instanceof Boolean) bool(((Boolean) object).booleanValue());
+            else if (object instanceof Boolean) bool((Boolean) object);
             else if (object instanceof Number) add(object);
             else if (object instanceof String) string(object);
             else if (object instanceof Character) string(object);
@@ -75,58 +75,69 @@ public class JsonWriter {
     }
 
     private boolean cyclic(Object object) {
-        Iterator it = calls.iterator();
-        while (it.hasNext()) {
-            Object called = it.next();
-            if (object == called) return true;
+        for (final Object called : calls) {
+            if (object == called) {
+                return true;
+            }
         }
         return false;
     }
 
     private void bean(Object object) {
         add("{");
-        BeanInfo info;
-        boolean addedSomething = false;
         try {
-            info = Introspector.getBeanInfo(object.getClass());
+            BeanInfo info = Introspector.getBeanInfo(object.getClass());
             PropertyDescriptor[] props = info.getPropertyDescriptors();
-            for (int i = 0; i < props.length; ++i) {
-                PropertyDescriptor prop = props[i];
+            boolean addedSomething = false;
+            for (PropertyDescriptor prop : props) {
                 String name = prop.getName();
                 // ignore stacktraces
-                if ( object instanceof Throwable && "stackTrace".equals(name) ) continue;
+                if (object instanceof Throwable && "stackTrace".equals(name)) {
+                    continue;
+                }
                 // ignore class element of JSONRPCErrorBean
-                if ( object instanceof JsonRpcErrorBean && "class".equals(name) ) continue;
+                if (object instanceof JsonRpcErrorBean && "class".equals(name)) {
+                    continue;
+                }
                 // for JSONRPCBean ignore result or error depending on weather error present
-                if ( object instanceof JsonRpcBean) {
-                    if ("class".equals(name) ) continue;
+                if (object instanceof JsonRpcBean) {
+                    if ("class".equals(name)) {
+                        continue;
+                    }
                     JsonRpcBean rpcBean = (JsonRpcBean) object;
-                    if (rpcBean.getError() == null && "error".equals(name) ) continue;
-                    if (rpcBean.getError() != null && "result".equals(name) ) continue;
+                    if (rpcBean.getError() == null && "error".equals(name)) {
+                        continue;
+                    }
+                    if (rpcBean.getError() != null && "result".equals(name)) {
+                        continue;
+                    }
                 }
                 Method accessor = prop.getReadMethod();
                 if ((emitClassName || !"class".equals(name)) && accessor != null) {
-                    if (!accessor.isAccessible()) accessor.setAccessible(true);
+                    if (!accessor.isAccessible()) {
+                        accessor.setAccessible(true);
+                    }
                     Object value = accessor.invoke(object, (Object[]) null);
-                    if (addedSomething) add(',');
+                    if (addedSomething) {
+                        add(',');
+                    }
                     add(name, value);
                     addedSomething = true;
                 }
             }
             Field[] ff = object.getClass().getFields();
-            for (int i = 0; i < ff.length; ++i) {
-                Field field = ff[i];
-                if (addedSomething) add(',');
+            for (Field field : ff) {
+                if (addedSomething) {
+                    add(',');
+                }
                 add(field.getName(), field.get(object));
                 addedSomething = true;
             }
-        } catch (IllegalAccessException iae) {
+        } catch (IllegalAccessException | IntrospectionException iae) {
             iae.printStackTrace();
         } catch (InvocationTargetException ite) {
             ite.getCause().printStackTrace();
             ite.printStackTrace();
-        } catch (IntrospectionException ie) {
-            ie.printStackTrace();
         }
         add("}");
     }

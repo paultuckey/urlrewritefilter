@@ -41,6 +41,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -58,7 +59,7 @@ public class ConfHandler extends DefaultHandler {
 
     private String confSystemId;
 
-    private static Hashtable dtdPaths = new Hashtable();
+    private static Map<String, String> dtdPaths = new Hashtable<>();
 
     static {
         dtdPaths.put("-//tuckey.org//DTD UrlRewrite 1.0//EN", "/org/tuckey/web/filters/urlrewrite/dtds/urlrewrite1.0.dtd");
@@ -92,11 +93,11 @@ public class ConfHandler extends DefaultHandler {
                 log.debug("Couldn't resolve entity with no publicId, system id is " + systemId);
             }
             if (confSystemId != null && !hasProtocol(systemId)) {
-                return new InputSource(confSystemId.substring(0, confSystemId.lastIndexOf('/')) + "/" + systemId);
+                return new InputSource(confSystemId.substring(0, confSystemId.lastIndexOf('/')) + '/' + systemId);
             }
             return new InputSource(systemId);
         }
-        String entity = (String) dtdPaths.get(publicId);
+        String entity = dtdPaths.get(publicId);
 
         if (entity == null) {
             if (log.isDebugEnabled()) {

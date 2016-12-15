@@ -73,6 +73,15 @@ public class VariableReplacerTest extends TestCase {
         final String result = VariableReplacer.replaceWithServletContext("%{context:host}", request, servletContext);
 
         assertEquals("http://testurl", result);
+
+    }
+
+
+    public final void testBadVars() {
+        request.setAttribute("s3.static.bucket", "mybucket");
+        final String result = VariableReplacer.replace("http://%{attribute:s3.static.bucket}", request);
+
+        assertEquals("http://mybucket", result);
     }
 
     

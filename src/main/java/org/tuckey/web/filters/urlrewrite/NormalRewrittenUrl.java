@@ -3,21 +3,21 @@
  * All rights reserved.
  * ====================================================================
  * Licensed under the BSD License. Text as follows.
- *
+ * <p>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *
- *   - Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *   - Redistributions in binary form must reproduce the above
- *     copyright notice, this list of conditions and the following
- *     disclaimer in the documentation and/or other materials provided
- *     with the distribution.
- *   - Neither the name tuckey.org nor the names of its contributors
- *     may be used to endorse or promote products derived from this
- *     software without specific prior written permission.
- *
+ * <p>
+ * - Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided
+ * with the distribution.
+ * - Neither the name tuckey.org nor the names of its contributors
+ * may be used to endorse or promote products derived from this
+ * software without specific prior written permission.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -36,6 +36,7 @@ package org.tuckey.web.filters.urlrewrite;
 
 import org.tuckey.web.filters.urlrewrite.extend.RewriteMatch;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
+import org.tuckey.web.filters.urlrewrite.utils.RewriteUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.RequestDispatcher;
@@ -67,6 +68,7 @@ public class NormalRewrittenUrl implements RewrittenUrl {
     private boolean encode;
     private boolean stopFilterChain = false;
     private boolean noSubstitution = false;
+    private boolean dropCookies = true;
     private RewriteMatch rewriteMatch;
     private ServletContext targetContext = null;
 
@@ -81,6 +83,7 @@ public class NormalRewrittenUrl implements RewrittenUrl {
         this.stopFilterChain = ruleExecutionOutput.isStopFilterMatch();
         this.rewriteMatch = ruleExecutionOutput.getRewriteMatch();
         this.noSubstitution = ruleExecutionOutput.isNoSubstitution();
+        this.dropCookies = ruleExecutionOutput.isDropCookies();
     }
 
     /**
@@ -175,18 +178,9 @@ public class NormalRewrittenUrl implements RewrittenUrl {
 
     /**
      * The method that actually handles the outcome and rewrites.
-     *
-     * @param hsRequest
-     * @param hsResponse
-     * @param chain
-     * @return True if the request was rewritten otherwise false.
-     * @throws javax.servlet.ServletException
-     * @throws java.io.IOException
      */
-    public boolean doRewrite(final HttpServletRequest hsRequest,
-                             final HttpServletResponse hsResponse, final FilterChain chain)
+    public boolean doRewrite(final HttpServletRequest hsRequest, final HttpServletResponse hsResponse, final FilterChain chain)
             throws IOException, ServletException {
-        boolean requestRewritten = false;
         String target = getTarget();
         if (log.isTraceEnabled()) {
             log.trace("doRewrite called");
@@ -195,6 +189,7 @@ public class NormalRewrittenUrl implements RewrittenUrl {
             // todo: exception handling?
             rewriteMatch.execute(hsRequest, hsResponse);
         }
+        boolean requestRewritten = false;
         if (stopFilterChain) {
             // if we need to stop the filter chain don't do anything
             log.trace("stopping filter chain");
@@ -209,25 +204,31 @@ public class NormalRewrittenUrl implements RewrittenUrl {
                 log.error("response is comitted cannot forward to " + target +
                         " (check you haven't done anything to the response (ie, written to it) before here)");
             } else {
-          		final RequestDispatcher rq = getRequestDispatcher(hsRequest, target, targetContext);
+                final RequestDispatcher rq = getRequestDispatcher(hsRequest, target, targetContext);
                 rq.forward(hsRequest, hsResponse);
-                if (log.isTraceEnabled()) log.trace("forwarded to " + target);
+                if (log.isTraceEnabled()) {
+                    log.trace("forwarded to " + target);
+                }
             }
             requestRewritten = true;
 
         } else if (isPreInclude()) {
-      		final RequestDispatcher rq = getRequestDispatcher(hsRequest, target, targetContext);
+            final RequestDispatcher rq = getRequestDispatcher(hsRequest, target, targetContext);
             rq.include(hsRequest, hsResponse);
             chain.doFilter(hsRequest, hsResponse);
             requestRewritten = true;
-            if (log.isTraceEnabled()) log.trace("preinclded " + target);
+            if (log.isTraceEnabled()) {
+                log.trace("preinclded " + target);
+            }
 
         } else if (isPostInclude()) {
-      		final RequestDispatcher rq = getRequestDispatcher(hsRequest, target, targetContext);
+            final RequestDispatcher rq = getRequestDispatcher(hsRequest, target, targetContext);
             chain.doFilter(hsRequest, hsResponse);
             rq.include(hsRequest, hsResponse);
             requestRewritten = true;
-            if (log.isTraceEnabled()) log.trace("postinclded " + target);
+            if (log.isTraceEnabled()) {
+                log.trace("postinclded " + target);
+            }
 
         } else if (isRedirect()) {
             if (hsResponse.isCommitted()) {
@@ -237,8 +238,11 @@ public class NormalRewrittenUrl implements RewrittenUrl {
                 if (isEncode()) {
                     target = hsResponse.encodeRedirectURL(target);
                 }
+                target = RewriteUtils.encodeRedirect(target);
                 hsResponse.sendRedirect(target);
-                if (log.isTraceEnabled()) log.trace("redirected to " + target);
+                if (log.isTraceEnabled()) {
+                    log.trace("redirected to " + target);
+                }
             }
             requestRewritten = true;
 
@@ -250,31 +254,39 @@ public class NormalRewrittenUrl implements RewrittenUrl {
                 if (isEncode()) {
                     target = hsResponse.encodeRedirectURL(target);
                 }
+                target = RewriteUtils.encodeRedirect(target);
                 hsResponse.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+
+
                 hsResponse.setHeader("Location", target);
-                if (log.isTraceEnabled()) log.trace("temporarily redirected to " + target);
+                if (log.isTraceEnabled()) {
+                    log.trace("temporarily redirected to " + target);
+                }
             }
             requestRewritten = true;
 
         } else if (isPermanentRedirect()) {
             if (hsResponse.isCommitted()) {
-                log.error("response is comitted cannot permanent redirect " + target +
+                log.error("response is committed cannot permanent redirect " + target +
                         " (check you haven't done anything to the response (ie, written to it) before here)");
             } else {
                 if (isEncode()) {
                     target = hsResponse.encodeRedirectURL(target);
                 }
+                target = RewriteUtils.encodeRedirect(target);
                 hsResponse.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
                 hsResponse.setHeader("Location", target);
-                if (log.isTraceEnabled()) log.trace("permanently redirected to " + target);
+                if (log.isTraceEnabled()) {
+                    log.trace("permanently redirected to " + target);
+                }
             }
             requestRewritten = true;
 
         } else if (isProxy()) {
             if (hsResponse.isCommitted()) {
-                log.error("response is committed. cannot proxy " + target + ". Check that you havn't written to the response before.");
+                log.error("response is committed. cannot proxy " + target + ". Check that you haven't written to the response before.");
             } else {
-                RequestProxy.execute(target, hsRequest, hsResponse);
+                RequestProxy.execute(target, hsRequest, hsResponse, dropCookies);
                 if (log.isTraceEnabled()) {
                     log.trace("Proxied request to " + target);
                 }

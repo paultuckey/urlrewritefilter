@@ -63,8 +63,6 @@ public class UrlRewriteDocTask extends Task {
             Log.setLevel("SYSOUT:" + logLevel);
             show();
 
-        } catch (FileNotFoundException e) {
-            throw new BuildException(e);
         } catch (IOException e) {
             throw new BuildException(e);
         }
@@ -87,8 +85,7 @@ public class UrlRewriteDocTask extends Task {
         if (reportFile.exists()) {
             reportFile.delete();
         }
-        FileWriter writer;
-        writer = new FileWriter(reportFile);
+        FileWriter writer = new FileWriter(reportFile);
 
         Status status = new Status(confObj);
         status.displayStatusOffline();

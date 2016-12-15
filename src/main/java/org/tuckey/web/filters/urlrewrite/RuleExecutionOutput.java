@@ -3,21 +3,21 @@
  * All rights reserved.
  * ====================================================================
  * Licensed under the BSD License. Text as follows.
- *
+ * <p>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *
- *   - Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *   - Redistributions in binary form must reproduce the above
- *     copyright notice, this list of conditions and the following
- *     disclaimer in the documentation and/or other materials provided
- *     with the distribution.
- *   - Neither the name tuckey.org nor the names of its contributors
- *     may be used to endorse or promote products derived from this
- *     software without specific prior written permission.
- *
+ * <p>
+ * - Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided
+ * with the distribution.
+ * - Neither the name tuckey.org nor the names of its contributors
+ * may be used to endorse or promote products derived from this
+ * software without specific prior written permission.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -34,10 +34,10 @@
  */
 package org.tuckey.web.filters.urlrewrite;
 
-import javax.servlet.ServletContext;
-
 import org.tuckey.web.filters.urlrewrite.extend.RewriteMatch;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
+
+import javax.servlet.ServletContext;
 
 
 public class RuleExecutionOutput {
@@ -50,30 +50,19 @@ public class RuleExecutionOutput {
     private boolean stopFilterMatch = false;
     private boolean noSubstitution = false;
     private RewriteMatch rewriteMatch;
+    private boolean dropCookies = true;
 
     /**
      * Will perform the action defined by the rule ie, redirect or passthrough.
-     *
-     * @param ruleExecutionOutput
      */
     public static RewrittenUrl getRewritenUrl(short toType, boolean encodeToUrl, RuleExecutionOutput ruleExecutionOutput) {
 
         NormalRewrittenUrl rewrittenRequest = new NormalRewrittenUrl(ruleExecutionOutput);
         String toUrl = ruleExecutionOutput.getReplacedUrl();
 
-        if (ruleExecutionOutput.isNoSubstitution()) {
+        if (toType == NormalRule.TO_TYPE_PERMANENT_REDIRECT) {
             if (log.isDebugEnabled()) {
-                log.debug("needs no substitution");
-            }
-        } else if (toType == NormalRule.TO_TYPE_REDIRECT) {
-            if (log.isDebugEnabled()) {
-                log.debug("needs to be redirected to " + toUrl);
-            }
-            rewrittenRequest.setRedirect(true);
-
-        } else if (toType == NormalRule.TO_TYPE_PERMANENT_REDIRECT) {
-            if (log.isDebugEnabled()) {
-                log.debug("needs to be permanentely redirected to " + toUrl);
+                log.debug("needs to be permanently redirected to " + toUrl);
             }
             rewrittenRequest.setPermanentRedirect(true);
 
@@ -83,6 +72,17 @@ public class RuleExecutionOutput {
             }
             rewrittenRequest.setTemporaryRedirect(true);
 
+        } else if (toType == NormalRule.TO_TYPE_REDIRECT) {
+            if (log.isDebugEnabled()) {
+                log.debug("needs to be redirected to " + toUrl);
+            }
+            rewrittenRequest.setRedirect(true);
+
+        }
+        if (ruleExecutionOutput.isNoSubstitution()) {
+            if (log.isDebugEnabled()) {
+                log.debug("needs no substitution");
+            }
         } else if (toType == NormalRule.TO_TYPE_PRE_INCLUDE) {
             if (log.isDebugEnabled()) {
                 log.debug(toUrl + " needs to be pre included");
@@ -164,11 +164,18 @@ public class RuleExecutionOutput {
     }
 
     public boolean isNoSubstitution() {
-    	return noSubstitution;
+        return noSubstitution;
     }
 
     public void setNoSubstitution(boolean noSubstitution) {
-    	this.noSubstitution = noSubstitution;
+        this.noSubstitution = noSubstitution;
     }
 
+    public boolean isDropCookies() {
+        return dropCookies;
+    }
+
+    public void setDropCookies(final boolean dropCookies) {
+        this.dropCookies = dropCookies;
+    }
 }

@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
  */
 public class ModRewriteConfLoader {
 
+    private static final Pattern PATTERN_QUOTE = Pattern.compile("\"");
     private static Log log = Log.getLog(ModRewriteConfLoader.class);
 
     private final Pattern LOG_LEVEL_PATTERN = Pattern.compile("RewriteLogLevel\\s+([0-9]+)\\s*$");
@@ -30,29 +31,33 @@ public class ModRewriteConfLoader {
     public void process(InputStream is, Conf conf) throws IOException {
         String line;
         BufferedReader in = new BufferedReader(new InputStreamReader(is));
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         while ((line = in.readLine()) != null) {
             buffer.append(line);
-            buffer.append("\n");
+            buffer.append('\n');
         }
         process(buffer.toString(), conf);
     }
 
     public void process(String modRewriteStyleConf, Conf conf) {
         String[] lines = modRewriteStyleConf.split("\n");
-        List conditionsBuffer = new ArrayList();
+        List<Condition> conditionsBuffer = new ArrayList<>();
         StringBuffer notesBuffer = new StringBuffer();
         String logLevelStr = null;
         String logTypeStr = null;
 
-        for (int i = 0; i < lines.length; i++) {
-            String line = StringUtils.trimToNull(lines[i]);
-            if (line == null) continue;
+        for (final String line1 : lines) {
+            String line = StringUtils.trimToNull(line1);
+            if (line == null) {
+                continue;
+            }
             log.debug("processing line: " + line);
 
             if (line.startsWith("#")) {
                 log.debug("adding note line (line starting with #)");
-                if (notesBuffer.length() > 0) notesBuffer.append("\n");
+                if (notesBuffer.length() > 0) {
+                    notesBuffer.append('\n');
+                }
                 String noteLine = StringUtils.trim(line.substring(1));
                 notesBuffer.append(noteLine);
 
@@ -61,7 +66,9 @@ public class ModRewriteConfLoader {
 
             } else if (line.startsWith("RewriteCond")) {
                 Condition condition = processRewriteCond(line);
-                if (condition != null) conditionsBuffer.add(condition);
+                if (condition != null) {
+                    conditionsBuffer.add(condition);
+                }
 
             } else if (line.startsWith("RewriteEngine")) {
                 processRewriteEngine(conf, line);
@@ -84,12 +91,12 @@ public class ModRewriteConfLoader {
             } else if (line.startsWith("RewriteRule")) {
                 parseRule(conf, conditionsBuffer, notesBuffer, line);
                 notesBuffer = new StringBuffer();
-                conditionsBuffer = new ArrayList();
+                conditionsBuffer = new ArrayList<>();
             }
         }
         if (logTypeStr != null || logLevelStr != null) {
-            String logStr = (logTypeStr == null ? "" : logTypeStr) + (logLevelStr == null ? "" : ":" + logLevelStr);
-            log.debug("setting log to: " + logStr);
+            String logStr = (logTypeStr == null ? "" : logTypeStr) + (logLevelStr == null ? "" : ':' + logLevelStr);
+            log.debug("setting log to: ", logStr);
             Log.setLevel(logStr);
         }
         if (conditionsBuffer.size() > 0) {
@@ -97,10 +104,9 @@ public class ModRewriteConfLoader {
         }
     }
 
-    private void parseRule(Conf conf, List conditionsBuffer, StringBuffer notesBuffer, String line) {
-        NormalRule rule = processRule(line);
-        for (int j = 0; j < conditionsBuffer.size(); j++) {
-            Condition condition = (Condition) conditionsBuffer.get(j);
+    private void parseRule(Conf conf, List<Condition> conditionsBuffer, StringBuffer notesBuffer, String line) {
+        final NormalRule rule = processRule(line);
+        for (Condition condition : conditionsBuffer) {
             rule.addCondition(condition);
         }
         if (notesBuffer.length() > 0) rule.setNote(notesBuffer.toString());
@@ -112,7 +118,7 @@ public class ModRewriteConfLoader {
         if (logTypeMatcher.matches()) {
             logTypeStr = StringUtils.trimToNull(logTypeMatcher.group(1));
             if (logTypeStr != null) {
-                logTypeStr = logTypeStr.replaceAll("\"", "");
+                logTypeStr = PATTERN_QUOTE.matcher(logTypeStr).replaceAll("");
                 log.debug("RewriteLog parsed as " + logTypeStr);
             }
         }
@@ -146,9 +152,11 @@ public class ModRewriteConfLoader {
                 log.debug("got rule " + rulePartStr);
                 String[] ruleParts = rulePartStr.split(" ");
                 int partCounter = 0;
-                for (int j = 0; j < ruleParts.length; j++) {
-                    String part = StringUtils.trimToNull(ruleParts[j]);
-                    if (part == null) continue;
+                for (final String rulePart : ruleParts) {
+                    String part = StringUtils.trimToNull(rulePart);
+                    if (part == null) {
+                        continue;
+                    }
                     partCounter++;
                     log.debug("parsed rule part " + part);
                     if (partCounter == 1) {
@@ -175,12 +183,12 @@ public class ModRewriteConfLoader {
         Matcher engineMatcher = ENGINE_PATTERN.matcher(line);
         if (engineMatcher.matches()) {
             String enabledStr = StringUtils.trim(engineMatcher.group(1));
-            log.debug("RewriteEngine value parsed as '" + enabledStr + "'");
+            log.debug("RewriteEngine value parsed as '" + enabledStr + '\'');
             if ("0".equalsIgnoreCase(enabledStr) ||
                     "false".equalsIgnoreCase(enabledStr) ||
                     "no".equalsIgnoreCase(enabledStr) ||
                     "off".equalsIgnoreCase(enabledStr)) enabled = false;
-            log.debug("RewriteEngine as boolean '" + enabled + "'");
+            log.debug("RewriteEngine as boolean '" + enabled + '\'');
         } else {
             log.error("cannot parse " + line);
         }
@@ -191,12 +199,12 @@ public class ModRewriteConfLoader {
         String rawFlags = StringUtils.trimToNull(part.substring(1, part.length() - 1));
         if (rawFlags != null) {
             String[] flags = rawFlags.split(",");
-            for (int k = 0; k < flags.length; k++) {
-                String flag = flags[k];
+            for (final String flag1 : flags) {
+                String flag = flag1;
                 String flagValue = null;
                 if (flag.indexOf("=") != -1) {
-                    flagValue = flag.substring(flag.indexOf("=") + 1);
-                    flag = flag.substring(0, flag.indexOf("="));
+                    flagValue = flag.substring(flag.indexOf('=') + 1);
+                    flag = flag.substring(0, flag.indexOf('='));
                 }
                 flag = flag.toLowerCase();
                 /*
@@ -371,9 +379,11 @@ public class ModRewriteConfLoader {
             String conditionParts = StringUtils.trimToNull(condMatcher.group(1));
             if (conditionParts != null) {
                 String[] condParts = conditionParts.split(" ");
-                for (int i = 0; i < condParts.length; i++) {
-                    String part = StringUtils.trimToNull(condParts[i]);
-                    if (part == null) continue;
+                for (final String condPart : condParts) {
+                    String part = StringUtils.trimToNull(condPart);
+                    if (part == null) {
+                        continue;
+                    }
                     if (part.equalsIgnoreCase("%{HTTP_USER_AGENT}")) {
                         condition.setType("header");
                         condition.setName("user-agent");

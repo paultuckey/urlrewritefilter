@@ -66,7 +66,7 @@ public class FunctionReplacer implements SubstitutionFilter {
     public String substitute(String subjectOfReplacement, SubstitutionContext ctx,
                              SubstitutionFilterChain nextFilter) {
         Matcher functionMatcher = functionPattern.matcher(subjectOfReplacement);
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         boolean anyMatches = false;
 
         int lastAppendPosition = 0;
@@ -110,23 +110,18 @@ public class FunctionReplacer implements SubstitutionFilter {
         // get the sub name if any ie for headers etc header:user-agent
         String varSubName = null;
         String varType;
-        int colonIdx = originalVarStr.indexOf(":");
+        int colonIdx = originalVarStr.indexOf(':');
         if (colonIdx != -1 && colonIdx + 1 < originalVarStr.length()) {
             varSubName = originalVarStr.substring(colonIdx + 1);
             varType = originalVarStr.substring(0, colonIdx);
             if (log.isDebugEnabled()) log.debug("function ${" + originalVarStr + "} type: " + varType +
-                    ", name: '" + varSubName + "'");
+                    ", name: '" + varSubName + '\'');
         } else {
             varType = originalVarStr;
             if (log.isDebugEnabled()) log.debug("function ${" + originalVarStr + "} type: " + varType);
         }
         String functionResult = "";
-        SubstitutionFilterChain redoFunctionFilter = new SubstitutionFilterChain() {
-            public String substitute(String string, SubstitutionContext ctx) {
-                return FunctionReplacer.this.substitute(string, ctx, nextFilter);
-            }
-
-        };
+        SubstitutionFilterChain redoFunctionFilter = (string, ctx1) -> FunctionReplacer.this.substitute(string, ctx1, nextFilter);
         // check for some built in functions
         if ("replace".equalsIgnoreCase(varType) || "replaceAll".equalsIgnoreCase(varType)) {
             functionResult = StringFunctions.replaceAll(varSubName, redoFunctionFilter, ctx);

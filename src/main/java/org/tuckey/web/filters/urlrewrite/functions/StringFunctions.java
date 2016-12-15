@@ -90,8 +90,6 @@ public class StringFunctions {
      * unescape query string "as+as" will return "as as"
      * note, encoding can be specified after colon eg, "as:UTF-16"
      *
-     * @param nextFilter
-     * @param ctx
      */
     public static String unescape(String subject, SubstitutionFilterChain nextFilter, SubstitutionContext ctx) {
         String encoding = "UTF-8";

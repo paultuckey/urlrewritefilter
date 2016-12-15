@@ -50,7 +50,7 @@ import java.util.Map;
  */
 public class UrlRewriteWrappedRequest extends HttpServletRequestWrapper {
 
-    HashMap overridenParameters;
+    Map<String, String[]> overridenParameters;
     String overridenMethod;
 
     public UrlRewriteWrappedRequest(HttpServletRequest httpServletRequest) {
@@ -58,7 +58,7 @@ public class UrlRewriteWrappedRequest extends HttpServletRequestWrapper {
     }
 
     public UrlRewriteWrappedRequest(HttpServletRequest httpServletRequest,
-                                    HashMap overridenParameters, String overridenMethod) {
+                                    Map<String, String[]> overridenParameters, String overridenMethod) {
         super(httpServletRequest);
         this.overridenParameters = overridenParameters;
         this.overridenMethod = overridenMethod;
@@ -66,18 +66,20 @@ public class UrlRewriteWrappedRequest extends HttpServletRequestWrapper {
 
     public Enumeration getParameterNames() {
         if (overridenParameters != null) {
-            List keys = Collections.list(super.getParameterNames());
+            @SuppressWarnings("unchecked")
+            List<String> keys = Collections.list(super.getParameterNames());
             keys.addAll(overridenParameters.keySet());
             return Collections.enumeration(keys);
         }
         return super.getParameterNames();
     }
 
-    public Map getParameterMap() {
+    @SuppressWarnings("unchecked")
+    public Map<String, String[]> getParameterMap() {
         if (overridenParameters != null) {
-            Map superMap = super.getParameterMap();
+            Map<String, String[]> superMap = super.getParameterMap();
             //superMap is an unmodifiable map, hence creating a new one.
-            Map overriddenMap = new HashMap(superMap.size() + overridenParameters.size());
+            Map<String, String[]> overriddenMap = new HashMap<>(superMap.size() + overridenParameters.size());
             overriddenMap.putAll(superMap);
             overriddenMap.putAll(overridenParameters);
             return overriddenMap;
@@ -87,14 +89,14 @@ public class UrlRewriteWrappedRequest extends HttpServletRequestWrapper {
 
     public String[] getParameterValues(String s) {
         if (overridenParameters != null && overridenParameters.containsKey(s)) {
-            return (String[]) overridenParameters.get(s);
+            return overridenParameters.get(s);
         }
         return super.getParameterValues(s);
     }
 
     public String getParameter(String s) {
         if (overridenParameters != null && overridenParameters.containsKey(s)) {
-            String[] values = (String[]) overridenParameters.get(s);
+            String[] values = overridenParameters.get(s);
             if (values == null || values.length == 0) {
                 return null;
             } else {

@@ -57,6 +57,11 @@ public class MockServletContext implements ServletContext {
     private static Log log = Log.getLog(MockServletContext.class);
     private final Hashtable attributes = new Hashtable();
 
+    @Override
+    public String getContextPath() {
+        return "/site";
+    }
+
     public ServletContext getContext(String s) {
         return new MockServletContext();
     }
