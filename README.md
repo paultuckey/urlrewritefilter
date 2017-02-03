@@ -23,7 +23,7 @@ See the [manual](http://cdn.rawgit.com/paultuckey/urlrewritefilter/master/src/do
 
 ## Quick Start
 
-  * Add Maven dependency below or add <a href="http://urlrewritefilter.googlecode.com/files/urlrewritefilter-4.0.3.jar">urlrewritefilter-4.0.3.jar</a> directly into your <b>WEB-INF/lib</b> directory.
+  * Add Maven dependency below or add <a href="http://central.maven.org/maven2/org/tuckey/urlrewritefilter/4.0.3/urlrewritefilter-4.0.3.jar">urlrewritefilter-4.0.3.jar</a> directly into your <b>WEB-INF/lib</b> directory.
 ```xml
     <dependency>
         <groupId>org.tuckey</groupId>

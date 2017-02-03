@@ -21,7 +21,7 @@
 
     <bannerLeft>
         <name>${project.name}</name>
-        <!-- <src>http://urlrewritefilter.googlecode.com/svn/trunk/src/doc/manual/3.2/urf.gif</src> -->
+        <!-- <src>http://tuckey.org/img/urf-100.png</src> -->
         <href>http://www.tuckey.org/urlrewrite/</href>
     </bannerLeft>
     <body>
