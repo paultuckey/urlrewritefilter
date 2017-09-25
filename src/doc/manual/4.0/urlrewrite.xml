@@ -81,7 +81,7 @@
             <to>/some/page-for-old-browsers.html</to>
         </rule>
     eg, will pass the request for /some/page.html on to /some/page-for-old-browsers.html only for older
-    browsers whose user agent srtings match Mozilla/1, Mozilla/2, Mozilla/3 or Mozilla/4.
+    browsers whose user agent strings match Mozilla/1, Mozilla/2, Mozilla/3 or Mozilla/4.
 
     Centralised browser detection
         <rule>
