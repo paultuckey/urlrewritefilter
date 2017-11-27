@@ -75,5 +75,24 @@ public class VariableReplacerTest extends TestCase {
         assertEquals("http://testurl", result);
     }
 
-    
+    public final void testReplaceWithUnderscore() {
+        request.getSession(true).setAttribute("_type", "html");
+        final String result = VariableReplacer.replace("%{session-attribute:_type}", request);
+
+        assertEquals("html", result);
+    }
+
+    public final void testReplaceWithPeriods() {
+        request.getSession(true).setAttribute("s3.static.bucket", "fizz");
+        final String result = VariableReplacer.replace("%{session-attribute:s3.static.bucket}", request);
+
+        assertEquals("fizz", result);
+    }
+
+    public final void testReplaceWithNumbers() {
+        request.getSession(true).setAttribute("com.foo1.bar2", "fizz");
+        final String result = VariableReplacer.replace("%{session-attribute:com.foo1.bar2}", request);
+
+        assertEquals("fizz", result);
+    }
 }
