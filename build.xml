@@ -6,8 +6,8 @@
     <property file="${basedir}/target/classes/org/tuckey/web/filters/urlrewrite/build.number.properties" />
 
     <property name="build.home" value="target/ant-build"/>
-    <property name="tomcat.home" value="/usr/java/apache-tomcat-7.0.27"/>
-    <property name="app.manual-version" value="4.0"/>
+    <property name="tomcat.home" value="${user.home}/co/urlrewritefilter/container-test/target/cargo/installs/tomcat-7.0.68/apache-tomcat-7.0.68/"/>
+    <property name="app.manual-version" value="5.0"/>
 
     <path id="run.classpath">
         <path path="target/urlrewritefilter-${project.version}.jar"/>
@@ -18,7 +18,7 @@
         <taskdef name="urlrewritedoc" classpathref="run.classpath"
                  classname="org.tuckey.web.filters.urlrewrite.UrlRewriteDocTask" />
         <urlrewritedoc
-                conf="src/test-web/WEB-INF/urlrewrite.xml"
+                conf="src/test/webapp/WEB-INF/urlrewrite.xml"
                 dest="src/doc/manual/${app.manual-version}/urlrewrite-conf-overview-sample.html"/>
     </target>
 
