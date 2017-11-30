@@ -24,7 +24,7 @@
 
     <properties>
         <app.manual-version>4.0</app.manual-version>
-        <app.year>2012</app.year>
+        <app.year>2017</app.year>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
@@ -48,8 +48,8 @@
 
     <scm>
         <url>https://github.com/paultuckey/urlrewritefilter</url>
-        <connection>scm:git:git://github.com/paultuckey/urlrewritefilter.git</connection>
-        <developerConnection>scm:git:git@github.com:paultuckey/urlrewritefilter.git</developerConnection>
+        <connection>scm:git:https://github.com/paultuckey/urlrewritefilter.git</connection>
+        <developerConnection>scm:git:https://github.com/paultuckey/urlrewritefilter.git</developerConnection>
     </scm>
 
     <developers>
