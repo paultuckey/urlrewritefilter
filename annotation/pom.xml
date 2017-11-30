@@ -4,7 +4,7 @@
     <groupId>org.tuckey</groupId>
     <artifactId>urlrewritefilter-annotation</artifactId>
     <packaging>jar</packaging>
-    <version>4.0.3</version>
+    <version>5.0.0</version>
     <name>UrlRewriteFilter Annotation</name>
     <url>http://www.tuckey.org/urlrewrite/</url>
     <inceptionYear>2006</inceptionYear>
@@ -31,8 +31,8 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git://github.com/paultuckey/urlrewritefilter.git</connection>
-        <developerConnection>scm:git:git@github.com:paultuckey/urlrewritefilter.git</developerConnection>
+        <connection>scm:git:https://github.com/paultuckey/urlrewritefilter.git</connection>
+        <developerConnection>scm:git:https://github.com/paultuckey/urlrewritefilter.git</developerConnection>
         <url>https://github.com/paultuckey/urlrewritefilter</url>
     </scm>
 
