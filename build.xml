@@ -6,7 +6,7 @@
     <property file="${basedir}/target/classes/org/tuckey/web/filters/urlrewrite/build.number.properties" />
 
     <property name="build.home" value="target/ant-build"/>
-    <property name="tomcat.home" value="${user.home}/co/urlrewritefilter/container-test/target/cargo/installs/tomcat-7.0.68/apache-tomcat-7.0.68/"/>
+    <property name="tomcat.home" value="${user.home}/co/urlrewritefilter/container-test/target/cargo/installs/tomcat-7.0.82/apache-tomcat-7.0.82/"/>
     <property name="app.manual-version" value="5.0"/>
 
     <path id="run.classpath">
