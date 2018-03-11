@@ -57,7 +57,7 @@ public class VariableReplacer implements SubstitutionFilter {
 
     private static Log log = Log.getLog(VariableReplacer.class);
 
-    private static Pattern toVariablePattern = Pattern.compile("(?<!\\\\)%\\{([-a-zA-Z0-9:_.]*)\\}");
+    private static Pattern toVariablePattern = Pattern.compile("(?<!\\\\)%\\{([\\-a-zA-Z0-9:_.]*)\\}");
 
     private static ServletContext servletContext;
     

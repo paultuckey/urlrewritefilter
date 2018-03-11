@@ -169,4 +169,47 @@ public class ModRewriteConfLoaderTest extends TestCase {
         assertEquals("request-filename", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getType());
         assertEquals("notdir", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getOperator());
     }
+
+    public void testReqUriNotEqual() {
+        loader.process("\n" +
+                "    RewriteCond %{REQUEST_URI} !^/index.html.*$\n" +
+                "    RewriteRule  ^/$                 /homepage.max.html  [L]   ", conf);
+        assertEquals(1, conf.getRules().size());
+        assertEquals(1, ((NormalRule) conf.getRules().get(0)).getConditions().size());
+        assertEquals("notequal", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getOperator());
+        assertEquals("request-uri", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getType());
+        assertEquals("^/index.html.*$", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getValue());
+        assertEquals("^/$", ((NormalRule) conf.getRules().get(0)).getFrom());
+        assertEquals("/homepage.max.html", ((NormalRule) conf.getRules().get(0)).getTo());
+        assertEquals(true, ((NormalRule) conf.getRules().get(0)).isLast());
+    }
+
+    		
+    public void testReplaceToVariables() {
+        loader.process("\n" +
+                "    RewriteCond %{REQUEST_FILENAME} !-f\n" +
+                "    RewriteCond %{REQUEST_FILENAME} !-d\n" +
+                "    RewriteRule ^(.*)$ index.cfm%{REQUEST_URI} [QSA,L]", conf);
+        assertEquals(1, conf.getRules().size());
+        assertEquals(2, ((NormalRule) conf.getRules().get(0)).getConditions().size());
+        assertEquals("notfile", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getOperator());
+        assertEquals("notdir", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(1)).getOperator());
+        assertEquals("request-filename", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getType());
+        assertEquals("^(.*)$", ((NormalRule) conf.getRules().get(0)).getFrom());
+        assertEquals("index.cfm%{request-uri}", ((NormalRule) conf.getRules().get(0)).getTo());
+        assertEquals(true, ((NormalRule) conf.getRules().get(0)).isLast());
+    }
+
+    public void testReqUriShortcut() {
+        loader.process("\n" +
+                "    RewriteCond  $1  ^somepage.*                   \n" +
+                "    RewriteRule  ^/$                 /homepage.max.html  [L]   ", conf);
+        assertEquals(1, conf.getRules().size());
+        assertEquals(1, ((NormalRule) conf.getRules().get(0)).getConditions().size());
+        assertEquals("request-uri", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getType());
+        assertEquals("^somepage.*", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getValue());
+        assertEquals("^/$", ((NormalRule) conf.getRules().get(0)).getFrom());
+        assertEquals("/homepage.max.html", ((NormalRule) conf.getRules().get(0)).getTo());
+        assertEquals(true, ((NormalRule) conf.getRules().get(0)).isLast());
+    }
 }
