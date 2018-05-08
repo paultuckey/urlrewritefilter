@@ -198,6 +198,12 @@ public class RequestProxy {
             return null;
         }
 
+        Enumeration<String> p = hsRequest.getParameterNames();
+        while (p.hasMoreElements()) {
+            String param = p.nextElement();
+            method.getParams().setParameter(param, hsRequest.getParameter(param));
+        }
+
         method.setFollowRedirects(false);
         method.setPath(targetUrl.getPath());
         method.setQueryString(targetUrl.getQuery());
@@ -260,7 +266,7 @@ public class RequestProxy {
                 continue;
             }
 
-            hsResponse.addHeader(h.getName(), h.getValue());
+            hsResponse.setHeader(h.getName(), h.getValue());
             if ( log.isInfoEnabled() ) log.info("setting response parameter:" + h.getName() + ", value: " + h.getValue());
         }
         //fixme what about the response footers? (httpMethod.getResponseFooters())
