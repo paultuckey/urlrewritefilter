@@ -843,4 +843,38 @@ public class RuleTest extends TestCase {
         NormalRewrittenUrl rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
         assertEquals("/en/robots.txt?param1=value1&param2=value2", rewrittenUrl.getTarget());
     }
+    
+    public void testRegexIssueIssue() throws InvocationTargetException, IOException, ServletException {
+        NormalRule rule = new NormalRule();
+        rule.setFrom(".*");
+        rule.setTo("robots.txt");
+        rule.setToType("permanent-redirect");
+        rule.setToLast("true");
+        rule.setQueryStringAppend("true");
+        rule.initialise(new MockServletContext());
+        MockRequest request = new MockRequest("/oddness");
+        NormalRewrittenUrl rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
+        assertEquals("robots.txt", rewrittenUrl.getTarget());
+
+        rule.setFrom(".+");
+        rule.setTo("robots.txt");
+        rule.setToType("permanent-redirect");
+        rule.setToLast("true");
+        rule.setQueryStringAppend("true");
+        rule.initialise(new MockServletContext());
+        request = new MockRequest("/oddness");
+        rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
+        assertEquals("robots.txt", rewrittenUrl.getTarget());
+
+        rule.setFrom(".?");
+        rule.setTo("robots.txt");
+        rule.setToType("permanent-redirect");
+        rule.setToLast("true");
+        rule.setQueryStringAppend("true");
+        rule.initialise(new MockServletContext());
+        request = new MockRequest("/oddness");
+        rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
+        assertEquals("robots.txtoddness", rewrittenUrl.getTarget());
+
+    }
 }

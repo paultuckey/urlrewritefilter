@@ -48,6 +48,7 @@ public class RegexPattern implements StringMatchingPattern {
 
     public RegexPattern(String patternStr, boolean caseSensitive)
             throws StringMatchingPatternSyntaxException {
+        patternStr = (patternStr.charAt(0) == '.') ? '^' + patternStr : patternStr ;// otherwise matcher.find() matches twice
         try {
             if (caseSensitive) {
                 pattern = Pattern.compile(patternStr);
