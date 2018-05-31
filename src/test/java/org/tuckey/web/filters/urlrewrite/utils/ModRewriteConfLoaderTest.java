@@ -212,4 +212,30 @@ public class ModRewriteConfLoaderTest extends TestCase {
         assertEquals("/homepage.max.html", ((NormalRule) conf.getRules().get(0)).getTo());
         assertEquals(true, ((NormalRule) conf.getRules().get(0)).isLast());
     }
+
+    public void testNoSubstitution() {
+    	loader.process("\n" +
+    			"    RewriteCond  $1  ^somepage.*                   \n" +
+    			"    RewriteRule ^.*$ - [NC,L]   ", conf);
+    	assertEquals(1, conf.getRules().size());
+    	assertEquals(1, ((NormalRule) conf.getRules().get(0)).getConditions().size());
+    	assertEquals("request-uri", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getType());
+    	assertEquals("^somepage.*", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getValue());
+    	assertEquals("^.*$", ((NormalRule) conf.getRules().get(0)).getFrom());
+    	assertEquals("-", ((NormalRule) conf.getRules().get(0)).getTo());
+    	assertEquals(true, ((NormalRule) conf.getRules().get(0)).isLast());
+    }
+
+    public void testTabOnly() {
+        loader.process("\n" +
+                "    RewriteCond  $1  ^somepage.*                   \n" +
+                "    RewriteRule	^.*$	-	[NC,L]   ", conf);
+        assertEquals(1, conf.getRules().size());
+        assertEquals(1, ((NormalRule) conf.getRules().get(0)).getConditions().size());
+        assertEquals("request-uri", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getType());
+        assertEquals("^somepage.*", ((Condition) ((NormalRule) conf.getRules().get(0)).getConditions().get(0)).getValue());
+        assertEquals("^.*$", ((NormalRule) conf.getRules().get(0)).getFrom());
+        assertEquals("-", ((NormalRule) conf.getRules().get(0)).getTo());
+        assertEquals(true, ((NormalRule) conf.getRules().get(0)).isLast());
+    }
 }
