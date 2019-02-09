@@ -95,4 +95,22 @@ public class FunctionReplacerTest extends TestCase {
         assertEquals("aFOOBAR b", FunctionReplacer.replace("a${upper:${lower:fOObAR}} b"));
     }
 
+    public void testRecursive2() throws InvocationTargetException, IOException, ServletException {
+        String target = "a${upper:AbCd  ${lower:fOObAR}  1234  } b";
+        assertTrue(FunctionReplacer.containsFunction(target));
+        assertEquals("aABCD  FOOBAR  1234   b", FunctionReplacer.replace(target));
+    }
+
+    public void testRecursive3() throws InvocationTargetException, IOException, ServletException {
+        String target = "a${trim:AbCd  ${lower:fOObAR}  1234  } b";
+        assertTrue(FunctionReplacer.containsFunction(target));
+        assertEquals("aAbCd  foobar  1234 b", FunctionReplacer.replace(target));
+    }
+
+    public void testSeries() throws InvocationTargetException, IOException, ServletException {
+        String target = "a${upper:hoge} ${lower:fOObAR} b";
+        assertTrue(FunctionReplacer.containsFunction(target));
+        assertEquals("aHOGE foobar b", FunctionReplacer.replace(target));
+    }
+
 }
