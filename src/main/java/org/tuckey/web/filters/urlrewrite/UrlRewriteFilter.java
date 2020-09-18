@@ -50,6 +50,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -262,12 +264,31 @@ public class UrlRewriteFilter implements Filter {
     }
 
     private void loadUrlRewriterLocal() {
-        InputStream inputStream = context.getResourceAsStream(confPath);
-        // attempt to retrieve from location other than local WEB-INF
-        if ( inputStream == null ) {
-            inputStream = ClassLoader.getSystemResourceAsStream(confPath);
+        URL confUrl = null;
+        InputStream inputStream = null;
+        try {
+            File confFile = new File(confPath);
+            if (confFile.exists()) {
+                inputStream = new FileInputStream(confFile);
+                confUrl = confFile.toURI().toURL();
+            }
+        } catch (FileNotFoundException e) {
+            log.debug(e);
+        } catch (MalformedURLException ex) {
+            log.debug(ex);
         }
-        URL confUrl = getClass().getClassLoader().getResource(confPath);
+        if (inputStream == null) {
+            inputStream = context.getResourceAsStream(confPath);
+            // attempt to retrieve from location other than local WEB-INF
+            if (inputStream == null) {
+                inputStream = ClassLoader.getSystemResourceAsStream(confPath);
+            }
+            try {
+                confUrl = context.getResource(confPath);
+            } catch (MalformedURLException e) {
+                log.debug(e);
+            }
+        }
         String confUrlStr = null;
         if (confUrl != null) {
             confUrlStr = confUrl.toString();
@@ -449,10 +470,12 @@ public class UrlRewriteFilter implements Filter {
      * @return time as a long
      */
     private long getConfFileLastModified() {
-        if ( context != null ) {
-            String realPath = context.getRealPath(confPath);
-            if ( realPath != null ) {
-                File confFile = new File(context.getRealPath(confPath));
+        if (context != null) {
+            File confFile = new File(confPath);
+            if (confFile.exists()) {
+                return confFile.lastModified();
+            } else if (context.getRealPath(confPath) != null) {
+                confFile = new File(context.getRealPath(confPath));
                 return confFile.lastModified();
             }
         }
