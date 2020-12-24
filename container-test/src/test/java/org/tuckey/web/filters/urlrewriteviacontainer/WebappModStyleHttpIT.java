@@ -39,6 +39,8 @@ import org.xml.sax.SAXException;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.util.Arrays;
+import org.apache.commons.httpclient.Cookie;
 
 
 /**
@@ -49,6 +51,12 @@ public class WebappModStyleHttpIT extends ContainerTestBase {
 
     protected String getApp() {
         return "webapp/mod";
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        client.getState().clearCookies();
     }
 
     public void testStatusRecord() throws IOException {
@@ -67,6 +75,15 @@ public class WebappModStyleHttpIT extends ContainerTestBase {
         method.setFollowRedirects(false);
         client.executeMethod(method);
         assertEquals("this is index.jsp", method.getResponseBodyAsString());
+    }
+
+    public void testCookiePassing() throws ServletException, IOException, SAXException {
+        GetMethod method = new GetMethod(getBaseUrl() + "/simple/cookie");
+        method.setFollowRedirects(false);
+        method.setRequestHeader("Cookie", new Cookie("127.0.0.1", "Dummy", "TestValue").toExternalForm());
+        client.executeMethod(method);
+        assertEquals("Dummy: TestValue", method.getResponseBodyAsString());
+        assertEquals(200, method.getStatusCode());
     }
 
     public void testStatus1() throws ServletException, IOException, SAXException {

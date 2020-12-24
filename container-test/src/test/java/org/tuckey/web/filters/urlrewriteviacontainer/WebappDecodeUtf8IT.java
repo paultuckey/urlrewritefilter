@@ -48,7 +48,7 @@ public class WebappDecodeUtf8IT extends ContainerTestBase {
         method.setRequestHeader("Accept-Encoding", "utf8");
         method.setFollowRedirects(false);
         client.executeMethod(method);
-        assertEquals(getBaseUrl() + "/utf-redir/done/", method.getResponseHeader("Location").getValue());
+        assertEquals(getContextPath() + "/utf-redir/done/", method.getResponseHeader("Location").getValue());
     }
 
 

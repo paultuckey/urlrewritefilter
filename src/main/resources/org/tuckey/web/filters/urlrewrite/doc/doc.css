@@ -37,7 +37,7 @@ a:link, a:visited {
     color: blue;
 }
 
-a:active, a:hover, {
+a:active, a:hover {
     color: #f30 !important;
 }
 

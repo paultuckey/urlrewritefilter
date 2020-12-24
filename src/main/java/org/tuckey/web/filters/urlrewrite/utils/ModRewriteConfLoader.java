@@ -179,6 +179,8 @@ public class ModRewriteConfLoader {
         } else {
             log.error("cannot parse " + line);
         }
+        // mod_rewrite passes cookies through to the backend unmodified
+        rule.setDropCookies("false");
         return rule;
     }
 

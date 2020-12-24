@@ -62,7 +62,7 @@
 
     <rule>
         <condition type="year" operator="greater">1970</condition>
-        <condition type="year" operator="less">2020</condition>
+        <condition type="year" operator="less">2050</condition>
         <from>/time/year/current</from>
         <to type="passthrough">/echo.jsp?echo=yearisbetween1970and3000</to>
     </rule>

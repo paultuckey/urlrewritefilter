@@ -51,7 +51,7 @@ public abstract class ContainerTestBase extends TestCase {
     private String containerId = "test";
 
     protected void setUp() throws Exception {
-        String containerId = System.getProperty("test.container.id");
+        String containerId = System.getProperty("test.container.id", System.getProperty("cargo.maven.containerId"));
         if (containerId != null) {
             this.containerId = containerId;
         }
@@ -72,6 +72,14 @@ public abstract class ContainerTestBase extends TestCase {
 
     protected String getBaseUrl() {
         return baseUrl + "/" + getApp();
+    }
+
+    protected String getContextPath() {
+        if(getApp() == null || getApp().isEmpty()) {
+            return "";
+        } else {
+            return "/" + getApp();
+        }
     }
 
     protected void recordRewriteStatus() throws IOException {

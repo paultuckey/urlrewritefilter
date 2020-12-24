@@ -71,7 +71,7 @@ public class WebappHttpIT extends ContainerTestBase {
         GetMethod method = new GetMethod(getBaseUrl() + "/test/status/");
         method.setFollowRedirects(false);
         client.executeMethod(method);
-        assertEquals(getBaseUrl() + "/rewrite-status", method.getResponseHeader("Location").getValue());
+        assertEquals(getContextPath() + "/rewrite-status", method.getResponseHeader("Location").getValue());
     }
 
     public void testBasicSets() throws ServletException, IOException, SAXException {
@@ -107,7 +107,7 @@ public class WebappHttpIT extends ContainerTestBase {
         GetMethod method = new GetMethod(getBaseUrl() + "/services/blah?qwerty");
         method.setFollowRedirects(false);
         client.executeMethod(method);
-        assertEquals(getBaseUrl() + "/axis/services/blah", method.getResponseHeader("Location").getValue());
+        assertEquals(getContextPath() + "/axis/services/blah", method.getResponseHeader("Location").getValue());
     }
 
     public void testTestErik() throws ServletException, IOException {
@@ -122,7 +122,7 @@ public class WebappHttpIT extends ContainerTestBase {
         GetMethod method = new GetMethod(getBaseUrl() + "/went%20to%20bahamas/");
         method.setFollowRedirects(false);
         client.executeMethod(method);
-        assertEquals(getBaseUrl() + "/jamaica/", method.getResponseHeader("Location").getValue());
+        assertEquals(getContextPath() + "/jamaica/", method.getResponseHeader("Location").getValue());
     }
 
     public void testSimpleRun() throws ServletException, IOException {
@@ -159,12 +159,6 @@ public class WebappHttpIT extends ContainerTestBase {
             os.write(buffer, 0, bytesRead);
         }
         return os.toString();
-    }
-
-    public void testSampleAnnotation() throws IOException {
-        GetMethod method = new GetMethod(getBaseUrl() + "/do-something/7");
-        client.executeMethod(method);
-        assertEquals(method.getResponseBodyAsString(), "AnnotatedClassSample id=7");
     }
 
 }

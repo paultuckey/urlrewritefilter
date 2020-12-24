@@ -36,12 +36,12 @@ public class WebappDecodeNoneIT extends ContainerTestBase {
         method.setFollowRedirects(false);
         client.executeMethod(method);
         assertNotNull("no location header", method.getResponseHeader("Location"));
-        assertEquals(getBaseUrl() + "/utf-redir/done/" + encodedStr + "/", method.getResponseHeader("Location").getValue());
+        assertEquals(getContextPath() + "/utf-redir/done/" + encodedStr + "/", method.getResponseHeader("Location").getValue());
     }
 
     public void testNoDecode() throws IOException {
         if ( "orion2.0.5".equals(getContainerId())) return; // jsp's with % in path not supported
-        if ( "tomcat-4.1.31".equals(getContainerId())) return; // jsp's with % in path not supported
+        if ( getContainerId().startsWith("tomcat")) return; // jsp's with % in path not supported
 
         GetMethod method = new GetMethod(getBaseUrl() + "/no-decode-test/D%25%2cD");
         client.executeMethod(method);
