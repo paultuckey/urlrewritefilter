@@ -24,19 +24,9 @@
 
     <properties>
         <app.manual-version>5.0</app.manual-version>
-        <app.year>2017</app.year>
+        <app.year>2021</app.year>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
-
-    <mailingLists>
-        <mailingList>
-            <name>UrlRewrite users</name>
-            <post>urlrewrite@googlegroups.com</post>
-            <subscribe>urlrewrite+subscribe@googlegroups.com</subscribe>
-            <unsubscribe>urlrewrite+unsubscribe@googlegroups.com</unsubscribe>
-            <archive>https://groups.google.com/d/forum/urlrewrite</archive>
-        </mailingList>
-    </mailingLists>
 
     <licenses>
         <license>
