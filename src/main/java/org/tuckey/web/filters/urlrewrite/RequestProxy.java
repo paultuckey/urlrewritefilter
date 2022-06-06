@@ -60,7 +60,7 @@ import java.util.Enumeration;
  * <p/>
  * This class uses the commons-httpclient classes from Apache.
  * <p/>
- * User: Joachim Ansorg, <jansorg@ksi.gr>
+ * User: Joachim Ansorg, jansorg AT ksi.gr
  * Date: 19.06.2008
  * Time: 16:02:54
  */

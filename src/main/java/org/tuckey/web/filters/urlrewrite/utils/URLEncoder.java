@@ -5,7 +5,7 @@ import java.util.BitSet;
 
 /**
  * URL-encoding utility for each URL part according to the RFC specs
- * see the rfc at http://www.ietf.org/rfc/rfc2396.txt
+ * see the rfc at <a href="http://www.ietf.org/rfc/rfc2396.txt">rfc2396</a>
  *
  * @author stephane
  */
@@ -147,8 +147,8 @@ public class URLEncoder {
     }
 
     /**
-     * pchar = unreserved | escaped | ":" | "@" | "&" | "=" | "+" | "$" | ","
-     * <p/>
+     * pchar = unreserved | escaped | ":" | "@" | "&amp;" | "=" | "+" | "$" | ","
+     *
      * Note: we don't allow escaped here since we will escape it ourselves, so we don't want to allow them in the
      * unescaped sequences
      */
@@ -169,7 +169,6 @@ public class URLEncoder {
      * Encodes a string to be a valid path parameter URL, which means it can contain PCHAR* only (do not put the leading
      * ";" or it will be escaped.
      *
-     * @throws UnsupportedEncodingException
      */
     public static String encodePathParam(final String pathParam, final String charset) throws UnsupportedEncodingException {
         return encodePathSegment(pathParam, charset);
@@ -179,7 +178,6 @@ public class URLEncoder {
      * Encodes a string to be a valid path segment URL, which means it can contain PCHAR* only (do not put path
      * parameters or they will be escaped.
      *
-     * @throws UnsupportedEncodingException
      */
     public static String encodePathSegment(final String pathSegment, final String charset) throws UnsupportedEncodingException {
         if (pathSegment == null) {
