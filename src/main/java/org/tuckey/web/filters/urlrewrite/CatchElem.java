@@ -37,10 +37,10 @@ package org.tuckey.web.filters.urlrewrite;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.extend.RewriteMatch;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.IOException;

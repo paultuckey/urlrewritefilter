@@ -43,9 +43,9 @@ import org.tuckey.web.filters.urlrewrite.utils.StringMatchingPatternSyntaxExcept
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 import org.tuckey.web.filters.urlrewrite.utils.WildcardPattern;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.io.File;
 import java.util.Calendar;
 
@@ -252,7 +252,7 @@ public class Condition extends TypeConverter {
 
             case TYPE_EXCEPTION:
                 String eName = null;
-                Exception e = (Exception) hsRequest.getAttribute("javax.servlet.error.exception");
+                Exception e = (Exception) hsRequest.getAttribute("jakarta.servlet.error.exception");
 
                 if (OPERATOR_INSTANCEOF == operator) {
                     return evaluateInstanceOfCondition(e);

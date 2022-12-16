@@ -46,7 +46,8 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXParseException;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -65,9 +66,12 @@ import java.util.List;
  * @author Paul Tuckey
  * @version $Revision: 43 $ $Date: 2006-10-31 17:29:59 +1300 (Tue, 31 Oct 2006) $
  */
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 public class Conf {
 
-    private static Log log = Log.getLog(Conf.class);
+	private static final Logger log = LoggerFactory.getLogger(UrlRewriteFilter.class);
+
 
     private final List errors = new ArrayList();
     private final List rules = new ArrayList(50);

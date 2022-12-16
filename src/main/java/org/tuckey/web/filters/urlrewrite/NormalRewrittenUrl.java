@@ -37,12 +37,12 @@ package org.tuckey.web.filters.urlrewrite;
 import org.tuckey.web.filters.urlrewrite.extend.RewriteMatch;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 
-import javax.servlet.FilterChain;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 
@@ -182,7 +182,7 @@ public class NormalRewrittenUrl implements RewrittenUrl {
      * @param hsResponse
      * @param chain
      * @return True if the request was rewritten otherwise false.
-     * @throws javax.servlet.ServletException
+     * @throws jakarta.servlet.ServletException
      * @throws java.io.IOException
      */
     public boolean doRewrite(final HttpServletRequest hsRequest,

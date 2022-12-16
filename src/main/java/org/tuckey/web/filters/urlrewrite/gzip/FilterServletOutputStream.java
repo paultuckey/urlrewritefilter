@@ -20,12 +20,14 @@ package org.tuckey.web.filters.urlrewrite.gzip;
  *  limitations under the License.
  */
 
-import javax.servlet.ServletOutputStream;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * A custom {@link javax.servlet.ServletOutputStream} for use by our filters
+ * A custom {@link jakarta.servlet.ServletOutputStream} for use by our filters
  *
  * @version $Id: FilterServletOutputStream.java 744 2008-08-16 20:10:49Z gregluck $
  * @author <a href="mailto:gluck@thoughtworks.com">Greg Luck</a>
@@ -60,6 +62,18 @@ public class FilterServletOutputStream extends ServletOutputStream {
      */
     public void write(final byte[] b, final int off, final int len) throws IOException {
         stream.write(b, off, len);
+    }
+
+    @Override
+    public boolean isReady() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void setWriteListener(WriteListener writeListener) {
+        // TODO Auto-generated method stub
+        
     }
 }
 

@@ -38,10 +38,10 @@ import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 import org.tuckey.web.filters.urlrewrite.utils.URLDecoder;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
@@ -254,7 +254,7 @@ public class UrlRewriter {
      *
      * @param e the InvocationTargetException
      * @return the original exception.
-     * @throws javax.servlet.ServletException If the exception is a servlet exception, it will be thrown.
+     * @throws jakarta.servlet.ServletException If the exception is a servlet exception, it will be thrown.
      */
     private Throwable getOriginalException(InvocationTargetException e) throws ServletException {
         Throwable originalThrowable = e.getTargetException();

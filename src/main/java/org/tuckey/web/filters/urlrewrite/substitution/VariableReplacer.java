@@ -38,10 +38,10 @@ import org.tuckey.web.filters.urlrewrite.TypeConverter;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.regex.Matcher;
@@ -237,7 +237,7 @@ public class VariableReplacer implements SubstitutionFilter {
                 return String.valueOf(hsRequest.isUserInRole(varSubName));
 
             case TypeConverter.TYPE_EXCEPTION:
-                Exception e = (Exception) hsRequest.getAttribute("javax.servlet.error.exception");
+                Exception e = (Exception) hsRequest.getAttribute("jakarta.servlet.error.exception");
                 if (e == null) return "";
                 return e.getClass().getName();
 

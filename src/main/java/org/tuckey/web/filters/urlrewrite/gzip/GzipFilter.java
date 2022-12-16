@@ -24,9 +24,9 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.zip.GZIPOutputStream;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 
@@ -41,7 +41,7 @@ import org.tuckey.web.filters.urlrewrite.utils.Log;
  * @author <a href="mailto:amurdoch@thoughtworks.com">Adam Murdoch</a>
  * @version $Id: GzipFilter.java 744 2008-08-16 20:10:49Z gregluck $
  */
-public class GzipFilter implements javax.servlet.Filter  {
+public class GzipFilter implements jakarta.servlet.Filter  {
 
     private static final Log LOG = Log.getLog(GzipFilter.class);
 
@@ -135,7 +135,7 @@ public class GzipFilter implements javax.servlet.Filter  {
      * Checks if the request uri is an include. These cannot be gzipped.
      */
     private boolean isIncluded(final HttpServletRequest request) {
-        final String uri = (String) request.getAttribute("javax.servlet.include.request_uri");
+        final String uri = (String) request.getAttribute("jakarta.servlet.include.request_uri");
         final boolean includeRequest = !(uri == null);
 
         if (includeRequest && LOG.isDebugEnabled()) {

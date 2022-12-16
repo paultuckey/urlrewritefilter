@@ -41,15 +41,15 @@ import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 import org.tuckey.web.filters.urlrewrite.utils.TypeUtils;
 import org.tuckey.web.filters.urlrewrite.json.JsonRewriteMatch;
 
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -211,7 +211,7 @@ public class Run {
         // do shortcuts
         Class paramClass = TypeUtils.findClass(param);
 
-        if ("javax.servlet.FilterChain".equalsIgnoreCase(param) || "FilterChain".equalsIgnoreCase(param)
+        if ("jakarta.servlet.FilterChain".equalsIgnoreCase(param) || "FilterChain".equalsIgnoreCase(param)
                 || "chain".equalsIgnoreCase(param)) {
             filter = true;
             paramClass = FilterChain.class;
@@ -537,7 +537,7 @@ public class Run {
                 returned = invokeRunMethod(runClassInstance, httpServletRequest, httpServletResponse, chain, params);
             }
         } catch (ServletException e) {
-            httpServletRequest.setAttribute("javax.servlet.error.exception", e);
+            httpServletRequest.setAttribute("jakarta.servlet.error.exception", e);
             throw e;
         }
         return returned;
