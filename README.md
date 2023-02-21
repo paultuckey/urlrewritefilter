@@ -31,6 +31,16 @@ See the [manual](https://tuckey.org/urlrewrite/manual/4.0/index.html) for more i
         <version>4.0.3</version>
     </dependency>
 ```
+
+For Servlet API 5.0, use Jakarta classifier like
+```xml
+    <dependency>
+        <groupId>org.tuckey</groupId>
+        <artifactId>urlrewritefilter</artifactId>
+        <version>4.0.3</version>
+        <classifier>jakarta</classifier>
+    </dependency>
+```
   * Add the following to your WEB-INF/web.xml (add it near the top above your servlet mappings (if you have any)): (see <a href="https://tuckey.org/urlrewrite/manual/4.0/index.html#filterparams">filter parameters</a> for more options)
 ```xml
     <filter>
