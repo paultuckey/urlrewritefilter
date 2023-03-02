@@ -1,0 +1,60 @@
+<project>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.tuckey</groupId>
+    <artifactId>urlrewritefilter-container-test2</artifactId>
+    <packaging>war</packaging>
+    <properties>
+        <maven.compiler.source>13</maven.compiler.source>
+        <maven.compiler.target>13</maven.compiler.target>
+    </properties>
+    <version>6.0.0</version>
+    <name>UrlRewriteFilter Container Tests2</name>
+    <url>http://www.tuckey.org/urlrewrite/</url>
+    <inceptionYear>2001</inceptionYear>
+    <description>Integration tests for UrlRewriteFilter</description>
+    <organization>
+        <name>Paul Tuckey</name>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>BSD</name>
+            <url>http://www.opensource.org/licenses/bsd-license.php</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Paul Tuckey</name>
+        </developer>
+    </developers>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.tuckey</groupId>
+            <artifactId>urlrewritefilter</artifactId>
+            <version>5.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>1.17.6</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>1.17.6</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>
