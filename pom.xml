@@ -40,6 +40,7 @@
         <url>https://github.com/paultuckey/urlrewritefilter</url>
         <connection>scm:git:https://github.com/paultuckey/urlrewritefilter.git</connection>
         <developerConnection>scm:git:https://github.com/paultuckey/urlrewritefilter.git</developerConnection>
+        <tag>HEAD</tag>
     </scm>
 
     <developers>
