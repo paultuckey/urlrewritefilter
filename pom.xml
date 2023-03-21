@@ -88,11 +88,8 @@
                 </executions>
                 <configuration>
                     <doCheck>false</doCheck>
-                    <doUpdate>true</doUpdate>
-                    <format>yyyyMMddHHmmss</format>
-                    <items>
-                        <item>timestamp</item>
-                    </items>
+                    <doUpdate>false</doUpdate>
+                    <shortRevisionLength>5</shortRevisionLength>
                 </configuration>
             </plugin>
             <plugin>
