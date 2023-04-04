@@ -22,8 +22,8 @@ package org.tuckey.web.filters.urlrewrite.gzip;
 
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * A collection of response processing utilities, which are shared between 2 or more filters

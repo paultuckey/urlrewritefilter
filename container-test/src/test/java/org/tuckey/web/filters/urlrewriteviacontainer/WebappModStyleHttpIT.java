@@ -37,7 +37,7 @@ package org.tuckey.web.filters.urlrewriteviacontainer;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.xml.sax.SAXException;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 import java.io.IOException;
 
 

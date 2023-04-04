@@ -39,7 +39,7 @@ import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.testhelper.MockRequest;
 import org.tuckey.web.testhelper.MockResponse;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 import java.io.IOException;
 
 

@@ -38,7 +38,7 @@ import junit.framework.TestCase;
 import org.tuckey.web.testhelper.MockRequest;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 

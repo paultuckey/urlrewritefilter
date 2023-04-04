@@ -34,9 +34,9 @@
  */
 package org.tuckey.web.filters.urlrewrite;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponseWrapper;
 import java.util.HashMap;
 
 /**
@@ -91,7 +91,7 @@ public class UrlRewriteWrappedResponse extends HttpServletResponseWrapper {
             return super.encodeURL(s);
         }
         if (rou.isEncode()) {
-            rou.setTarget(super.encodeUrl(rou.getTarget()));
+            rou.setTarget(super.encodeURL(rou.getTarget()));
         }
         return processPostEncodeURL(rou.getTarget()).getTarget();
     }
@@ -102,7 +102,7 @@ public class UrlRewriteWrappedResponse extends HttpServletResponseWrapper {
             return super.encodeURL(s);
         }
         if (rou.isEncode()) {
-            rou.setTarget(super.encodeRedirectUrl(rou.getTarget()));
+            rou.setTarget(super.encodeRedirectURL(rou.getTarget()));
         }
         return processPostEncodeURL(rou.getTarget()).getTarget();
     }

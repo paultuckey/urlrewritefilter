@@ -3,7 +3,7 @@ package org.tuckey.web.filters.urlrewriteviacontainer;
 
 import org.apache.commons.httpclient.methods.GetMethod;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 import java.io.IOException;
 import java.net.URLEncoder;
 

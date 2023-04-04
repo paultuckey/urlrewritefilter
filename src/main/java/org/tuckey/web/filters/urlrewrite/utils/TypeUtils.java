@@ -1,9 +1,9 @@
 package org.tuckey.web.filters.urlrewrite.utils;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 
 public class TypeUtils {
@@ -52,19 +52,19 @@ public class TypeUtils {
         if (matchObj == null) {
             if (runMethodParam.isPrimitive()) {
                 if (runMethodParam.equals(boolean.class)) param = Boolean.FALSE;
-                else if (runMethodParam.equals(char.class)) param = new Character('\u0000');
-                else if (runMethodParam.equals(byte.class)) param = new Byte((byte) 0);
-                else if (runMethodParam.equals(short.class)) param = new Short((short) 0);
-                else if (runMethodParam.equals(int.class)) param = new Integer(0);
-                else if (runMethodParam.equals(long.class)) param = new Long(0L);
-                else if (runMethodParam.equals(float.class)) param = new Float(0f);
-                else if (runMethodParam.equals(double.class)) param = new Double(0d);
+                else if (runMethodParam.equals(char.class)) param = Character.valueOf('\u0000');
+                else if (runMethodParam.equals(byte.class)) param = Byte.valueOf((byte) 0);
+                else if (runMethodParam.equals(short.class)) param = Short.valueOf((short) 0);
+                else if (runMethodParam.equals(int.class)) param = Integer.valueOf(0);
+                else if (runMethodParam.equals(long.class)) param = Long.valueOf(0L);
+                else if (runMethodParam.equals(float.class)) param = Float.valueOf(0f);
+                else if (runMethodParam.equals(double.class)) param = Double.valueOf(0d);
             }
         } else {
             if (runMethodParam.equals(Boolean.class) || runMethodParam.equals(boolean.class))
                 param = Boolean.valueOf((String) matchObj);
             else if (runMethodParam.equals(Character.class) || runMethodParam.equals(char.class))
-                param = new Character(((String) matchObj).charAt(0));
+                param = Character.valueOf(((String) matchObj).charAt(0));
             else if (runMethodParam.equals(Byte.class) || runMethodParam.equals(byte.class))
                 param = Byte.valueOf((String) matchObj);
             else if (runMethodParam.equals(Short.class) || runMethodParam.equals(short.class))

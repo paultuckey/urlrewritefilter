@@ -34,8 +34,8 @@
  */
 package org.tuckey.web.testhelper;
 
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletContext;
 import java.util.Enumeration;
 
 /**

@@ -34,7 +34,7 @@
  */
 package org.tuckey.web.filters.urlrewrite;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.tuckey.web.filters.urlrewrite.extend.RewriteMatch;
 import org.tuckey.web.filters.urlrewrite.utils.Log;

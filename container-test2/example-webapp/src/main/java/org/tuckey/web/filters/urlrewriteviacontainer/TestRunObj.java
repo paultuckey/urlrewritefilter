@@ -36,11 +36,11 @@ package org.tuckey.web.filters.urlrewriteviacontainer;
 
 import org.tuckey.web.filters.urlrewrite.extend.RewriteMatch;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 

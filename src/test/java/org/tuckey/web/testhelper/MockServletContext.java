@@ -37,10 +37,10 @@ package org.tuckey.web.testhelper;
 import org.tuckey.web.filters.urlrewrite.UrlRewriteFilterTest;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;

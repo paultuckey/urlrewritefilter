@@ -41,8 +41,8 @@ import org.tuckey.web.testhelper.MockRequest;
 import org.tuckey.web.testhelper.MockRequestDispatcher;
 import org.tuckey.web.testhelper.MockResponse;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**

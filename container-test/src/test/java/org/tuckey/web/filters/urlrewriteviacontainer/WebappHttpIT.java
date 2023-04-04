@@ -39,7 +39,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 import org.xml.sax.SAXException;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
