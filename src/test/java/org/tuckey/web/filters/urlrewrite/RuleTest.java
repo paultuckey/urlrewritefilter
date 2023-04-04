@@ -820,6 +820,19 @@ public class RuleTest extends TestCase {
         assertEquals("/found-the-file", rewrittenUrl.getTarget());
     }
 
+    public void testEncodedFilename() throws InvocationTargetException, IOException, ServletException {
+        NormalRule rule = new NormalRule();
+        rule.setTo("/found-the-file");
+        Condition condition = new Condition();
+        condition.setType("request-filename");
+        condition.setOperator("isfile");
+        rule.addCondition(condition);
+        rule.initialise(new MockServletContext());
+        MockRequest request = new MockRequest("/conf%2Dtest1.xml");
+        NormalRewrittenUrl rewrittenUrl = (NormalRewrittenUrl) rule.matches(request.getRequestURI(), request, response);
+        assertEquals("/found-the-file", rewrittenUrl.getTarget());
+    }
+
     public void testNotFilename() throws InvocationTargetException, IOException, ServletException {
         NormalRule rule = new NormalRule();
         rule.setTo("/not-found-the-file");
