@@ -28,7 +28,7 @@
     </developers>
 
     <build>
-        <finalName>webapp</finalName>
+        <finalName>example-webapp</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -55,14 +55,15 @@
 
     <dependencies>
         <dependency>
+            <!-- run `mvn install` locally root of project -->
             <groupId>org.tuckey</groupId>
             <artifactId>urlrewritefilter</artifactId>
-            <version>4.0.4</version>
+            <version>5.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.0.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

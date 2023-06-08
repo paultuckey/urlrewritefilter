@@ -1,48 +1,56 @@
 package org.tuckey.web.filters.urlrewriteviacontainer;
 
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
-import org.testcontainers.utility.MountableFile;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.testcontainers.shaded.org.apache.commons.lang3.BooleanUtils.isTrue;
+
+import java.io.IOException;
+import java.nio.file.Paths;
+
 
 @Testcontainers
 public class ExampleTest {
 
-    private final MountableFile warFile = MountableFile.forHostPath("/Users/paul/co/urlrewritefilter/container-test2/example-webapp/target/webapp.war");
+    String webappPath = Paths.get("..", "example-webapp", "target", "example-webapp.war")
+            .toAbsolutePath().toString();
 
     @Container
-    public GenericContainer<?> container = new GenericContainer(DockerImageName.parse("payara/micro"))
-            .withExposedPorts(8087)
-            .withCopyFileToContainer(warFile, "/opt/payara/deployments/webapp.war")
-            .withCommand("--noCluster --deploy /opt/payara/deployments/webapp.war --contextRoot /")
-            .waitingFor(Wait.forHttp("/get").forStatusCode(200));
+    public GenericContainer<?> container = new GenericContainer<>("tomcat:10.1.9")
+            .withReuse(true)
+            .withExposedPorts(8080)
+            .withFileSystemBind(webappPath, "/usr/local/tomcat/webapps/example-webapp.war")
+            .waitingFor(Wait.forHttp("/example-webapp/test/test.jsp").forStatusCode(200));
 
     @BeforeEach
     public void setUp() {
-        // Assume that we have Redis running locally?
-        //underTest = new RedisBackedCache("localhost", 6379);
+        System.out.println("War: " + webappPath);
     }
 
     @Test
-    public void checkContainerIsRunning(){
-        assert(isTrue(container.isRunning()));
+    public void checkContainerIsRunning() {
+        System.out.println(container.getContainerId());
+        assert (container.isRunning());
     }
 
     @Test
-    public void testSimplePutAndGet() {
-        //System.out.println(webContainer.getContainerId());
-        //underTest.put("test", "example");
+    public void testSimplePutAndGet() throws IOException {
+        System.out.println("Container ID" + container.getContainerId());
 
-        //String retrieved = underTest.get("test");
-        //assertThat("123").isEqualTo("example");
-
-
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+            ClassicHttpRequest httpGet = ClassicRequestBuilder.get("http://localhost:8080/example-webapp/test/test.jsp")
+                    .build();
+            httpClient.execute(httpGet, response -> {
+                System.out.println(response.getCode() + " " + response.getReasonPhrase());
+                return null;
+            });
+        }
     }
 }
