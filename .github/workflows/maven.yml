@@ -24,15 +24,15 @@ jobs:
       run: mvn --batch-mode --update-snapshots package
 
     - name: Locally install filter
-      run: mvn install
+      run: mvn install --batch-mode
 
     - name: Locally install example
       working-directory: container-test/example-webapp
-      run: mvn install
+      run: mvn install --batch-mode
 
     - name: Run container tests
       working-directory: container-test/test-with-testcontainers
-      run: mvn test
+      run: mvn test --batch-mode
 
 #    - uses: actions/upload-artifact@v3
 #      with:

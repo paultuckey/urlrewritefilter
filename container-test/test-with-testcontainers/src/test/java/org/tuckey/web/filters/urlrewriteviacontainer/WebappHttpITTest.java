@@ -56,7 +56,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * @author Paul Tuckey
  * @version $Revision: 33 $ $Date: 2006-09-12 16:41:56 +1200 (Tue, 12 Sep 2006) $
  */
-public class WebappHttpIT extends ContainerTestBase {
+public class WebappHttpITTest extends ContainerTestBase {
 
     protected String getApp() {
         return "webapp";

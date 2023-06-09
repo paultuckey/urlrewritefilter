@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * <p/>
  * options: browser (may fail), enc (unlikely fail)
  */
-public class WebappDecodeUtf8IT extends ContainerTestBase {
+public class WebappDecodeUtf8ITTest extends ContainerTestBase {
 
     protected String getApp() {
         return "webapp";

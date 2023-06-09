@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.tuckey</groupId>
     <artifactId>example-webapp</artifactId>
-    <packaging>war</packaging>
-    <version>5.0.0</version>
+    <packaging>jar</packaging>
+    <version>5.0.0-SNAPSHOT</version>
     <name>Example Webapp</name>
     <url>http://www.tuckey.org/urlrewrite/</url>
     <inceptionYear>2001</inceptionYear>

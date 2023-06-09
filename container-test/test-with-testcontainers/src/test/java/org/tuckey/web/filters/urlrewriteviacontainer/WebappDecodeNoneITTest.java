@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  *
  */
-public class WebappDecodeNoneIT extends ContainerTestBase {
+public class WebappDecodeNoneITTest extends ContainerTestBase {
 
     protected String getApp() {
         return "webapp";
