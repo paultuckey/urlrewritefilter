@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2005-2007, Paul Tuckey
+ * Copyright (c) 2005-2023, Paul Tuckey
  * All rights reserved.
  * ====================================================================
  * Licensed under the BSD License. Text as follows.
@@ -36,7 +36,6 @@ package org.tuckey.web.filters.urlrewriteviacontainer;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.junit.jupiter.api.BeforeEach;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
@@ -67,7 +66,6 @@ public abstract class ContainerTestBase {
             .withFileSystemBind(webappPath, "/usr/local/tomcat/webapps/webapp.war")
             .waitingFor(Wait.forHttp("/webapp/test/test.jsp").forStatusCode(200));
 
-    //@BeforeEach
     public void setUp() throws Exception {
         container.start();
         System.out.println(container.getContainerId());

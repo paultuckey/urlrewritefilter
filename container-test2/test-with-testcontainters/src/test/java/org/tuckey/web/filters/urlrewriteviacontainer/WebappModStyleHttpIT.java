@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2005-2007, Paul Tuckey
+ * Copyright (c) 2005-2023, Paul Tuckey
  * All rights reserved.
  * ====================================================================
  * Licensed under the BSD License. Text as follows.
@@ -35,13 +35,14 @@
 package org.tuckey.web.filters.urlrewriteviacontainer;
 
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 import jakarta.servlet.ServletException;
 import java.io.IOException;
 
-import static org.junit.Assert.*;
-
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Paul Tuckey
@@ -53,10 +54,13 @@ public class WebappModStyleHttpIT extends ContainerTestBase {
         return "webapp/mod";
     }
 
-    public void testStatusRecord() throws IOException {
+    @BeforeEach
+    public void beforeEach() throws Exception {
+        super.setUp();
         super.recordRewriteStatus();
     }
 
+    @Test
     public void testSimpleTest() throws ServletException, IOException, SAXException {
         GetMethod method = new GetMethod(getBaseUrl() + "/index.jsp");
         method.setFollowRedirects(false);
@@ -64,6 +68,7 @@ public class WebappModStyleHttpIT extends ContainerTestBase {
         assertEquals("this is index.jsp", method.getResponseBodyAsString());
     }
 
+    @Test
     public void testSimpleTestRewrite() throws ServletException, IOException, SAXException {
         GetMethod method = new GetMethod(getBaseUrl() + "/simple/test");
         method.setFollowRedirects(false);
@@ -71,6 +76,7 @@ public class WebappModStyleHttpIT extends ContainerTestBase {
         assertEquals("this is index.jsp", method.getResponseBodyAsString());
     }
 
+    @Test
     public void testStatus1() throws ServletException, IOException, SAXException {
         GetMethod method = new GetMethod(getBaseUrl() + "/rewrite-status");
         method.setFollowRedirects(false);

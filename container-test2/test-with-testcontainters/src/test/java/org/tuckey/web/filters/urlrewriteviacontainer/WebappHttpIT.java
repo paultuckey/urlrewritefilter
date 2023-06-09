@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2005-2007, Paul Tuckey
+ * Copyright (c) 2005-2023, Paul Tuckey
  * All rights reserved.
  * ====================================================================
  * Licensed under the BSD License. Text as follows.
@@ -34,18 +34,22 @@
  */
 package org.tuckey.web.filters.urlrewriteviacontainer;
 
+import jakarta.servlet.ServletException;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 import org.xml.sax.SAXException;
 
-import jakarta.servlet.ServletException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 
 /**
@@ -58,10 +62,13 @@ public class WebappHttpIT extends ContainerTestBase {
         return "webapp";
     }
 
-    public void testStatusRecord() throws IOException {
+    @BeforeEach
+    public void beforeEach() throws Exception {
+        super.setUp();
         super.recordRewriteStatus();
     }
 
+    @Test
     public void testProduct() throws IOException, SAXException, InterruptedException {
         GetMethod method = new GetMethod(getBaseUrl() + "/products/987");
         client.executeMethod(method);
@@ -69,6 +76,7 @@ public class WebappHttpIT extends ContainerTestBase {
     }
 
 
+    @Test
     public void testSimpleDistEx() throws ServletException, IOException, SAXException {
         GetMethod method = new GetMethod(getBaseUrl() + "/test/status/");
         method.setFollowRedirects(false);
@@ -76,6 +84,7 @@ public class WebappHttpIT extends ContainerTestBase {
         assertEquals(getBaseUrl() + "/rewrite-status", method.getResponseHeader("Location").getValue());
     }
 
+    @Test
     public void testBasicSets() throws ServletException, IOException, SAXException {
         GetMethod method = new GetMethod(getBaseUrl() + "/settest/674");
         client.executeMethod(method);
@@ -85,33 +94,38 @@ public class WebappHttpIT extends ContainerTestBase {
                 "method: DELETE", method.getResponseBodyAsString());
     }
 
+    @Test
     public void testMultipleProduct() throws ServletException, IOException, SAXException {
         GetMethod method = new GetMethod(getBaseUrl() + "/multiple/products/987");
         client.executeMethod(method);
         assertEquals("product 987", method.getResponseBodyAsString());
     }
 
+    @Test
     public void testNullTo() throws ServletException, IOException {
         GetMethod method = new GetMethod(getBaseUrl() + "/hideme/anb.jsp;dsaddd?asdasds#sdsfd");
         client.executeMethod(method);
-        assertEquals("should have status set", 403, method.getStatusCode());
+        assertEquals(403, method.getStatusCode()); // "should have status set",
         String CONTENT = "<p>some content</p>";
-        assertFalse("should not output above content", CONTENT.equals(StringUtils.trim(method.getResponseBodyAsString())));
+        assertFalse(CONTENT.equals(StringUtils.trim(method.getResponseBodyAsString()))); // "should not output above content"
     }
 
+    @Test
     public void testYear() throws ServletException, IOException {
         GetMethod method = new GetMethod(getBaseUrl() + "/time/year/current");
         client.executeMethod(method);
         assertEquals("echo yearisbetween1970and3000", method.getResponseBodyAsString());
     }
 
+    @Test
     public void testTestAxis() throws ServletException, IOException {
         GetMethod method = new GetMethod(getBaseUrl() + "/services/blah?qwerty");
         method.setFollowRedirects(false);
         client.executeMethod(method);
-        assertEquals(getBaseUrl() + "/axis/services/blah", method.getResponseHeader("Location").getValue());
+        assertEquals("/" + getApp() + "/axis/services/blah", method.getResponseHeader("Location").getValue());
     }
 
+    @Test
     public void testTestErik() throws ServletException, IOException {
         GetMethod method = new GetMethod(getBaseUrl() + "/eriktest/hi.ho");
         method.setFollowRedirects(false);
@@ -120,6 +134,7 @@ public class WebappHttpIT extends ContainerTestBase {
         assertEquals("http://www.example.com/context/hi.ho", method.getResponseHeader("Location").getValue());
     }
 
+    @Test
     public void testTestEncode() throws ServletException, IOException {
         GetMethod method = new GetMethod(getBaseUrl() + "/went%20to%20bahamas/");
         method.setFollowRedirects(false);
@@ -127,12 +142,14 @@ public class WebappHttpIT extends ContainerTestBase {
         assertEquals(getBaseUrl() + "/jamaica/", method.getResponseHeader("Location").getValue());
     }
 
+    @Test
     public void testSimpleRun() throws ServletException, IOException {
         GetMethod method = new GetMethod(getBaseUrl() + "/run/test/test1");
         client.executeMethod(method);
         assertEquals("this is " + TestRunObj.class.getName(), method.getResponseBodyAsString());
     }
 
+    @Test
     public void testQueryStringEscape() throws IOException {
         GetMethod method = new GetMethod(getBaseUrl() + "/query-string-escape/jack+%26+jones");
         method.setFollowRedirects(false);
@@ -140,6 +157,7 @@ public class WebappHttpIT extends ContainerTestBase {
         assertEquals("http://query-string-escape-result.com/?q=jack%2B%26%2Bjones&another=jack+&+jones", method.getResponseHeader("Location").getValue());
     }
 
+    @Test
     public void testGzip() throws IOException {
         GetMethod method = new GetMethod(getBaseUrl() + "/gzip-me.jsp");
         method.addRequestHeader("accept-encoding", "gzip");
@@ -163,6 +181,7 @@ public class WebappHttpIT extends ContainerTestBase {
         return os.toString();
     }
 
+    @Test
     public void testSampleAnnotation() throws IOException {
         GetMethod method = new GetMethod(getBaseUrl() + "/do-something/7");
         client.executeMethod(method);

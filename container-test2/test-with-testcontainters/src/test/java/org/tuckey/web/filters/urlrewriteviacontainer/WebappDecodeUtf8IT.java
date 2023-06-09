@@ -4,10 +4,14 @@ package org.tuckey.web.filters.urlrewriteviacontainer;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 import jakarta.servlet.ServletException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 import java.net.URLEncoder;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 /**
  * todo: need to do a few tests
@@ -36,14 +40,16 @@ public class WebappDecodeUtf8IT extends ContainerTestBase {
         return "urlrewrite-decode-utf8.xml";
     }
 
-    public void testSetup() throws IOException {
+    @BeforeEach
+    public void beforeEach() throws Exception {
+        super.setUp();
         super.recordRewriteStatus();
     }
-
 
     /**
      *
      */
+    @Test
     public void testTestUtf() throws ServletException, IOException {
         String utfSampleString = "m\u0101ori";
         GetMethod method = new GetMethod(getBaseUrl() + "/utf/" + URLEncoder.encode(utfSampleString, "UTF8") + "/");

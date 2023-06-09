@@ -11,8 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import java.io.IOException;
 import java.net.URLEncoder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -28,7 +28,7 @@ public class WebappDecodeNoneIT extends ContainerTestBase {
     }
 
     @BeforeEach
-    public void testSetup() throws Exception {
+    public void beforeEach() throws Exception {
         super.setUp();
         super.recordRewriteStatus();
     }
@@ -44,10 +44,11 @@ public class WebappDecodeNoneIT extends ContainerTestBase {
         method.setRequestHeader("Accept-Encoding", "utf8");
         method.setFollowRedirects(false);
         client.executeMethod(method);
-        assertNotNull("no location header", method.getResponseHeader("Location"));
+        assertNotNull(method.getResponseHeader("Location"), "no location header");
         assertEquals(getBaseUrl() + "/utf-redir/done/" + encodedStr + "/", method.getResponseHeader("Location").getValue());
     }
 
+    @Test
     public void testNoDecode() throws IOException {
         if ( "orion2.0.5".equals(getContainerId())) return; // jsp's with % in path not supported
         if ( "tomcat-4.1.31".equals(getContainerId())) return; // jsp's with % in path not supported
@@ -57,6 +58,7 @@ public class WebappDecodeNoneIT extends ContainerTestBase {
         assertEquals("this is no-decode-test target jsp", method.getResponseBodyAsString());
     }
 
+    @Test
     public void testQueryStringNoDecode() throws IOException {
         if ( "orion2.0.5".equals(getContainerId())) return; // orion cannot correctly encode & into %26
 
