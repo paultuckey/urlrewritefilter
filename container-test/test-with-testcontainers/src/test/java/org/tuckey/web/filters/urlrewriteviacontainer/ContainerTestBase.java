@@ -61,14 +61,15 @@ public abstract class ContainerTestBase {
     public GenericContainer<?> container = new GenericContainer<>("tomcat:10.1.9")
             .withReuse(true)
             .withExposedPorts(8080)
-            .withFileSystemBind(webappPath, "/usr/local/tomcat/webapps/webapp.war")
-            .waitingFor(Wait.forHttp("/webapp/test/test.jsp").forStatusCode(200));
+            .withFileSystemBind(webappPath, "/usr/local/tomcat/webapps/webapp.war");
+
 
     public void setUp() throws Exception {
         container.start();
         System.out.println(container.getContainerId());
         System.out.println("HOST " + container.getHost());
         System.out.println("PORT " + container.getFirstMappedPort());
+        Thread.sleep(2000); //no work //.waitingFor(Wait.forHttp("/webapp/test/test.jsp").forStatusCode(200));
         assert (container.isRunning());
 
         String containerId = System.getProperty("test.container.id");
