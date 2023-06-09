@@ -28,7 +28,7 @@
     </developers>
 
     <build>
-        <finalName>example-webapp</finalName>
+        <finalName>webapp</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
