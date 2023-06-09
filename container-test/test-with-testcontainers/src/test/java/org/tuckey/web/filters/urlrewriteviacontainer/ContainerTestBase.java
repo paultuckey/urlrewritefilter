@@ -50,8 +50,6 @@ import java.nio.file.Paths;
 @Testcontainers
 public abstract class ContainerTestBase {
 
-    private int mappedPort = 0;
-
     protected HttpClient client = new HttpClient();
     private File systemPropBaseReportsDir = new File("container-test", "reports");
     private String containerId = "test";
@@ -69,8 +67,8 @@ public abstract class ContainerTestBase {
     public void setUp() throws Exception {
         container.start();
         System.out.println(container.getContainerId());
+        System.out.println("HOST " + container.getHost());
         System.out.println("PORT " + container.getFirstMappedPort());
-        this.mappedPort = container.getFirstMappedPort();
         assert (container.isRunning());
 
         String containerId = System.getProperty("test.container.id");
@@ -92,7 +90,7 @@ public abstract class ContainerTestBase {
     }
 
     protected String getBaseUrl() {
-        return "http://localhost:" + this.mappedPort + "/" + getApp();
+        return "http://" + container.getHost() + ":" + container.getFirstMappedPort() + "/" + getApp();
     }
 
     protected void recordRewriteStatus() throws IOException {

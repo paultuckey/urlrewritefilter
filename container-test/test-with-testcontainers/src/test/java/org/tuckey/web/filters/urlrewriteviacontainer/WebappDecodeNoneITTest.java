@@ -45,7 +45,7 @@ public class WebappDecodeNoneITTest extends ContainerTestBase {
         method.setFollowRedirects(false);
         client.executeMethod(method);
         assertNotNull(method.getResponseHeader("Location"), "no location header");
-        assertEquals(getBaseUrl() + "/utf-redir/done/" + encodedStr + "/", method.getResponseHeader("Location").getValue());
+        assertEquals("/" + getApp() + "/utf-redir/done/" + encodedStr + "/", method.getResponseHeader("Location").getValue());
     }
 
     @Test
