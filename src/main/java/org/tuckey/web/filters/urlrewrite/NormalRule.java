@@ -65,6 +65,8 @@ public class NormalRule extends RuleBase implements Rule {
     public static final short TO_TYPE_PRE_INCLUDE = 4;
     public static final short TO_TYPE_POST_INCLUDE = 5;
     public static final short TO_TYPE_PROXY = 6;
+    public static final short TO_TYPE_307_TEMPORARY_REDIRECT = 7;
+    public static final short TO_TYPE_308_PERMANENT_REDIRECT = 8;
 
     private boolean dropCookies = true;
     private boolean encodeToUrl = false;
@@ -164,6 +166,10 @@ public class NormalRule extends RuleBase implements Rule {
             toType = TO_TYPE_PERMANENT_REDIRECT;
         } else if ("temporary-redirect".equals(toTypeStr)) {
             toType = TO_TYPE_TEMPORARY_REDIRECT;
+        } else if ("308-permanent-redirect".equals(toTypeStr)) {
+            toType = TO_TYPE_308_PERMANENT_REDIRECT;
+        } else if ("307-temporary-redirect".equals(toTypeStr)) {
+            toType = TO_TYPE_307_TEMPORARY_REDIRECT;
         } else if ("pre-include".equals(toTypeStr)) {
             toType = TO_TYPE_PRE_INCLUDE;
         } else if ("post-include".equals(toTypeStr)) {
@@ -187,6 +193,8 @@ public class NormalRule extends RuleBase implements Rule {
         if (toType == TO_TYPE_REDIRECT) return "redirect";
         if (toType == TO_TYPE_PERMANENT_REDIRECT) return "permanent-redirect";
         if (toType == TO_TYPE_TEMPORARY_REDIRECT) return "temporary-redirect";
+        if (toType == TO_TYPE_308_PERMANENT_REDIRECT) return "permanent-redirect-308";
+        if (toType == TO_TYPE_307_TEMPORARY_REDIRECT) return "temporary-redirect-307";
         if (toType == TO_TYPE_PRE_INCLUDE) return "pre-include";
         if (toType == TO_TYPE_POST_INCLUDE) return "post-include";
         if (toType == TO_TYPE_PROXY) return "proxy";
