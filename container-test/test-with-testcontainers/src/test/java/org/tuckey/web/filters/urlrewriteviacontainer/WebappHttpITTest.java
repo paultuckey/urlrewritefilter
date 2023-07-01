@@ -150,7 +150,7 @@ public class WebappHttpITTest extends ContainerTestBase {
     public void testSimpleRun() throws IOException {
         GetMethod method = new GetMethod(getBaseUrl() + "/run/test/test1");
         client.executeMethod(method);
-        assertEquals("this is " + TestRunObj.class.getName(), method.getResponseBodyAsString());
+        assertEquals("this is TestRunObj", method.getResponseBodyAsString());
     }
 
     @Test
