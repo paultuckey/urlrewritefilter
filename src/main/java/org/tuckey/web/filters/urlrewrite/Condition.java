@@ -48,6 +48,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.io.File;
 import java.util.Calendar;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Conditions must be met when the filter is processing a url.
@@ -267,7 +269,11 @@ public class Condition extends TypeConverter {
                 	if (requestURI.startsWith(hsRequest.getContextPath() + "/")){
                 		requestURI = requestURI.substring(hsRequest.getContextPath().length());
                 	}
-                    String fileName = rule.getServletContext().getRealPath(requestURI);
+                    // Decode any encoded URI chars
+                    try {
+                        requestURI = new URI( requestURI ).getPath();
+                    } catch( URISyntaxException URIe ) {}
+                    String fileName = rule.getServletContext().getRealPath( requestURI );
                     if ( log.isDebugEnabled() ) log.debug("fileName found is " + fileName);
                     return evaluateStringCondition(fileName);
                 }   else {
