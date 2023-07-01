@@ -35,6 +35,7 @@
 package org.tuckey.web.filters.urlrewriteviacontainer;
 
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
@@ -51,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class WebappModStyleHttpITTest extends ContainerTestBase {
 
     protected String getApp() {
-        return "webapp/mod";
+        return "webapp";
     }
 
     @BeforeEach
@@ -60,25 +61,30 @@ public class WebappModStyleHttpITTest extends ContainerTestBase {
         super.recordRewriteStatus();
     }
 
+    @AfterEach
+    public void afterEach() throws InterruptedException {
+        super.tearDown();
+    }
+
     @Test
-    public void testSimpleTest() throws ServletException, IOException, SAXException {
-        GetMethod method = new GetMethod(getBaseUrl() + "/index.jsp");
+    public void testSimpleTest() throws IOException {
+        GetMethod method = new GetMethod(getBaseUrl() + "/mod/index.jsp");
         method.setFollowRedirects(false);
         client.executeMethod(method);
         assertEquals("this is index.jsp", method.getResponseBodyAsString());
     }
 
     @Test
-    public void testSimpleTestRewrite() throws ServletException, IOException, SAXException {
-        GetMethod method = new GetMethod(getBaseUrl() + "/simple/test");
+    public void testSimpleTestRewrite() throws IOException {
+        GetMethod method = new GetMethod(getBaseUrl() + "/mod/simple/test");
         method.setFollowRedirects(false);
         client.executeMethod(method);
         assertEquals("this is index.jsp", method.getResponseBodyAsString());
     }
 
     @Test
-    public void testStatus1() throws ServletException, IOException, SAXException {
-        GetMethod method = new GetMethod(getBaseUrl() + "/rewrite-status");
+    public void testStatus1() throws IOException {
+        GetMethod method = new GetMethod(getBaseUrl() + "/mod/rewrite-status");
         method.setFollowRedirects(false);
         client.executeMethod(method);
         assertTrue(method.getResponseBodyAsString().contains("Running Status"));

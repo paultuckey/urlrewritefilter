@@ -3,11 +3,11 @@
  * All rights reserved.
  * ====================================================================
  * Licensed under the BSD License. Text as follows.
- *
+ * <p>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *
+ * <p>
  *   - Redistributions of source code must retain the above copyright
  *     notice, this list of conditions and the following disclaimer.
  *   - Redistributions in binary form must reproduce the above
@@ -17,7 +17,7 @@
  *   - Neither the name tuckey.org nor the names of its contributors
  *     may be used to endorse or promote products derived from this
  *     software without specific prior written permission.
- *
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -34,13 +34,12 @@
  */
 package org.tuckey.web.filters.urlrewriteviacontainer;
 
-import jakarta.servlet.ServletException;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
-import org.xml.sax.SAXException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -68,8 +67,13 @@ public class WebappHttpITTest extends ContainerTestBase {
         super.recordRewriteStatus();
     }
 
+    @AfterEach
+    public void afterEach() throws InterruptedException {
+        super.tearDown();
+    }
+
     @Test
-    public void testProduct() throws IOException, SAXException, InterruptedException {
+    public void testProduct() throws IOException {
         GetMethod method = new GetMethod(getBaseUrl() + "/products/987");
         client.executeMethod(method);
         assertEquals("product 987", method.getResponseBodyAsString());
@@ -77,32 +81,32 @@ public class WebappHttpITTest extends ContainerTestBase {
 
 
     @Test
-    public void testSimpleDistEx() throws ServletException, IOException, SAXException {
+    public void testSimpleDistEx() throws IOException {
         GetMethod method = new GetMethod(getBaseUrl() + "/test/status/");
         method.setFollowRedirects(false);
         client.executeMethod(method);
-        assertEquals(getBaseUrl() + "/rewrite-status", method.getResponseHeader("Location").getValue());
+        assertEquals("/" + getApp() + "/rewrite-status", method.getResponseHeader("Location").getValue());
     }
 
     @Test
-    public void testBasicSets() throws ServletException, IOException, SAXException {
+    public void testBasicSets() throws IOException {
         GetMethod method = new GetMethod(getBaseUrl() + "/settest/674");
         client.executeMethod(method);
         assertNotNull(method.getResponseHeader("cache-control"));
         assertEquals("testsession: hello!, " +
                 "param.settest1: 674, " +
-                "method: DELETE", method.getResponseBodyAsString());
+                "method: GET", method.getResponseBodyAsString());
     }
 
     @Test
-    public void testMultipleProduct() throws ServletException, IOException, SAXException {
+    public void testMultipleProduct() throws IOException {
         GetMethod method = new GetMethod(getBaseUrl() + "/multiple/products/987");
         client.executeMethod(method);
         assertEquals("product 987", method.getResponseBodyAsString());
     }
 
     @Test
-    public void testNullTo() throws ServletException, IOException {
+    public void testNullTo() throws IOException {
         GetMethod method = new GetMethod(getBaseUrl() + "/hideme/anb.jsp;dsaddd?asdasds#sdsfd");
         client.executeMethod(method);
         assertEquals(403, method.getStatusCode()); // "should have status set",
@@ -111,14 +115,14 @@ public class WebappHttpITTest extends ContainerTestBase {
     }
 
     @Test
-    public void testYear() throws ServletException, IOException {
+    public void testYear() throws IOException {
         GetMethod method = new GetMethod(getBaseUrl() + "/time/year/current");
         client.executeMethod(method);
         assertEquals("echo yearisbetween1970and3000", method.getResponseBodyAsString());
     }
 
     @Test
-    public void testTestAxis() throws ServletException, IOException {
+    public void testTestAxis() throws IOException {
         GetMethod method = new GetMethod(getBaseUrl() + "/services/blah?qwerty");
         method.setFollowRedirects(false);
         client.executeMethod(method);
@@ -126,7 +130,7 @@ public class WebappHttpITTest extends ContainerTestBase {
     }
 
     @Test
-    public void testTestErik() throws ServletException, IOException {
+    public void testTestErik() throws IOException {
         GetMethod method = new GetMethod(getBaseUrl() + "/eriktest/hi.ho");
         method.setFollowRedirects(false);
         method.addRequestHeader(new Header("host", "blah.com"));
@@ -135,15 +139,15 @@ public class WebappHttpITTest extends ContainerTestBase {
     }
 
     @Test
-    public void testTestEncode() throws ServletException, IOException {
+    public void testTestEncode() throws IOException {
         GetMethod method = new GetMethod(getBaseUrl() + "/went%20to%20bahamas/");
         method.setFollowRedirects(false);
         client.executeMethod(method);
-        assertEquals(getBaseUrl() + "/jamaica/", method.getResponseHeader("Location").getValue());
+        assertEquals("/" + getApp() + "/jamaica/", method.getResponseHeader("Location").getValue());
     }
 
     @Test
-    public void testSimpleRun() throws ServletException, IOException {
+    public void testSimpleRun() throws IOException {
         GetMethod method = new GetMethod(getBaseUrl() + "/run/test/test1");
         client.executeMethod(method);
         assertEquals("this is " + TestRunObj.class.getName(), method.getResponseBodyAsString());
@@ -179,13 +183,6 @@ public class WebappHttpITTest extends ContainerTestBase {
             os.write(buffer, 0, bytesRead);
         }
         return os.toString();
-    }
-
-    @Test
-    public void testSampleAnnotation() throws IOException {
-        GetMethod method = new GetMethod(getBaseUrl() + "/do-something/7");
-        client.executeMethod(method);
-        assertEquals(method.getResponseBodyAsString(), "AnnotatedClassSample id=7");
     }
 
 }

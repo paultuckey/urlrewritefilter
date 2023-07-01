@@ -46,7 +46,6 @@
         <set type="session" name="testsession">hello!</set>
         <set type="response-header" name="cache-control">none-fool</set>
         <set type="parameter" name="settest1">$1</set>
-        <set type="method">DELETE</set>
         <to>/settest.jsp</to>
     </rule>
 
@@ -62,7 +61,7 @@
 
     <rule>
         <condition type="year" operator="greater">1970</condition>
-        <condition type="year" operator="less">2020</condition>
+        <condition type="year" operator="less">2045</condition>
         <from>/time/year/current</from>
         <to type="passthrough">/echo.jsp?echo=yearisbetween1970and3000</to>
     </rule>

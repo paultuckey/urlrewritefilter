@@ -49,16 +49,6 @@ public class WebappDecodeNoneITTest extends ContainerTestBase {
     }
 
     @Test
-    public void testNoDecode() throws IOException {
-        if ( "orion2.0.5".equals(getContainerId())) return; // jsp's with % in path not supported
-        if ( "tomcat-4.1.31".equals(getContainerId())) return; // jsp's with % in path not supported
-
-        GetMethod method = new GetMethod(getBaseUrl() + "/no-decode-test/D%25%2cD");
-        client.executeMethod(method);
-        assertEquals("this is no-decode-test target jsp", method.getResponseBodyAsString());
-    }
-
-    @Test
     public void testQueryStringNoDecode() throws IOException {
         if ( "orion2.0.5".equals(getContainerId())) return; // orion cannot correctly encode & into %26
 

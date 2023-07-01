@@ -37,7 +37,8 @@ package org.tuckey.web.filters.urlrewriteviacontainer;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.containers.output.OutputFrame;
+import org.testcontainers.containers.output.ToStringConsumer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -45,6 +46,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Paths;
+import java.time.Duration;
 
 
 @Testcontainers
@@ -63,9 +65,14 @@ public abstract class ContainerTestBase {
             .withExposedPorts(8080)
             .withFileSystemBind(webappPath, "/usr/local/tomcat/webapps/webapp.war");
 
+    ToStringConsumer toStringConsumer = new ToStringConsumer();
 
     public void setUp() throws Exception {
         container.start();
+
+        container.followOutput(toStringConsumer, OutputFrame.OutputType.STDOUT);
+        container.followOutput(toStringConsumer, OutputFrame.OutputType.STDERR);
+
         System.out.println(container.getContainerId());
         System.out.println("HOST " + container.getHost());
         System.out.println("PORT " + container.getFirstMappedPort());
@@ -90,12 +97,19 @@ public abstract class ContainerTestBase {
         client.executeMethod(method);
     }
 
+    public void tearDown() throws InterruptedException {
+        Thread.sleep(1);
+        // useful for debugging
+        //Thread.sleep(5 * 60 * 1000);
+        // go to tomcat container then files /usr/local/tomcat/logs
+    }
+
     protected String getBaseUrl() {
         return "http://" + container.getHost() + ":" + container.getFirstMappedPort() + "/" + getApp();
     }
 
     protected void recordRewriteStatus() throws IOException {
-        GetMethod method = new GetMethod(getBaseUrl() + "/" + getApp() + "/rewrite-status");
+        GetMethod method = new GetMethod(getBaseUrl() + "/rewrite-status");
         method.setFollowRedirects(false);
         client.executeMethod(method);
         File statusFile = new File(containerId + "-" + getApp() + "-" + getConf() + "-rewrite-status.html");
