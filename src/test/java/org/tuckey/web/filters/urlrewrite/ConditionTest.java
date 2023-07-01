@@ -3,21 +3,21 @@
  * All rights reserved.
  * ====================================================================
  * Licensed under the BSD License. Text as follows.
- *
+ * <p>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *
- *   - Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *   - Redistributions in binary form must reproduce the above
- *     copyright notice, this list of conditions and the following
- *     disclaimer in the documentation and/or other materials provided
- *     with the distribution.
- *   - Neither the name tuckey.org nor the names of its contributors
- *     may be used to endorse or promote products derived from this
- *     software without specific prior written permission.
- *
+ * <p>
+ * - Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * - Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following
+ * disclaimer in the documentation and/or other materials provided
+ * with the distribution.
+ * - Neither the name tuckey.org nor the names of its contributors
+ * may be used to endorse or promote products derived from this
+ * software without specific prior written permission.
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -39,6 +39,7 @@ import org.tuckey.web.testhelper.MockRequest;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 
 import jakarta.servlet.http.Cookie;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 
@@ -201,7 +202,7 @@ public class ConditionTest extends TestCase {
     public void testId() {
         Condition condition = new Condition();
         condition.setId(98);
-        assertTrue(condition.getId() == 98);
+        assertEquals(98, condition.getId());
     }
 
     public void testConditionOperator() {
@@ -256,7 +257,7 @@ public class ConditionTest extends TestCase {
         condition7.setOperator("somebadassop");
 
         assertFalse("condition must not init", condition7.initialise());
-        assertTrue("condition must have error", condition7.getError() != null);
+        assertNotNull("condition must have error", condition7.getError());
 
     }
 
@@ -265,7 +266,7 @@ public class ConditionTest extends TestCase {
         long field = System.currentTimeMillis();
         Condition condition = new Condition();
         condition.setType("time");
-        condition.setValue("" + field);
+        condition.setValue(String.valueOf(field));
         condition.setOperator("greaterorequal");
         condition.initialise();
         assertNotNull("condition must match", condition.getConditionMatch(request));
@@ -277,7 +278,7 @@ public class ConditionTest extends TestCase {
         int field = cal.get(Calendar.YEAR);
         Condition condition = new Condition();
         condition.setType("year");
-        condition.setValue("" + field);
+        condition.setValue(String.valueOf(field));
         condition.initialise();
         assertNotNull("condition must match", condition.getConditionMatch(request));
     }
@@ -288,7 +289,7 @@ public class ConditionTest extends TestCase {
         int field = cal.get(Calendar.MONTH);
         Condition condition = new Condition();
         condition.setType("month");
-        condition.setValue("" + field);
+        condition.setValue(String.valueOf(field));
         condition.initialise();
         assertNotNull("condition must match", condition.getConditionMatch(request));
     }
@@ -299,7 +300,7 @@ public class ConditionTest extends TestCase {
         int field = cal.get(Calendar.DAY_OF_MONTH);
         Condition condition = new Condition();
         condition.setType("dayofmonth");
-        condition.setValue("" + field);
+        condition.setValue(String.valueOf(field));
         condition.initialise();
         assertNotNull("condition must match", condition.getConditionMatch(request));
     }
@@ -310,7 +311,7 @@ public class ConditionTest extends TestCase {
         int field = cal.get(Calendar.DAY_OF_WEEK);
         Condition condition = new Condition();
         condition.setType("dayofweek");
-        condition.setValue("" + field);
+        condition.setValue(String.valueOf(field));
         condition.initialise();
         assertNotNull("condition must match", condition.getConditionMatch(request));
     }
@@ -322,7 +323,7 @@ public class ConditionTest extends TestCase {
         int field = cal.get(Calendar.AM_PM);
         Condition condition = new Condition();
         condition.setType("ampm");
-        condition.setValue("" + field);
+        condition.setValue(String.valueOf(field));
         condition.initialise();
         assertNotNull("condition must match", condition.getConditionMatch(request));
     }
@@ -333,7 +334,7 @@ public class ConditionTest extends TestCase {
         int field = cal.get(Calendar.HOUR_OF_DAY);
         Condition condition = new Condition();
         condition.setType("hourofday");
-        condition.setValue("" + field);
+        condition.setValue(String.valueOf(field));
         condition.initialise();
         assertNotNull("condition must match", condition.getConditionMatch(request));
     }
@@ -344,7 +345,7 @@ public class ConditionTest extends TestCase {
         int field = cal.get(Calendar.MINUTE);
         Condition condition = new Condition();
         condition.setType("minute");
-        condition.setValue("" + field);
+        condition.setValue(String.valueOf(field));
         condition.initialise();
         assertNotNull("condition must match", condition.getConditionMatch(request));
     }
@@ -355,7 +356,7 @@ public class ConditionTest extends TestCase {
         int field = cal.get(Calendar.SECOND);
         Condition condition = new Condition();
         condition.setType("second");
-        condition.setValue("" + field);
+        condition.setValue(String.valueOf(field));
         condition.initialise();
         assertNotNull("condition must match", condition.getConditionMatch(request));
     }
@@ -366,7 +367,7 @@ public class ConditionTest extends TestCase {
         int field = cal.get(Calendar.MILLISECOND);
         Condition condition = new Condition();
         condition.setType("millisecond");
-        condition.setValue("" + field);
+        condition.setValue(String.valueOf(field));
         condition.setOperator("greaterorequal");
         condition.initialise();
         assertNotNull("condition must match", condition.getConditionMatch(request));
@@ -544,7 +545,7 @@ public class ConditionTest extends TestCase {
         condition.initialise();
         assertNotNull("condition must not match", condition.getConditionMatch(request));
         request.addParameter("reqparam", "1000245");
-    // Condition: Not Equal, Pattern: Null, Value: Not Null, Result should be: match.
+        // Condition: Not Equal, Pattern: Null, Value: Not Null, Result should be: match.
         assertNull("condition must match", condition.getConditionMatch(request));
     }
 
