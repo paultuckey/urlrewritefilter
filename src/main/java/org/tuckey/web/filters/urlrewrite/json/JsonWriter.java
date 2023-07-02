@@ -75,9 +75,7 @@ public class JsonWriter {
     }
 
     private boolean cyclic(Object object) {
-        Iterator it = calls.iterator();
-        while (it.hasNext()) {
-            Object called = it.next();
+        for (Object called : calls) {
             if (object == called) return true;
         }
         return false;
@@ -90,19 +88,18 @@ public class JsonWriter {
         try {
             info = Introspector.getBeanInfo(object.getClass());
             PropertyDescriptor[] props = info.getPropertyDescriptors();
-            for (int i = 0; i < props.length; ++i) {
-                PropertyDescriptor prop = props[i];
+            for (PropertyDescriptor prop : props) {
                 String name = prop.getName();
                 // ignore stacktraces
-                if ( object instanceof Throwable && "stackTrace".equals(name) ) continue;
+                if (object instanceof Throwable && "stackTrace".equals(name)) continue;
                 // ignore class element of JSONRPCErrorBean
-                if ( object instanceof JsonRpcErrorBean && "class".equals(name) ) continue;
+                if (object instanceof JsonRpcErrorBean && "class".equals(name)) continue;
                 // for JSONRPCBean ignore result or error depending on weather error present
-                if ( object instanceof JsonRpcBean) {
-                    if ("class".equals(name) ) continue;
+                if (object instanceof JsonRpcBean) {
+                    if ("class".equals(name)) continue;
                     JsonRpcBean rpcBean = (JsonRpcBean) object;
-                    if (rpcBean.getError() == null && "error".equals(name) ) continue;
-                    if (rpcBean.getError() != null && "result".equals(name) ) continue;
+                    if (rpcBean.getError() == null && "error".equals(name)) continue;
+                    if (rpcBean.getError() != null && "result".equals(name)) continue;
                 }
                 Method accessor = prop.getReadMethod();
                 if ((emitClassName || !"class".equals(name)) && accessor != null) {
@@ -114,8 +111,7 @@ public class JsonWriter {
                 }
             }
             Field[] ff = object.getClass().getFields();
-            for (int i = 0; i < ff.length; ++i) {
-                Field field = ff[i];
+            for (Field field : ff) {
                 if (addedSomething) add(',');
                 add(field.getName(), field.get(object));
                 addedSomething = true;
