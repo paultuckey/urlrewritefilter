@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2005-2007, Paul Tuckey
+ * Copyright (c) 2005-2023, Paul Tuckey
  * All rights reserved.
  * ====================================================================
  * Licensed under the BSD License. Text as follows.
