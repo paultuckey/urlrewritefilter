@@ -8,17 +8,17 @@ import java.util.regex.Pattern;
 
 /**
  * todo: IN PROGRESS
- *
+ * <p>
  * Class to decode a request from one of three inputs.  Literally:
- * 
+ * <p>
  * /blah.jsp
- *
+ * <p>
  * or
- *
+ * <p>
  * GET /blah.jsp HTTP/1.1
- *
+ * <p>
  * or
- *
+ * <p>
  * GET /blah.jsp HTTP/1.1
  * user-agent: Mozilla 1.2.3
  * cookie: a:aaa

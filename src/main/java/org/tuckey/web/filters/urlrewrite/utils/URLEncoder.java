@@ -182,7 +182,7 @@ public class URLEncoder {
 
     /**
      * pchar = unreserved | escaped | ":" | "@" | "&amp;" | "=" | "+" | "$" | ","
-     *
+     * <p>
      * Note: we don't allow escaped here since we will escape it ourselves, so we don't want to allow them in the
      * unescaped sequences
      */

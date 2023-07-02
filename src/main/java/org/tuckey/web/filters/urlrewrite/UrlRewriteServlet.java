@@ -3,11 +3,11 @@
  * All rights reserved.
  * ====================================================================
  * Licensed under the BSD License. Text as follows.
- *
+ * <p>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *
+ * <p>
  *   - Redistributions of source code must retain the above copyright
  *     notice, this list of conditions and the following disclaimer.
  *   - Redistributions in binary form must reproduce the above
@@ -17,7 +17,7 @@
  *   - Neither the name tuckey.org nor the names of its contributors
  *     may be used to endorse or promote products derived from this
  *     software without specific prior written permission.
- *
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -52,7 +52,7 @@ import java.util.Enumeration;
  * Servlet for use if you cannot load filters in your environment for some strange reason.  This will
  * work very differently from the filter (obviously), but it can be used for "run" items where there
  * is no "to".
- *
+ * <p>
  * This servlet just loads an instance of the filter and calls it as if it were the container.
  */
 public class UrlRewriteServlet extends HttpServlet {
