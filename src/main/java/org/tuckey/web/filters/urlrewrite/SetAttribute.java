@@ -1,13 +1,13 @@
 /**
- * Copyright (c) 2005-2007, Paul Tuckey
+ * Copyright (c) 2005-2023, Paul Tuckey
  * All rights reserved.
  * ====================================================================
  * Licensed under the BSD License. Text as follows.
- *
+ * <p>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *
+ * <p>
  *   - Redistributions of source code must retain the above copyright
  *     notice, this list of conditions and the following disclaimer.
  *   - Redistributions in binary form must reproduce the above
@@ -17,7 +17,7 @@
  *   - Neither the name tuckey.org nor the names of its contributors
  *     may be used to endorse or promote products derived from this
  *     software without specific prior written permission.
- *
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
@@ -309,16 +309,16 @@ public class SetAttribute {
     /**
      * takes a string a number expression and converts it to a long.
      * syntax: number type
-     *
+     * <p>
      * Valid examples: "1 day", "2 days", "1 hour", "1 hour 2 minutes", "34 months"
-     *
+     * <p>
      * Any positive number is valid
-     *
+     * <p>
      * Valid types are: years, months, weeks, days, hours, minutes, seconds
-     *
+     * <p>
      * note, this syntax is a direct copy of mod_expires syntax
      * http://httpd.apache.org/docs/2.0/mod/mod_expires.html
-     *
+     * <p>
      * note, a year is calculated as 365.25 days and a month as 365.25 days divided by 12.
      */
     protected long parseTimeValue(String parsingValue) {
