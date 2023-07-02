@@ -1,0 +1,78 @@
+<project>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.tuckey</groupId>
+    <artifactId>example-webapp</artifactId>
+    <packaging>war</packaging>
+    <version>5.0.0-SNAPSHOT</version>
+    <name>Example Webapp</name>
+    <url>http://www.tuckey.org/urlrewrite/</url>
+    <inceptionYear>2001</inceptionYear>
+    <description>Example webapp for Integration tests for UrlRewriteFilter</description>
+    <organization>
+        <name>Paul Tuckey</name>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>BSD</name>
+            <url>http://www.opensource.org/licenses/bsd-license.php</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Paul Tuckey</name>
+        </developer>
+    </developers>
+
+    <build>
+        <finalName>webapp</finalName>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <webResources>
+                        <resource>
+                            <targetPath>WEB-INF</targetPath>
+                            <directory>target</directory>
+                            <includes>
+                                <include>urlrewrite-generated.xml</include>
+                            </includes>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <!-- run `mvn install` locally root of project -->
+            <groupId>org.tuckey</groupId>
+            <artifactId>urlrewritefilter</artifactId>
+            <version>5.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+
+</project>

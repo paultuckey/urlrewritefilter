@@ -34,9 +34,9 @@
  */
 package org.tuckey.web.filters.urlrewrite.extend;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * A RewriteRule is basically the class that will figure out the answer to "Can we service this http request?".  If we

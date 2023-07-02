@@ -37,8 +37,8 @@ package org.tuckey.web.filters.urlrewrite.sample;
 import org.tuckey.web.filters.urlrewrite.extend.RewriteRule;
 import org.tuckey.web.filters.urlrewrite.extend.RewriteMatch;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * A sample of how you might write a custom rule.

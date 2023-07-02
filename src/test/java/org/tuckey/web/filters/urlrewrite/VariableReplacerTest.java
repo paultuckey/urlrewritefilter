@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import org.tuckey.web.filters.urlrewrite.substitution.VariableReplacer;
 import org.tuckey.web.testhelper.MockRequest;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 /**
  * @author Tim Morrow

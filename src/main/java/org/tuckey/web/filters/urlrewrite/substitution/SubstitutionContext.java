@@ -3,7 +3,7 @@ package org.tuckey.web.filters.urlrewrite.substitution;
 import org.tuckey.web.filters.urlrewrite.ConditionMatch;
 import org.tuckey.web.filters.urlrewrite.utils.StringMatchingMatcher;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class SubstitutionContext {
 

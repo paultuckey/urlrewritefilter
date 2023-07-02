@@ -23,6 +23,17 @@ jobs:
     - name: Build with Maven
       run: mvn --batch-mode --update-snapshots package
 
+    - name: Locally install filter
+      run: mvn install --batch-mode
+
+    - name: Locally install example
+      working-directory: container-test/example-webapp
+      run: mvn install --batch-mode
+
+    - name: Run container tests
+      working-directory: container-test/test-with-testcontainers
+      run: mvn test --batch-mode
+
 #    - uses: actions/upload-artifact@v3
 #      with:
 #        name: Package

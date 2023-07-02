@@ -2,7 +2,7 @@ package org.tuckey.web.filters.urlrewrite;
 
 import junit.framework.TestCase;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 import java.io.IOException;
 
 /**

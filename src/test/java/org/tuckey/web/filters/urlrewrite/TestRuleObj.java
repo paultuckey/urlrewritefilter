@@ -37,8 +37,8 @@ package org.tuckey.web.filters.urlrewrite;
 import org.tuckey.web.filters.urlrewrite.extend.RewriteRule;
 import org.tuckey.web.filters.urlrewrite.extend.RewriteMatch;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class TestRuleObj extends RewriteRule {
     public RewriteMatch matches(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {

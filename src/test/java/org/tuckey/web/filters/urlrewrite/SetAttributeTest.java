@@ -41,7 +41,7 @@ import org.tuckey.web.filters.urlrewrite.utils.RegexMatcher;
 import org.tuckey.web.testhelper.MockRequest;
 import org.tuckey.web.testhelper.MockResponse;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
 import java.util.regex.Pattern;
 
 /**

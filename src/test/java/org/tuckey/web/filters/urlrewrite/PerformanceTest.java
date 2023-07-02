@@ -5,7 +5,7 @@ import org.tuckey.web.filters.urlrewrite.test.TestRunObj;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 import org.tuckey.web.testhelper.*;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 

@@ -3,7 +3,7 @@ package org.tuckey.web.filters.urlrewrite.test;
 import junit.framework.TestCase;
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class MockRequestParserTest extends TestCase {
 

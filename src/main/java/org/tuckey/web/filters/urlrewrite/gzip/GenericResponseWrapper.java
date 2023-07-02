@@ -20,7 +20,7 @@ package org.tuckey.web.filters.urlrewrite.gzip;
  *  limitations under the License.
  */
 
-import javax.servlet.http.HttpServletResponseWrapper;
+import jakarta.servlet.http.HttpServletResponseWrapper;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -33,9 +33,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.tuckey.web.filters.urlrewrite.utils.Log;
 
