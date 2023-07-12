@@ -16,11 +16,11 @@
         <name>Paul Tuckey</name>
     </organization>
 
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>7</version>
-    </parent>
+<!--    <parent>-->
+<!--        <groupId>org.sonatype.oss</groupId>-->
+<!--        <artifactId>oss-parent</artifactId>-->
+<!--        <version>7</version>-->
+<!--    </parent>-->
 
     <properties>
         <app.manual-version>5.0</app.manual-version>
@@ -51,6 +51,14 @@
     <issueManagement>
         <url>https://github.com/paultuckey/urlrewritefilter/issues</url>
     </issueManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/paultuckey/urlrewritefilter</url>
+        </repository>
+    </distributionManagement>
 
     <build>
         <resources>
