@@ -66,6 +66,12 @@
             <version>6.0.0</version>
             <scope>provided</scope>
         </dependency>
+        <!-- required for proxying -->
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+        </dependency>
     </dependencies>
 
     <properties>
