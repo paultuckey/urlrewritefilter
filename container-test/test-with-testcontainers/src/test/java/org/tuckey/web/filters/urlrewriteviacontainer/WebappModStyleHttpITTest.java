@@ -43,6 +43,8 @@ import org.xml.sax.SAXException;
 import jakarta.servlet.ServletException;
 import java.io.IOException;
 
+import org.apache.commons.httpclient.Cookie;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -63,7 +65,13 @@ public class WebappModStyleHttpITTest extends ContainerTestBase {
 
     @AfterEach
     public void afterEach() throws InterruptedException {
-        super.tearDown();
+        tearDown();
+    }
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        client.getState().clearCookies();
     }
 
     @Test
@@ -91,4 +99,13 @@ public class WebappModStyleHttpITTest extends ContainerTestBase {
         assertFalse(method.getResponseBodyAsString().contains("Error"));
     }
 
+    @Test
+    public void testCookiePassing() throws ServletException, IOException, SAXException {
+        GetMethod method = new GetMethod(getBaseUrl() + "/mod/cookie");
+        method.setFollowRedirects(false);
+        method.setRequestHeader("Cookie", new Cookie("localhost", "Dummy", "TestValue").toExternalForm());
+        client.executeMethod(method);
+        assertEquals(200, method.getStatusCode());
+        assertEquals("Cookie-Servlet\nDummy: TestValue", method.getResponseBodyAsString());
+    }
 }

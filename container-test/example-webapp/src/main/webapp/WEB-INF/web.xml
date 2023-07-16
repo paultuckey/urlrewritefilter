@@ -39,6 +39,7 @@
 
                 # simple test rule
                 RewriteRule  ^/mod/simple/test$ /mod/index.jsp  [L]
+                RewriteRule  ^/mod/cookie$ http://localhost:8080/webapp/cookie [P]
 
             ]]></param-value>
         </init-param>
@@ -55,11 +56,14 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <servlet>
+        <servlet-name>Cookie Test</servlet-name>
+        <servlet-class>org.tuckey.web.filters.urlrewriteviacontainer.CookieServlet</servlet-class>
+    </servlet>
 
-
-
-
-
-
+    <servlet-mapping>
+        <servlet-name>Cookie Test</servlet-name>
+        <url-pattern>/cookie</url-pattern>
+    </servlet-mapping>
 
 </web-app>

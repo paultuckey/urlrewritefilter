@@ -7,6 +7,7 @@ import org.tuckey.web.filters.urlrewrite.NormalRule;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 
 public class ModRewriteConfLoaderTest extends TestCase {
 
@@ -30,19 +31,25 @@ public class ModRewriteConfLoaderTest extends TestCase {
         assertFalse(conf.isEngineEnabled());
     }
 
-    public void testLoadFromFile() throws IOException {
+    public void testLoadFromFile() throws Exception {
         InputStream is = ModRewriteConfLoaderTest.class.getResourceAsStream(BASE_PATH + "htaccess-test1.txt");
         loader.process(is, conf);
         assertTrue(conf.isEngineEnabled());
         assertEquals(1, conf.getRules().size());
+        Field dropCookiesField = NormalRule.class.getDeclaredField("dropCookies");
+        dropCookiesField.setAccessible(true);
+        assertFalse(dropCookiesField.getBoolean(conf.getRules().get(0)));
     }
 
-    public void testLoadFromFile2() throws IOException {
+    public void testLoadFromFile2() throws Exception {
         InputStream is = ModRewriteConfLoaderTest.class.getResourceAsStream(BASE_PATH + "htaccess-test1.txt");
         Conf conf = new Conf(null, is, "htaccess-test1.txt", null, true);
         assertTrue(conf.isEngineEnabled());
         assertTrue(conf.isOk());
         assertEquals(1, conf.getRules().size());
+        Field dropCookiesField = NormalRule.class.getDeclaredField("dropCookies");
+        dropCookiesField.setAccessible(true);
+        assertFalse(dropCookiesField.getBoolean(conf.getRules().get(0)));
     }
 
     public void testSimple2() {
