@@ -4,7 +4,7 @@
     <groupId>org.tuckey</groupId>
     <artifactId>example-webapp</artifactId>
     <packaging>war</packaging>
-    <version>5.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>Example Webapp</name>
     <url>http://www.tuckey.org/urlrewrite/</url>
     <inceptionYear>2001</inceptionYear>
@@ -58,7 +58,7 @@
             <!-- run `mvn install` locally root of project -->
             <groupId>org.tuckey</groupId>
             <artifactId>urlrewritefilter</artifactId>
-            <version>5.0.0-SNAPSHOT</version>
+            <version>5.1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>jakarta.servlet</groupId>
