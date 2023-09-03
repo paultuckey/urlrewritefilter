@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.tuckey</groupId>
@@ -16,11 +17,11 @@
         <name>Paul Tuckey</name>
     </organization>
 
-<!--    <parent>-->
-<!--        <groupId>org.sonatype.oss</groupId>-->
-<!--        <artifactId>oss-parent</artifactId>-->
-<!--        <version>7</version>-->
-<!--    </parent>-->
+    <!--    <parent>-->
+    <!--        <groupId>org.sonatype.oss</groupId>-->
+    <!--        <artifactId>oss-parent</artifactId>-->
+    <!--        <version>7</version>-->
+    <!--    </parent>-->
 
     <properties>
         <app.manual-version>4.0</app.manual-version>
@@ -53,11 +54,22 @@
     </issueManagement>
 
     <distributionManagement>
+        <!--        <repository>-->
+        <!--            <id>github</id>-->
+        <!--            <name>GitHub Packages</name>-->
+        <!--            <url>https://maven.pkg.github.com/paultuckey/urlrewritefilter</url>-->
+        <!--        </repository>-->
+
+        <!-- for ossrh ensure ~/.m2/settings.xml is set with auth -->
+        <!-- https://oss.sonatype.org/ -->
         <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/paultuckey/urlrewritefilter</url>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <build>
