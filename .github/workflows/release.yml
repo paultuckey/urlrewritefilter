@@ -11,8 +11,16 @@ jobs:
       - uses: actions/checkout@v3
 
 # Do manually for now (Sep 2023)
+# https://central.sonatype.org/publish/publish-maven/#nexus-staging-maven-plugin-for-deployment-and-release
+#     brew uninstall gpg2
+#     brew install gnupg
+#     which gpg
+#     sudo ln -s /opt/homebrew/bin/gpg /usr/local/bin/gpg2
+#     gpg --gen-key --default-new-key-algo=rsa4096/cert,sign+rsa4096/encr
+#     gpg --list-keys
+#     gpg --keyserver hkp://keys.openpgp.org --send-keys 01F9EF136A63C2E2BFE561AC5001F66EF9179A2C
 #
-#   mvn deploy
+#    mvn clean deploy
 
 #      - name: Set up Java for publishing to Maven Central Repository
 #        uses: actions/setup-java@v3
