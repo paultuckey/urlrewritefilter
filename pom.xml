@@ -27,6 +27,7 @@
         <app.manual-version>5.0</app.manual-version>
         <app.year>2022</app.year>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <licenses>

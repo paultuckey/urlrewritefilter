@@ -7,6 +7,7 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <version>1.0.0</version>
     <name>UrlRewriteFilter Container Tests</name>
