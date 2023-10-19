@@ -12,15 +12,9 @@
         Add-on to urlrewritefilter to support annotations
     </description>
 
-    <mailingLists>
-        <mailingList>
-            <name>UrlRewrite users</name>
-            <post>urlrewrite@googlegroups.com</post>
-            <subscribe>urlrewrite+subscribe@googlegroups.com</subscribe>
-            <unsubscribe>urlrewrite+unsubscribe@googlegroups.com</unsubscribe>
-            <archive>https://groups.google.com/d/forum/urlrewrite</archive>
-        </mailingList>
-    </mailingLists>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <licenses>
         <license>
