@@ -58,7 +58,7 @@
             <!-- run `mvn install` locally root of project -->
             <groupId>org.tuckey</groupId>
             <artifactId>urlrewritefilter</artifactId>
-            <version>5.1.1</version>
+            <version>5.1.2</version>
         </dependency>
         <dependency>
             <groupId>jakarta.servlet</groupId>

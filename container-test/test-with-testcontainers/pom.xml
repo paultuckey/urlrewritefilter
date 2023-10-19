@@ -7,6 +7,7 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <version>1.0.0</version>
     <name>UrlRewriteFilter Container Tests</name>
@@ -46,7 +47,7 @@
             <!-- run `mvn install` locally root of project -->
             <groupId>org.tuckey</groupId>
             <artifactId>urlrewritefilter</artifactId>
-            <version>5.1.1</version>
+            <version>5.1.2</version>
         </dependency>
         <dependency>
             <!-- run `mvn install` locally in example-webapp -->

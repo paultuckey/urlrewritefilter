@@ -23,22 +23,21 @@ See the [manual](https://tuckey.org/urlrewrite/manual/4.0/index.html) for more i
 
 ## Quick Start
 
-  * Add Maven dependency below or add <a href="http://central.maven.org/maven2/org/tuckey/urlrewritefilter/4.0.3/urlrewritefilter-4.0.3.jar">urlrewritefilter-4.0.3.jar</a> directly into your <b>WEB-INF/lib</b> directory.
+  * Add Maven dependency below or add <a href="http://central.maven.org/maven2/org/tuckey/urlrewritefilter/5.1.2/urlrewritefilter-5.1.2.jar">urlrewritefilter-5.1.2.jar</a> directly into your <b>WEB-INF/lib</b> directory.
 ```xml
     <dependency>
         <groupId>org.tuckey</groupId>
         <artifactId>urlrewritefilter</artifactId>
-        <version>4.0.3</version>
+        <version>5.1.2</version>
     </dependency>
 ```
 
-For Servlet API 5.0, use Jakarta classifier like
+For Servlet API 4 or less (javax), use the old version 4.x
 ```xml
     <dependency>
         <groupId>org.tuckey</groupId>
         <artifactId>urlrewritefilter</artifactId>
         <version>4.0.3</version>
-        <classifier>jakarta</classifier>
     </dependency>
 ```
   * Add the following to your WEB-INF/web.xml (add it near the top above your servlet mappings (if you have any)): (see <a href="https://tuckey.org/urlrewrite/manual/4.0/index.html#filterparams">filter parameters</a> for more options)
