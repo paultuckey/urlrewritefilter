@@ -25,7 +25,7 @@ jobs:
       run: mvn --batch-mode --update-snapshots package
 
     - name: Locally install filter
-      run: mvn install --batch-mode
+      run: mvn install --batch-mode -Dgpg.skip
 
     - name: Locally install example
       working-directory: container-test/example-webapp
