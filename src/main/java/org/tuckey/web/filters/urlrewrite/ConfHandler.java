@@ -51,14 +51,14 @@ import java.util.regex.Pattern;
  */
 public class ConfHandler extends DefaultHandler {
 
-    private static Log log = Log.getLog(ConfHandler.class);
+    private static final Log log = Log.getLog(ConfHandler.class);
 
     // pattern to match file://, http://, jndi://
     private static final Pattern HAS_PROTOCOL = Pattern.compile("^\\w+:");
 
-    private String confSystemId;
+    private final String confSystemId;
 
-    private static Hashtable dtdPaths = new Hashtable();
+    private static final Hashtable<String, String> dtdPaths = new Hashtable<>();
 
     static {
         dtdPaths.put("-//tuckey.org//DTD UrlRewrite 1.0//EN", "/org/tuckey/web/filters/urlrewrite/dtds/urlrewrite1.0.dtd");
@@ -73,6 +73,7 @@ public class ConfHandler extends DefaultHandler {
         dtdPaths.put("-//tuckey.org//DTD UrlRewrite 3.3//EN", "/org/tuckey/web/filters/urlrewrite/dtds/urlrewrite3.3.dtd");
         dtdPaths.put("-//tuckey.org//DTD UrlRewrite 4.0//EN", "/org/tuckey/web/filters/urlrewrite/dtds/urlrewrite4.0.dtd");
         dtdPaths.put("-//tuckey.org//DTD UrlRewrite 5.0//EN", "/org/tuckey/web/filters/urlrewrite/dtds/urlrewrite5.0.dtd");
+        dtdPaths.put("-//tuckey.org//DTD UrlRewrite 5.1//EN", "/org/tuckey/web/filters/urlrewrite/dtds/urlrewrite5.1.dtd");
     }
 
     public ConfHandler(String confSystemId) {
@@ -97,7 +98,7 @@ public class ConfHandler extends DefaultHandler {
             }
             return new InputSource(systemId);
         }
-        String entity = (String) dtdPaths.get(publicId);
+        String entity = dtdPaths.get(publicId);
 
         if (entity == null) {
             if (log.isDebugEnabled()) {

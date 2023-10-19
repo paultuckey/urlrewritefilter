@@ -5,7 +5,7 @@
     <groupId>org.tuckey</groupId>
     <artifactId>urlrewritefilter</artifactId>
     <packaging>jar</packaging>
-    <version>5.1.2</version>
+    <version>5.1.3</version>
     <name>UrlRewriteFilter</name>
     <url>http://www.tuckey.org/urlrewrite/</url>
     <inceptionYear>2001</inceptionYear>
@@ -24,7 +24,7 @@
     <!--    </parent>-->
 
     <properties>
-        <app.manual-version>5.0</app.manual-version>
+        <app.manual-version>5.1</app.manual-version>
         <app.year>2022</app.year>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

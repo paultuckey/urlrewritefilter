@@ -23,12 +23,12 @@ See the [manual](https://tuckey.org/urlrewrite/manual/4.0/index.html) for more i
 
 ## Quick Start
 
-  * Add Maven dependency below or add <a href="http://central.maven.org/maven2/org/tuckey/urlrewritefilter/5.1.2/urlrewritefilter-5.1.2.jar">urlrewritefilter-5.1.2.jar</a> directly into your <b>WEB-INF/lib</b> directory.
+  * Add Maven dependency below or add <a href="http://central.maven.org/maven2/org/tuckey/urlrewritefilter/5.1.3/urlrewritefilter-5.1.3.jar">urlrewritefilter-5.1.3.jar</a> directly into your <b>WEB-INF/lib</b> directory.
 ```xml
     <dependency>
         <groupId>org.tuckey</groupId>
         <artifactId>urlrewritefilter</artifactId>
-        <version>5.1.2</version>
+        <version>5.1.3</version>
     </dependency>
 ```
 
