@@ -20,7 +20,8 @@ jobs:
 #     gpg --list-keys
 #     gpg --keyserver hkp://keys.openpgp.org --send-keys 01F9EF136A63C2E2BFE561AC5001F66EF9179A2C
 #
-#    mvn clean deploy
+#     mvn clean deploy
+#     tag and push `urlrewritefilter-x.x.x`
 
 #      - name: Set up Java for publishing to Maven Central Repository
 #        uses: actions/setup-java@v3
