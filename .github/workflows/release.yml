@@ -22,6 +22,7 @@ jobs:
 #
 #     mvn clean deploy
 #     tag and push `urlrewritefilter-x.x.x`
+#     check https://repo1.maven.org/maven2/org/tuckey/urlrewritefilter/
 
 #      - name: Set up Java for publishing to Maven Central Repository
 #        uses: actions/setup-java@v3
