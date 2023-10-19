@@ -10,8 +10,8 @@ body {
 h1 {
     color: #000000;
     font-size: 2.5em;
-    padding: 0px 0px 0px 5px;
-    margin: 0px;
+    padding: 0 0 0 5px;
+    margin: 0;
     font-family: georgia, times, serif;
 }
 
@@ -42,11 +42,11 @@ h3 {
     font-family: georgia, times, serif;
     border-bottom: 1px solid #c0c0c0;
     margin-top: 2em;
-    padding: 0.25em 0.25em 0em 0.5em;
+    padding: 0.25em 0.25em 0 0.5em;
 }
 
 p {
-    padding: 0.25em 0.25em 0em 1.0em;
+    padding: 0.25em 0.25em 0 1.0em;
 }
 
 code, pre {
@@ -78,7 +78,7 @@ th {
 }
 
 hr {
-    border: 0px;
+    border: 0;
     background-color: #c0c0c0;
 }
 
@@ -90,7 +90,6 @@ hr {
     float:left;
     width:160px;
     background: #efefef;
-    Zmargin-top: 2px;
     padding-bottom: 10px;
     padding-left: 10px;
     -moz-border-radius-bottomleft: 20px;
