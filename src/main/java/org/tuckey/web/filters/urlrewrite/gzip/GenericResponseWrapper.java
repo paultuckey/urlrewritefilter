@@ -41,7 +41,7 @@ import org.tuckey.web.filters.urlrewrite.utils.Log;
 
 
 /**
- * Provides a wrapper for {@link javax.servlet.http.HttpServletResponseWrapper}.
+ * Provides a wrapper for {@link jakarta.servlet.http.HttpServletResponseWrapper}.
  * <p/>
  * It is used to wrap the real Response so that we can modify it after
  * that the target of the request has delivered its response.
@@ -167,7 +167,7 @@ public class GenericResponseWrapper extends HttpServletResponseWrapper implement
 
 
     /**
-     * @see javax.servlet.http.HttpServletResponseWrapper#addHeader(java.lang.String, java.lang.String)
+     * @see jakarta.servlet.http.HttpServletResponseWrapper#addHeader(java.lang.String, java.lang.String)
      */
     @Override
     public void addHeader(String name, String value) {
@@ -182,7 +182,7 @@ public class GenericResponseWrapper extends HttpServletResponseWrapper implement
     }
 
     /**
-     * @see javax.servlet.http.HttpServletResponseWrapper#setHeader(java.lang.String, java.lang.String)
+     * @see jakarta.servlet.http.HttpServletResponseWrapper#setHeader(java.lang.String, java.lang.String)
      */
     @Override
     public void setHeader(String name, String value) {
@@ -194,7 +194,7 @@ public class GenericResponseWrapper extends HttpServletResponseWrapper implement
     }
 
     /**
-     * @see javax.servlet.http.HttpServletResponseWrapper#addDateHeader(java.lang.String, long)
+     * @see jakarta.servlet.http.HttpServletResponseWrapper#addDateHeader(java.lang.String, long)
      */
     @Override
     public void addDateHeader(String name, long date) {
@@ -209,7 +209,7 @@ public class GenericResponseWrapper extends HttpServletResponseWrapper implement
     }
 
     /**
-     * @see javax.servlet.http.HttpServletResponseWrapper#setDateHeader(java.lang.String, long)
+     * @see jakarta.servlet.http.HttpServletResponseWrapper#setDateHeader(java.lang.String, long)
      */
     @Override
     public void setDateHeader(String name, long date) {
@@ -221,7 +221,7 @@ public class GenericResponseWrapper extends HttpServletResponseWrapper implement
     }
 
     /**
-     * @see javax.servlet.http.HttpServletResponseWrapper#addIntHeader(java.lang.String, int)
+     * @see jakarta.servlet.http.HttpServletResponseWrapper#addIntHeader(java.lang.String, int)
      */
     @Override
     public void addIntHeader(String name, int value) {
@@ -236,7 +236,7 @@ public class GenericResponseWrapper extends HttpServletResponseWrapper implement
     }
 
     /**
-     * @see javax.servlet.http.HttpServletResponseWrapper#setIntHeader(java.lang.String, int)
+     * @see jakarta.servlet.http.HttpServletResponseWrapper#setIntHeader(java.lang.String, int)
      */
     @Override
     public void setIntHeader(String name, int value) {
