@@ -7,7 +7,7 @@
 
     <property name="build.home" value="target/ant-build"/>
     <property name="tomcat.home" value="${user.home}/co/urlrewritefilter/container-test/target/cargo/installs/tomcat-7.0.82/apache-tomcat-7.0.82/"/>
-    <property name="app.manual-version" value="5.0"/>
+    <property name="app.manual-version" value="5.1"/>
 
     <path id="run.classpath">
         <path path="target/urlrewritefilter-${project.version}.jar"/>

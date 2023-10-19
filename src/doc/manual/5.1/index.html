@@ -26,7 +26,7 @@
 <div id="masthead" class="top">
     <h1><a href="http://www.tuckey.org/urlrewrite/">
         <img id="logo" src="urf-100.png" border="0" alt="Tuckey Logo" /></a>
-        UrlRewriteFilter <!--@ver-->5.0.0<!--/@ver--></h1>
+        UrlRewriteFilter <!--@ver-->5.1.3<!--/@ver--></h1>
 </div>
 
 <div class="row">
@@ -86,12 +86,12 @@
 
  <ol>
     <li>Add Maven dependency below or add
-        <a href="http://central.maven.org/maven2/org/tuckey/urlrewritefilter/4.0.3/urlrewritefilter-4.0.3.jar">urlrewritefilter-<!--@ver-->5.0.0<!--/@ver-->.jar</a>
+        <a href="http://central.maven.org/maven2/org/tuckey/urlrewritefilter/5.1.3/urlrewritefilter-5.1.3.jar">urlrewritefilter-<!--@ver-->5.1.3<!--/@ver-->.jar</a>
         directly into your <b>WEB-INF/lib</b> directory.
            <pre><code>&lt;dependency&gt;
     &lt;groupId&gt;org.tuckey&lt;/groupId&gt;
     &lt;artifactId&gt;urlrewritefilter&lt;/artifactId&gt;
-    &lt;version&gt;<!--@ver-->5.0.0<!--/@ver-->&lt;/version&gt;
+    &lt;version&gt;<!--@ver-->5.1.3<!--/@ver-->&lt;/version&gt;
 &lt;/dependency&gt;</code></pre></li>
      <li>Add the following to your WEB-INF/web.xml (add it near the top above your
         servlet mappings (if you have any)): (see <a href="#filterparams">filter
@@ -106,7 +106,7 @@
     &lt;dispatcher&gt;REQUEST&lt;/dispatcher&gt;
     &lt;dispatcher&gt;FORWARD&lt;/dispatcher&gt;
 &lt;/filter-mapping&gt;</code></pre></li>
-     <li>Add <b><a href="https://tuckey.org/urlrewrite/manual/5.0/urlrewrite.xml">urlrewrite.xml</a></b>
+     <li>Add <b><a href="https://tuckey.org/urlrewrite/manual/5.1/urlrewrite.xml">urlrewrite.xml</a></b>
          into your WEB-INF directory. (src/main/webapp/WEB-INF/ for Maven users)</li>
      <li>Restart the context.</li>
 </ol>
@@ -255,7 +255,7 @@
 
 <p>Configuration is done via a simple XML file that lives in your <code>WEB-INF</code> folder. It should be named
     urlrewrite.xml.
-    It may be helpful to read the <a href="http://www.tuckey.org/res/dtds/urlrewrite5.0.dtd">UrlRewriteFilter DTD
+    It may be helpful to read the <a href="http://www.tuckey.org/res/dtds/urlrewrite5.1.dtd">UrlRewriteFilter DTD
     (Document Type Definition)</a>. Please also make sure you look at the <a href="guide.html">examples</a>. A simple
     configuration file looks like:</p>
 
@@ -263,8 +263,8 @@
 &lt;?xml version="1.0" encoding="utf-8"?&gt;
 
 &lt;!DOCTYPE urlrewrite
-    PUBLIC "-//tuckey.org//DTD UrlRewrite 5.0//EN"
-    "http://www.tuckey.org/res/dtds/urlrewrite5.0.dtd"&gt;
+    PUBLIC "-//tuckey.org//DTD UrlRewrite 5.1//EN"
+    "http://www.tuckey.org/res/dtds/urlrewrite5.1.dtd"&gt;
 
 &lt;urlrewrite&gt;
 
@@ -1348,7 +1348,7 @@ ${FUNCTION:PARAMS}
 &lt;target name="urlrewrite-doc" depends="compile"
     description="UrlRewriteFilter validation and documenting"&gt;
 
-&lt;taskdef name="urlrewritedoc" classpath="lib/urlrewritefilter-<!--@ver-->5.0.0<!--/@ver-->.jar"
+&lt;taskdef name="urlrewritedoc" classpath="lib/urlrewritefilter-<!--@ver-->5.1.3<!--/@ver-->.jar"
     classname="org.tuckey.web.filters.urlrewrite.UrlRewriteDocTask" /&gt;
 &lt;urlrewritedoc
     conf="${build.home}/WEB-INF/urlrewrite.xml"
