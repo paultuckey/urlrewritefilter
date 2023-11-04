@@ -60,6 +60,8 @@ public class NormalRewrittenUrl implements RewrittenUrl {
     private boolean redirect = false;
     private boolean permanentRedirect = false;
     private boolean temporaryRedirect = false;
+    private boolean permanentRedirect308 = false;
+    private boolean temporaryRedirect307 = false;
     private boolean preInclude = false;
     private boolean postInclude = false;
     private boolean proxy = false;
@@ -67,11 +69,12 @@ public class NormalRewrittenUrl implements RewrittenUrl {
     private boolean encode;
     private boolean stopFilterChain = false;
     private boolean noSubstitution = false;
+    private boolean dropCookies = true;
     private RewriteMatch rewriteMatch;
     private ServletContext targetContext = null;
 
     /**
-     * Holds information about the rewirtten url.
+     * Holds information about the rewritten url.
      *
      * @param ruleExecutionOutput the url to rewrite to
      */
@@ -81,6 +84,7 @@ public class NormalRewrittenUrl implements RewrittenUrl {
         this.stopFilterChain = ruleExecutionOutput.isStopFilterMatch();
         this.rewriteMatch = ruleExecutionOutput.getRewriteMatch();
         this.noSubstitution = ruleExecutionOutput.isNoSubstitution();
+        this.dropCookies = ruleExecutionOutput.shouldDropCookies();
     }
 
     /**
@@ -131,6 +135,22 @@ public class NormalRewrittenUrl implements RewrittenUrl {
 
     public boolean isTemporaryRedirect() {
         return temporaryRedirect;
+    }
+
+    public void set308PermanentRedirect(boolean permanentRedirect308) {
+        this.permanentRedirect308 = permanentRedirect308;
+    }
+
+    public boolean is308PermanentRedirect() {
+        return permanentRedirect308;
+    }
+
+    public void set307TemporaryRedirect(boolean temporaryRedirect307) {
+        this.temporaryRedirect307 = temporaryRedirect307;
+    }
+
+    public boolean is307TemporaryRedirect() {
+        return temporaryRedirect307;
     }
 
     public void setEncode(boolean b) {
@@ -270,11 +290,39 @@ public class NormalRewrittenUrl implements RewrittenUrl {
             }
             requestRewritten = true;
 
+        } else if (is307TemporaryRedirect()) {
+            if (hsResponse.isCommitted()) {
+                log.error("response is committed cannot temporary redirect (307) to " + target +
+                    " (check you haven't done anything to the response (ie, written to it) before here)");
+            } else {
+                if (isEncode()) {
+                    target = hsResponse.encodeRedirectURL(target);
+                }
+                hsResponse.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
+                hsResponse.setHeader("Location", target);
+                if (log.isDebugEnabled()) log.debug("temporarily redirected (with response 307) to " + target);
+            }
+            requestRewritten = true;
+
+        } else if (is308PermanentRedirect()) {
+            if (hsResponse.isCommitted()) {
+                log.error("response is committed cannot permanent redirect (308) to " + target +
+                    " (check you haven't done anything to the response (ie, written to it) before here)");
+            } else {
+                if (isEncode()) {
+                    target = hsResponse.encodeRedirectURL(target);
+                }
+                hsResponse.setStatus(308);
+                hsResponse.setHeader("Location", target);
+                if (log.isDebugEnabled()) log.debug("permanently redirected (with response 308) to " + target);
+            }
+            requestRewritten = true;
+
         } else if (isProxy()) {
             if (hsResponse.isCommitted()) {
                 log.error("response is committed. cannot proxy " + target + ". Check that you havn't written to the response before.");
             } else {
-                RequestProxy.execute(target, hsRequest, hsResponse);
+                RequestProxy.execute(target, hsRequest, hsResponse, dropCookies);
                 if (log.isTraceEnabled()) {
                     log.trace("Proxied request to " + target);
                 }

@@ -48,6 +48,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.util.Calendar;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Conditions must be met when the filter is processing a url.
@@ -263,7 +265,15 @@ public class Condition extends TypeConverter {
 
             case TYPE_REQUEST_FILENAME:
                 if ( rule.getServletContext() != null ) {
-                    String fileName = rule.getServletContext().getRealPath(hsRequest.getRequestURI());
+                	String requestURI = hsRequest.getRequestURI();
+                	if (requestURI.startsWith(hsRequest.getContextPath() + "/")){
+                		requestURI = requestURI.substring(hsRequest.getContextPath().length());
+                	}
+                    // Decode any encoded URI chars
+                    try {
+                        requestURI = new URI( requestURI ).getPath();
+                    } catch( URISyntaxException URIe ) {}
+                    String fileName = rule.getServletContext().getRealPath( requestURI );
                     if ( log.isDebugEnabled() ) log.debug("fileName found is " + fileName);
                     return evaluateStringCondition(fileName);
                 }   else {
@@ -334,34 +344,52 @@ public class Condition extends TypeConverter {
 
 
     private ConditionMatch evaluateStringCondition(String value) {
-        if (pattern == null && value == null) {
-            log.debug("value is empty and pattern is also, condition false");
-            return evaluateBoolCondition(false);
-        }
         if ( operator == OPERATOR_IS_DIR ) {
             if ( log.isDebugEnabled() ) log.debug("checking to see if " + value + " is a directory");
+            if (value == null){
+            	return evaluateBoolCondition(false);
+            }
             File fileToCheck = new File(value);
             return evaluateBoolCondition(fileToCheck.isDirectory());
         } else if ( operator == OPERATOR_IS_FILE ) {
             if ( log.isDebugEnabled() ) log.debug("checking to see if " + value + " is a file");
+            if (value == null){
+            	return evaluateBoolCondition(false);
+            }
             File fileToCheck = new File(value);
             return evaluateBoolCondition(fileToCheck.isFile());
         } else if ( operator == OPERATOR_IS_FILE_WITH_SIZE ) {
             if ( log.isDebugEnabled() ) log.debug("checking to see if " + value + " is a file with size");
+            if (value == null){
+            	return evaluateBoolCondition(false);
+            }
             File fileToCheck = new File(value);
             return evaluateBoolCondition(fileToCheck.isFile() && fileToCheck.length() > 0);
         } else if ( operator == OPERATOR_NOT_DIR ) {
             if ( log.isDebugEnabled() ) log.debug("checking to see if " + value + " is not a directory");
+            if (value == null){
+            	return evaluateBoolCondition(true);
+            }
             File fileToCheck = new File(value);
             return evaluateBoolCondition(!fileToCheck.isDirectory());
         } else if ( operator == OPERATOR_NOT_FILE ) {
             if ( log.isDebugEnabled() ) log.debug("checking to see if " + value + " is not a file");
+            if (value == null){
+            	return evaluateBoolCondition(true);
+            }
             File fileToCheck = new File(value);
             return evaluateBoolCondition(!fileToCheck.isFile());
         } else if ( operator == OPERATOR_NOT_FILE_WITH_SIZE ) {
             if ( log.isDebugEnabled() ) log.debug("checking to see if " + value + " is not a file with size");
+            if (value == null){
+            	return evaluateBoolCondition(true);
+            }
             File fileToCheck = new File(value);
             return evaluateBoolCondition(!(fileToCheck.isFile() && fileToCheck.length() > 0));
+        }
+        if (pattern == null && value == null) {
+            log.debug("value is empty and pattern is also, condition false");
+            return evaluateBoolCondition(false);
         }
         if (pattern == null) {
             log.debug("value isn't empty but pattern is, assuming checking for existence, condition true");

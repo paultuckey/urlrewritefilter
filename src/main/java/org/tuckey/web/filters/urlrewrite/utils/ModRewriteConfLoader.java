@@ -26,6 +26,7 @@ public class ModRewriteConfLoader {
     private final Pattern ENGINE_PATTERN = Pattern.compile("RewriteEngine\\s+([a-zA-Z0-9]+)\\s*$");
     private final Pattern CONDITION_PATTERN = Pattern.compile("RewriteCond\\s+(.*)$");
     private final Pattern RULE_PATTERN = Pattern.compile("RewriteRule\\s+(.*)$");
+    private final Pattern TO_VARIABLE_PATTERN = Pattern.compile("(?<!\\\\)%\\{([_\\-a-zA-Z:]*)\\}");
 
     public void process(InputStream is, Conf conf) throws IOException {
         String line;
@@ -85,6 +86,8 @@ public class ModRewriteConfLoader {
                 parseRule(conf, conditionsBuffer, notesBuffer, line);
                 notesBuffer = new StringBuffer();
                 conditionsBuffer = new ArrayList();
+            } else {
+                log.error("Unknown line: " + line);
             }
         }
         if (logTypeStr != null || logLevelStr != null) {
@@ -144,7 +147,7 @@ public class ModRewriteConfLoader {
             String rulePartStr = StringUtils.trimToNull(ruleMatcher.group(1));
             if (rulePartStr != null) {
                 log.debug("got rule " + rulePartStr);
-                String[] ruleParts = rulePartStr.split(" ");
+                String[] ruleParts = rulePartStr.split("\\s");
                 int partCounter = 0;
                 for (int j = 0; j < ruleParts.length; j++) {
                     String part = StringUtils.trimToNull(ruleParts[j]);
@@ -154,7 +157,16 @@ public class ModRewriteConfLoader {
                     if (partCounter == 1) {
                         rule.setFrom(part);
                     }
-                    if (partCounter == 2 && !"-".equals(part)) {
+                    if (partCounter == 2) {
+                        if (!"-".equals(part)) {
+                            Matcher matcher = TO_VARIABLE_PATTERN.matcher(part);
+                            if (matcher.find()) {
+                                String knownType = getType(matcher.group(0).toString());
+                                if (knownType != "") {
+                                    part = part.replace(matcher.group(0).toString(), "%{" + knownType + "}");
+                                }
+                            }
+                        }
                         rule.setTo(part);
                     }
                     if (part.startsWith("[") && part.endsWith("]")) {
@@ -276,6 +288,8 @@ public class ModRewriteConfLoader {
                 */
                 if ("nocase".equalsIgnoreCase(flag) || "NC".equalsIgnoreCase(flag)) {
                     rule.setFromCaseSensitive(false);
+                } else {
+                    rule.setFromCaseSensitive(true);
                 }
                 /*
                 # 'noescape|NE' (no URI escaping of output)
@@ -427,7 +441,7 @@ public class ModRewriteConfLoader {
                         condition.setType("auth-type");
                     } else if (part.equalsIgnoreCase("%{SERVER_PORT}")) {
                         condition.setType("port");
-                    } else if (part.equalsIgnoreCase("%{REQUEST_URI}")) {
+                    } else if (part.equalsIgnoreCase("%{REQUEST_URI}") || part.equalsIgnoreCase("$1")) {
                         condition.setType("request-uri");
                     } else if (part.equalsIgnoreCase("%{REQUEST_FILENAME}")) {
                         condition.setType("request-filename");
@@ -477,7 +491,12 @@ public class ModRewriteConfLoader {
                         //todo: note https in mod_rewrite means "on" in URF land it means true
 
                     } else {
-                        condition.setValue(part);
+                        if(part.startsWith("!")) {
+                            condition.setOperator("notequal");
+                            condition.setValue(part.replaceFirst("^!", ""));
+                        } else {
+                            condition.setValue(part);
+                        }
                     }
 
                 }
@@ -489,6 +508,92 @@ public class ModRewriteConfLoader {
         }
         return condition;
     }
+    
 
 
+    public String getType(String part) {
+        if (part.equalsIgnoreCase("%{HTTP_USER_AGENT}")) {
+            return "header:user-agent";
+        } else if (part.equalsIgnoreCase("%{HTTP_REFERER}")) {
+            return "header:referer";
+        } else if (part.equalsIgnoreCase("%{HTTP_COOKIE}")) {
+            return "header:cookie";
+        } else if (part.equalsIgnoreCase("%{HTTP_FORWARDED}")) {
+            return "header:forwarded";
+        } else if (part.equalsIgnoreCase("%{HTTP_PROXY_CONNECTION}")) {
+            return "header:proxy-connection";
+        } else if (part.equalsIgnoreCase("%{HTTP_ACCEPT}")) {
+            return "header:accept";
+        } else if (part.equalsIgnoreCase("%{HTTP_HOST}")) {
+            return "server-name";
+
+        } else if (part.equalsIgnoreCase("%{REMOTE_ADDR}")) {
+            return "remote-addr";
+        } else if (part.equalsIgnoreCase("%{REMOTE_HOST}")) {
+            return "remote-host";
+        } else if (part.equalsIgnoreCase("%{REMOTE_USER}")) {
+            return "remote-user";
+        } else if (part.equalsIgnoreCase("%{REQUEST_METHOD}")) {
+            return "method";
+        } else if (part.equalsIgnoreCase("%{QUERY_STRING}")) {
+            return "query-string";
+
+        } else if (part.equalsIgnoreCase("%{TIME_YEAR}")) {
+            return "year";
+        } else if (part.equalsIgnoreCase("%{TIME_MON}")) {
+            return "month";
+        } else if (part.equalsIgnoreCase("%{TIME_DAY}")) {
+            return "dayofmonth";
+        } else if (part.equalsIgnoreCase("%{TIME_WDAY}")) {
+            return "dayofweek";
+        } else if (part.equalsIgnoreCase("%{TIME_HOUR}")) {
+            return "hourofday";
+        } else if (part.equalsIgnoreCase("%{TIME_MIN}")) {
+            return "minute";
+        } else if (part.equalsIgnoreCase("%{TIME_SEC}")) {
+            return "second";
+
+        } else if (part.equalsIgnoreCase("%{PATH_INFO}")) {
+            return "path-info";
+        } else if (part.equalsIgnoreCase("%{AUTH_TYPE}")) {
+            return "auth-type";
+        } else if (part.equalsIgnoreCase("%{SERVER_PORT}")) {
+            return "port";
+        } else if (part.equalsIgnoreCase("%{REQUEST_URI}") || part.equalsIgnoreCase("$1")) {
+            return "request-uri";
+        } else if (part.equalsIgnoreCase("%{REQUEST_FILENAME}")) {
+            return "request-filename";
+
+        } else if (part.equalsIgnoreCase("%{REMOTE_PORT}")) {
+            log.error("REMOTE_PORT currently unsupported, ignoring");
+        } else if (part.equalsIgnoreCase("%{REMOTE_IDENT}")) {
+            log.error("REMOTE_IDENT currently unsupported, ignoring");
+        } else if (part.equalsIgnoreCase("%{SCRIPT_FILENAME}")) {
+            log.error("SCRIPT_FILENAME currently unsupported, ignoring");
+        } else if (part.equalsIgnoreCase("%{DOCUMENT_ROOT}")) {
+            log.error("DOCUMENT_ROOT currently unsupported, ignoring");
+        } else if (part.equalsIgnoreCase("%{SERVER_ADMIN}")) {
+            log.error("SERVER_ADMIN currently unsupported, ignoring");
+        } else if (part.equalsIgnoreCase("%{SERVER_NAME}")) {
+            log.error("SERVER_NAME currently unsupported, ignoring");
+        } else if (part.equalsIgnoreCase("%{SERVER_ADDR}")) {
+            log.error("SERVER_ADDR currently unsupported, ignoring");
+        } else if (part.equalsIgnoreCase("%{SERVER_PROTOCOL}")) {
+            log.error("SERVER_PROTOCOL currently unsupported, ignoring");
+        } else if (part.equalsIgnoreCase("%{SERVER_SOFTWARE}")) {
+            log.error("SERVER_SOFTWARE currently unsupported, ignoring");
+        } else if (part.equalsIgnoreCase("%{TIME}")) {
+            log.error("TIME currently unsupported, ignoring");
+        } else if (part.equalsIgnoreCase("%{API_VERSION}")) {
+            log.error("API_VERSION currently unsupported, ignoring");
+        } else if (part.equalsIgnoreCase("%{THE_REQUEST}")) {
+            log.error("THE_REQUEST currently unsupported, ignoring");
+        } else if (part.equalsIgnoreCase("%{IS_SUBREQ}")) {
+            log.error("IS_SUBREQ currently unsupported, ignoring");
+        } else if (part.equalsIgnoreCase("%{HTTPS}")) {
+            log.error("HTTPS currently unsupported, ignoring");
+        }
+
+        return "";
+    }
 }

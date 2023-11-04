@@ -252,6 +252,7 @@ public class Conf {
                 rule.setToContextStr(getAttrValue(toNode, "context"));
                 rule.setToLast(getAttrValue(toNode, "last"));
                 rule.setQueryStringAppend(getAttrValue(toNode, "qsappend"));
+                rule.setDropCookies(getAttrValue(toNode, "drop-cookies"));
                 if ("true".equalsIgnoreCase(getAttrValue(toNode, "encode"))) rule.setEncodeToUrl(true);
 
                 processSetAttributes(ruleElement, rule);

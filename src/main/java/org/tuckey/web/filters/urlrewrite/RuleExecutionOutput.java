@@ -49,6 +49,7 @@ public class RuleExecutionOutput {
     private boolean ruleMatched = false;
     private boolean stopFilterMatch = false;
     private boolean noSubstitution = false;
+    private boolean dropCookies = true;
     private RewriteMatch rewriteMatch;
 
     /**
@@ -82,6 +83,18 @@ public class RuleExecutionOutput {
                 log.debug("needs to be temporarily redirected to " + toUrl);
             }
             rewrittenRequest.setTemporaryRedirect(true);
+
+        } else if (toType == NormalRule.TO_TYPE_308_PERMANENT_REDIRECT) {
+            if (log.isDebugEnabled()) {
+                log.debug("needs to be permanently redirected (with response code 308) to " + toUrl);
+            }
+            rewrittenRequest.set308PermanentRedirect(true);
+
+        } else if (toType == NormalRule.TO_TYPE_307_TEMPORARY_REDIRECT) {
+            if (log.isDebugEnabled()) {
+                log.debug("needs to be temporarily redirected (with response code 307) to " + toUrl);
+            }
+            rewrittenRequest.set307TemporaryRedirect(true);
 
         } else if (toType == NormalRule.TO_TYPE_PRE_INCLUDE) {
             if (log.isDebugEnabled()) {
@@ -169,6 +182,14 @@ public class RuleExecutionOutput {
 
     public void setNoSubstitution(boolean noSubstitution) {
     	this.noSubstitution = noSubstitution;
+    }
+
+    public void setDropCookies(boolean forwardCookies) {
+      this.dropCookies = forwardCookies;
+    }
+
+    public boolean shouldDropCookies() {
+      return dropCookies;
     }
 
 }

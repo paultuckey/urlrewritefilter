@@ -1,0 +1,48 @@
+name: Publish package to the Maven Central Repository and GitHub Packages
+on:
+  workflow_dispatch
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v3
+
+# Do manually for now (Sep 2023)
+# https://central.sonatype.org/publish/publish-maven/#nexus-staging-maven-plugin-for-deployment-and-release
+#     brew uninstall gpg2
+#     brew install gnupg
+#     which gpg
+#     sudo ln -s /opt/homebrew/bin/gpg /usr/local/bin/gpg2
+#     gpg --gen-key --default-new-key-algo=rsa4096/cert,sign+rsa4096/encr
+#     gpg --list-keys
+#     gpg --keyserver hkp://keys.openpgp.org --send-keys 01F9EF136A63C2E2BFE561AC5001F66EF9179A2C
+#
+#     mvn clean deploy
+#     tag and push `urlrewritefilter-x.x.x`
+#     check https://repo1.maven.org/maven2/org/tuckey/urlrewritefilter/
+
+#      - name: Set up Java for publishing to Maven Central Repository
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: '11'
+#          distribution: 'adopt'
+#          server-id: ossrh
+#          server-username: MAVEN_USERNAME
+#          server-password: MAVEN_PASSWORD
+#      - name: Publish to the Maven Central Repository
+#        run: mvn --batch-mode deploy
+#        env:
+#          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+#          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+#      - name: Set up Java for publishing to GitHub Packages
+#        uses: actions/setup-java@v3
+#        with:
+#          java-version: '8'
+#          distribution: 'zulu'
+#      - name: Publish to GitHub Packages
+#        run: mvn --batch-mode deploy
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
