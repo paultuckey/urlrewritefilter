@@ -35,13 +35,15 @@
 package org.tuckey.web.testhelper;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
@@ -177,6 +179,11 @@ public class MockResponse implements HttpServletResponse {
 
     }
 
+    @Override
+    public void setContentLengthLong(long l) {
+
+    }
+
     public void setContentType(String s) {
 
     }
@@ -217,6 +224,16 @@ public class MockResponse implements HttpServletResponse {
         return (String) responseHeaders.get(s);
     }
 
+    @Override
+    public Collection<String> getHeaders(String s) {
+        return null;
+    }
+
+    @Override
+    public Collection<String> getHeaderNames() {
+        return null;
+    }
+
     public int getStatus() {
         return status;
     }
@@ -236,6 +253,16 @@ class MockSerlvetOutputStream extends ServletOutputStream {
 
     public MockSerlvetOutputStream() {
         this.baos = new ByteArrayOutputStream();
+    }
+
+    @Override
+    public boolean isReady() {
+        return false;
+    }
+
+    @Override
+    public void setWriteListener(WriteListener writeListener) {
+
     }
 
     public void write(int b) throws IOException {

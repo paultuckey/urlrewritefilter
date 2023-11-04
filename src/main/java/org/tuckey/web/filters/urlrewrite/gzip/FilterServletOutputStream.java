@@ -21,6 +21,7 @@ package org.tuckey.web.filters.urlrewrite.gzip;
  */
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -60,6 +61,16 @@ public class FilterServletOutputStream extends ServletOutputStream {
      */
     public void write(final byte[] b, final int off, final int len) throws IOException {
         stream.write(b, off, len);
+    }
+
+    @Override
+    public boolean isReady() {
+        return true;
+    }
+
+    @Override
+    public void setWriteListener(WriteListener writeListener) {
+        //
     }
 }
 
