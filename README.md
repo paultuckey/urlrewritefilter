@@ -4,7 +4,7 @@
 ### [UrlRewriteFilter Web Site](http://www.tuckey.org/urlrewrite/) | [Documentation](https://tuckey.org/urlrewrite/manual/4.0/index.html)
 
 
-*Based on the popular and very useful [mod_rewrite](http://httpd.apache.org/docs-2.0/mod/mod_rewrite.html) for apache, UrlRewriteFilter is a Java Web Filter for any J2EE compliant web application server (such as [Resin](http://caucho.com), [Orion](http://www.orionserver.com/) or [Tomcat](http://tomcat.apache.org/)), which allows you to rewrite URLs before they get to your code. It is a very powerful tool just like Apache's mod_rewrite.*
+*Based on the popular and very useful [mod_rewrite](http://httpd.apache.org/docs-2.0/mod/mod_rewrite.html) for apache, UrlRewriteFilter is a Java Web Filter for any J2EE compliant web application server (such as [Resin](http://caucho.com), [Jetty](https://eclipse.dev/jetty/) or [Tomcat](http://tomcat.apache.org/)), which allows you to rewrite URLs before they get to your code. It is a very powerful tool just like Apache's mod_rewrite.*
 
 URL rewriting is very common with Apache Web Server (see [mod_rewrite's rewriting guide](http://httpd.apache.org/docs-2.0/misc/rewriteguide.html)) but has not been possible in most java web application servers. The main things it is used for are:
 
